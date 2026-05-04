@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Threat Detection — Settings</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="options-container">
+        <div class="options-header">
+            <h1>🛡️ Threat Detection Settings</h1>
+            <p>Configure monitored websites, sensitive paths, fields, and backend connection</p>
+        </div>
+
+        <div class="options-section">
+            <h2>Backend API</h2>
+            <div class="form-group">
+                <label>Backend URL</label>
+                <input type="text" id="backendUrl" placeholder="http://localhost:8081">
+            </div>
+            <div class="btn-row">
+                <button class="btn-primary" id="saveBackendUrl">Save URL</button>
+            </div>
+        </div>
+
+        <div class="options-section">
+            <h2>Monitored Websites</h2>
+            <p class="section-desc">
+                Add domains to monitor. The extension only tracks behavior on these sites.
+                Each domain has its own sensitive paths and fields configuration.
+            </p>
+            <div id="siteList" class="site-cards-list"></div>
+            <div class="add-domain-area">
+                <div class="form-group">
+                    <label>Add New Domain</label>
+                    <input type="text" id="newDomain" placeholder="example.com">
+                </div>
+                <div class="btn-row">
+                    <button class="btn-primary" id="addDomain">+ Add Domain</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="options-section">
+            <h2>Monitoring Control</h2>
+            <div class="btn-row">
+                <button class="btn-primary" id="enableMonitoring">Enable Monitoring</button>
+                <button class="btn-secondary" id="disableMonitoring">Disable Monitoring</button>
+            </div>
+            <p class="monitoring-status-text" id="monitoringStatus"></p>
+        </div>
+
+        <div class="options-section">
+            <h2>Demo Mode</h2>
+            <p class="section-desc">
+                When Demo Mode is ON, High Risk and Critical blocking overlays will have a "Close for Demo" button, allowing you to bypass them during presentations.
+            </p>
+            <div class="btn-row">
+                <button class="btn-primary" id="enableDemoMode">Turn Demo Mode ON</button>
+                <button class="btn-secondary" id="disableDemoMode">Turn Demo Mode OFF</button>
+            </div>
+            <p class="monitoring-status-text" id="demoModeStatus"></p>
+        </div>
+
+        <div class="options-section">
+            <h2>Reset</h2>
+            <p class="section-desc">
+                Reset all settings to defaults. This will restore the demo configuration
+                with the default demo monitored site.
+            </p>
+            <div class="btn-row">
+                <button class="btn-secondary" id="resetDefaults">Reset to Defaults</button>
+            </div>
+        </div>
+
+        <div class="toast" id="toast">Saved!</div>
+    </div>
+
+    <!-- Modal for editing site config -->
+    <div class="modal-overlay" id="editModal" style="display:none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Edit Site Configuration</h3>
+                <button class="modal-close" id="modalClose">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Domain</label>
+                    <input type="text" id="editDomain" disabled>
+                </div>
+                <div class="form-group">
+                    <label>Sensitive Paths <span class="hint">(one per line, e.g. /login)</span></label>
+                    <textarea id="editPaths" rows="8" class="code-textarea"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Sensitive Fields <span class="hint">(comma-separated, e.g. password,email,otp)</span></label>
+                    <textarea id="editFields" rows="3" class="code-textarea"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="modalCancel">Cancel</button>
+                <button class="btn-primary" id="modalSave">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="options.js"></script>
+</body>
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Threat Detection — Admin Logs</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #111827;
+            --bg-card: #1a1f35;
+            --border: #2a2f45;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-yellow: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-purple: #8b5cf6;
+            --glass: rgba(255,255,255,0.03);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(139,92,246,0.1));
+            border-bottom: 1px solid var(--border);
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header .subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 18px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover { background: var(--border); }
+        .btn-primary { background: var(--accent-blue); border-color: var(--accent-blue); }
+        .btn-primary:hover { background: #2563eb; }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            padding: 24px 40px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .stat-card .label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .stat-card .value.safe { color: var(--accent-green); }
+        .stat-card .value.suspicious { color: var(--accent-yellow); }
+        .stat-card .value.high-risk { color: var(--accent-red); }
+        .stat-card .value.critical { color: #dc2626; }
+
+        .container {
+            padding: 0 40px 40px;
+        }
+
+        .table-wrapper {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table-header h2 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border);
+            background: var(--glass);
+        }
+
+        td {
+            padding: 12px 16px;
+            font-size: 13px;
+            border-bottom: 1px solid rgba(42,47,69,0.5);
+            vertical-align: top;
+        }
+
+        tr:hover { background: var(--glass); }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-safe { background: rgba(16,185,129,0.15); color: #10b981; }
+        .badge-suspicious { background: rgba(245,158,11,0.15); color: #f59e0b; }
+        .badge-high-risk { background: rgba(239,68,68,0.15); color: #ef4444; }
+        .badge-critical { background: rgba(220,38,38,0.2); color: #dc2626; }
+
+        .score-bar {
+            width: 60px;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+            display: inline-block;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        .score-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        .reasons-list {
+            list-style: none;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .reasons-list li::before {
+            content: '→ ';
+            color: var(--accent-purple);
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            background: rgba(139,92,246,0.12);
+            color: var(--accent-purple);
+            margin: 1px 2px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state .icon { font-size: 48px; margin-bottom: 16px; }
+
+        .status-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.online { background: var(--accent-green); }
+        .status-dot.offline { background: var(--accent-red); animation: none; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .mono { font-family: 'Courier New', monospace; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>🛡️ Threat Detection — Admin Dashboard</h1>
+            <div class="subtitle">Real-time security monitoring logs</div>
+        </div>
+        <div class="header-actions">
+            <span id="backendStatus"><span class="status-dot online"></span> Backend Online</span>
+            <button class="btn btn-primary" onclick="loadLogs()">↻ Refresh</button>
+        </div>
+    </div>
+
+    <div class="stats-bar">
+        <div class="stat-card">
+            <div class="label">Total Logs</div>
+            <div class="value" id="totalLogs">—</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Safe</div>
+            <div class="value safe" id="safeCount">—</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Suspicious</div>
+            <div class="value suspicious" id="suspiciousCount">—</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">High Risk</div>
+            <div class="value high-risk" id="highRiskCount">—</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Critical</div>
+            <div class="value critical" id="criticalCount">—</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="table-wrapper">
+            <div class="table-header">
+                <h2>Recent Risk Logs</h2>
+                <span id="logCount" style="font-size:12px;color:var(--text-secondary)"></span>
+            </div>
+            <div id="tableContainer">
+                <div class="empty-state">
+                    <div class="icon">📊</div>
+                    <div>Loading logs...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+
+        async function loadLogs() {
+            try {
+                const res = await fetch(`${API_BASE}/api/threat/logs`);
+                if (!res.ok) throw new Error('Backend error');
+                const logs = await res.json();
+                renderLogs(logs);
+                updateStats(logs);
+                document.getElementById('backendStatus').innerHTML =
+                    '<span class="status-dot online"></span> Backend Online';
+            } catch (e) {
+                document.getElementById('backendStatus').innerHTML =
+                    '<span class="status-dot offline"></span> Backend Offline';
+                document.getElementById('tableContainer').innerHTML =
+                    '<div class="empty-state"><div class="icon">⚠️</div><div>Cannot reach backend API</div></div>';
+            }
+        }
+
+        function updateStats(logs) {
+            document.getElementById('totalLogs').textContent = logs.length;
+            document.getElementById('safeCount').textContent =
+                logs.filter(l => l.riskLevel === 'Safe').length;
+            document.getElementById('suspiciousCount').textContent =
+                logs.filter(l => l.riskLevel === 'Suspicious').length;
+            document.getElementById('highRiskCount').textContent =
+                logs.filter(l => l.riskLevel === 'High Risk').length;
+            document.getElementById('criticalCount').textContent =
+                logs.filter(l => l.riskLevel === 'Critical').length;
+            document.getElementById('logCount').textContent = `${logs.length} entries`;
+        }
+
+        function getBadgeClass(level) {
+            if (level === 'Safe') return 'badge-safe';
+            if (level === 'Suspicious') return 'badge-suspicious';
+            if (level === 'High Risk') return 'badge-high-risk';
+            return 'badge-critical';
+        }
+
+        function getScoreColor(score) {
+            if (score <= 30) return '#10b981';
+            if (score <= 60) return '#f59e0b';
+            if (score <= 90) return '#ef4444';
+            return '#dc2626';
+        }
+
+        function renderLogs(logs) {
+            if (!logs || logs.length === 0) {
+                document.getElementById('tableContainer').innerHTML =
+                    '<div class="empty-state"><div class="icon">✅</div><div>No risk logs recorded yet. Start monitoring to see data here.</div></div>';
+                return;
+            }
+
+            let html = `<table>
+                <thead><tr>
+                    <th>Time</th>
+                    <th>Session</th>
+                    <th>Domain</th>
+                    <th>Score</th>
+                    <th>Level</th>
+                    <th>Action</th>
+                    <th>Reasons</th>
+                    <th>Tags</th>
+                </tr></thead><tbody>`;
+
+            for (const log of logs) {
+                const time = log.createdAt ? new Date(log.createdAt).toLocaleString() : '—';
+                const reasons = (log.reasons || '').split(' | ');
+                const tags = (log.tags || '').split(', ');
+                const scoreColor = getScoreColor(log.riskScore);
+
+                html += `<tr>
+                    <td class="mono">${time}</td>
+                    <td class="mono">${(log.sessionId || '—').substring(0, 16)}</td>
+                    <td>${log.domain || '—'}</td>
+                    <td>
+                        ${log.riskScore}
+                        <div class="score-bar">
+                            <div class="score-bar-fill" style="width:${Math.min(log.riskScore, 100)}%;background:${scoreColor}"></div>
+                        </div>
+                    </td>
+                    <td><span class="badge ${getBadgeClass(log.riskLevel)}">${log.riskLevel}</span></td>
+                    <td class="mono">${log.action || '—'}</td>
+                    <td><ul class="reasons-list">${reasons.map(r => `<li>${r}</li>`).join('')}</ul></td>
+                    <td>${tags.map(t => `<span class="tag">${t}</span>`).join('')}</td>
+                </tr>`;
+            }
+
+            html += '</tbody></table>';
+            document.getElementById('tableContainer').innerHTML = html;
+        }
+
+        // Load on page load and auto-refresh every 10 seconds
+        loadLogs();
+        setInterval(loadLogs, 10000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Threat Detection System</title>
+
+    <style>
+        body {
+            font-family: Arial,sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        input, select, button {
+            padding: 10px;
+            margin: 10px;
+        }
+
+        .safe { color: green; }
+        .suspicious { color: orange; }
+        .high { color: red; }
+
+        .box {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-top: 20px;
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>🔐 Threat Detection System</h2>
+
+<form id="form">
+    <input type="number" id="redirect" placeholder="Redirect Count"><br>
+
+    <input type="number" step="0.1" id="speed" placeholder="Click Speed"><br>
+
+    <select id="action">
+        <option value="browse">Browsing</option>
+        <option value="login">Login</option>
+        <option value="password">Password Entry</option>
+    </select><br>
+
+    <button type="submit">Analyze</button>
+</form>
+
+<div id="result" class="box"></div>
+
+<script>
+    document.getElementById("form").onsubmit = async (e) => {
+        e.preventDefault();
+
+        const data = {
+            redirect_count: parseInt(document.getElementById("redirect").value),
+            click_speed: parseFloat(document.getElementById("speed").value),
+            action: document.getElementById("action").value
+        };
+
+        const res = await fetch("/analyze", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+
+        let colorClass = "";
+        if (result.risk_level === "Safe") colorClass = "safe";
+        else if (result.risk_level === "Suspicious") colorClass = "suspicious";
+        else colorClass = "high";
+
+        document.getElementById("result").innerHTML = `
+    <h3 class="${colorClass}">${result.risk_level}</h3>
+    <p><b>Reasons:</b> ${result.reasons.join(", ")}</p>
+    <p><b>Tags:</b> ${result.tags.join(", ")}</p>
+    <p><b>Action:</b> ${result.action}</p>
+  `;
+    };
+</script>
+
+</body>
+</html>

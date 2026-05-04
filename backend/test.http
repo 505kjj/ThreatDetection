@@ -1,0 +1,42 @@
+### Health Check
+GET http://localhost:8081/api/threat/health
+
+### Start Session
+POST http://localhost:8081/api/threat/session/start
+Content-Type: application/json
+
+{
+  "sessionId": "S-test-001",
+  "domain": "example.com",
+  "userAgentHash": "abc123hash"
+}
+
+### Analyze Behavior (Generic)
+POST http://localhost:8081/api/threat/analyze
+Content-Type: application/json
+
+{
+  "sessionId": "S-test-001",
+  "domain": "example.com",
+  "url": "https://example.com/login",
+  "path": "/login",
+  "referrer": "https://google.com",
+  "redirectCount": 1,
+  "eventType": "password_focus",
+  "actionType": "sensitive_action",
+  "pageCategory": "sensitive_page",
+  "fieldType": "password",
+  "averageClickGapMs": 220,
+  "clicksLast10Sec": 12,
+  "pagesVisitedLast30Sec": 4,
+  "tabSwitchCount": 2,
+  "copyPasteCount": 1,
+  "formSubmitCount": 1,
+  "timestamp": "2026-05-03T22:00:00"
+}
+
+### Get Risk Logs
+GET http://localhost:8081/api/threat/logs
+
+### Get Session
+GET http://localhost:8081/api/threat/session/S-test-001
