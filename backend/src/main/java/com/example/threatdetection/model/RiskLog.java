@@ -1,10 +1,12 @@
 package com.example.threatdetection.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
 
@@ -13,6 +15,7 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "risk_logs")
+@SQLRestriction("secure_record = true")
 @Data
 @Builder
 @NoArgsConstructor
@@ -29,13 +32,8 @@ public class RiskLog {
     private int trustScore;
     private String riskLevel;
 
-    @Column(length = 2048)
-    private String url;
-
     private String eventType;
     private String actionType;
-    private String pageCategory;
-    private String fieldType;
 
     @Column(length = 4096)
     private String reasons;
@@ -45,6 +43,11 @@ public class RiskLog {
 
     private String action;
     private double confidence;
+
+    // Only records created through the validated API are visible to readers and exporters.
+    @JsonIgnore
+    @Builder.Default
+    private Boolean secureRecord = true;
 
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();

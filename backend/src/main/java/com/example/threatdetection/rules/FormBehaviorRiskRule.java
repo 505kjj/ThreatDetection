@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * Evaluates risk from form submission patterns.
- * Repeated form submissions or submissions on sensitive pages indicate brute-force or abuse.
+ * Repeated submissions are an activity signal. A single submission is normal behavior.
  */
 @Component
 public class FormBehaviorRiskRule implements RiskRule {
@@ -23,25 +23,13 @@ public class FormBehaviorRiskRule implements RiskRule {
     public List<RiskSignal> evaluate(BehaviorRequest request) {
         List<RiskSignal> signals = new ArrayList<>();
         int formSubmits = request.getFormSubmitCount();
-        String eventType = request.getEventType();
-        String pageCategory = request.getPageCategory();
 
         // Excessive form submissions
         if (formSubmits > 3) {
             signals.add(RiskSignal.builder()
                     .score(15)
-                    .reason("Excessive form submissions detected: " + formSubmits + " submits (possible brute-force)")
+                    .reason("Repeated form submissions observed: " + formSubmits)
                     .tag("form_abuse")
-                    .category("form")
-                    .build());
-        }
-
-        // Form submit on sensitive page
-        if ("form_submit".equals(eventType) && "sensitive_page".equals(pageCategory)) {
-            signals.add(RiskSignal.builder()
-                    .score(15)
-                    .reason("Form submitted on a sensitive page")
-                    .tag("sensitive_form_submit")
                     .category("form")
                     .build());
         }

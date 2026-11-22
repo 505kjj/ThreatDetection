@@ -9,5 +9,7 @@ import java.util.Optional;
 @Repository
 public interface ThreatSessionRepository extends JpaRepository<ThreatSession, Long> {
 
-    Optional<ThreatSession> findBySessionId(String sessionId);
+    Optional<ThreatSession> findBySessionIdAndOwnerId(String sessionId, String ownerId);
+
+    Optional<ThreatSession> findBySessionIdAndOwnerIdIsNotNull(String sessionId);
 }

@@ -25,20 +25,9 @@ public class BehaviorEvent {
     private Long id;
 
     private String sessionId;
-    private String domain;
-
-    @Column(length = 2048)
-    private String url;
-
-    private String path;
-
-    @Column(length = 2048)
-    private String referrer;
 
     private String eventType;
     private String actionType;
-    private String pageCategory;
-    private String fieldType;
 
     @Builder.Default
     private int redirectCount = 0;

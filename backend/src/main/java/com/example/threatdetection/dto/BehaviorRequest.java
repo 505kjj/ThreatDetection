@@ -1,59 +1,67 @@
 package com.example.threatdetection.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Behavior metadata sent from the Chrome extension.
  * Contains ONLY metadata — never actual form values, passwords, or sensitive data.
  */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 public class BehaviorRequest {
 
+    @NotBlank
+    @Pattern(regexp = ApiFields.SESSION_ID)
     private String sessionId;
-    private String domain;
-    private String url;
-    private String path;
-    private String referrer;
 
-    @Builder.Default
-    private int redirectCount = 0;
+    @Min(0)
+    @Max(100)
+    private int redirectCount;
 
+    @NotBlank
+    @Pattern(regexp = ApiFields.EVENT)
     private String eventType;
-    private String actionType;
-    private String pageCategory;
-    private String fieldType;
 
-    @Builder.Default
-    private double averageClickGapMs = -1;
+    @NotBlank
+    @Pattern(regexp = ApiFields.ACTION_TYPE)
+    private String actionType = "normal_action";
 
-    @Builder.Default
-    private int clicksLast10Sec = 0;
+    @NotBlank
+    @Pattern(regexp = ApiFields.PAGE_CATEGORY)
+    private String pageCategory = "normal_page";
 
-    @Builder.Default
-    private int pagesVisitedLast30Sec = 0;
+    @Min(-1)
+    @Max(10_000)
+    private int averageClickGapMs = -1;
 
-    @Builder.Default
-    private int tabSwitchCount = 0;
+    @Min(0)
+    @Max(1000)
+    private int clicksLast10Sec;
 
-    @Builder.Default
-    private int copyPasteCount = 0;
+    @Min(0)
+    @Max(1000)
+    private int pagesVisitedLast30Sec;
 
-    @Builder.Default
-    private int formSubmitCount = 0;
+    @Min(0)
+    @Max(1000)
+    private int tabSwitchCount;
 
-    // Optional fields for advanced rules
-    @Builder.Default
-    private int failedActionCount = 0;
+    @Min(0)
+    @Max(1000)
+    private int copyPasteCount;
 
-    @Builder.Default
-    private boolean deviceChanged = false;
+    @Min(0)
+    @Max(1000)
+    private int formSubmitCount;
 
-    private String userAgentHash;
-    private String timestamp;
+    @Min(0)
+    @Max(1000)
+    private int failedActionCount;
+
+    private boolean deviceChanged;
 }

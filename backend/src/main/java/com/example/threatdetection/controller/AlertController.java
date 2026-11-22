@@ -2,6 +2,7 @@ package com.example.threatdetection.controller;
 
 import com.example.threatdetection.model.AlertLog;
 import com.example.threatdetection.service.AlertService;
+import jakarta.validation.constraints.Positive;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,7 +59,7 @@ public class AlertController {
      * Resolve an alert by ID.
      */
     @PostMapping("/{id}/resolve")
-    public ResponseEntity<?> resolveAlert(@PathVariable Long id) {
+    public ResponseEntity<?> resolveAlert(@PathVariable @Positive Long id) {
         Optional<AlertLog> resolved = alertService.resolveAlert(id);
         if (resolved.isPresent()) {
             return ResponseEntity.ok(resolved.get());

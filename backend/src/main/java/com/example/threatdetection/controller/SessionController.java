@@ -1,13 +1,15 @@
 package com.example.threatdetection.controller;
 
+import com.example.threatdetection.dto.ApiFields;
 import com.example.threatdetection.dto.SessionStartRequest;
 import com.example.threatdetection.model.ThreatSession;
 import com.example.threatdetection.service.SessionService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * Session management API controller.
@@ -24,11 +26,12 @@ public class SessionController {
 
     /**
      * POST /api/threat/session/start
-     * Start or resume a monitoring session.
+     * Issue a new monitoring session for the authenticated browser.
      */
-    @PostMapping("/start")
-    public ResponseEntity<ThreatSession> startSession(@RequestBody SessionStartRequest request) {
-        ThreatSession session = sessionService.startSession(request);
+    @PostMapping(value = "/start", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ThreatSession> startSession(@Valid @RequestBody SessionStartRequest request,
+                                                       Authentication principal) {
+        ThreatSession session = sessionService.startSession(request, principal.getName());
         return ResponseEntity.ok(session);
     }
 
@@ -37,11 +40,8 @@ public class SessionController {
      * Get session details.
      */
     @GetMapping("/{sessionId}")
-    public ResponseEntity<?> getSession(@PathVariable String sessionId) {
-        Optional<ThreatSession> session = sessionService.getSession(sessionId);
-        if (session.isPresent()) {
-            return ResponseEntity.ok(session.get());
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<ThreatSession> getSession(@PathVariable @Pattern(regexp = ApiFields.SESSION_ID) String sessionId,
+                                                     Authentication principal) {
+        return ResponseEntity.ok(sessionService.requireReadableSession(sessionId, principal));
     }
 }

@@ -1,10 +1,12 @@
 package com.example.threatdetection.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
 
@@ -13,6 +15,7 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "alert_logs")
+@SQLRestriction("secure_record = true")
 @Data
 @Builder
 @NoArgsConstructor
@@ -27,6 +30,10 @@ public class AlertLog {
     private String domain;
     private int riskScore;
     private String riskLevel;
+
+    @JsonIgnore
+    @Builder.Default
+    private Boolean secureRecord = true;
 
     @Column(length = 4096)
     private String message;

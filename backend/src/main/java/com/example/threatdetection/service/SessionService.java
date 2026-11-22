@@ -3,10 +3,13 @@ package com.example.threatdetection.service;
 import com.example.threatdetection.dto.SessionStartRequest;
 import com.example.threatdetection.model.ThreatSession;
 import com.example.threatdetection.repository.ThreatSessionRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.Locale;
+import java.util.UUID;
 
 /**
  * Service for managing threat monitoring sessions.
@@ -21,45 +24,26 @@ public class SessionService {
     }
 
     /**
-     * Start or retrieve an existing session.
+     * Issue a fresh session for the authenticated browser.
      */
-    public ThreatSession startSession(SessionStartRequest request) {
-        Optional<ThreatSession> existing = sessionRepository.findBySessionId(request.getSessionId());
-        if (existing.isPresent()) {
-            ThreatSession session = existing.get();
-            session.setLastActivity(LocalDateTime.now());
-            return sessionRepository.save(session);
+    public ThreatSession startSession(SessionStartRequest request, String ownerId) {
+        return sessionRepository.save(ThreatSession.builder()
+                .sessionId(UUID.randomUUID().toString())
+                .domain(request.getDomain().toLowerCase(Locale.ROOT))
+                .ownerId(ownerId)
+                .build());
+    }
+
+    public ThreatSession requireReadableSession(String sessionId, Authentication principal) {
+        if (principal.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"))) {
+            return sessionRepository.findBySessionIdAndOwnerIdIsNotNull(sessionId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         }
-
-        ThreatSession session = ThreatSession.builder()
-                .sessionId(request.getSessionId())
-                .domain(request.getDomain())
-                .startTime(LocalDateTime.now())
-                .lastActivity(LocalDateTime.now())
-                .currentRiskScore(0)
-                .riskLevel("Safe")
-                .userAgentHash(request.getUserAgentHash())
-                .build();
-
-        return sessionRepository.save(session);
+        return requireOwnedSession(sessionId, principal.getName());
     }
 
-    /**
-     * Get a session by session ID.
-     */
-    public Optional<ThreatSession> getSession(String sessionId) {
-        return sessionRepository.findBySessionId(sessionId);
-    }
-
-    /**
-     * Update session risk information.
-     */
-    public void updateSessionRisk(String sessionId, int riskScore, String riskLevel) {
-        sessionRepository.findBySessionId(sessionId).ifPresent(session -> {
-            session.setCurrentRiskScore(riskScore);
-            session.setRiskLevel(riskLevel);
-            session.setLastActivity(LocalDateTime.now());
-            sessionRepository.save(session);
-        });
+    public ThreatSession requireOwnedSession(String sessionId, String ownerId) {
+        return sessionRepository.findBySessionIdAndOwnerId(sessionId, ownerId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 }

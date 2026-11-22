@@ -1,10 +1,13 @@
 package com.example.threatdetection.controller;
 
+import com.example.threatdetection.dto.ApiFields;
 import com.example.threatdetection.model.RiskLog;
 import com.example.threatdetection.service.*;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,15 +24,18 @@ public class AdminController {
     private final TimelineService timelineService;
     private final SessionSummaryService sessionSummaryService;
     private final CsvExportService csvExportService;
+    private final SessionService sessionService;
 
     public AdminController(LogQueryService logQueryService,
                            TimelineService timelineService,
                            SessionSummaryService sessionSummaryService,
-                           CsvExportService csvExportService) {
+                           CsvExportService csvExportService,
+                           SessionService sessionService) {
         this.logQueryService = logQueryService;
         this.timelineService = timelineService;
         this.sessionSummaryService = sessionSummaryService;
         this.csvExportService = csvExportService;
+        this.sessionService = sessionService;
     }
 
     /**
@@ -38,9 +44,9 @@ public class AdminController {
      */
     @GetMapping("/logs/filtered")
     public ResponseEntity<List<RiskLog>> getFilteredLogs(
-            @RequestParam(required = false) String riskLevel,
-            @RequestParam(required = false) String domain,
-            @RequestParam(required = false) String search) {
+            @RequestParam(required = false) @Pattern(regexp = ApiFields.RISK_LEVEL) String riskLevel,
+            @RequestParam(required = false) @Pattern(regexp = ApiFields.HOST_FILTER) String domain,
+            @RequestParam(required = false) @Pattern(regexp = ApiFields.LOG_SEARCH) String search) {
         return ResponseEntity.ok(logQueryService.getFilteredLogs(riskLevel, domain, search));
     }
 
@@ -62,7 +68,9 @@ public class AdminController {
      * Get the timeline (chronological risk logs) for a session.
      */
     @GetMapping("/session/{sessionId}/timeline")
-    public ResponseEntity<List<RiskLog>> getTimeline(@PathVariable String sessionId) {
+    public ResponseEntity<List<RiskLog>> getTimeline(
+            @PathVariable @Pattern(regexp = ApiFields.SESSION_ID) String sessionId, Authentication principal) {
+        sessionService.requireReadableSession(sessionId, principal);
         return ResponseEntity.ok(timelineService.getSessionTimeline(sessionId));
     }
 
@@ -71,7 +79,9 @@ public class AdminController {
      * Get a summary of a session's risk profile.
      */
     @GetMapping("/session/{sessionId}/summary")
-    public ResponseEntity<Map<String, Object>> getSessionSummary(@PathVariable String sessionId) {
+    public ResponseEntity<Map<String, Object>> getSessionSummary(
+            @PathVariable @Pattern(regexp = ApiFields.SESSION_ID) String sessionId, Authentication principal) {
+        sessionService.requireReadableSession(sessionId, principal);
         return ResponseEntity.ok(sessionSummaryService.getSessionSummary(sessionId));
     }
 
