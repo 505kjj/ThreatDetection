@@ -1,0 +1,868 @@
+{
+  "source": {
+    "featureColumns": [
+      "https",
+      "nondefault_port",
+      "ip_host",
+      "idn_labels",
+      "hostname_length",
+      "host_labels",
+      "host_digits",
+      "host_hyphens",
+      "registrant_length",
+      "subdomain_labels",
+      "path_length",
+      "path_depth",
+      "path_digits",
+      "path_percent_escapes"
+    ],
+    "featureVersion": "url-lexical-v1",
+    "counts": {
+      "input": 45619,
+      "invalid": 445,
+      "uciGroupRows": 9302,
+      "duplicateUrls": 231,
+      "conflictingUrls": 0
+    },
+    "uciGroups": 197285,
+    "overlappingUciGroups": 2553,
+    "validIndependentRows": 35641,
+    "developmentExcluded": 3892,
+    "partitions": {
+      "train": {
+        "sha256": "3a3a568a8b40f7cd3cb2a75a132401b43b85e7c21b4e09157293670c8eb32230",
+        "rows": 9182,
+        "phishing": 5713,
+        "legitimate": 3469,
+        "groups": 8450,
+        "firstDay": "2024-07-02",
+        "lastDay": "2025-04-23"
+      },
+      "calibration": {
+        "sha256": "beb9eba386f4bf33a95f91142e6d1fe1f7c87e91aabeaecbd8f8ef07713d9673",
+        "rows": 2997,
+        "phishing": 1254,
+        "legitimate": 1743,
+        "groups": 2701,
+        "firstDay": "2025-06-05",
+        "lastDay": "2025-09-07"
+      },
+      "test": {
+        "sha256": "886b877a66e354ffa98a18e03bc0433788334ed30f2e29781d8cbb9d0d9abd66",
+        "rows": 19570,
+        "phishing": 8569,
+        "legitimate": 11001,
+        "groups": 14005,
+        "firstDay": "2025-09-08",
+        "lastDay": "2025-12-16"
+      }
+    }
+  },
+  "seed": 137,
+  "rowsPerClassPerRegime": 2500,
+  "platform": "Windows-10-10.0.26300-SP0",
+  "regimes": {
+    "uci_only": {
+      "trainingRows": 5000,
+      "features": 8,
+      "fitAndEvaluationSeconds": 0.10708069999964209,
+      "prAucAveragePrecision": 0.5561568207728552,
+      "rocAuc": 0.7018042811733057,
+      "logLoss": 0.8576325524604926,
+      "thresholdMetrics": {
+        "threshold": 0.5,
+        "tp": 6233,
+        "fp": 3238,
+        "tn": 7763,
+        "fn": 2336,
+        "precision": 0.6581142434800972,
+        "recall": 0.7273894270043179,
+        "f1": 0.691019955654102,
+        "falsePositiveRate": 0.29433687846559403,
+        "falseAlertDomains": 2661,
+        "legitimateDomains": 7344,
+        "negativeDomainFalsePositiveRate": 0.36233660130718953,
+        "negativeDomainFpr95Upper": 0.37166996593648904
+      },
+      "domainTargetMetrics": [
+        {
+          "calibration": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationRisk": 0.05,
+            "calibrationDomains": 1699,
+            "maximumAllowedCalibrationFalseAlertDomains": 10,
+            "observedCalibrationFalseAlertDomains": 0,
+            "threshold": 0.9795083333333335
+          },
+          "external": {
+            "threshold": 0.9795083333333335,
+            "tp": 0,
+            "fp": 0,
+            "tn": 11001,
+            "fn": 8569,
+            "precision": null,
+            "recall": 0.0,
+            "f1": 0.0,
+            "falsePositiveRate": 0.0,
+            "falseAlertDomains": 0,
+            "legitimateDomains": 7344,
+            "negativeDomainFalsePositiveRate": 0.0,
+            "negativeDomainFpr95Upper": 0.00040783242832774774
+          }
+        },
+        {
+          "calibration": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 1699,
+            "threshold": null
+          },
+          "external": null
+        }
+      ]
+    },
+    "phresh_only": {
+      "trainingRows": 5000,
+      "features": 8,
+      "fitAndEvaluationSeconds": 0.08634080000047106,
+      "prAucAveragePrecision": 0.8211542429558676,
+      "rocAuc": 0.8358614721463752,
+      "logLoss": 0.5125829418074112,
+      "thresholdMetrics": {
+        "threshold": 0.5,
+        "tp": 3759,
+        "fp": 433,
+        "tn": 10568,
+        "fn": 4810,
+        "precision": 0.8967080152671756,
+        "recall": 0.4386742910491306,
+        "f1": 0.5891387822270981,
+        "falsePositiveRate": 0.039360058176529406,
+        "falseAlertDomains": 399,
+        "legitimateDomains": 7344,
+        "negativeDomainFalsePositiveRate": 0.054330065359477125,
+        "negativeDomainFpr95Upper": 0.05888161632324664
+      },
+      "domainTargetMetrics": [
+        {
+          "calibration": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationRisk": 0.05,
+            "calibrationDomains": 1699,
+            "maximumAllowedCalibrationFalseAlertDomains": 10,
+            "observedCalibrationFalseAlertDomains": 10,
+            "threshold": 0.7850203521651019
+          },
+          "external": {
+            "threshold": 0.7850203521651019,
+            "tp": 2235,
+            "fp": 64,
+            "tn": 10937,
+            "fn": 6334,
+            "precision": 0.9721618094823836,
+            "recall": 0.26082390010502976,
+            "f1": 0.41129922708870076,
+            "falsePositiveRate": 0.00581765294064176,
+            "falseAlertDomains": 59,
+            "legitimateDomains": 7344,
+            "negativeDomainFalsePositiveRate": 0.008033769063180828,
+            "negativeDomainFpr95Upper": 0.009968998061512224
+          }
+        },
+        {
+          "calibration": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 1699,
+            "threshold": null
+          },
+          "external": null
+        }
+      ]
+    },
+    "equal_mixture": {
+      "trainingRows": 5000,
+      "features": 8,
+      "fitAndEvaluationSeconds": 0.08423359999869717,
+      "prAucAveragePrecision": 0.8082316866958481,
+      "rocAuc": 0.8152606544887139,
+      "logLoss": 0.5176524778808437,
+      "thresholdMetrics": {
+        "threshold": 0.5,
+        "tp": 4640,
+        "fp": 870,
+        "tn": 10131,
+        "fn": 3929,
+        "precision": 0.8421052631578947,
+        "recall": 0.5414867545804645,
+        "f1": 0.6591377228496342,
+        "falsePositiveRate": 0.07908371966184892,
+        "falseAlertDomains": 788,
+        "legitimateDomains": 7344,
+        "negativeDomainFalsePositiveRate": 0.10729847494553377,
+        "negativeDomainFpr95Upper": 0.11342271012573388
+      },
+      "domainTargetMetrics": [
+        {
+          "calibration": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationRisk": 0.05,
+            "calibrationDomains": 1699,
+            "maximumAllowedCalibrationFalseAlertDomains": 10,
+            "observedCalibrationFalseAlertDomains": 10,
+            "threshold": 0.8589464594695242
+          },
+          "external": {
+            "threshold": 0.8589464594695242,
+            "tp": 2142,
+            "fp": 40,
+            "tn": 10961,
+            "fn": 6427,
+            "precision": 0.9816681943171403,
+            "recall": 0.24997082506710236,
+            "f1": 0.39847456050599944,
+            "falsePositiveRate": 0.0036360330879011,
+            "falseAlertDomains": 37,
+            "legitimateDomains": 7344,
+            "negativeDomainFalsePositiveRate": 0.0050381263616557734,
+            "negativeDomainFpr95Upper": 0.006622653532450088
+          }
+        },
+        {
+          "calibration": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 1699,
+            "threshold": null
+          },
+          "external": null
+        }
+      ]
+    }
+  },
+  "phreshOnlyPathAblation": {
+    "trainingRows": 5000,
+    "features": 12,
+    "fitAndEvaluationSeconds": 0.12673170000198297,
+    "prAucAveragePrecision": 0.8714826256752686,
+    "rocAuc": 0.8813008904472757,
+    "logLoss": 0.4590686718805216,
+    "thresholdMetrics": {
+      "threshold": 0.5,
+      "tp": 5713,
+      "fp": 1173,
+      "tn": 9828,
+      "fn": 2856,
+      "precision": 0.8296543711879175,
+      "recall": 0.6667055665771968,
+      "f1": 0.7393076674215464,
+      "falsePositiveRate": 0.10662667030269976,
+      "falseAlertDomains": 1156,
+      "legitimateDomains": 7344,
+      "negativeDomainFalsePositiveRate": 0.1574074074074074,
+      "negativeDomainFpr95Upper": 0.16456601329188394
+    },
+    "domainTargetMetrics": [
+      {
+        "calibration": {
+          "targetNegativeDomainFpr": 0.01,
+          "calibrationRisk": 0.05,
+          "calibrationDomains": 1699,
+          "maximumAllowedCalibrationFalseAlertDomains": 10,
+          "observedCalibrationFalseAlertDomains": 10,
+          "threshold": 0.7573936000316115
+        },
+        "external": {
+          "threshold": 0.7573936000316115,
+          "tp": 2959,
+          "fp": 68,
+          "tn": 10933,
+          "fn": 5610,
+          "precision": 0.9775355137099438,
+          "recall": 0.3453145057766367,
+          "f1": 0.5103483959986203,
+          "falsePositiveRate": 0.00618125624943187,
+          "falseAlertDomains": 65,
+          "legitimateDomains": 7344,
+          "negativeDomainFalsePositiveRate": 0.008850762527233115,
+          "negativeDomainFpr95Upper": 0.010869493376054685
+        }
+      },
+      {
+        "calibration": {
+          "targetNegativeDomainFpr": 0.001,
+          "calibrationDomains": 1699,
+          "threshold": null
+        },
+        "external": null
+      }
+    ]
+  },
+  "oofFolds": 3,
+  "oofAveragePrecision": {
+    "logistic": 0.8627779610802413,
+    "forest": 0.8759649459672376,
+    "xgboost": 0.8778308727645588,
+    "mlp": 0.8775934211414456
+  },
+  "selectedModels": [
+    "xgboost",
+    "mlp"
+  ],
+  "weights": {
+    "logistic": 0.24279609460623902,
+    "forest": 0.2516217366619482,
+    "xgboost": 0.25287054388789354,
+    "mlp": 0.25271162484391924
+  },
+  "results": {
+    "bestIndividual": {
+      "prAucAveragePrecision": 0.8052654463624664,
+      "rocAuc": 0.8206673124242762,
+      "logLoss": 0.5071742658706196,
+      "thresholdMetrics": {
+        "threshold": 0.5,
+        "tp": 4667,
+        "fp": 1180,
+        "tn": 9821,
+        "fn": 3902,
+        "precision": 0.7981871044980332,
+        "recall": 0.5446376473334111,
+        "f1": 0.6474750277469479,
+        "falsePositiveRate": 0.10726297609308244,
+        "falseAlertDomains": 888,
+        "legitimateDomains": 7344,
+        "negativeDomainFalsePositiveRate": 0.12091503267973856,
+        "negativeDomainFpr95Upper": 0.12735244138689594
+      },
+      "domainTargetMetrics": [
+        {
+          "calibration": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationRisk": 0.05,
+            "calibrationDomains": 1699,
+            "maximumAllowedCalibrationFalseAlertDomains": 10,
+            "observedCalibrationFalseAlertDomains": 9,
+            "threshold": 0.9324139952659608
+          },
+          "external": {
+            "threshold": 0.9324139952659608,
+            "tp": 2179,
+            "fp": 59,
+            "tn": 10942,
+            "fn": 6390,
+            "precision": 0.9736371760500446,
+            "recall": 0.2542887151359552,
+            "f1": 0.403257148144721,
+            "falsePositiveRate": 0.005363148804654123,
+            "falseAlertDomains": 53,
+            "legitimateDomains": 7344,
+            "negativeDomainFalsePositiveRate": 0.00721677559912854,
+            "negativeDomainFpr95Upper": 0.009064071456279988
+          }
+        },
+        {
+          "calibration": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 1699,
+            "threshold": null
+          },
+          "external": null
+        }
+      ]
+    },
+    "twoWeighted": {
+      "prAucAveragePrecision": 0.8189414886130576,
+      "rocAuc": 0.8311645864125339,
+      "logLoss": 0.5005091428492793,
+      "thresholdMetrics": {
+        "threshold": 0.5,
+        "tp": 5312,
+        "fp": 1550,
+        "tn": 9451,
+        "fn": 3257,
+        "precision": 0.7741183328475663,
+        "recall": 0.6199089742093593,
+        "f1": 0.6884842200764695,
+        "falsePositiveRate": 0.14089628215616762,
+        "falseAlertDomains": 1202,
+        "legitimateDomains": 7344,
+        "negativeDomainFalsePositiveRate": 0.1636710239651416,
+        "negativeDomainFpr95Upper": 0.1709389064822393
+      },
+      "domainTargetMetrics": [
+        {
+          "calibration": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationRisk": 0.05,
+            "calibrationDomains": 1699,
+            "maximumAllowedCalibrationFalseAlertDomains": 10,
+            "observedCalibrationFalseAlertDomains": 10,
+            "threshold": 0.9418110228895574
+          },
+          "external": {
+            "threshold": 0.9418110228895574,
+            "tp": 2272,
+            "fp": 48,
+            "tn": 10953,
+            "fn": 6297,
+            "precision": 0.9793103448275862,
+            "recall": 0.2651417901738826,
+            "f1": 0.41730186426669114,
+            "falsePositiveRate": 0.00436323970548132,
+            "falseAlertDomains": 42,
+            "legitimateDomains": 7344,
+            "negativeDomainFalsePositiveRate": 0.005718954248366013,
+            "negativeDomainFpr95Upper": 0.007390840112473923
+          }
+        },
+        {
+          "calibration": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 1699,
+            "threshold": null
+          },
+          "external": null
+        }
+      ]
+    },
+    "majority": {
+      "prAucAveragePrecision": 0.7130623054033574,
+      "rocAuc": 0.7694770191856756,
+      "logLoss": 6.730116516095102,
+      "thresholdMetrics": {
+        "threshold": 0.75,
+        "tp": 4637,
+        "fp": 896,
+        "tn": 10105,
+        "fn": 3932,
+        "precision": 0.8380625338875836,
+        "recall": 0.5411366553856927,
+        "f1": 0.6576372145794923,
+        "falsePositiveRate": 0.08144714116898463,
+        "falseAlertDomains": 807,
+        "legitimateDomains": 7344,
+        "negativeDomainFalsePositiveRate": 0.10988562091503268,
+        "negativeDomainFpr95Upper": 0.11607152344043993
+      },
+      "domainTargetMetrics": [
+        {
+          "calibration": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationRisk": 0.05,
+            "calibrationDomains": 1699,
+            "maximumAllowedCalibrationFalseAlertDomains": 10,
+            "observedCalibrationFalseAlertDomains": 0,
+            "threshold": 1.0000000000000002
+          },
+          "external": {
+            "threshold": 1.0000000000000002,
+            "tp": 0,
+            "fp": 0,
+            "tn": 11001,
+            "fn": 8569,
+            "precision": null,
+            "recall": 0.0,
+            "f1": 0.0,
+            "falsePositiveRate": 0.0,
+            "falseAlertDomains": 0,
+            "legitimateDomains": 7344,
+            "negativeDomainFalsePositiveRate": 0.0,
+            "negativeDomainFpr95Upper": 0.00040783242832774774
+          }
+        },
+        {
+          "calibration": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 1699,
+            "threshold": null
+          },
+          "external": null
+        }
+      ]
+    },
+    "fourWeighted": {
+      "prAucAveragePrecision": 0.8251858926922115,
+      "rocAuc": 0.8366422708959429,
+      "logLoss": 0.49505368005496647,
+      "thresholdMetrics": {
+        "threshold": 0.5,
+        "tp": 5319,
+        "fp": 1597,
+        "tn": 9404,
+        "fn": 3250,
+        "precision": 0.7690861769809139,
+        "recall": 0.6207258723304936,
+        "f1": 0.6869874071682274,
+        "falsePositiveRate": 0.1451686210344514,
+        "falseAlertDomains": 1281,
+        "legitimateDomains": 7344,
+        "negativeDomainFalsePositiveRate": 0.1744281045751634,
+        "negativeDomainFpr95Upper": 0.1818750807396908
+      },
+      "domainTargetMetrics": [
+        {
+          "calibration": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationRisk": 0.05,
+            "calibrationDomains": 1699,
+            "maximumAllowedCalibrationFalseAlertDomains": 10,
+            "observedCalibrationFalseAlertDomains": 10,
+            "threshold": 0.9164476269531985
+          },
+          "external": {
+            "threshold": 0.9164476269531985,
+            "tp": 2396,
+            "fp": 68,
+            "tn": 10933,
+            "fn": 6173,
+            "precision": 0.9724025974025974,
+            "recall": 0.27961255689111914,
+            "f1": 0.43433336354572644,
+            "falsePositiveRate": 0.00618125624943187,
+            "falseAlertDomains": 59,
+            "legitimateDomains": 7344,
+            "negativeDomainFalsePositiveRate": 0.008033769063180828,
+            "negativeDomainFpr95Upper": 0.009968998061512224
+          }
+        },
+        {
+          "calibration": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 1699,
+            "threshold": null
+          },
+          "external": null
+        }
+      ]
+    },
+    "stacked": {
+      "prAucAveragePrecision": 0.8213325679641168,
+      "rocAuc": 0.8323694334368589,
+      "logLoss": 0.4998503370375956,
+      "thresholdMetrics": {
+        "threshold": 0.5,
+        "tp": 5303,
+        "fp": 1609,
+        "tn": 9392,
+        "fn": 3266,
+        "precision": 0.7672164351851852,
+        "recall": 0.6188586766250438,
+        "f1": 0.6850978618952264,
+        "falsePositiveRate": 0.14625943096082175,
+        "falseAlertDomains": 1263,
+        "legitimateDomains": 7344,
+        "negativeDomainFalsePositiveRate": 0.17197712418300654,
+        "negativeDomainFpr95Upper": 0.17938421499948876
+      },
+      "domainTargetMetrics": [
+        {
+          "calibration": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationRisk": 0.05,
+            "calibrationDomains": 1699,
+            "maximumAllowedCalibrationFalseAlertDomains": 10,
+            "observedCalibrationFalseAlertDomains": 10,
+            "threshold": 0.942082948431275
+          },
+          "external": {
+            "threshold": 0.942082948431275,
+            "tp": 2346,
+            "fp": 66,
+            "tn": 10935,
+            "fn": 6223,
+            "precision": 0.972636815920398,
+            "recall": 0.2737775703115883,
+            "f1": 0.427283489663965,
+            "falsePositiveRate": 0.0059994545950368145,
+            "falseAlertDomains": 59,
+            "legitimateDomains": 7344,
+            "negativeDomainFalsePositiveRate": 0.008033769063180828,
+            "negativeDomainFpr95Upper": 0.009968998061512224
+          }
+        },
+        {
+          "calibration": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 1699,
+            "threshold": null
+          },
+          "external": null
+        }
+      ]
+    }
+  },
+  "agreements": [
+    {
+      "models": [
+        "logistic",
+        "forest"
+      ],
+      "disagreeRows": 1878,
+      "bothWrongRows": 3702,
+      "errorCorrelation": 0.7356030931738352
+    },
+    {
+      "models": [
+        "logistic",
+        "xgboost"
+      ],
+      "disagreeRows": 1945,
+      "bothWrongRows": 3810,
+      "errorCorrelation": 0.7337482585578664
+    },
+    {
+      "models": [
+        "logistic",
+        "mlp"
+      ],
+      "disagreeRows": 699,
+      "bothWrongRows": 4160,
+      "errorCorrelation": 0.899317810501212
+    },
+    {
+      "models": [
+        "forest",
+        "xgboost"
+      ],
+      "disagreeRows": 831,
+      "bothWrongRows": 4525,
+      "errorCorrelation": 0.8881805940520411
+    },
+    {
+      "models": [
+        "forest",
+        "mlp"
+      ],
+      "disagreeRows": 1307,
+      "bothWrongRows": 4014,
+      "errorCorrelation": 0.8167421822461267
+    },
+    {
+      "models": [
+        "xgboost",
+        "mlp"
+      ],
+      "disagreeRows": 1412,
+      "bothWrongRows": 4103,
+      "errorCorrelation": 0.8078538371768804
+    }
+  ],
+  "architecture": {
+    "A_brand_only": {
+      "prAucAveragePrecision": 0.43786407766990293,
+      "rocAuc": 0.5,
+      "logLoss": 15.782221047079451,
+      "thresholdMetrics": {
+        "threshold": 0.5,
+        "tp": 0,
+        "fp": 0,
+        "tn": 11001,
+        "fn": 8569,
+        "precision": null,
+        "recall": 0.0,
+        "f1": 0.0,
+        "falsePositiveRate": 0.0,
+        "falseAlertDomains": 0,
+        "legitimateDomains": 7344,
+        "negativeDomainFalsePositiveRate": 0.0,
+        "negativeDomainFpr95Upper": 0.00040783242832774774
+      }
+    },
+    "E_selective_page_analysis": null,
+    "B_single": {
+      "prAucAveragePrecision": 0.8052654463624664,
+      "rocAuc": 0.8206673124242762,
+      "logLoss": 0.5071742658706196,
+      "thresholdMetrics": {
+        "threshold": 0.5,
+        "tp": 4667,
+        "fp": 1180,
+        "tn": 9821,
+        "fn": 3902,
+        "precision": 0.7981871044980332,
+        "recall": 0.5446376473334111,
+        "f1": 0.6474750277469479,
+        "falsePositiveRate": 0.10726297609308244,
+        "falseAlertDomains": 888,
+        "legitimateDomains": 7344,
+        "negativeDomainFalsePositiveRate": 0.12091503267973856,
+        "negativeDomainFpr95Upper": 0.12735244138689594
+      },
+      "domainTargetMetrics": [
+        {
+          "calibration": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationRisk": 0.05,
+            "calibrationDomains": 1699,
+            "maximumAllowedCalibrationFalseAlertDomains": 10,
+            "observedCalibrationFalseAlertDomains": 9,
+            "threshold": 0.9324139952659608
+          },
+          "external": {
+            "threshold": 0.9324139952659608,
+            "tp": 2179,
+            "fp": 59,
+            "tn": 10942,
+            "fn": 6390,
+            "precision": 0.9736371760500446,
+            "recall": 0.2542887151359552,
+            "f1": 0.403257148144721,
+            "falsePositiveRate": 0.005363148804654123,
+            "falseAlertDomains": 53,
+            "legitimateDomains": 7344,
+            "negativeDomainFalsePositiveRate": 0.00721677559912854,
+            "negativeDomainFpr95Upper": 0.009064071456279988
+          }
+        },
+        {
+          "calibration": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 1699,
+            "threshold": null
+          },
+          "external": null
+        }
+      ]
+    },
+    "C_two": {
+      "prAucAveragePrecision": 0.8189414886130576,
+      "rocAuc": 0.8311645864125339,
+      "logLoss": 0.5005091428492793,
+      "thresholdMetrics": {
+        "threshold": 0.5,
+        "tp": 5312,
+        "fp": 1550,
+        "tn": 9451,
+        "fn": 3257,
+        "precision": 0.7741183328475663,
+        "recall": 0.6199089742093593,
+        "f1": 0.6884842200764695,
+        "falsePositiveRate": 0.14089628215616762,
+        "falseAlertDomains": 1202,
+        "legitimateDomains": 7344,
+        "negativeDomainFalsePositiveRate": 0.1636710239651416,
+        "negativeDomainFpr95Upper": 0.1709389064822393
+      },
+      "domainTargetMetrics": [
+        {
+          "calibration": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationRisk": 0.05,
+            "calibrationDomains": 1699,
+            "maximumAllowedCalibrationFalseAlertDomains": 10,
+            "observedCalibrationFalseAlertDomains": 10,
+            "threshold": 0.9418110228895574
+          },
+          "external": {
+            "threshold": 0.9418110228895574,
+            "tp": 2272,
+            "fp": 48,
+            "tn": 10953,
+            "fn": 6297,
+            "precision": 0.9793103448275862,
+            "recall": 0.2651417901738826,
+            "f1": 0.41730186426669114,
+            "falsePositiveRate": 0.00436323970548132,
+            "falseAlertDomains": 42,
+            "legitimateDomains": 7344,
+            "negativeDomainFalsePositiveRate": 0.005718954248366013,
+            "negativeDomainFpr95Upper": 0.007390840112473923
+          }
+        },
+        {
+          "calibration": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 1699,
+            "threshold": null
+          },
+          "external": null
+        }
+      ]
+    },
+    "D_four": {
+      "prAucAveragePrecision": 0.8251858926922115,
+      "rocAuc": 0.8366422708959429,
+      "logLoss": 0.49505368005496647,
+      "thresholdMetrics": {
+        "threshold": 0.5,
+        "tp": 5319,
+        "fp": 1597,
+        "tn": 9404,
+        "fn": 3250,
+        "precision": 0.7690861769809139,
+        "recall": 0.6207258723304936,
+        "f1": 0.6869874071682274,
+        "falsePositiveRate": 0.1451686210344514,
+        "falseAlertDomains": 1281,
+        "legitimateDomains": 7344,
+        "negativeDomainFalsePositiveRate": 0.1744281045751634,
+        "negativeDomainFpr95Upper": 0.1818750807396908
+      },
+      "domainTargetMetrics": [
+        {
+          "calibration": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationRisk": 0.05,
+            "calibrationDomains": 1699,
+            "maximumAllowedCalibrationFalseAlertDomains": 10,
+            "observedCalibrationFalseAlertDomains": 10,
+            "threshold": 0.9164476269531985
+          },
+          "external": {
+            "threshold": 0.9164476269531985,
+            "tp": 2396,
+            "fp": 68,
+            "tn": 10933,
+            "fn": 6173,
+            "precision": 0.9724025974025974,
+            "recall": 0.27961255689111914,
+            "f1": 0.43433336354572644,
+            "falsePositiveRate": 0.00618125624943187,
+            "falseAlertDomains": 59,
+            "legitimateDomains": 7344,
+            "negativeDomainFalsePositiveRate": 0.008033769063180828,
+            "negativeDomainFpr95Upper": 0.009968998061512224
+          }
+        },
+        {
+          "calibration": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 1699,
+            "threshold": null
+          },
+          "external": null
+        }
+      ]
+    }
+  },
+  "offlinePerformance": {
+    "B_single": {
+      "uncompressedBytes": 61324,
+      "compressedBytes": 11774,
+      "loadMedianMs": 1.6482,
+      "singleMedianUs": 360.35,
+      "singleP95Us": 593.0049999999999,
+      "processCpuMeanUs": 468.75,
+      "pythonTracedPeakBytesFor256": 9668,
+      "runtime": "Python CPU, not Chrome"
+    },
+    "C_two": {
+      "uncompressedBytes": 74051,
+      "compressedBytes": 19555,
+      "loadMedianMs": 5.4476,
+      "singleMedianUs": 1546.0,
+      "singleP95Us": 2385.6400000000003,
+      "processCpuMeanUs": 1562.5,
+      "pythonTracedPeakBytesFor256": 49644,
+      "runtime": "Python CPU, not Chrome"
+    },
+    "D_four": {
+      "uncompressedBytes": 275587,
+      "compressedBytes": 80464,
+      "loadMedianMs": 7.1411,
+      "singleMedianUs": 5260.4,
+      "singleP95Us": 6769.215,
+      "processCpuMeanUs": 4843.75,
+      "pythonTracedPeakBytesFor256": 63959,
+      "runtime": "Python CPU, not Chrome"
+    }
+  }
+}

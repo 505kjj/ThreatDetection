@@ -1,0 +1,101 @@
+{
+  "runs": [
+    {
+      "installed": false,
+      "run": 1,
+      "launchMs": 454.4137,
+      "launchToWorkerMs": null,
+      "processTreeAfterLocalNavigation": {
+        "processCount": 8,
+        "privateBytes": 326070272,
+        "cumulativeCpuSeconds": 2.9375
+      },
+      "advisoryExtensionPageMicrobenchmark": null,
+      "syntheticDomProbe": null
+    },
+    {
+      "installed": true,
+      "run": 1,
+      "launchMs": 420.6265000000003,
+      "launchToWorkerMs": 425.2019,
+      "processTreeAfterLocalNavigation": {
+        "processCount": 10,
+        "privateBytes": 352174080,
+        "cumulativeCpuSeconds": 3.1875
+      },
+      "advisoryExtensionPageMicrobenchmark": null,
+      "syntheticDomProbe": null
+    },
+    {
+      "installed": false,
+      "run": 2,
+      "launchMs": 661.3816999999999,
+      "launchToWorkerMs": null,
+      "processTreeAfterLocalNavigation": {
+        "processCount": 9,
+        "privateBytes": 326615040,
+        "cumulativeCpuSeconds": 5.078125
+      },
+      "advisoryExtensionPageMicrobenchmark": null,
+      "syntheticDomProbe": null
+    },
+    {
+      "installed": true,
+      "run": 2,
+      "launchMs": 672.5888999999988,
+      "launchToWorkerMs": 672.5941999999995,
+      "processTreeAfterLocalNavigation": {
+        "processCount": 10,
+        "privateBytes": 359186432,
+        "cumulativeCpuSeconds": 5.90625
+      },
+      "advisoryExtensionPageMicrobenchmark": null,
+      "syntheticDomProbe": null
+    },
+    {
+      "installed": false,
+      "run": 3,
+      "launchMs": 398.4972000000016,
+      "launchToWorkerMs": null,
+      "processTreeAfterLocalNavigation": {
+        "processCount": 8,
+        "privateBytes": 322805760,
+        "cumulativeCpuSeconds": 4.578125
+      },
+      "advisoryExtensionPageMicrobenchmark": null,
+      "syntheticDomProbe": {
+        "evidence": {
+          "passwordFieldPresent": true,
+          "crossOriginForm": true
+        },
+        "usPerProbe": 11.300000000745058
+      }
+    },
+    {
+      "installed": true,
+      "run": 3,
+      "launchMs": 406.200499999999,
+      "launchToWorkerMs": 406.20430000000124,
+      "processTreeAfterLocalNavigation": {
+        "processCount": 10,
+        "privateBytes": 355876864,
+        "cumulativeCpuSeconds": 4.75
+      },
+      "advisoryExtensionPageMicrobenchmark": {
+        "moduleMs": 49.599999994039536,
+        "uncachedUs": 19.925000000745058,
+        "memoizedUs": 3.949999999254942,
+        "repeatedFixtureInputs": 6
+      },
+      "syntheticDomProbe": {
+        "evidence": {
+          "passwordFieldPresent": true,
+          "crossOriginForm": true
+        },
+        "usPerProbe": 9
+      }
+    }
+  ],
+  "nodeFeatureExtractionUs": 12.073891666666896,
+  "playwrightVersion": "1.65.1"
+}

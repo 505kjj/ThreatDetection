@@ -1,0 +1,12 @@
+{
+  "model": "frozen logistic regression",
+  "directPython": {
+    "p50Us": 433.95000000000005,
+    "p95Us": 651.925
+  },
+  "loopbackHttp": {
+    "p50Us": 1377.15,
+    "p95Us": 14097.129999999996
+  },
+  "scope": "Synthetic numeric vector, separate local HTTP requests, no TLS, WAN, or production service"
+}
