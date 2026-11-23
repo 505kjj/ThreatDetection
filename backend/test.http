@@ -1,42 +1,56 @@
-### Health Check
-GET http://localhost:8081/api/threat/health
+@baseUrl = http://127.0.0.1:8081
 
-### Start Session
-POST http://localhost:8081/api/threat/session/start
+# Supply browserToken and adminToken in your HTTP client's private environment.
+# Copy sessionId from the Start Session response into that environment.
+# See the root README for disposable local credentials.
+
+### Public health — 200
+GET {{baseUrl}}/api/health
+
+### Unauthenticated admin read — 401
+GET {{baseUrl}}/api/threat/logs
+
+### Browser denied admin read — 403
+GET {{baseUrl}}/api/threat/logs
+Authorization: Bearer {{browserToken}}
+
+### Start session — 200
+POST {{baseUrl}}/api/threat/session/start
+Authorization: Bearer {{browserToken}}
 Content-Type: application/json
 
 {
-  "sessionId": "S-test-001",
-  "domain": "example.com",
-  "userAgentHash": "abc123hash"
+  "domain": "bank.example.test"
 }
 
-### Analyze Behavior (Generic)
-POST http://localhost:8081/api/threat/analyze
+### Ordinary password focus — Safe / ALLOW
+POST {{baseUrl}}/api/threat/analyze
+Authorization: Bearer {{browserToken}}
 Content-Type: application/json
 
 {
-  "sessionId": "S-test-001",
-  "domain": "example.com",
-  "url": "https://example.com/login",
-  "path": "/login",
-  "referrer": "https://google.com",
-  "redirectCount": 1,
+  "sessionId": "{{sessionId}}",
   "eventType": "password_focus",
   "actionType": "sensitive_action",
   "pageCategory": "sensitive_page",
-  "fieldType": "password",
-  "averageClickGapMs": 220,
-  "clicksLast10Sec": 12,
-  "pagesVisitedLast30Sec": 4,
-  "tabSwitchCount": 2,
-  "copyPasteCount": 1,
-  "formSubmitCount": 1,
-  "timestamp": "2026-05-03T22:00:00"
+  "formSubmitCount": 1
 }
 
-### Get Risk Logs
-GET http://localhost:8081/api/threat/logs
+### Unsupported browsing field — 400
+POST {{baseUrl}}/api/threat/analyze
+Authorization: Bearer {{browserToken}}
+Content-Type: application/json
 
-### Get Session
-GET http://localhost:8081/api/threat/session/S-test-001
+{
+  "sessionId": "{{sessionId}}",
+  "eventType": "page_view",
+  "url": "https://bank.example.test/login?fixture=synthetic#marker"
+}
+
+### Get own session — 200
+GET {{baseUrl}}/api/threat/session/{{sessionId}}
+Authorization: Bearer {{browserToken}}
+
+### Export redacted records — 200
+GET {{baseUrl}}/api/threat/logs/export
+Authorization: Bearer {{adminToken}}

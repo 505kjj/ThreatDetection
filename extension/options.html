@@ -9,30 +9,38 @@
     <div class="options-container">
         <div class="options-header">
             <h1>🛡️ Threat Detection Settings</h1>
-            <p>Configure monitored websites, sensitive paths, fields, and backend connection</p>
+            <p>Connect to the secured backend for local phishing and malware reputation checks.</p>
         </div>
 
         <div class="options-section">
             <h2>Backend API</h2>
             <div class="form-group">
-                <label>Backend URL</label>
-                <input type="text" id="backendUrl" placeholder="http://localhost:8081">
+                <label for="backendOrigin">Backend origin</label>
+                <input type="text" id="backendOrigin" placeholder="http://127.0.0.1:8081" spellcheck="false">
+            </div>
+            <div class="form-group">
+                <label for="browserToken">Browser token</label>
+                <input type="password" id="browserToken" autocomplete="off" spellcheck="false">
+                <p id="tokenStatus" class="section-desc">Checking connection settings…</p>
+                <p class="section-desc">Use a browser token issued for this backend. Re-enter it after restarting Chrome.</p>
             </div>
             <div class="btn-row">
-                <button class="btn-primary" id="saveBackendUrl">Save URL</button>
+                <button class="btn-primary" id="saveConnection">Save connection</button>
+                <button class="btn-secondary" id="clearToken">Clear token</button>
             </div>
         </div>
 
         <div class="options-section">
-            <h2>Monitored Websites</h2>
+            <h2>Activity monitoring</h2>
             <p class="section-desc">
-                Add domains to monitor. The extension only tracks behavior on these sites.
-                Each domain has its own sensitive paths and fields configuration.
+                Reputation checks happen locally on all supported websites. Add a hostname only if you also want
+                activity monitoring for it and its subdomains. Activity monitoring sends the hostname and activity counts
+                to the backend. Paths and field names stay on your device.
             </p>
             <div id="siteList" class="site-cards-list"></div>
             <div class="add-domain-area">
                 <div class="form-group">
-                    <label>Add New Domain</label>
+                    <label for="newDomain">Hostname</label>
                     <input type="text" id="newDomain" placeholder="example.com">
                 </div>
                 <div class="btn-row">
@@ -42,7 +50,7 @@
         </div>
 
         <div class="options-section">
-            <h2>Monitoring Control</h2>
+            <h2>Protection and monitoring</h2>
             <div class="btn-row">
                 <button class="btn-primary" id="enableMonitoring">Enable Monitoring</button>
                 <button class="btn-secondary" id="disableMonitoring">Disable Monitoring</button>
@@ -51,29 +59,16 @@
         </div>
 
         <div class="options-section">
-            <h2>Demo Mode</h2>
-            <p class="section-desc">
-                When Demo Mode is ON, High Risk and Critical blocking overlays will have a "Close for Demo" button, allowing you to bypass them during presentations.
-            </p>
-            <div class="btn-row">
-                <button class="btn-primary" id="enableDemoMode">Turn Demo Mode ON</button>
-                <button class="btn-secondary" id="disableDemoMode">Turn Demo Mode OFF</button>
-            </div>
-            <p class="monitoring-status-text" id="demoModeStatus"></p>
-        </div>
-
-        <div class="options-section">
             <h2>Reset</h2>
             <p class="section-desc">
-                Reset all settings to defaults. This will restore the demo configuration
-                with the default demo monitored site.
+                Clear the browser token and monitored sites and restore the local backend origin.
             </p>
             <div class="btn-row">
                 <button class="btn-secondary" id="resetDefaults">Reset to Defaults</button>
             </div>
         </div>
 
-        <div class="toast" id="toast">Saved!</div>
+        <p id="message" class="section-desc" role="status"></p>
     </div>
 
     <!-- Modal for editing site config -->
@@ -85,15 +80,15 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label>Domain</label>
+                    <label for="editDomain">Domain</label>
                     <input type="text" id="editDomain" disabled>
                 </div>
                 <div class="form-group">
-                    <label>Sensitive Paths <span class="hint">(one per line, e.g. /login)</span></label>
+                    <label for="editPaths">Sensitive Paths <span class="hint">(one per line, e.g. /login)</span></label>
                     <textarea id="editPaths" rows="8" class="code-textarea"></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Sensitive Fields <span class="hint">(comma-separated, e.g. password,email,otp)</span></label>
+                    <label for="editFields">Sensitive Fields <span class="hint">(comma-separated, e.g. password,email,otp)</span></label>
                     <textarea id="editFields" rows="3" class="code-textarea"></textarea>
                 </div>
             </div>
@@ -104,6 +99,6 @@
         </div>
     </div>
 
-    <script src="options.js"></script>
+    <script type="module" src="options.js"></script>
 </body>
 </html>

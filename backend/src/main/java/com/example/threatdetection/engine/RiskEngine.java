@@ -8,8 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -25,6 +24,7 @@ public class RiskEngine {
 
     private static final Logger log = LoggerFactory.getLogger(RiskEngine.class);
     private static final int MAX_SCORE = 100;
+    private static final int MAX_BEHAVIOR_SCORE = 60;
 
     private final List<RiskRule> rules;
 
@@ -56,13 +56,14 @@ public class RiskEngine {
                     log.debug("Rule [{}] produced {} signal(s)", rule.getRuleName(), signals.size());
                 }
             } catch (Exception e) {
-                log.error("Rule [{}] threw an exception: {}", rule.getRuleName(), e.getMessage(), e);
+                log.error("Behavior rule [{}] failed", rule.getRuleName());
             }
         }
 
         // Aggregate
         int totalScore = allSignals.stream().mapToInt(RiskSignal::getScore).sum();
-        int cappedScore = Math.min(totalScore, MAX_SCORE);
+        // Browser-reported behavior alone cannot establish a dangerous destination.
+        int cappedScore = Math.min(totalScore, MAX_BEHAVIOR_SCORE);
 
         // De-duplicate reasons and tags while preserving order
         Set<String> reasonSet = new LinkedHashSet<>();
@@ -86,13 +87,9 @@ public class RiskEngine {
 
         // Default safe response if nothing was detected
         if (allSignals.isEmpty()) {
-            reasons.add("No suspicious behavior detected");
+            reasons.add("No suspicious behavior observed in this event");
             tags.add("normal_behavior");
         }
-
-        String timestamp = request.getTimestamp() != null
-                ? request.getTimestamp()
-                : LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
         int trustScore = 100 - cappedScore;
 
@@ -104,7 +101,7 @@ public class RiskEngine {
                 .tags(tags)
                 .action(action.getValue())
                 .confidence(Math.round(confidence * 100.0) / 100.0)
-                .timestamp(timestamp)
+                .timestamp(Instant.now().toString())
                 .build();
     }
 }

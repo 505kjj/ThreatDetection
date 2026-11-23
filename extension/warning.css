@@ -1,0 +1,13 @@
+:root { color-scheme: dark; font: 16px/1.55 system-ui, sans-serif; background: #13151b; color: #ecedf0; }
+main { max-width: 40rem; margin: clamp(2rem, 10vh, 6rem) auto; padding: clamp(1.25rem, 5vw, 3rem); }
+.product { color: #f3a59f; font-weight: 650; margin: 0 0 1.25rem; }
+h1 { font-size: clamp(2rem, 5vw, 3rem); line-height: 1.12; margin: 0 0 1rem; }
+.hostname { font-family: ui-monospace, monospace; overflow-wrap: anywhere; }
+p, li { color: #d2d3da; }
+.actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.5rem; }
+button { font: inherit; font-weight: 650; cursor: pointer; border: 1px solid #e8eaf0; border-radius: .5rem;
+  padding: .6rem 1rem; background: #e8eaf0; color: #161820; }
+.secondary { background: transparent; color: #ecedf0; border-color: #767987; }
+button:focus-visible { outline: 3px solid #f3a59f; outline-offset: 3px; }
+button:disabled { cursor: default; opacity: .6; }
+#exception { border-left: 2px solid #f3a59f; padding-left: 1rem; margin-top: 1.5rem; }

@@ -1,190 +1,372 @@
-/**
- * Background Service Worker — Generic Threat Detection Extension
- * 
- * Handles:
- * - Extension installation (default settings)
- * - Tab navigation tracking for redirect detection
- * - Message relay between content scripts and popup
- * - Generic domain matching helpers
- */
+import { analysisFields, analyze, downloadSnapshot, requestFailure, startSession, validToken } from './backend-api.mjs';
+import { createBlockRules } from './block-rules.mjs';
+import { BYPASS_ALARM, createBrowserProtection } from './browser-protection.mjs';
+import { detectImpersonation } from './impersonation.mjs';
+import { checkDestination, createSnapshotCache, destinationFor } from './reputation.mjs';
+import { DEFAULT_ORIGIN, backendOrigin, backendPermission, matchingSite, pageHostname, readSites } from './settings.mjs';
 
-// ============================================
-// DOMAIN MATCHING UTILITIES
-// ============================================
+const CREDENTIAL = 'backendCredential';
+const statusKey = tabId => 'tab-status:' + tabId;
+const navigationKey = tabId => 'tab-navigation:' + tabId;
+const requests = new Map();
+const navigations = new Map();
+const local = chrome.storage.local;
+const session = chrome.storage.session;
+const reputation = createSnapshotCache(session, downloadSnapshot);
+const rules = createBlockRules(chrome.declarativeNetRequest, chrome.runtime.id);
+const protection = createBrowserProtection(chrome, rules);
+const REPUTATION_REFRESH = 'reputation-refresh';
+let connectionRevision = 0;
 
-function normalizeDomain(input) {
-  return input
-    .replace(/^https?:\/\//, "")
-    .replace(/^www\./, "")
-    .replace(/\/.*$/, "")
-    .trim()
-    .toLowerCase();
+const setup = initialize();
+async function initialize() {
+  await Promise.all([
+    local.setAccessLevel({ accessLevel: 'TRUSTED_CONTEXTS' }),
+    session.setAccessLevel({ accessLevel: 'TRUSTED_CONTEXTS' })
+  ]);
+  const old = await local.get(null);
+  if (!old.backendOrigin) {
+    await local.set({ backendOrigin: backendOrigin(old.backendUrl) ?? DEFAULT_ORIGIN });
+  }
+  const legacyKeys = Object.keys(old).filter(key =>
+    key.startsWith('session_') || ['backendUrl', 'demoMode', '_latestRisk', '_latestDomain', '_latestTime'].includes(key));
+  if (legacyKeys.length) await local.remove(legacyKeys);
 }
 
-function getMatchingSiteConfig(hostname, monitoredSites) {
-  if (!monitoredSites || !Array.isArray(monitoredSites)) return null;
-  const normalizedHost = normalizeDomain(hostname);
-
-  return monitoredSites.find(site => {
-    const normalizedSite = normalizeDomain(site.domain);
-    return site.enabled !== false && (
-      normalizedHost === normalizedSite ||
-      normalizedHost.endsWith("." + normalizedSite)
-    );
-  });
+function optionsSender(sender) {
+  return sender.url === chrome.runtime.getURL('options.html');
 }
 
-// ============================================
-// DEFAULT CONFIGURATION
-// ============================================
+async function settings() {
+  const data = await local.get(['backendOrigin', 'monitoringEnabled', 'monitoredSites']);
+  return {
+    origin: backendOrigin(data.backendOrigin),
+    enabled: data.monitoringEnabled !== false,
+    sites: readSites(data.monitoredSites)
+  };
+}
 
-const DEFAULT_SENSITIVE_PATHS = [
-  '/login', '/signin', '/signup', '/register',
-  '/dashboard', '/admin', '/profile', '/account', '/settings',
-  '/payment', '/checkout',
-  '/patient', '/emergency', '/hospital', '/ambulance', '/records'
-];
+async function credentialFor(origin) {
+  const { [CREDENTIAL]: credential } = await session.get(CREDENTIAL);
+  return origin && credential?.origin === origin && validToken(credential.token) ? credential : null;
+}
 
-const DEFAULT_SENSITIVE_FIELDS = [
-  'password', 'otp', 'email', 'phone', 'card', 'cvv', 'token', 'pin'
-];
-
-const DEFAULT_HIGH_RISK_ACTIONS = [
-  'form_submit', 'password_focus', 'copy_paste', 'rapid_clicking', 'tab_blur'
-];
-
-const DEFAULT_CONFIG = {
-  backendUrl: 'http://localhost:8081',
-  monitoringEnabled: true,
-  monitoredSites: [
-    {
-      domain: 'example.com',
-      enabled: true,
-      sensitivePaths: DEFAULT_SENSITIVE_PATHS,
-      sensitiveFields: DEFAULT_SENSITIVE_FIELDS,
-      highRiskActions: DEFAULT_HIGH_RISK_ACTIONS
-    }
-  ]
-};
-
-// ============================================
-// INSTALLATION HANDLER
-// ============================================
-
-chrome.runtime.onInstalled.addListener((details) => {
-  if (details.reason === 'install') {
-    chrome.storage.local.set({
-      backendUrl: DEFAULT_CONFIG.backendUrl,
-      monitoringEnabled: DEFAULT_CONFIG.monitoringEnabled,
-      monitoredSites: DEFAULT_CONFIG.monitoredSites
-    }, () => {
-      console.log('[ThreatDetection] Extension installed with default config');
-    });
+async function synchronizeRules(revision = connectionRevision) {
+  const config = await settings();
+  const credential = config.enabled ? await credentialFor(config.origin) : null;
+  const permitted = credential && await chrome.permissions.contains(backendPermission(credential.origin));
+  if (!rules.snapshot()) {
+    const cached = permitted ? await reputation.cached(credential) : null;
+    if (revision !== connectionRevision) return null;
+    await rules.setSnapshot(cached);
   }
-});
-
-// ============================================
-// TAB NAVIGATION TRACKING (redirect detection)
-// ============================================
-
-// Track redirect counts per tab
-const tabRedirects = {};
-
-chrome.webNavigation.onBeforeNavigate.addListener((details) => {
-  if (details.frameId !== 0) return; // Only main frame
-  const tabId = details.tabId;
-
-  if (!tabRedirects[tabId]) {
-    tabRedirects[tabId] = { count: 0, lastUrl: '', timestamp: Date.now() };
+  const snapshot = permitted ? await reputation.current(credential) : null;
+  if (revision !== connectionRevision) return null;
+  await rules.setSnapshot(snapshot);
+  if (revision !== connectionRevision) return null;
+  if (permitted) {
+    const when = Math.min(Date.now() + 60000, snapshot?.expires ?? Infinity);
+    const alarm = await chrome.alarms.get(REPUTATION_REFRESH);
+    if (!alarm || alarm.scheduledTime > when) await chrome.alarms.create(REPUTATION_REFRESH, { when });
   }
+  return snapshot;
+}
 
-  const entry = tabRedirects[tabId];
-  const now = Date.now();
-
-  // If navigation happens within 3 seconds of last, count as redirect chain
-  if (now - entry.timestamp < 3000 && entry.lastUrl !== details.url) {
-    entry.count++;
-  } else {
-    entry.count = 0; // Reset if enough time has passed
-  }
-
-  entry.lastUrl = details.url;
-  entry.timestamp = now;
-});
-
-chrome.webNavigation.onCompleted.addListener((details) => {
-  if (details.frameId !== 0) return;
-  const tabId = details.tabId;
-  const redirectInfo = tabRedirects[tabId] || { count: 0 };
-
-  // Send redirect count to content script
+async function currentPage(tabId) {
+  if (!Number.isInteger(tabId) || tabId < 0) return null;
+  const navigation = navigations.get(tabId);
+  const settingsRevision = connectionRevision;
   try {
-    chrome.tabs.sendMessage(tabId, {
-      type: 'REDIRECT_INFO',
-      redirectCount: redirectInfo.count
-    }).catch(() => { /* content script may not be ready */ });
-  } catch (e) { /* ignore */ }
+    const frame = await chrome.webNavigation.getFrame({ tabId, frameId: 0 });
+    const destination = destinationFor(frame?.url);
+    return destination && frame.documentId && frame.documentLifecycle === 'active'
+      ? { tabId, documentId: frame.documentId, host: destination.host, destination, navigation, settingsRevision } : null;
+  } catch {
+    return null;
+  }
+}
+
+function samePage(page, latest) {
+  return latest?.documentId === page.documentId && latest.destination.key === page.destination.key &&
+    latest.navigation === page.navigation && navigations.get(page.tabId) === page.navigation;
+}
+
+async function verifiedPage(sender) {
+  if (sender.frameId !== 0 || sender.documentLifecycle !== 'active' || !sender.tab) return null;
+  const page = await currentPage(sender.tab.id);
+  return page && page.documentId === sender.documentId && page.host === pageHostname(sender.url) ? page : null;
+}
+
+async function pageSettings(page) {
+  const config = await settings();
+  const site = matchingSite(config.sites, page.host);
+  const canMonitor = config.enabled && site?.enabled === true;
+  const credential = config.enabled ? await credentialFor(config.origin) : null;
+  const permitted = credential ? await chrome.permissions.contains(backendPermission(credential.origin)) : false;
+  return { ...config, site, canMonitor, credential, permitted };
+}
+
+function clearBadge(tabId) {
+  return chrome.action.setBadgeText({ tabId, text: '' });
+}
+
+function withImpersonation(verdict, evidence) {
+  return evidence?.length ? { ...verdict, impersonation: evidence } : verdict;
+}
+
+async function reputationFor(page, config) {
+  const revision = page.settingsRevision;
+  let result;
+  if (!config.enabled) result = { state: 'paused' };
+  else if (!config.credential) result = { state: 'unavailable', cause: 'credential' };
+  else if (!config.permitted) result = { state: 'unavailable', cause: 'permission' };
+  else {
+    const snapshot = await synchronizeRules(revision).catch(() => null);
+    result = await checkDestination(snapshot, page.destination);
+  }
+  const latest = await currentPage(page.tabId);
+  if (revision !== connectionRevision || !samePage(page, latest)) return { state: 'inactive' };
+  if (result.expires <= Date.now()) result = { state: 'unavailable', cause: 'reputation' };
+  // Indicator values are needed only by the worker's private warning flow.
+  delete result.evidence;
+  const impersonation = config.enabled ? detectImpersonation(page.host) : [];
+  if (result.state === 'confirmed') {
+    await Promise.all([
+      chrome.action.setBadgeBackgroundColor({ tabId: page.tabId, color: '#b91c1c' }),
+      chrome.action.setBadgeText({ tabId: page.tabId, text: 'STOP' })
+    ]);
+  } else if (result.state === 'no_match' && impersonation.length) {
+    await Promise.all([
+      chrome.action.setBadgeBackgroundColor({ tabId: page.tabId, color: '#92400e' }),
+      chrome.action.setBadgeText({ tabId: page.tabId, text: '!' })
+    ]);
+  } else {
+    await clearBadge(page.tabId);
+  }
+  return withImpersonation(result, impersonation);
+}
+
+async function saveConnection(message) {
+  const origin = backendOrigin(message.origin);
+  const { token } = message;
+  if (!origin || (token !== '' && !validToken(token))) return { saved: false };
+  if (!await chrome.permissions.contains(backendPermission(origin))) return { saved: false };
+  // The credential includes its origin so it cannot be reused after an endpoint change.
+  if (token) await session.set({ [CREDENTIAL]: { id: crypto.randomUUID(), origin, token } });
+  else if (!await credentialFor(origin)) await session.remove(CREDENTIAL);
+  await local.set({ backendOrigin: origin });
+  return { saved: true };
+}
+
+async function pageConfiguration(page) {
+  const config = await pageSettings(page);
+  const verdict = await reputationFor(page, config);
+  if (!config.canMonitor || verdict.state !== 'no_match') {
+    return { active: false, verdict, recheck: config.permitted && verdict.state !== 'inactive' };
+  }
+  return {
+    active: true,
+    verdict,
+    sensitivePaths: config.site.sensitivePaths,
+    sensitiveFields: config.site.sensitiveFields
+  };
+}
+
+async function tabStatus(tabId) {
+  const page = await currentPage(tabId);
+  if (!page) {
+    if (!Number.isInteger(tabId) || tabId < 0) return { state: 'unsupported' };
+    return await protection.tabStatus(tabId) ?? { state: 'unsupported' };
+  }
+  const config = await pageSettings(page);
+  const display = { host: page.host, monitoringEnabled: config.enabled, site: config.site?.domain ?? null,
+    siteEnabled: config.site?.enabled === true };
+  const verdict = await reputationFor(page, config);
+  if (verdict.state !== 'no_match' || !config.canMonitor) return { ...display, ...verdict };
+  const key = statusKey(tabId);
+  const { [key]: previous } = await session.get(key);
+  if (previous?.documentId === page.documentId && previous.credentialId === config.credential.id &&
+      previous.navigation === (page.navigation ?? null) && Date.now() - previous.checkedAt < 45000 &&
+      previous.verdict.state !== 'safe') {
+    return { ...display, ...verdict, ...previous.verdict };
+  }
+  return { ...display, ...verdict };
+}
+
+async function submitTelemetry(page, message) {
+  const { tabId, documentId, host } = page;
+  const existing = requests.get(tabId);
+  if (existing?.documentId === documentId && !existing.controller.signal.aborted) return { state: 'waiting' };
+  existing?.controller.abort();
+  const task = { documentId, controller: new AbortController() };
+  requests.set(tabId, task);
+  const { signal } = task.controller;
+  try {
+    const config = await pageSettings(page);
+    if (!config.canMonitor) return { state: 'inactive' };
+    const { credential } = config;
+    const localVerdict = await reputationFor(page, config);
+    if (localVerdict.state !== 'no_match') return localVerdict;
+
+    const key = statusKey(tabId);
+    const navKey = navigationKey(tabId);
+    const saved = await session.get([key, navKey]);
+    const nav = saved[navKey];
+    const fields = analysisFields(message, nav?.documentId === documentId && nav.redirected);
+    if (!fields) return { state: 'inactive' };
+    const previous = saved[key];
+    const previousDocument = previous?.documentId === documentId && previous.credentialId === credential.id;
+    let id = previousDocument ? previous.sessionId : null;
+    if (previousDocument && previous.navigation === (page.navigation ?? null) &&
+        Date.now() - previous.checkedAt < 500 &&
+        message.eventType !== 'recheck_risk') {
+      return withImpersonation(previous.verdict, localVerdict.impersonation);
+    }
+
+    let verdict;
+    try {
+      signal.throwIfAborted();
+      id ??= await startSession(credential, host, signal);
+      signal.throwIfAborted();
+      verdict = await analyze(credential, id, fields, signal);
+      if (!verdict) {
+        // In-memory backend sessions disappear on restart. Renew once on a 404.
+        id = null;
+        id = await startSession(credential, host, signal);
+        verdict = await analyze(credential, id, fields, signal);
+        if (!verdict) id = null;
+      }
+      verdict ??= { state: 'unavailable', cause: 'backend' };
+    } catch (error) {
+      verdict = { state: 'unavailable', cause: requestFailure(error) };
+    }
+
+    const latest = await currentPage(tabId);
+    if (signal.aborted || page.settingsRevision !== connectionRevision || !samePage(page, latest)) {
+      return { state: 'inactive' };
+    }
+    if (localVerdict.expires <= Date.now()) verdict = { state: 'unavailable', cause: 'reputation' };
+    await session.set({
+      [key]: { documentId, navigation: page.navigation ?? null, credentialId: credential.id,
+        sessionId: id, verdict, checkedAt: Date.now() }
+    });
+    return withImpersonation(verdict, localVerdict.impersonation);
+  } finally {
+    if (requests.get(tabId) === task) requests.delete(tabId);
+  }
+}
+
+async function handleMessage(message, sender) {
+  await setup;
+  if (optionsSender(sender)) {
+    if (message.type === 'GET_CONNECTION') {
+      const { origin } = await settings();
+      return { origin: origin ?? DEFAULT_ORIGIN, hasToken: !!await credentialFor(origin) };
+    }
+    if (message.type === 'SAVE_CONNECTION') return saveConnection(message);
+    if (message.type === 'CLEAR_CONNECTION') {
+      await session.remove(CREDENTIAL);
+      return { saved: true };
+    }
+  }
+  if (sender.url === chrome.runtime.getURL('popup.html') && message.type === 'GET_TAB_STATUS') {
+    return tabStatus(message.tabId);
+  }
+  if (['GET_NETWORK_WARNING', 'PROCEED_ONCE', 'LEAVE_NETWORK_WARNING'].includes(message.type)) {
+    if (!rules.snapshot()) void synchronizeRules().catch(() => {});
+    return protection.message(message.type, sender, message.token);
+  }
+  if (message.type === 'PAGE_CONFIGURATION' || message.type === 'TELEMETRY') {
+    const page = await verifiedPage(sender);
+    if (!page) return { state: 'inactive' };
+    return message.type === 'PAGE_CONFIGURATION' ? pageConfiguration(page) : submitTelemetry(page, message);
+  }
+  return { state: 'inactive' };
+}
+
+chrome.runtime.onMessage.addListener((message, sender, respond) => {
+  if (sender.id !== chrome.runtime.id || typeof message?.type !== 'string') return false;
+  handleMessage(message, sender).then(respond, () => respond({ state: 'unavailable', cause: 'backend' }));
+  return true;
 });
 
-// Clean up on tab close
-chrome.tabs.onRemoved.addListener((tabId) => {
-  delete tabRedirects[tabId];
+chrome.webNavigation.onBeforeNavigate.addListener(details => void protection.start(details).catch(() => {}));
+chrome.webNavigation.onErrorOccurred.addListener(details => {
+  if (details.frameId !== 0 || (details.error !== 'net::ERR_BLOCKED_BY_CLIENT' && !rules.bypass(details.tabId))) return;
+  void setup.then(async () => {
+    if (!rules.snapshot()) await synchronizeRules();
+    await protection.failed(details);
+  }).catch(() => {});
+});
+chrome.webNavigation.onCommitted.addListener(details => {
+  const { tabId, frameId, documentId, transitionQualifiers = [] } = details;
+  if (frameId !== 0) return;
+  navigations.set(tabId, crypto.randomUUID());
+  requests.get(tabId)?.controller.abort();
+  void clearBadge(tabId).catch(() => {});
+  const redirected = transitionQualifiers.includes('server_redirect') || transitionQualifiers.includes('client_redirect');
+  void session.set({ [navigationKey(tabId)]: { documentId, redirected } }).catch(() => {});
+  void setup.then(() => protection.committed(details)).catch(() => {});
 });
 
-// ============================================
-// MESSAGE HANDLER
-// ============================================
+chrome.webNavigation.onHistoryStateUpdated.addListener(details => {
+  const { tabId, frameId, documentId } = details;
+  if (frameId !== 0) return;
+  navigations.set(tabId, crypto.randomUUID());
+  requests.get(tabId)?.controller.abort();
+  void clearBadge(tabId).catch(() => {});
+  void chrome.tabs.sendMessage(tabId, { type: 'REFRESH_CONFIGURATION' }, { documentId }).catch(() => {});
+  void setup.then(() => protection.history(details)).catch(() => {});
+});
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === 'GET_CONFIG') {
-    chrome.storage.local.get(['backendUrl', 'monitoringEnabled', 'monitoredSites'], (data) => {
-      sendResponse({
-        backendUrl: data.backendUrl || DEFAULT_CONFIG.backendUrl,
-        monitoringEnabled: data.monitoringEnabled !== false,
-        monitoredSites: data.monitoredSites || DEFAULT_CONFIG.monitoredSites
-      });
-    });
-    return true; // Async response
-  }
+chrome.tabs.onRemoved.addListener(tabId => {
+  navigations.delete(tabId);
+  requests.get(tabId)?.controller.abort();
+  void session.remove([statusKey(tabId), navigationKey(tabId)]).catch(() => {});
+  void protection.remove(tabId).catch(() => {});
+});
 
-  if (message.type === 'GET_REDIRECT_COUNT') {
-    const tabId = sender.tab?.id;
-    const info = tabRedirects[tabId] || { count: 0 };
-    sendResponse({ redirectCount: info.count });
-    return true;
-  }
+async function refreshOpenPages() {
+  const tabs = await chrome.tabs.query({});
+  await Promise.allSettled(tabs.map(async tab => {
+    await clearBadge(tab.id);
+    await chrome.tabs.sendMessage(tab.id, { type: 'REFRESH_CONFIGURATION' }, { frameId: 0 });
+  }));
+}
 
-  if (message.type === 'CHECK_DOMAIN') {
-    // Generic domain matching check for popup/content
-    chrome.storage.local.get(['monitoringEnabled', 'monitoredSites'], (data) => {
-      const monitoringEnabled = data.monitoringEnabled !== false;
-      const sites = data.monitoredSites || DEFAULT_CONFIG.monitoredSites;
-      const match = getMatchingSiteConfig(message.hostname || '', sites);
-      sendResponse({
-        isMonitored: monitoringEnabled && !!match,
-        siteConfig: match || null,
-        monitoringEnabled: monitoringEnabled
-      });
-    });
-    return true;
-  }
+function invalidateRequests() {
+  connectionRevision++;
+  for (const task of requests.values()) task.controller.abort();
+}
 
-  if (message.type === 'RISK_RESULT') {
-    // Store latest risk result for the popup
-    chrome.storage.session.set({
-      latestRisk: message.data,
-      latestRiskDomain: message.domain,
-      latestRiskTimestamp: Date.now()
-    });
-    return false;
-  }
+async function resetProtection(clearCache) {
+  invalidateRequests();
+  const clearingRules = rules.setSnapshot(null, true);
+  if (clearCache) await reputation.clear();
+  await clearingRules;
+  await Promise.all([refreshOpenPages(), synchronizeRules()]);
+}
 
-  if (message.type === 'GET_DEFAULTS') {
-    sendResponse({
-      sensitivePaths: DEFAULT_SENSITIVE_PATHS,
-      sensitiveFields: DEFAULT_SENSITIVE_FIELDS,
-      highRiskActions: DEFAULT_HIGH_RISK_ACTIONS
-    });
-    return true;
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === 'session' && CREDENTIAL in changes) {
+    void resetProtection(true).catch(() => {});
+  } else if (area === 'local' && ['backendOrigin', 'monitoringEnabled'].some(key => key in changes)) {
+    void resetProtection(false).catch(() => {});
+  } else if (area === 'local' && 'monitoredSites' in changes) {
+    invalidateRequests();
+    void refreshOpenPages().catch(() => {});
   }
 });
+
+chrome.permissions.onRemoved.addListener(() => {
+  void resetProtection(false).catch(() => {});
+});
+
+chrome.alarms.onAlarm.addListener(alarm => {
+  if (alarm.name === REPUTATION_REFRESH) {
+    void setup.then(synchronizeRules).then(refreshOpenPages).catch(() => {});
+  } else if (alarm.name.startsWith(BYPASS_ALARM)) {
+    void protection.expire(Number(alarm.name.slice(BYPASS_ALARM.length))).catch(() => {});
+  }
+});
+void setup.then(synchronizeRules).catch(() => {});

@@ -2,6 +2,7 @@ package com.example.threatdetection.service;
 
 import com.example.threatdetection.dto.BehaviorRequest;
 import com.example.threatdetection.model.BehaviorEvent;
+import com.example.threatdetection.model.ThreatSession;
 import com.example.threatdetection.repository.BehaviorEventRepository;
 import org.springframework.stereotype.Service;
 
@@ -22,17 +23,11 @@ public class EventLoggingService {
     /**
      * Log a behavior event from the extension.
      */
-    public BehaviorEvent logEvent(BehaviorRequest request) {
+    public BehaviorEvent logEvent(BehaviorRequest request, ThreatSession session) {
         BehaviorEvent event = BehaviorEvent.builder()
-                .sessionId(request.getSessionId())
-                .domain(request.getDomain())
-                .url(request.getUrl())
-                .path(request.getPath())
-                .referrer(request.getReferrer())
+                .sessionId(session.getSessionId())
                 .eventType(request.getEventType())
                 .actionType(request.getActionType())
-                .pageCategory(request.getPageCategory())
-                .fieldType(request.getFieldType())
                 .redirectCount(request.getRedirectCount())
                 .averageClickGapMs(request.getAverageClickGapMs())
                 .clicksLast10Sec(request.getClicksLast10Sec())

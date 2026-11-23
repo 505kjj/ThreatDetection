@@ -37,8 +37,8 @@ public class AlertService {
         }
 
         String message = String.format(
-                "Session [%s] on [%s] detected as [%s] with risk score %d. Reasons: %s",
-                sessionId, domain, level, response.getRiskScore(),
+                "Behavior classified as [%s] with risk score %d. Reasons: %s",
+                level, response.getRiskScore(),
                 String.join(", ", response.getReasons())
         );
 
@@ -53,7 +53,6 @@ public class AlertService {
                 .build();
 
         alertLogRepository.save(alert);
-        log.info("Alert generated for session [{}]: {}", sessionId, level);
     }
 
     /**

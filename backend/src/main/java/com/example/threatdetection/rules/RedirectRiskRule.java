@@ -8,8 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Evaluates risk from HTTP redirect chains.
- * Multiple redirects before reaching a sensitive page are a strong phishing indicator.
+ * Evaluates browser-reported redirects as behavior signals.
  */
 @Component
 public class RedirectRiskRule implements RiskRule {
@@ -31,21 +30,21 @@ public class RedirectRiskRule implements RiskRule {
         if (redirectCount == 1) {
             signals.add(RiskSignal.builder()
                     .score(10)
-                    .reason("User reached page through an external redirect")
+                    .reason("Browser reported one redirect")
                     .tag("redirect_based_risk")
                     .category("navigation")
                     .build());
         } else if (redirectCount == 2) {
             signals.add(RiskSignal.builder()
                     .score(18)
-                    .reason("User reached page through multiple redirects (possible phishing chain)")
+                    .reason("Browser reported multiple redirects")
                     .tag("redirect_chain")
                     .category("navigation")
                     .build());
         } else {
             signals.add(RiskSignal.builder()
                     .score(25)
-                    .reason("User reached page through " + redirectCount + " redirects (high phishing risk)")
+                    .reason("Browser reported " + redirectCount + " redirects")
                     .tag("high_redirect_chain")
                     .category("navigation")
                     .build());

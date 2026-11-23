@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "dataset": "phase3a-synthetic",
+  "kind": "synthetic",
+  "minConfidence": "medium",
+  "split": {
+    "trainBefore": "2026-01-02T00:00:00Z",
+    "testFrom": "2026-01-03T00:00:00Z",
+    "seed": "phase3a-v1"
+  },
+  "sources": [
+    {
+      "id": "fixture-labels",
+      "lineage": "fixture-labels",
+      "kind": "synthetic",
+      "format": "reviewed-jsonl",
+      "file": "labels.jsonl",
+      "sha256": "94fde5fdfcbd33e60a17ae22b3f745dada621456ac2fe39a7b0a22854da7b552",
+      "license": { "name": "Original ThreatDetection test fixtures" },
+      "attribution": "ThreatDetection synthetic fixture authors",
+      "acquiredAt": "2026-01-05T00:00:00Z"
+    }
+  ],
+  "snapshots": [
+    {
+      "id": "fixture-feed",
+      "lineage": "fixture-feed",
+      "kind": "synthetic",
+      "file": "snapshot.json",
+      "sha256": "6dc389c70c55be1381b8f209dc3b0e14d20c4ec1221727b8ff162d4ec8b42a5e",
+      "license": { "name": "Original ThreatDetection test fixtures" },
+      "attribution": "ThreatDetection synthetic fixture authors",
+      "capturedAt": "2026-01-03T00:10:00Z"
+    }
+  ]
+}

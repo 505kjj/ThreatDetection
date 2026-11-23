@@ -1,332 +1,191 @@
-/**
- * Options Page Script — Generic Threat Detection Extension
- * 
- * Supports full per-site management:
- * - Add/remove any domain
- * - Enable/disable per domain
- * - Edit sensitive paths per domain
- * - Edit sensitive fields per domain
- * - Reset to default demo config
- */
+import { DEFAULT_ORIGIN, backendOrigin, backendPermission, newSite, readSites, siteHostname } from './settings.mjs';
+import { validToken } from './backend-api.mjs';
 
-// ============================================
-// DOMAIN MATCHING UTILITIES (shared logic)
-// ============================================
+const byId = id => document.getElementById(id);
+let editingDomain = null;
+let connectionBusy = false;
 
-function normalizeDomain(input) {
-  return input
-    .replace(/^https?:\/\//, "")
-    .replace(/^www\./, "")
-    .replace(/\/.*$/, "")
-    .trim()
-    .toLowerCase();
+function announce(text) {
+  byId('message').textContent = text;
 }
 
-// ============================================
-// DEFAULT CONFIGURATION
-// ============================================
-
-const DEFAULT_SENSITIVE_PATHS = [
-  '/login', '/signin', '/signup', '/register', '/dashboard', '/admin',
-  '/profile', '/account', '/settings', '/payment', '/checkout',
-  '/patient', '/emergency', '/hospital', '/ambulance', '/records'
-];
-const DEFAULT_SENSITIVE_FIELDS = ['password', 'otp', 'email', 'phone', 'card', 'cvv', 'token', 'pin'];
-const DEFAULT_HIGH_RISK = ['form_submit', 'password_focus', 'copy_paste', 'rapid_clicking', 'tab_blur'];
-
-const DEFAULT_CONFIG = {
-  backendUrl: 'http://localhost:8081',
-  monitoringEnabled: true,
-  demoMode: true,
-  monitoredSites: [{
-    domain: 'example.com',
-    enabled: true,
-    sensitivePaths: DEFAULT_SENSITIVE_PATHS,
-    sensitiveFields: DEFAULT_SENSITIVE_FIELDS,
-    highRiskActions: DEFAULT_HIGH_RISK
-  }]
-};
-
-// ============================================
-// STATE
-// ============================================
-
-let editingIndex = -1;
-
-// ============================================
-// INITIALIZATION
-// ============================================
-
-document.addEventListener('DOMContentLoaded', loadSettings);
-
-async function loadSettings() {
-  const data = await chrome.storage.local.get(['backendUrl', 'monitoringEnabled', 'demoMode', 'monitoredSites']);
-
-  document.getElementById('backendUrl').value = data.backendUrl || DEFAULT_CONFIG.backendUrl;
-
-  const enabled = data.monitoringEnabled !== false;
-  document.getElementById('monitoringStatus').textContent =
-    enabled ? '✓ Monitoring is currently ENABLED' : '✗ Monitoring is currently DISABLED';
-  document.getElementById('monitoringStatus').className =
-    'monitoring-status-text ' + (enabled ? 'status-enabled' : 'status-disabled');
-
-  const demoEnabled = data.demoMode !== false;
-  document.getElementById('demoModeStatus').textContent =
-    demoEnabled ? '✓ Demo Mode is ON' : '✗ Demo Mode is OFF';
-  document.getElementById('demoModeStatus').className =
-    'monitoring-status-text ' + (demoEnabled ? 'status-enabled' : 'status-disabled');
-
-  renderSiteList(data.monitoredSites || DEFAULT_CONFIG.monitoredSites);
+async function loadConnection() {
+  const result = await chrome.runtime.sendMessage({ type: 'GET_CONNECTION' });
+  if (!result?.origin) throw new Error('Settings unavailable');
+  byId('backendOrigin').value = result.origin;
+  byId('tokenStatus').textContent = result.hasToken ? 'Browser token set for this session.' : 'Browser token required.';
+  byId('clearToken').disabled = !result.hasToken;
 }
 
-// ============================================
-// SITE LIST RENDERING
-// ============================================
-
-function renderSiteList(sites) {
-  const list = document.getElementById('siteList');
-  list.innerHTML = '';
-
-  if (!sites || sites.length === 0) {
-    list.innerHTML = '<div class="empty-state">No monitored sites configured. Add a domain below to start monitoring.</div>';
-    return;
-  }
-
-  sites.forEach((site, index) => {
-    const card = document.createElement('div');
-    card.className = 'site-card' + (site.enabled === false ? ' site-disabled' : '');
-
-    const pathCount = (site.sensitivePaths || []).length;
-    const fieldCount = (site.sensitiveFields || []).length;
-    const statusLabel = site.enabled === false ? 'Disabled' : 'Active';
-    const statusClass = site.enabled === false ? 'badge-off' : 'badge-on';
-
-    card.innerHTML = `
-      <div class="site-card-header">
-        <div class="site-card-domain">${site.domain}</div>
-        <span class="site-status-badge ${statusClass}">${statusLabel}</span>
-      </div>
-      <div class="site-card-meta">
-        <span>${pathCount} sensitive paths</span>
-        <span>·</span>
-        <span>${fieldCount} sensitive fields</span>
-      </div>
-      <div class="site-card-actions">
-        <button class="card-btn card-btn-edit" data-index="${index}" title="Edit paths & fields">✏️ Edit</button>
-        <button class="card-btn card-btn-toggle" data-index="${index}" title="${site.enabled === false ? 'Enable' : 'Disable'} monitoring">
-          ${site.enabled === false ? '▶ Enable' : '⏸ Disable'}
-        </button>
-        <button class="card-btn card-btn-remove" data-index="${index}" title="Remove domain">🗑 Remove</button>
-      </div>
-    `;
-    list.appendChild(card);
-  });
-
-  // Attach handlers
-  list.querySelectorAll('.card-btn-remove').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      const idx = parseInt(e.currentTarget.dataset.index);
-      const data = await chrome.storage.local.get('monitoredSites');
-      const sites = data.monitoredSites || [];
-      const removedDomain = sites[idx]?.domain || 'Domain';
-      sites.splice(idx, 1);
-      await chrome.storage.local.set({ monitoredSites: sites });
-      renderSiteList(sites);
-      showToast(`${removedDomain} removed`);
-    });
-  });
-
-  list.querySelectorAll('.card-btn-toggle').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      const idx = parseInt(e.currentTarget.dataset.index);
-      const data = await chrome.storage.local.get('monitoredSites');
-      const sites = data.monitoredSites || [];
-      if (sites[idx]) {
-        sites[idx].enabled = sites[idx].enabled === false ? true : false;
-        await chrome.storage.local.set({ monitoredSites: sites });
-        renderSiteList(sites);
-        showToast(`${sites[idx].domain} ${sites[idx].enabled ? 'enabled' : 'disabled'}`);
-      }
-    });
-  });
-
-  list.querySelectorAll('.card-btn-edit').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      const idx = parseInt(e.currentTarget.dataset.index);
-      const data = await chrome.storage.local.get('monitoredSites');
-      const sites = data.monitoredSites || [];
-      if (sites[idx]) {
-        openEditModal(idx, sites[idx]);
-      }
-    });
-  });
+async function getSites() {
+  const { monitoredSites } = await chrome.storage.local.get('monitoredSites');
+  return readSites(monitoredSites);
 }
 
-// ============================================
-// EDIT MODAL
-// ============================================
-
-function openEditModal(index, site) {
-  editingIndex = index;
-  document.getElementById('editDomain').value = site.domain;
-  document.getElementById('editPaths').value = (site.sensitivePaths || []).join('\n');
-  document.getElementById('editFields').value = (site.sensitiveFields || []).join(', ');
-  document.getElementById('editModal').style.display = 'flex';
+async function renderMonitoring() {
+  const { monitoringEnabled } = await chrome.storage.local.get('monitoringEnabled');
+  const enabled = monitoringEnabled !== false;
+  byId('monitoringStatus').textContent = enabled ? 'Monitoring enabled for configured sites.' : 'Monitoring paused.';
+  byId('enableMonitoring').disabled = enabled;
+  byId('disableMonitoring').disabled = !enabled;
 }
 
-function closeEditModal() {
-  editingIndex = -1;
-  document.getElementById('editModal').style.display = 'none';
+function button(label, onClick) {
+  const element = document.createElement('button');
+  element.type = 'button';
+  element.className = 'card-btn';
+  element.textContent = label;
+  element.addEventListener('click', () => void onClick());
+  return element;
 }
 
-document.getElementById('modalClose').addEventListener('click', closeEditModal);
-document.getElementById('modalCancel').addEventListener('click', closeEditModal);
-
-document.getElementById('modalSave').addEventListener('click', async () => {
-  if (editingIndex < 0) return;
-
-  const pathsRaw = document.getElementById('editPaths').value;
-  const fieldsRaw = document.getElementById('editFields').value;
-
-  const paths = pathsRaw
-    .split('\n')
-    .map(p => p.trim())
-    .filter(p => p.length > 0)
-    .map(p => p.startsWith('/') ? p : '/' + p);
-
-  const fields = fieldsRaw
-    .split(',')
-    .map(f => f.trim().toLowerCase())
-    .filter(f => f.length > 0);
-
-  const data = await chrome.storage.local.get('monitoredSites');
-  const sites = data.monitoredSites || [];
-
-  if (sites[editingIndex]) {
-    sites[editingIndex].sensitivePaths = paths;
-    sites[editingIndex].sensitiveFields = fields;
-    await chrome.storage.local.set({ monitoredSites: sites });
-    renderSiteList(sites);
-    showToast('Site configuration saved');
-  }
-
-  closeEditModal();
-});
-
-// Close modal on backdrop click
-document.getElementById('editModal').addEventListener('click', (e) => {
-  if (e.target === document.getElementById('editModal')) {
-    closeEditModal();
-  }
-});
-
-// ============================================
-// SAVE BACKEND URL
-// ============================================
-
-document.getElementById('saveBackendUrl').addEventListener('click', async () => {
-  const url = document.getElementById('backendUrl').value.trim().replace(/\/+$/, '');
-  if (!url) return;
-  await chrome.storage.local.set({ backendUrl: url });
-  showToast('Backend URL saved');
-});
-
-// ============================================
-// ADD DOMAIN
-// ============================================
-
-document.getElementById('addDomain').addEventListener('click', async () => {
-  let domain = document.getElementById('newDomain').value.trim();
-  if (!domain) return;
-
-  // Normalize domain
-  domain = normalizeDomain(domain);
-  if (!domain) return;
-
-  const data = await chrome.storage.local.get('monitoredSites');
-  const sites = data.monitoredSites || [];
-
-  // Check duplicate
-  if (sites.some(s => normalizeDomain(s.domain) === domain)) {
-    showToast('Domain already exists');
-    return;
-  }
-
-  sites.push({
-    domain: domain,
-    enabled: true,
-    sensitivePaths: [...DEFAULT_SENSITIVE_PATHS],
-    sensitiveFields: [...DEFAULT_SENSITIVE_FIELDS],
-    highRiskActions: [...DEFAULT_HIGH_RISK]
-  });
-
+async function updateSite(domain, update) {
+  const sites = await getSites();
+  const index = sites.findIndex(site => site.domain === domain);
+  if (index === -1) return;
+  const changed = update(sites[index]);
+  if (changed) sites[index] = changed;
+  else sites.splice(index, 1);
   await chrome.storage.local.set({ monitoredSites: sites });
-  document.getElementById('newDomain').value = '';
-  renderSiteList(sites);
-  showToast(`${domain} added`);
-});
+  await renderSites();
+}
 
-// Enter key support for domain input
-document.getElementById('newDomain').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    document.getElementById('addDomain').click();
+async function renderSites() {
+  const sites = await getSites();
+  const list = byId('siteList');
+  list.replaceChildren();
+  if (!sites.length) {
+    const empty = document.createElement('p');
+    empty.className = 'empty-state';
+    empty.textContent = 'No sites are monitored.';
+    list.append(empty);
+  }
+  for (const site of sites) {
+    const card = document.createElement('div');
+    card.className = 'site-card';
+    const name = document.createElement('div');
+    name.className = 'site-card-domain';
+    name.textContent = site.domain;
+    const controls = document.createElement('div');
+    controls.className = 'site-card-actions';
+    controls.append(
+      button('Edit', () => openEditor(site)),
+      button(site.enabled ? 'Pause' : 'Monitor', () => updateSite(site.domain, current =>
+        ({ ...current, enabled: !current.enabled }))),
+      button('Remove', () => updateSite(site.domain, () => null))
+    );
+    card.append(name, controls);
+    list.append(card);
+  }
+}
+
+function openEditor(site) {
+  editingDomain = site.domain;
+  byId('editDomain').value = site.domain;
+  byId('editPaths').value = site.sensitivePaths.join('\n');
+  byId('editFields').value = site.sensitiveFields.join(', ');
+  byId('editModal').style.display = 'flex';
+  byId('editPaths').focus();
+}
+
+function closeEditor() {
+  editingDomain = null;
+  byId('editModal').style.display = 'none';
+}
+
+byId('saveConnection').addEventListener('click', async () => {
+  if (connectionBusy) return;
+  const origin = backendOrigin(byId('backendOrigin').value);
+  const token = byId('browserToken').value.trim();
+  if (!origin) {
+    announce('Enter an HTTPS origin or a local HTTP origin such as http://127.0.0.1:8081.');
+    return;
+  }
+  if (token && !validToken(token)) {
+    announce('Enter the 43-character browser token issued for this backend.');
+    return;
+  }
+  connectionBusy = true;
+  try {
+    if (origin.startsWith('https:') && !await chrome.permissions.request(backendPermission(origin))) {
+      announce('Allow access to the backend host to save this connection.');
+      return;
+    }
+    const result = await chrome.runtime.sendMessage({ type: 'SAVE_CONNECTION', origin, token });
+    if (!result?.saved) throw new Error('Connection rejected');
+    byId('browserToken').value = '';
+    await loadConnection();
+    announce('Connection settings saved.');
+  } catch {
+    announce('Could not save the connection.');
+  } finally {
+    connectionBusy = false;
   }
 });
 
-// ============================================
-// ENABLE / DISABLE MONITORING
-// ============================================
-
-document.getElementById('enableMonitoring').addEventListener('click', async () => {
-  await chrome.storage.local.set({ monitoringEnabled: true });
-  document.getElementById('monitoringStatus').textContent = '✓ Monitoring is currently ENABLED';
-  document.getElementById('monitoringStatus').className = 'monitoring-status-text status-enabled';
-  showToast('Monitoring enabled');
+byId('clearToken').addEventListener('click', async () => {
+  try {
+    await chrome.runtime.sendMessage({ type: 'CLEAR_CONNECTION' });
+    byId('browserToken').value = '';
+    await loadConnection();
+    announce('Browser token cleared.');
+  } catch {
+    announce('Could not clear the browser token.');
+  }
 });
 
-document.getElementById('disableMonitoring').addEventListener('click', async () => {
-  await chrome.storage.local.set({ monitoringEnabled: false });
-  document.getElementById('monitoringStatus').textContent = '✗ Monitoring is currently DISABLED';
-  document.getElementById('monitoringStatus').className = 'monitoring-status-text status-disabled';
-  showToast('Monitoring disabled');
+byId('addDomain').addEventListener('click', async () => {
+  const input = byId('newDomain');
+  const host = siteHostname(input.value.trim());
+  if (!host) {
+    announce('Enter a hostname, for example example.com.');
+    return;
+  }
+  const sites = await getSites();
+  if (sites.some(site => site.domain === host)) {
+    announce('This hostname is already configured.');
+    return;
+  }
+  await chrome.storage.local.set({ monitoredSites: [...sites, newSite(host)] });
+  input.value = '';
+  await renderSites();
+  announce('Site added.');
 });
 
-// ============================================
-// DEMO MODE CONTROL
-// ============================================
-
-document.getElementById('enableDemoMode').addEventListener('click', async () => {
-  await chrome.storage.local.set({ demoMode: true });
-  document.getElementById('demoModeStatus').textContent = '✓ Demo Mode is ON';
-  document.getElementById('demoModeStatus').className = 'monitoring-status-text status-enabled';
-  showToast('Demo Mode enabled');
+byId('newDomain').addEventListener('keydown', event => {
+  if (event.key === 'Enter') byId('addDomain').click();
 });
 
-document.getElementById('disableDemoMode').addEventListener('click', async () => {
-  await chrome.storage.local.set({ demoMode: false });
-  document.getElementById('demoModeStatus').textContent = '✗ Demo Mode is OFF';
-  document.getElementById('demoModeStatus').className = 'monitoring-status-text status-disabled';
-  showToast('Demo Mode disabled');
+byId('modalClose').addEventListener('click', closeEditor);
+byId('modalCancel').addEventListener('click', closeEditor);
+byId('modalSave').addEventListener('click', async () => {
+  if (!editingDomain) return;
+  const split = (value, separator) => value.split(separator).map(item => item.trim()).filter(Boolean);
+  const paths = split(byId('editPaths').value, '\n').map(path => path.startsWith('/') ? path : '/' + path);
+  const fields = split(byId('editFields').value, ',');
+  const [site] = readSites([{ domain: editingDomain, sensitivePaths: paths, sensitiveFields: fields }]);
+  if (site.sensitivePaths.length !== new Set(paths).size || site.sensitiveFields.length !== new Set(fields).size) {
+    announce('Enter up to 50 short paths and field names. Use letters, numbers, dashes, or underscores for field names.');
+    return;
+  }
+  await updateSite(editingDomain, current => ({ ...current, sensitivePaths: paths, sensitiveFields: fields }));
+  closeEditor();
+  announce('Site settings saved.');
 });
 
-// ============================================
-// RESET DEFAULTS
-// ============================================
-
-document.getElementById('resetDefaults').addEventListener('click', async () => {
-  await chrome.storage.local.set(DEFAULT_CONFIG);
-  loadSettings();
-  showToast('Settings reset to defaults');
-});
-
-// ============================================
-// TOAST
-// ============================================
-
-function showToast(msg) {
-  const toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 2000);
+for (const [id, enabled] of [['enableMonitoring', true], ['disableMonitoring', false]]) {
+  byId(id).addEventListener('click', async () => {
+    await chrome.storage.local.set({ monitoringEnabled: enabled });
+    await renderMonitoring();
+  });
 }
+
+byId('resetDefaults').addEventListener('click', async () => {
+  await chrome.runtime.sendMessage({ type: 'CLEAR_CONNECTION' });
+  await chrome.storage.local.set({ backendOrigin: DEFAULT_ORIGIN, monitoredSites: [], monitoringEnabled: true });
+  byId('browserToken').value = '';
+  await Promise.all([loadConnection(), renderSites(), renderMonitoring()]);
+  announce('Settings reset.');
+});
+
+Promise.all([loadConnection(), renderSites(), renderMonitoring()]).catch(() => announce('Could not load settings.'));

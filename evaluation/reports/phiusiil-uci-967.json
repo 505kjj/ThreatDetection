@@ -1,0 +1,238 @@
+{
+  "schemaVersion": 1,
+  "dataset": "phiusiil-uci-967",
+  "kind": "real",
+  "provenance": {
+    "sources": [
+      {
+        "id": "phiusiil-uci-967",
+        "lineage": "phiusiil",
+        "kind": "real",
+        "file": "PhiUSIIL_Phishing_URL_Dataset.csv",
+        "sha256": "a236549cd369cd80bd478ff8e1779cbf44c58d5c3f79f7a51a1adbed7d06d1c6",
+        "reference": "https://archive.ics.uci.edu/dataset/967/phiusiil+phishing+url+dataset",
+        "attribution": "Arvind Prasad and Shalini Chandra (2024), PhiUSIIL Phishing URL (Website), UCI Machine Learning Repository, DOI 10.1016/j.cose.2023.103545. Normalized and evaluated by ThreatDetection.",
+        "license": {
+          "name": "CC BY 4.0",
+          "url": "https://creativecommons.org/licenses/by/4.0/"
+        },
+        "format": "phiusiil-csv",
+        "acquiredAt": "2026-11-23T18:43:15Z",
+        "releasedAt": "2024-03-03T00:00:00Z",
+        "confidence": "medium"
+      }
+    ],
+    "snapshots": [],
+    "minimumConfidence": "medium",
+    "split": {
+      "trainBefore": "2024-01-01T00:00:00Z",
+      "testFrom": "2024-02-01T00:00:00Z",
+      "seed": "phase3a-v1"
+    }
+  },
+  "featureSchema": {
+    "version": "url-lexical-v1",
+    "columns": [
+      "https",
+      "nondefault_port",
+      "ip_host",
+      "idn_labels",
+      "hostname_length",
+      "host_labels",
+      "host_digits",
+      "host_hyphens",
+      "registrant_length",
+      "subdomain_labels",
+      "path_length",
+      "path_depth",
+      "path_digits",
+      "path_percent_escapes"
+    ]
+  },
+  "ingestion": {
+    "received": 235795,
+    "eligibleBeforeDedup": 235005,
+    "duplicates": 2575,
+    "conflictingKeys": 1,
+    "invalidLabel": 0,
+    "belowConfidence": 0,
+    "invalidObservationTime": 0,
+    "invalidUrl": 790,
+    "inputCounts": {
+      "phiusiil-uci-967": {
+        "received": 235795,
+        "phishingLabels": 100945,
+        "legitimateLabels": 134850
+      }
+    },
+    "phishing": 97580,
+    "legitimate": 134849,
+    "retained": 232429,
+    "cohorts": {
+      "unknown": {
+        "phishing": 97580,
+        "legitimate": 134849
+      }
+    }
+  },
+  "chronologicalDomainDisjoint": {
+    "splitCounts": {
+      "train": {
+        "phishing": 0,
+        "legitimate": 0,
+        "groups": 0
+      },
+      "validation": {
+        "phishing": 0,
+        "legitimate": 0,
+        "groups": 0
+      },
+      "test": {
+        "phishing": 0,
+        "legitimate": 0,
+        "groups": 0
+      }
+    },
+    "withheld": {
+      "undated": 232429,
+      "seenInEarlierWindow": 0
+    },
+    "test": {
+      "reputation": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 0,
+        "fn": 0,
+        "abstainPhishing": 0,
+        "abstainLegitimate": 0,
+        "total": 0,
+        "scored": 0,
+        "precision": null,
+        "recall": null,
+        "f1": null,
+        "falsePositiveRate": null,
+        "decisionCoverage": null,
+        "phishingAlertCoverage": null
+      },
+      "impersonation": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 0,
+        "fn": 0,
+        "abstainPhishing": 0,
+        "abstainLegitimate": 0,
+        "total": 0,
+        "scored": 0,
+        "precision": null,
+        "recall": null,
+        "f1": null,
+        "falsePositiveRate": null,
+        "decisionCoverage": null,
+        "phishingAlertCoverage": null
+      },
+      "combined": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 0,
+        "fn": 0,
+        "abstainPhishing": 0,
+        "abstainLegitimate": 0,
+        "total": 0,
+        "scored": 0,
+        "precision": null,
+        "recall": null,
+        "f1": null,
+        "falsePositiveRate": null,
+        "decisionCoverage": null,
+        "phishingAlertCoverage": null
+      },
+      "reputationUnavailable": {
+        "undated": 0,
+        "sameLabelLineage": 0,
+        "noPriorFreshSnapshot": 0
+      },
+      "combinedPolicy": {
+        "confirmed": 0,
+        "advisoryOnly": 0
+      }
+    }
+  },
+  "retrospectiveDomainDisjoint": {
+    "splitCounts": {
+      "train": {
+        "phishing": 67270,
+        "legitimate": 94269,
+        "groups": 137851
+      },
+      "validation": {
+        "phishing": 16980,
+        "legitimate": 20289,
+        "groups": 29689
+      },
+      "test": {
+        "phishing": 13330,
+        "legitimate": 20291,
+        "groups": 29745
+      }
+    },
+    "test": {
+      "reputation": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 0,
+        "fn": 0,
+        "abstainPhishing": 13330,
+        "abstainLegitimate": 20291,
+        "total": 33621,
+        "scored": 0,
+        "precision": null,
+        "recall": null,
+        "f1": null,
+        "falsePositiveRate": null,
+        "decisionCoverage": 0,
+        "phishingAlertCoverage": 0
+      },
+      "impersonation": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 20291,
+        "fn": 13330,
+        "abstainPhishing": 0,
+        "abstainLegitimate": 0,
+        "total": 33621,
+        "scored": 33621,
+        "precision": null,
+        "recall": 0,
+        "f1": 0,
+        "falsePositiveRate": 0,
+        "decisionCoverage": 1,
+        "phishingAlertCoverage": 0
+      },
+      "combined": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 0,
+        "fn": 0,
+        "abstainPhishing": 13330,
+        "abstainLegitimate": 20291,
+        "total": 33621,
+        "scored": 0,
+        "precision": null,
+        "recall": null,
+        "f1": null,
+        "falsePositiveRate": null,
+        "decisionCoverage": 0,
+        "phishingAlertCoverage": 0
+      },
+      "reputationUnavailable": {
+        "undated": 33621,
+        "sameLabelLineage": 0,
+        "noPriorFreshSnapshot": 0
+      },
+      "combinedPolicy": {
+        "confirmed": 0,
+        "advisoryOnly": 0
+      }
+    }
+  }
+}

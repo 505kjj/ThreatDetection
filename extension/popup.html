@@ -6,83 +6,34 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="popup-container">
-        <div class="popup-header">
-            <div class="header-icon">🛡️</div>
-            <div class="header-text">
-                <h1>Threat Monitor</h1>
-                <p class="subtitle">Real-time Security Analysis</p>
-            </div>
+    <main class="popup-container">
+        <header class="popup-header">
+            <div class="header-icon" aria-hidden="true">🛡️</div>
+            <div class="header-text"><h1>Threat Monitor</h1></div>
+        </header>
+        <div class="status-bar" role="status">
+            <span class="status-dot idle" id="statusDot"></span>
+            <span id="statusText">Checking monitoring…</span>
         </div>
-        <div class="status-bar" id="statusBar">
-            <span class="status-dot" id="statusDot"></span>
-            <span id="statusText">Checking...</span>
-        </div>
-        <div class="section">
-            <div class="section-label">Current Website</div>
+        <section class="section" aria-label="Current website">
             <div class="domain-display" id="currentDomain">—</div>
-            <div class="monitoring-badge" id="monitoringBadge">Not Monitored</div>
-        </div>
-        <div class="section">
-            <div style="display: flex; justify-content: space-between;">
-                <div>
-                    <div class="section-label">Blocking Status</div>
-                    <div class="blocking-status" id="blockingStatus" style="font-weight: 600;">Not Blocked</div>
-                </div>
-                <div style="text-align: right;">
-                    <div class="section-label">Demo Mode</div>
-                    <div id="demoModeStatus" style="font-weight: 600; color: #94a3b8;">—</div>
-                </div>
-            </div>
-        </div>
-        <div class="not-monitored-notice" id="notMonitoredNotice" style="display:none;">
-            <div class="notice-icon">🔍</div>
-            <div class="notice-text">This website is not being monitored.</div>
-            <div class="notice-hint">Click "Monitor This Site" to start tracking behavior on this domain.</div>
-        </div>
-        <div class="risk-section" id="riskSection" style="display:none;">
-            <div class="risk-header" style="margin-bottom: 12px;">
-                <div>
-                    <div class="section-label">Risk Level</div>
-                    <div class="risk-level" id="riskLevel">—</div>
-                </div>
-                <div style="display: flex; gap: 12px;">
-                    <div style="text-align: center;">
-                        <div class="section-label" style="margin-bottom: 4px;">Trust</div>
-                        <div class="risk-score-circle" id="trustScoreCircle" style="border-color: #4ade80; color: #4ade80;"><span id="trustScore">100</span></div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div class="section-label" style="margin-bottom: 4px;">Risk</div>
-                        <div class="risk-score-circle" id="riskScoreCircle"><span id="riskScore">0</span></div>
-                    </div>
-                </div>
-            </div>
-            <div class="risk-action" id="riskAction">
-                <span class="action-label">Action:</span> <span id="actionValue">—</span>
-            </div>
-            <div class="reasons-box" id="reasonsBox" style="display:none;">
-                <div class="section-label">Reasons</div>
-                <ul id="reasonsList" class="reasons-list"></ul>
-            </div>
-            <div class="tags-box" id="tagsBox" style="display:none;">
-                <div class="section-label">Tags</div>
-                <div id="tagsList" class="tags-list"></div>
-            </div>
-        </div>
-        <div class="no-data" id="noData" style="display:none;">
-            <div class="no-data-icon">✅</div>
-            <div>No risk data yet. Browse the site to start.</div>
-        </div>
-        <div class="backend-status" id="backendStatus">
-            <span class="status-dot-sm" id="backendDot"></span>
-            <span id="backendText">Checking backend...</span>
-        </div>
+            <p class="section-desc" id="details"></p>
+        </section>
+        <section id="impersonationSection" class="risk-section" aria-label="Financial impersonation evidence" hidden>
+            <div class="section-label">Address evidence</div>
+            <ul id="impersonationReasons" class="reasons-list"></ul>
+        </section>
+        <section id="riskSection" class="risk-section" aria-label="Activity check details" hidden>
+            <div class="section-label">Activity score</div>
+            <p id="riskScore"></p>
+            <ul id="reasonsList" class="reasons-list"></ul>
+        </section>
         <div class="actions">
-            <button class="btn btn-add" id="btnAddSite" style="display:none;">+ Monitor This Site</button>
-            <button class="btn btn-remove" id="btnRemoveSite" style="display:none;">− Stop Monitoring</button>
-            <button class="btn btn-options" id="btnOptions">⚙ Settings</button>
+            <button class="btn btn-add" id="btnAddSite" hidden>Monitor this site</button>
+            <button class="btn btn-remove" id="btnRemoveSite" hidden>Stop monitoring this site</button>
+            <button class="btn btn-options" id="btnOptions">Settings</button>
         </div>
-    </div>
-    <script src="popup.js"></script>
+    </main>
+    <script type="module" src="popup.js"></script>
 </body>
 </html>

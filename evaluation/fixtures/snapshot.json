@@ -1,0 +1,10 @@
+{
+  "generatedAt": "2026-01-03T00:00:00Z",
+  "expiresAt": "2026-01-03T05:00:00Z",
+  "entries": [
+    { "kind": "HOST", "value": "flagged-login.test", "threat": "PHISHING" },
+    { "kind": "HOST", "value": "incorrect-feed.test", "threat": "PHISHING" },
+    { "kind": "URL_SHA256", "value": "ce9389fa581dc806f8cca489c9cb62223daf26172dadd30b43f4c01335e7076e", "threat": "PHISHING" },
+    { "kind": "URL_PATH", "value": "https://explicit-path.test/pay", "threat": "PHISHING" }
+  ]
+}
