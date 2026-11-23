@@ -115,13 +115,15 @@ For manual requests with an HTTP client, see [`backend/test.http`](backend/test.
    ```
 
 3. Open the extension's **Settings**, use `http://127.0.0.1:8081` for local verification, paste the browser token, and choose **Save connection**. For a remote backend, use its HTTPS origin and approve the host permission requested by Chrome. Changing the origin requires a new token for that origin.
-4. Visit a website and check the popup. Add the hostname in Settings only if you also want server-side activity checks. Clearing the token or pausing protection disables checks on open tabs. Stop the disposable backend with `Stop-Process -InputObject $backend` when finished.
+4. Visit a website and check the popup. Add the hostname in Settings only if you also want server-side activity checks. Clearing the token makes reputation and activity checks unavailable. Pausing protection also stops local financial impersonation checks. Stop the disposable backend with `Stop-Process -InputObject $backend` when finished.
 
 The token and snapshot are kept in trusted extension memory for the browser session. Reloading or updating the extension, or restarting Chrome, clears them. The snapshot request contains no destination. For opted-in activity monitoring, the service worker renews a session once if the backend loses it. Each such session starts with the hostname only. Analysis sends the server-issued UUID, bounded counts, and activity categories. Requests never include page URLs, paths, query strings, fragments, referrers, or form values.
 
+Financial impersonation checks use only the hostname and run locally, including when reputation is unavailable. See the [verified domain registry, decision policy, and evaluation](docs/financial-impersonation.md).
+
 ### Extension regression checks
 
-Run `node --test extension/tests/worker.test.mjs extension/tests/reputation.test.mjs` from the repository root with Node.js 24.
+Run `node --test extension/tests/*.test.mjs` from the repository root with Node.js 24.
 
 The browser smoke test requires the built backend JAR and a separate Playwright installation. From the repository root in PowerShell 7:
 
@@ -134,7 +136,7 @@ node (Join-Path $env:NODE_PATH 'playwright/cli.js') install chromium --no-shell
 node extension/tests/chrome-smoke.cjs
 ```
 
-It uses a disposable Chrome profile, a local login fixture, synthetic phishing and malware indicators, and an isolated backend with a generated credential. The synthetic sites are served locally.
+It uses a disposable Chromium profile, a local login fixture, synthetic phishing, malware and impersonation indicators, and an isolated backend with a generated credential. The browser resolves the synthetic sites to loopback.
 
 ## Authentication and CORS configuration
 

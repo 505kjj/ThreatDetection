@@ -68,8 +68,11 @@
   }
 
   function renderVerdict(verdict) {
-    if (verdict?.state === 'confirmed' || verdict?.state === 'warning') showWarning(verdict);
-    else if (verdict?.state !== 'waiting') clearWarning();
+    if (verdict?.state === 'confirmed' || verdict?.state === 'warning' || verdict?.impersonation?.length) {
+      showWarning(verdict);
+    } else if (verdict?.state !== 'waiting') {
+      clearWarning();
+    }
   }
 
   function showWarning(verdict) {
@@ -79,12 +82,20 @@
       clearWarning();
       return;
     }
-    if (bannerState !== verdict.state) clearWarning();
+    const reasons = verdict.impersonation?.map(item => item.reason) ?? [];
+    const warning = confirmed
+      ? 'Threat Monitor found a known phishing or malware match. Leave this page without entering information.'
+      : reasons.length
+        ? 'Possible financial website impersonation. Verify the address before entering information.' +
+          (verdict.state === 'unavailable' ? ' The protection service is unavailable.' : '')
+        : 'Threat Monitor observed unusual activity. The site has not been confirmed malicious.';
+    const presentation = JSON.stringify([warning, reasons]);
+    if (bannerState !== presentation) clearWarning();
     clearTimeout(warningExpiry);
     warningExpiry = setTimeout(clearWarning, timeout);
     if (banner?.isConnected) return;
     banner = document.createElement('div');
-    bannerState = verdict.state;
+    bannerState = presentation;
     const shadow = banner.attachShadow({ mode: 'closed' });
     const style = document.createElement('style');
     style.textContent = `
@@ -100,9 +111,7 @@
     alert.setAttribute('role', confirmed ? 'alert' : 'status');
     if (confirmed) alert.className = 'confirmed';
     const description = document.createElement('span');
-    description.textContent = confirmed
-      ? 'Threat Monitor found a known phishing or malware match. Leave this page without entering information.'
-      : 'Threat Monitor observed unusual activity. The site has not been confirmed malicious.';
+    description.textContent = [warning, ...reasons].join(' ');
     const dismiss = document.createElement('button');
     dismiss.textContent = 'Dismiss';
     dismiss.type = 'button';

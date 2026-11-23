@@ -281,3 +281,54 @@ test('a missing provider returns unavailable, never no-match or a warning', asyn
   assert.equal((await state.message(event)).cause, 'reputation');
   assert.equal(state.calls.length, 0);
 });
+
+test('local cautions add no browsing requests and never suppress known threats on verified scopes', async t => {
+  const official = 'now.hdfc.bank.in';
+  const state = await worker(() => { throw new Error('Unexpected browsing telemetry'); },
+    () => json(snapshot([{ kind: 'HOST', value: official, threat: 'PHISHING' }])));
+  t.after(state.restore);
+  state.frames[1].url = 'https://sbi.bank.in.example.org/private?otp=synthetic';
+  state.frames[2].url = 'https://' + official;
+  const before = await state.status();
+  assert.equal(before.state, 'unavailable');
+  assert.equal(before.impersonation[0].kind, 'embedded_official_domain');
+  await state.save(defaultOrigin, token);
+  assert.equal((await state.status()).impersonation[0].kind, 'embedded_official_domain');
+  assert.equal(state.badges.get(1), '!');
+  const confirmed = await state.status(2);
+  assert.equal(confirmed.state, 'confirmed');
+  assert.equal(confirmed.impersonation, undefined);
+  assert.equal(state.badges.get(2), 'STOP');
+  assert.equal((await state.message({ type: 'PAGE_CONFIGURATION' })).active, false);
+  assert.equal(state.calls.length, 0);
+  assert.equal(state.downloads.length, 1);
+  assert.equal(state.downloads[0].options.body, undefined);
+  assert.equal(JSON.stringify(state.stored.session).includes('example.org'), false);
+});
+
+test('opted-in telemetry retains the local evidence through cached results and failures', async t => {
+  let online = true;
+  const state = await worker(call => {
+    if (!online) throw new Error('Network unavailable');
+    return json(call.url.endsWith('/start') ? { sessionId: originalSession } : safe);
+  });
+  t.after(state.restore);
+  const host = 'hdfcbank.example.org';
+  state.frames[1].url = 'https://' + host;
+  await state.api.storage.local.set({ monitoredSites: [newSite(host)] });
+  await state.save(defaultOrigin, token);
+  assert.equal((await state.message({ type: 'PAGE_CONFIGURATION' })).active, true);
+  for (let i = 0; i < 2; i++) {
+    const verdict = await state.message(event);
+    assert.equal(verdict.state, 'safe');
+    assert.equal(verdict.impersonation[0].kind, 'subdomain_brand');
+  }
+  assert.equal(state.calls.length, 2);
+  assert.deepEqual(state.calls[0].body, { domain: host });
+  assert.deepEqual(state.calls[1].body, { sessionId: originalSession, ...analysisFields(event, false) });
+  online = false;
+  const unavailable = await state.message({ ...event, eventType: 'recheck_risk' });
+  assert.equal(unavailable.state, 'unavailable');
+  assert.equal(unavailable.impersonation[0].kind, 'subdomain_brand');
+  assert.deepEqual((await state.status()).impersonation, unavailable.impersonation);
+});

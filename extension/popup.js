@@ -34,20 +34,30 @@ async function refresh() {
 
 function render(status) {
   current = status;
-  byId('statusText').textContent = title[status.state] ?? title.unavailable;
-  byId('statusDot').className = 'status-dot ' + (status.state === 'confirmed' ? 'offline' : 'idle');
+  const evidence = status.impersonation ?? [];
+  const caution = evidence.length > 0 && (status.state === 'no_match' || status.state === 'warning');
+  byId('statusText').textContent = caution ? 'Possible financial website impersonation'
+    : title[status.state] ?? title.unavailable;
+  byId('statusDot').className = 'status-dot ' + (status.state === 'confirmed' ? 'offline' : caution ? 'caution' : 'idle');
   byId('currentDomain').textContent = status.host ?? '—';
   const detail = {
     confirmed: status.threat === 'MALWARE' ? 'Known malware match. Leave this page.' :
       'Known phishing match. Leave this page without entering information.',
     no_match: 'The snapshot has no match for this page. It may still be unsafe.'
   };
-  byId('details').textContent = cause[status.cause] ?? detail[status.state] ?? '';
+  byId('details').textContent = caution ? 'Verify the official address before entering information.'
+    : cause[status.cause] ?? detail[status.state] ?? '';
   byId('btnAddSite').hidden = !status.host || status.siteEnabled || !status.monitoringEnabled;
   byId('btnRemoveSite').hidden = !status.host || !status.siteEnabled || !status.monitoringEnabled;
   byId('riskSection').hidden = status.state !== 'warning';
   byId('riskScore').textContent = status.riskScore ?? '';
-  byId('reasonsList').replaceChildren(...(status.reasons ?? []).map(reason => {
+  byId('impersonationSection').hidden = evidence.length === 0;
+  renderReasons('impersonationReasons', evidence.map(item => item.reason));
+  renderReasons('reasonsList', status.reasons ?? []);
+}
+
+function renderReasons(list, reasons) {
+  byId(list).replaceChildren(...reasons.map(reason => {
     const item = document.createElement('li');
     item.textContent = reason;
     return item;

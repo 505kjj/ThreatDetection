@@ -12,7 +12,8 @@ const extension = path.resolve(__dirname, '..');
 const jar = path.resolve(extension, '../backend/target/threat-detection-0.0.1-SNAPSHOT.jar');
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 const token = randomBytes(32).toString('base64url');
-const privateMarkers = ['private-path', 'private-query', 'private-fragment', 'private-form-value'];
+const privateMarkers = ['private-path', 'private-query', 'private-fragment', 'private-form-value',
+  'private-otp-value', 'private-card-value', 'private-cookie-value'];
 
 function javaExecutable() {
   // The Oracle Java launcher shim on Windows can start a separate JVM process.
@@ -104,24 +105,41 @@ function writeFixture(file, content) {
   renameSync(pending, file);
 }
 
+async function inPageWarning(page, phrase) {
+  const cdp = await page.context().newCDPSession(page);
+  try {
+    const { root } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
+    const contains = node => node.nodeValue?.includes(phrase) ||
+      (node.children ?? []).some(contains) || (node.shadowRoots ?? []).some(contains);
+    return contains(root);
+  } finally {
+    await cdp.detach();
+  }
+}
+
 async function main() {
   const java = javaExecutable();
   const fixture = createServer((_request, response) => {
-    response.writeHead(200, { 'Content-Type': 'text/html' });
+    response.writeHead(200, { 'Content-Type': 'text/html', 'Set-Cookie': 'fixture=private-cookie-value; HttpOnly' });
     response.end('<!doctype html><title>Local login fixture</title><input id="other">' +
-      '<input id="password" type="password" value="private-form-value">');
+      '<input id="password" type="password" value="private-form-value">' +
+      '<input id="otp" autocomplete="one-time-code" value="private-otp-value">' +
+      '<input id="card" autocomplete="cc-number" value="private-card-value">');
   });
   await new Promise(resolve => fixture.listen(0, '127.0.0.1', resolve));
   const folder = mkdtempSync(path.join(tmpdir(), 'threat-reputation-smoke-'));
   const snapshotPath = path.join(folder, 'snapshot.json');
   const localSite = 'http://127.0.0.1:' + fixture.address().port;
-  const phishingFixture = 'http://known-phish.example.test:' + fixture.address().port + '/login-fixture';
+  const phishingHost = 'hdfcbank-help.example.net';
+  const cautionHost = 'sbi.bank.in.example.org';
+  const phishingFixture = 'http://' + phishingHost + ':' + fixture.address().port + '/login-fixture';
+  const cautionFixture = 'http://' + cautionHost + ':' + fixture.address().port + '/private-path?x=private-query';
   function publish(lifetime) {
     writeFixture(snapshotPath, {
       generatedAt: new Date(Date.now() - 1000).toISOString(),
       expiresAt: new Date(Date.now() + lifetime).toISOString(),
       entries: [
-        { kind: 'HOST', value: 'known-phish.example.test', threat: 'PHISHING' },
+        { kind: 'HOST', value: phishingHost, threat: 'PHISHING' },
         { kind: 'URL_SHA256', value: createHash('sha256').update(localSite + '/download-fixture').digest('hex'),
           threat: 'MALWARE' }
       ]
@@ -134,7 +152,8 @@ async function main() {
     browser = await chromium.launchPersistentContext('', {
       channel: 'chromium',
       args: ['--disable-extensions-except=' + extension, '--load-extension=' + extension,
-        '--no-proxy-server', '--host-resolver-rules=MAP known-phish.example.test 127.0.0.1']
+        '--no-proxy-server', '--host-resolver-rules=' +
+          [phishingHost, cautionHost].map(host => 'MAP ' + host + ' 127.0.0.1').join(',')]
     });
     const worker = browser.serviceWorkers()[0] ?? await browser.waitForEvent('serviceworker');
     const extensionOrigin = new URL(worker.url()).origin === 'null'
@@ -183,6 +202,7 @@ async function main() {
       assert.ok(request.serviceWorker(), 'API traffic must come from the service worker');
       assert.equal((await request.allHeaders()).authorization, 'Bearer ' + token);
       assert.equal((await request.allHeaders()).referer, undefined);
+      assert.equal((await request.allHeaders()).cookie, undefined);
       for (const marker of privateMarkers) assert.ok(!request.postData().includes(marker));
     }
     console.log('Chrome: service worker authenticated and sent only the allowed hostname and activity fields');
@@ -201,9 +221,23 @@ async function main() {
     const phish = await browser.newPage();
     await phish.goto(phishingFixture);
     await assertStatus(phish, 'Known malicious website');
+    await popup.locator('#impersonationReasons').getByText(/subdomain uses the HDFC Bank name/).waitFor();
     assert.equal(await badge(worker, phish.url()), 'STOP');
     assert.equal(await badge(worker, malware.url()), 'STOP');
     assert.equal(await badge(worker, site.url()), '');
+    const caution = await browser.newPage();
+    await caution.goto(cautionFixture);
+    await assertStatus(caution, 'Possible financial website impersonation');
+    await popup.locator('#impersonationReasons').getByText(/official State Bank of India address is embedded/).waitFor();
+    await eventually(() => inPageWarning(caution, 'official State Bank of India address is embedded'),
+      value => value === true, 'in-page explanation');
+    assert.equal(await badge(worker, caution.url()), '!');
+    assert.equal(await badge(worker, phish.url()), 'STOP');
+    assert.equal(await badge(worker, site.url()), '');
+    assert.equal(caution.url(), cautionFixture, 'a name-only warning must leave the user on the page');
+    assert.equal(apiCalls.some(call => call.postData()?.includes(cautionHost)), false,
+      'the local impersonation check must not send the hostname to the API');
+    console.log('Chrome: local impersonation explains the address evidence without transmitting the hostname or blocking');
     assert.ok(snapshotCalls.length > 0);
     for (const request of snapshotCalls) {
       assert.equal(request.url(), origin + '/api/threat/reputation/snapshot');
@@ -248,6 +282,9 @@ async function main() {
 
     await options.locator('#disableMonitoring').click();
     await options.locator('#monitoringStatus').getByText('Monitoring paused.').waitFor();
+    await assertStatus(caution, 'Monitoring paused');
+    await popup.locator('#impersonationSection').waitFor({ state: 'hidden' });
+    assert.equal(await badge(worker, caution.url()), '');
     await wait(600);
     const before = apiCalls.length;
     await focusPassword(site);
@@ -266,6 +303,9 @@ async function main() {
     const stale = await browser.newPage();
     await stale.goto(phishingFixture);
     await assertStatus(stale, 'Protection unavailable');
+    await popup.locator('#impersonationReasons').getByText(/subdomain uses the HDFC Bank name/).waitFor();
+    await eventually(() => inPageWarning(stale, 'The protection service is unavailable.'),
+      value => value === true, 'degraded in-page warning');
     assert.equal(await badge(worker, stale.url()), '');
     publish(14000);
     await eventually(async () => (await fetch(snapshotEndpoint, { headers })).status,
@@ -288,6 +328,6 @@ async function main() {
 }
 
 main().catch(error => {
-  console.error(error.message);
+  console.error(error.stack ?? error.message);
   process.exitCode = 1;
 });

@@ -1,4 +1,5 @@
 import { analysisFields, analyze, downloadSnapshot, requestFailure, startSession, validToken } from './backend-api.mjs';
+import { detectImpersonation } from './impersonation.mjs';
 import { checkDestination, createSnapshotCache, destinationFor } from './reputation.mjs';
 import { DEFAULT_ORIGIN, backendOrigin, backendPermission, matchingSite, pageHostname, readSites } from './settings.mjs';
 
@@ -84,6 +85,10 @@ function clearBadge(tabId) {
   return chrome.action.setBadgeText({ tabId, text: '' });
 }
 
+function withImpersonation(verdict, evidence) {
+  return evidence?.length ? { ...verdict, impersonation: evidence } : verdict;
+}
+
 async function reputationFor(page, config) {
   const revision = page.settingsRevision;
   let result;
@@ -103,15 +108,21 @@ async function reputationFor(page, config) {
     }
   }
   if (revision !== connectionRevision || !samePage(page, latest)) return { state: 'inactive' };
+  const impersonation = config.enabled ? detectImpersonation(page.host) : [];
   if (result.state === 'confirmed') {
     await Promise.all([
       chrome.action.setBadgeBackgroundColor({ tabId: page.tabId, color: '#b91c1c' }),
       chrome.action.setBadgeText({ tabId: page.tabId, text: 'STOP' })
     ]);
+  } else if (result.state === 'no_match' && impersonation.length) {
+    await Promise.all([
+      chrome.action.setBadgeBackgroundColor({ tabId: page.tabId, color: '#92400e' }),
+      chrome.action.setBadgeText({ tabId: page.tabId, text: '!' })
+    ]);
   } else {
     await clearBadge(page.tabId);
   }
-  return result;
+  return withImpersonation(result, impersonation);
 }
 
 async function saveConnection(message) {
@@ -153,7 +164,7 @@ async function tabStatus(tabId) {
   if (previous?.documentId === page.documentId && previous.credentialId === config.credential.id &&
       previous.navigation === (page.navigation ?? null) && Date.now() - previous.checkedAt < 45000 &&
       previous.verdict.state !== 'safe') {
-    return { ...display, ...previous.verdict };
+    return { ...display, ...verdict, ...previous.verdict };
   }
   return { ...display, ...verdict };
 }
@@ -185,7 +196,7 @@ async function submitTelemetry(page, message) {
     if (previousDocument && previous.navigation === (page.navigation ?? null) &&
         Date.now() - previous.checkedAt < 500 &&
         message.eventType !== 'recheck_risk') {
-      return previous.verdict;
+      return withImpersonation(previous.verdict, localVerdict.impersonation);
     }
 
     let verdict;
@@ -215,7 +226,7 @@ async function submitTelemetry(page, message) {
       [key]: { documentId, navigation: page.navigation ?? null, credentialId: credential.id,
         sessionId: id, verdict, checkedAt: Date.now() }
     });
-    return verdict;
+    return withImpersonation(verdict, localVerdict.impersonation);
   } finally {
     if (requests.get(tabId) === task) requests.delete(tabId);
   }
