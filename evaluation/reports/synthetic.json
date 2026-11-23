@@ -1,0 +1,251 @@
+{
+  "schemaVersion": 1,
+  "dataset": "phase3a-synthetic",
+  "kind": "synthetic",
+  "provenance": {
+    "sources": [
+      {
+        "id": "fixture-labels",
+        "lineage": "fixture-labels",
+        "kind": "synthetic",
+        "file": "labels.jsonl",
+        "sha256": "94fde5fdfcbd33e60a17ae22b3f745dada621456ac2fe39a7b0a22854da7b552",
+        "attribution": "ThreatDetection synthetic fixture authors",
+        "license": {
+          "name": "Original ThreatDetection test fixtures"
+        },
+        "format": "reviewed-jsonl",
+        "acquiredAt": "2026-01-05T00:00:00Z"
+      }
+    ],
+    "snapshots": [
+      {
+        "id": "fixture-feed",
+        "lineage": "fixture-feed",
+        "kind": "synthetic",
+        "file": "snapshot.json",
+        "sha256": "6dc389c70c55be1381b8f209dc3b0e14d20c4ec1221727b8ff162d4ec8b42a5e",
+        "attribution": "ThreatDetection synthetic fixture authors",
+        "license": {
+          "name": "Original ThreatDetection test fixtures"
+        },
+        "capturedAt": "2026-01-03T00:10:00Z"
+      }
+    ],
+    "minimumConfidence": "medium",
+    "split": {
+      "trainBefore": "2026-01-02T00:00:00Z",
+      "testFrom": "2026-01-03T00:00:00Z",
+      "seed": "phase3a-v1"
+    }
+  },
+  "featureSchema": {
+    "version": "url-lexical-v1",
+    "columns": [
+      "https",
+      "nondefault_port",
+      "ip_host",
+      "idn_labels",
+      "hostname_length",
+      "host_labels",
+      "host_digits",
+      "host_hyphens",
+      "registrant_length",
+      "subdomain_labels",
+      "path_length",
+      "path_depth",
+      "path_digits",
+      "path_percent_escapes"
+    ]
+  },
+  "ingestion": {
+    "received": 20,
+    "eligibleBeforeDedup": 18,
+    "duplicates": 2,
+    "conflictingKeys": 1,
+    "invalidLabel": 0,
+    "belowConfidence": 1,
+    "invalidObservationTime": 0,
+    "invalidUrl": 1,
+    "inputCounts": {
+      "fixture-labels": {
+        "received": 20,
+        "phishingLabels": 12,
+        "legitimateLabels": 8
+      }
+    },
+    "phishing": 8,
+    "legitimate": 7,
+    "retained": 15,
+    "cohorts": {
+      "global": {
+        "phishing": 6,
+        "legitimate": 6
+      },
+      "india-financial": {
+        "phishing": 2,
+        "legitimate": 1
+      }
+    }
+  },
+  "chronologicalDomainDisjoint": {
+    "splitCounts": {
+      "train": {
+        "phishing": 1,
+        "legitimate": 1,
+        "groups": 2
+      },
+      "validation": {
+        "phishing": 1,
+        "legitimate": 1,
+        "groups": 2
+      },
+      "test": {
+        "phishing": 6,
+        "legitimate": 4,
+        "groups": 10
+      }
+    },
+    "withheld": {
+      "undated": 0,
+      "seenInEarlierWindow": 1
+    },
+    "test": {
+      "reputation": {
+        "tp": 3,
+        "fp": 1,
+        "tn": 2,
+        "fn": 2,
+        "abstainPhishing": 1,
+        "abstainLegitimate": 1,
+        "total": 10,
+        "scored": 8,
+        "precision": 0.75,
+        "recall": 0.6,
+        "f1": 0.6666666666666666,
+        "falsePositiveRate": 0.3333333333333333,
+        "decisionCoverage": 0.8,
+        "phishingAlertCoverage": 0.5
+      },
+      "impersonation": {
+        "tp": 2,
+        "fp": 1,
+        "tn": 3,
+        "fn": 4,
+        "abstainPhishing": 0,
+        "abstainLegitimate": 0,
+        "total": 10,
+        "scored": 10,
+        "precision": 0.6666666666666666,
+        "recall": 0.3333333333333333,
+        "f1": 0.4444444444444444,
+        "falsePositiveRate": 0.25,
+        "decisionCoverage": 1,
+        "phishingAlertCoverage": 0.3333333333333333
+      },
+      "combined": {
+        "tp": 5,
+        "fp": 2,
+        "tn": 1,
+        "fn": 1,
+        "abstainPhishing": 0,
+        "abstainLegitimate": 1,
+        "total": 10,
+        "scored": 9,
+        "precision": 0.7142857142857143,
+        "recall": 0.8333333333333334,
+        "f1": 0.7692307692307693,
+        "falsePositiveRate": 0.6666666666666666,
+        "decisionCoverage": 0.9,
+        "phishingAlertCoverage": 0.8333333333333334
+      },
+      "reputationUnavailable": {
+        "undated": 0,
+        "sameLabelLineage": 0,
+        "noPriorFreshSnapshot": 2
+      },
+      "combinedPolicy": {
+        "confirmed": 4,
+        "advisoryOnly": 3
+      }
+    }
+  },
+  "retrospectiveDomainDisjoint": {
+    "splitCounts": {
+      "train": {
+        "phishing": 5,
+        "legitimate": 7,
+        "groups": 11
+      },
+      "validation": {
+        "phishing": 1,
+        "legitimate": 0,
+        "groups": 1
+      },
+      "test": {
+        "phishing": 2,
+        "legitimate": 0,
+        "groups": 2
+      }
+    },
+    "test": {
+      "reputation": {
+        "tp": 1,
+        "fp": 0,
+        "tn": 0,
+        "fn": 1,
+        "abstainPhishing": 0,
+        "abstainLegitimate": 0,
+        "total": 2,
+        "scored": 2,
+        "precision": 1,
+        "recall": 0.5,
+        "f1": 0.6666666666666666,
+        "falsePositiveRate": null,
+        "decisionCoverage": 1,
+        "phishingAlertCoverage": 0.5
+      },
+      "impersonation": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 0,
+        "fn": 2,
+        "abstainPhishing": 0,
+        "abstainLegitimate": 0,
+        "total": 2,
+        "scored": 2,
+        "precision": null,
+        "recall": 0,
+        "f1": 0,
+        "falsePositiveRate": null,
+        "decisionCoverage": 1,
+        "phishingAlertCoverage": 0
+      },
+      "combined": {
+        "tp": 1,
+        "fp": 0,
+        "tn": 0,
+        "fn": 1,
+        "abstainPhishing": 0,
+        "abstainLegitimate": 0,
+        "total": 2,
+        "scored": 2,
+        "precision": 1,
+        "recall": 0.5,
+        "f1": 0.6666666666666666,
+        "falsePositiveRate": null,
+        "decisionCoverage": 1,
+        "phishingAlertCoverage": 0.5
+      },
+      "reputationUnavailable": {
+        "undated": 0,
+        "sameLabelLineage": 0,
+        "noPriorFreshSnapshot": 0
+      },
+      "combinedPolicy": {
+        "confirmed": 1,
+        "advisoryOnly": 0
+      }
+    }
+  }
+}

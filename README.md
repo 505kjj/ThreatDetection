@@ -4,6 +4,8 @@ Threat Detection contains a Java 21 Spring Boot API, a Manifest V3 Chrome extens
 
 See [threat intelligence ingestion](docs/threat-intelligence-ingestion.md) for the managed CERT Polska source, provider terms, signed publication, and operations. [URL reputation operations](docs/url-reputation.md) describes the browser contract and the legacy operator-file format. An instance without a current, authorized browser snapshot reports **Protection unavailable**.
 
+The [offline evaluation guide](docs/dataset-evaluation.md) covers Phase 3A dataset provenance, held-out rule baselines, and the versioned URL feature interface. It is separate from the browser and backend.
+
 | Module | Location | Current behavior |
 | --- | --- | --- |
 | Spring Boot REST API, rules and JPA persistence | [`backend/`](backend/) | Secured API. Temporary H2 database is configured by default. |
