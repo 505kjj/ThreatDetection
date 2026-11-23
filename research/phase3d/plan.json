@@ -1,0 +1,15 @@
+{
+  "sampleSizes": [
+    5000,
+    20000,
+    50000,
+    100000
+  ],
+  "models": [
+    "logistic",
+    "forest",
+    "xgboost",
+    "mlp"
+  ],
+  "fusionMaxRows": 20000
+}
