@@ -1,11 +1,12 @@
 {
   "manifest_version": 3,
   "name": "Generic Threat Detection Monitor",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "minimum_chrome_version": "116",
-  "description": "A generic browser-based threat detection system that monitors configured websites for suspicious behavior patterns and provides real-time risk analysis.",
+  "description": "Checks visited websites locally against a phishing and malware reputation snapshot.",
   "permissions": [
     "storage",
+    "alarms",
     "webNavigation"
   ],
   "host_permissions": [

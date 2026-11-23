@@ -45,23 +45,52 @@ class BackendStatus extends Error {
   }
 }
 
-async function post(credential, route, payload, signal) {
-  const response = await fetch(credential.origin + '/api/threat/' + route, {
-    method: 'POST',
+function request(credential, route, signal, payload) {
+  return fetch(credential.origin + '/api/threat/' + route, {
+    method: payload ? 'POST' : 'GET',
     headers: {
       Authorization: 'Bearer ' + credential.token,
-      'Content-Type': 'application/json',
+      ...(payload ? { 'Content-Type': 'application/json' } : {}),
       Accept: 'application/json'
     },
-    body: JSON.stringify(payload),
+    body: payload ? JSON.stringify(payload) : undefined,
     credentials: 'omit',
     redirect: 'error',
     referrerPolicy: 'no-referrer',
     cache: 'no-store',
     signal: AbortSignal.any([signal, AbortSignal.timeout(5000)])
   });
+}
+
+async function post(credential, route, payload, signal) {
+  const response = await request(credential, route, signal, payload);
   if (!response.ok) throw new BackendStatus(response.status);
   return response.json();
+}
+
+export async function downloadSnapshot(credential) {
+  // A transport failure can use the previous still-fresh snapshot. A server rejection cannot.
+  const response = await request(credential, 'reputation/snapshot', new AbortController().signal);
+  if (!response.ok || !response.body) return null;
+  const limit = 3 * 1024 * 1024;
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder('utf-8', { fatal: true });
+  let json = '';
+  let size = 0;
+  try {
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) return JSON.parse(json + decoder.decode());
+      size += value.byteLength;
+      if (size > limit) return null;
+      json += decoder.decode(value, { stream: true });
+    }
+  } catch {
+    return null;
+  } finally {
+    await reader.cancel().catch(() => {});
+    reader.releaseLock();
+  }
 }
 
 export async function startSession(credential, host, signal) {

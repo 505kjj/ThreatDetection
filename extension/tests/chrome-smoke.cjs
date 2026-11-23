@@ -3,6 +3,8 @@ const { spawn, spawnSync } = require('node:child_process');
 const { createHash, randomBytes } = require('node:crypto');
 const { once } = require('node:events');
 const { createServer } = require('node:http');
+const { mkdtempSync, renameSync, rmSync, rmdirSync, writeFileSync } = require('node:fs');
+const { tmpdir } = require('node:os');
 const path = require('node:path');
 const { chromium } = require('playwright');
 
@@ -36,7 +38,7 @@ async function stop(process) {
   await exited;
 }
 
-async function startBackend(java, extensionOrigin, port = 0) {
+async function startBackend(java, extensionOrigin, snapshotPath, port = 0) {
   const config = {
     threat: { security: {
       'allowed-origins': [extensionOrigin],
@@ -47,17 +49,20 @@ async function startBackend(java, extensionOrigin, port = 0) {
     } }
   };
   const process = spawn(java, ['-jar', jar, '--server.address=127.0.0.1', '--server.port=' + port], {
-    env: { ...globalThis.process.env, SPRING_APPLICATION_JSON: JSON.stringify(config) }
+    env: { ...globalThis.process.env, SPRING_APPLICATION_JSON: JSON.stringify(config),
+      THREAT_REPUTATION_SNAPSHOT_PATH: snapshotPath, THREAT_REPUTATION_RELOAD_INTERVAL: 'PT0.2S' }
   });
   let logs = '';
   process.stdout.on('data', chunk => { logs = (logs + chunk).slice(-8000); });
   process.stderr.on('data', chunk => { logs = (logs + chunk).slice(-8000); });
   process.on('error', error => { logs += String(error); });
   try {
-    for (let attempt = 0; attempt < 60; attempt++) {
+    const deadline = Date.now() + 90000;
+    while (Date.now() < deadline) {
       const match = /Tomcat started on port (\d+)/.exec(logs);
       if (match) {
-        const health = await fetch('http://127.0.0.1:' + match[1] + '/api/health').catch(() => null);
+        const health = await fetch('http://127.0.0.1:' + match[1] + '/api/health',
+          { signal: AbortSignal.timeout(2000) }).catch(() => null);
         if (health?.ok) return { process, port: Number(match[1]) };
       }
       if (process.exitCode !== null) break;
@@ -83,6 +88,22 @@ async function focusPassword(site) {
   await site.locator('#password').focus();
 }
 
+async function badge(worker, url) {
+  return worker.evaluate(async url => {
+    for (const tab of await chrome.tabs.query({})) {
+      const frame = await chrome.webNavigation.getFrame({ tabId: tab.id, frameId: 0 }).catch(() => null);
+      if (frame?.url === url) return chrome.action.getBadgeText({ tabId: tab.id });
+    }
+    return null;
+  }, url);
+}
+
+function writeFixture(file, content) {
+  const pending = file + '.next';
+  writeFileSync(pending, JSON.stringify(content));
+  renameSync(pending, file);
+}
+
 async function main() {
   const java = javaExecutable();
   const fixture = createServer((_request, response) => {
@@ -91,23 +112,44 @@ async function main() {
       '<input id="password" type="password" value="private-form-value">');
   });
   await new Promise(resolve => fixture.listen(0, '127.0.0.1', resolve));
+  const folder = mkdtempSync(path.join(tmpdir(), 'threat-reputation-smoke-'));
+  const snapshotPath = path.join(folder, 'snapshot.json');
+  const localSite = 'http://127.0.0.1:' + fixture.address().port;
+  const phishingFixture = 'http://known-phish.example.test:' + fixture.address().port + '/login-fixture';
+  function publish(lifetime) {
+    writeFixture(snapshotPath, {
+      generatedAt: new Date(Date.now() - 1000).toISOString(),
+      expiresAt: new Date(Date.now() + lifetime).toISOString(),
+      entries: [
+        { kind: 'HOST', value: 'known-phish.example.test', threat: 'PHISHING' },
+        { kind: 'URL_SHA256', value: createHash('sha256').update(localSite + '/download-fixture').digest('hex'),
+          threat: 'MALWARE' }
+      ]
+    });
+  }
   let browser;
   let backend;
   try {
+    publish(300000);
     browser = await chromium.launchPersistentContext('', {
       channel: 'chromium',
-      args: ['--disable-extensions-except=' + extension, '--load-extension=' + extension]
+      args: ['--disable-extensions-except=' + extension, '--load-extension=' + extension,
+        '--no-proxy-server', '--host-resolver-rules=MAP known-phish.example.test 127.0.0.1']
     });
     const worker = browser.serviceWorkers()[0] ?? await browser.waitForEvent('serviceworker');
     const extensionOrigin = new URL(worker.url()).origin === 'null'
       ? 'chrome-extension://' + new URL(worker.url()).hostname
       : new URL(worker.url()).origin;
-    backend = await startBackend(java, extensionOrigin);
+    backend = await startBackend(java, extensionOrigin, snapshotPath);
     const origin = 'http://127.0.0.1:' + backend.port;
     const apiCalls = [];
+    const snapshotCalls = [];
     browser.on('request', request => {
       if (request.method() === 'POST' && request.url().startsWith(origin + '/api/threat/')) {
         apiCalls.push(request);
+      }
+      if (request.method() === 'GET' && request.url().startsWith(origin + '/api/threat/reputation/snapshot')) {
+        snapshotCalls.push(request);
       }
     });
 
@@ -115,16 +157,19 @@ async function main() {
     await options.goto(extensionOrigin + '/options.html');
     await options.locator('#tokenStatus').getByText('Browser token required.').waitFor();
     await options.locator('#backendOrigin').fill(origin);
-    await options.locator('#browserToken').fill(token);
-    await options.locator('#saveConnection').click();
+    async function refreshCredential() {
+      await options.locator('#browserToken').fill(token);
+      await options.locator('#saveConnection').click();
+      await eventually(() => options.locator('#browserToken').inputValue(), value => value === '', 'saved token');
+    }
+    await refreshCredential();
     await options.locator('#tokenStatus').getByText('Browser token set for this session.').waitFor();
     await options.locator('#newDomain').fill('127.0.0.1');
     await options.locator('#addDomain').click();
     await options.locator('#siteList').getByText('127.0.0.1', { exact: true }).waitFor();
 
     const site = await browser.newPage();
-    await site.goto('http://127.0.0.1:' + fixture.address().port +
-      '/login/private-path?fixture=private-query#private-fragment');
+    await site.goto(localSite + '/login/private-path?fixture=private-query#private-fragment');
     const first = await eventually(() => tabRecord(worker), result => result?.verdict.state === 'safe', 'initial verdict');
     await wait(600);
     await focusPassword(site);
@@ -142,12 +187,59 @@ async function main() {
     }
     console.log('Chrome: service worker authenticated and sent only the allowed hostname and activity fields');
 
+    const popup = await browser.newPage();
+    await popup.goto(extensionOrigin + '/popup.html');
+    async function assertStatus(page, label) {
+      await page.bringToFront();
+      await options.evaluate(() => chrome.storage.session.set({ smokeRefresh: crypto.randomUUID() }));
+      await popup.locator('#statusText').getByText(label, { exact: true }).waitFor();
+    }
+    await assertStatus(site, 'No known threat match');
+    const malware = await browser.newPage();
+    await malware.goto(localSite + '/download-fixture?case=private-query#private-fragment');
+    await eventually(() => badge(worker, malware.url()), value => value === 'STOP', 'malware toolbar warning');
+    const phish = await browser.newPage();
+    await phish.goto(phishingFixture);
+    await assertStatus(phish, 'Known malicious website');
+    assert.equal(await badge(worker, phish.url()), 'STOP');
+    assert.equal(await badge(worker, malware.url()), 'STOP');
+    assert.equal(await badge(worker, site.url()), '');
+    assert.ok(snapshotCalls.length > 0);
+    for (const request of snapshotCalls) {
+      assert.equal(request.url(), origin + '/api/threat/reputation/snapshot');
+      assert.equal(request.postData(), null);
+      assert.ok(request.serviceWorker());
+      const headers = await request.allHeaders();
+      assert.equal(headers.authorization, 'Bearer ' + token);
+      assert.equal(headers.referer, undefined);
+      assert.equal(headers.cookie, undefined);
+    }
+    assert.equal(apiCalls.filter(call => call.url().endsWith('/session/start')).length, 1,
+      'confirmed destinations must not register behavioral sessions');
+    await malware.evaluate(() => history.pushState({}, '', '/help-fixture'));
+    await assertStatus(malware, 'No known threat match');
+    assert.equal(await badge(worker, malware.url()), '');
+    assert.equal(await badge(worker, phish.url()), 'STOP');
+    console.log('Chrome: phishing host and exact malware path warn in separate tabs; SPA navigation clears only its own warning');
+    await malware.close();
+    await phish.close();
+    await site.bringToFront();
+    await wait(650);
+    for (let i = 0; i < 28; i++) {
+      await site.mouse.click(300, 150);
+      if (i % 7 === 6) await wait(550);
+    }
+    await assertStatus(site, 'Suspicious activity, unconfirmed');
+    assert.equal(await badge(worker, site.url()), '');
+    console.log('Chrome: behavior-only signals stay unconfirmed and never set the malicious badge');
+
     await stop(backend.process);
     await wait(600);
     await focusPassword(site);
     await eventually(() => tabRecord(worker), result =>
       result?.verdict.state === 'unavailable' && result.checkedAt > checked.checkedAt, 'offline status', 230);
-    backend = await startBackend(java, extensionOrigin, backend.port);
+    await assertStatus(site, 'Protection unavailable');
+    backend = await startBackend(java, extensionOrigin, snapshotPath, backend.port);
     await focusPassword(site);
     const recovered = await eventually(() => tabRecord(worker), result => result?.verdict.state === 'safe' &&
       result.sessionId !== first.sessionId, 'new session after restart', 230);
@@ -162,11 +254,36 @@ async function main() {
     await wait(600);
     assert.equal(apiCalls.length, before);
     console.log('Chrome: pausing monitoring stopped requests from the open document');
+
+    await options.locator('#enableMonitoring').click();
+    await site.close();
+    writeFixture(snapshotPath, { invalid: 'synthetic-provider-error' });
+    const headers = { Authorization: 'Bearer ' + token };
+    const snapshotEndpoint = origin + '/api/threat/reputation/snapshot';
+    await eventually(async () => (await fetch(snapshotEndpoint, { headers })).status,
+      status => status === 503, 'provider failure response');
+    await refreshCredential();
+    const stale = await browser.newPage();
+    await stale.goto(phishingFixture);
+    await assertStatus(stale, 'Protection unavailable');
+    assert.equal(await badge(worker, stale.url()), '');
+    publish(14000);
+    await eventually(async () => (await fetch(snapshotEndpoint, { headers })).status,
+      status => status === 200, 'restored short-lived snapshot');
+    await refreshCredential();
+    await assertStatus(stale, 'Known malicious website');
+    assert.equal(await badge(worker, stale.url()), 'STOP');
+    await popup.locator('#statusText').getByText('Protection unavailable', { exact: true }).waitFor();
+    assert.equal(await badge(worker, stale.url()), '');
+    console.log('Chrome: invalid and expired snapshots report unavailable and clear the toolbar warning');
   } finally {
     if (browser) await browser.close();
     await stop(backend?.process);
     fixture.closeAllConnections();
     await new Promise(resolve => fixture.close(resolve));
+    rmSync(snapshotPath, { force: true });
+    rmSync(snapshotPath + '.next', { force: true });
+    rmdirSync(folder);
   }
 }
 

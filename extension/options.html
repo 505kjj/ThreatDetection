@@ -9,7 +9,7 @@
     <div class="options-container">
         <div class="options-header">
             <h1>🛡️ Threat Detection Settings</h1>
-            <p>Connect to the secured backend and choose which websites to monitor.</p>
+            <p>Connect to the secured backend for local phishing and malware reputation checks.</p>
         </div>
 
         <div class="options-section">
@@ -31,10 +31,11 @@
         </div>
 
         <div class="options-section">
-            <h2>Monitored Websites</h2>
+            <h2>Activity monitoring</h2>
             <p class="section-desc">
-                Add a hostname to monitor it and its subdomains. Paths and field names are used locally
-                to classify activity. The backend receives the hostname and a limited set of activity counts and categories.
+                Reputation checks happen locally on all supported websites. Add a hostname only if you also want
+                activity monitoring for it and its subdomains. Activity monitoring sends the hostname and activity counts
+                to the backend. Paths and field names stay on your device.
             </p>
             <div id="siteList" class="site-cards-list"></div>
             <div class="add-domain-area">
@@ -49,7 +50,7 @@
         </div>
 
         <div class="options-section">
-            <h2>Monitoring Control</h2>
+            <h2>Protection and monitoring</h2>
             <div class="btn-row">
                 <button class="btn-primary" id="enableMonitoring">Enable Monitoring</button>
                 <button class="btn-secondary" id="disableMonitoring">Disable Monitoring</button>

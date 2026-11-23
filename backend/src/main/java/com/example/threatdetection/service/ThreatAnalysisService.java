@@ -5,6 +5,7 @@ import com.example.threatdetection.dto.RiskResponse;
 import com.example.threatdetection.engine.RiskEngine;
 import com.example.threatdetection.model.RiskLog;
 import com.example.threatdetection.model.ThreatSession;
+import com.example.threatdetection.reputation.ReputationService;
 import com.example.threatdetection.repository.RiskLogRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,17 +24,20 @@ public class ThreatAnalysisService {
     private final SessionService sessionService;
     private final RiskLogRepository riskLogRepository;
     private final AlertService alertService;
+    private final ReputationService reputationService;
 
     public ThreatAnalysisService(RiskEngine riskEngine,
                                   EventLoggingService eventLoggingService,
                                   SessionService sessionService,
                                   RiskLogRepository riskLogRepository,
-                                  AlertService alertService) {
+                                  AlertService alertService,
+                                  ReputationService reputationService) {
         this.riskEngine = riskEngine;
         this.eventLoggingService = eventLoggingService;
         this.sessionService = sessionService;
         this.riskLogRepository = riskLogRepository;
         this.alertService = alertService;
+        this.reputationService = reputationService;
     }
 
     /**
@@ -43,7 +47,7 @@ public class ThreatAnalysisService {
     public RiskResponse analyze(BehaviorRequest request, String ownerId) {
         ThreatSession session = sessionService.requireOwnedSession(request.getSessionId(), ownerId);
         eventLoggingService.logEvent(request, session);
-        RiskResponse response = riskEngine.evaluate(request);
+        RiskResponse response = reputationService.applyHostReputation(session.getDomain(), riskEngine.evaluate(request));
 
         session.setCurrentRiskScore(response.getRiskScore());
         session.setRiskLevel(response.getRiskLevel());

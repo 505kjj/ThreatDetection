@@ -1,11 +1,13 @@
 # Threat Detection
 
-Threat Detection contains a Java 21 Spring Boot API, a Manifest V3 Chrome extension, and a Java Swing admin client. The Chrome extension uses the secured backend to check activity on configured websites. These behavioral signals can support a warning and do not establish whether a website is phishing.
+Threat Detection contains a Java 21 Spring Boot API, a Manifest V3 Chrome extension, and a Java Swing admin client. Chrome matches exact hostnames and URL-path hashes locally against an authenticated reputation snapshot. Optional activity monitoring on configured sites can produce an unconfirmed warning.
 
-| Module | Location | Phase 1A status |
+See [URL reputation operations and provider evaluation](docs/url-reputation.md) for the snapshot format, licensing requirements, and deployment configuration. An instance without a configured, current snapshot reports **Protection unavailable**.
+
+| Module | Location | Current behavior |
 | --- | --- | --- |
 | Spring Boot REST API, rules and JPA persistence | [`backend/`](backend/) | Secured API. Temporary H2 database is configured by default. |
-| Chrome extension | [`extension/`](extension/) | Connects to the secured API using a browser bearer token and the returned session UUID. Authentication and network failures show protection as unavailable. |
+| Chrome extension | [`extension/`](extension/) | Downloads one authenticated threat snapshot and checks websites on the device. Optional activity monitoring uses the secured session API. |
 | Swing admin client | [`admin-swing/`](admin-swing/) | Existing client needs admin bearer authentication. The simulator also needs the new browser session contract. |
 | Static browser demos | [`backend/src/main/resources/static/`](backend/src/main/resources/static/) | Assets retained for reference. The server disables static mappings and denies the demo routes. |
 
@@ -97,7 +99,7 @@ For manual requests with an HTTP client, see [`backend/test.http`](backend/test.
 ## Connect the Chrome extension
 
 1. In Chrome 116 or later, open `chrome://extensions`, enable **Developer mode**, and load the repository’s `extension/` directory as an unpacked extension. Copy the displayed extension ID.
-2. Register a separate `BROWSER` client and its token digest in the backend configuration. Include the extension's exact `chrome-extension://<extension-id>` origin in `threat.security.allowed-origins`. For a disposable local client, use the `New-LocalApiClient` helper from the verification block above and the configuration below. Run it from `backend/` after building the JAR.
+2. Register a separate `BROWSER` client and its token digest in the backend configuration. Include the extension's exact `chrome-extension://<extension-id>` origin in `threat.security.allowed-origins`. Set `THREAT_REPUTATION_SNAPSHOT_PATH` to an absolute path to an authorized, current [snapshot](docs/url-reputation.md#snapshot-format). For a disposable local client, use the `New-LocalApiClient` helper from the verification block above and the configuration below. Run it from `backend/` after building the JAR.
 
    ```powershell
    $extensionId = Read-Host 'ID shown in chrome://extensions'
@@ -113,13 +115,13 @@ For manual requests with an HTTP client, see [`backend/test.http`](backend/test.
    ```
 
 3. Open the extension's **Settings**, use `http://127.0.0.1:8081` for local verification, paste the browser token, and choose **Save connection**. For a remote backend, use its HTTPS origin and approve the host permission requested by Chrome. Changing the origin requires a new token for that origin.
-4. Add a test hostname such as `example.com` and visit it. The popup should display the activity-check result when the worker has received one. Clear the token or stop the backend to check that the popup says **Protection unavailable**. Pausing monitoring stops collection on open tabs. Stop the disposable backend with `Stop-Process -InputObject $backend` when finished.
+4. Visit a website and check the popup. Add the hostname in Settings only if you also want server-side activity checks. Clearing the token or pausing protection disables checks on open tabs. Stop the disposable backend with `Stop-Process -InputObject $backend` when finished.
 
-The token is kept in trusted extension memory for the browser session. Reloading or updating the extension, or restarting Chrome, clears it. Per-document session IDs and verdicts are also in memory. The service worker renews a session once if the backend loses it. Each session starts with the hostname only. Analysis contains that server-issued UUID, bounded counts, and activity categories. Path and field-name matching happen on the device. Requests never include page URLs, paths, query strings, fragments, referrers, or form values.
+The token and snapshot are kept in trusted extension memory for the browser session. Reloading or updating the extension, or restarting Chrome, clears them. The snapshot request contains no destination. For opted-in activity monitoring, the service worker renews a session once if the backend loses it. Each such session starts with the hostname only. Analysis sends the server-issued UUID, bounded counts, and activity categories. Requests never include page URLs, paths, query strings, fragments, referrers, or form values.
 
 ### Extension regression checks
 
-Run `node --test extension/tests/worker.test.mjs` from the repository root with Node.js 24. The tests exercise message validation, the outgoing payload, credential isolation and origin binding, session recovery, and failure states.
+Run `node --test extension/tests/worker.test.mjs extension/tests/reputation.test.mjs` from the repository root with Node.js 24.
 
 The browser smoke test requires the built backend JAR and a separate Playwright installation. From the repository root in PowerShell 7:
 
@@ -132,7 +134,7 @@ node (Join-Path $env:NODE_PATH 'playwright/cli.js') install chromium --no-shell
 node extension/tests/chrome-smoke.cjs
 ```
 
-It uses a disposable Chrome profile, a local login fixture, and an isolated backend with a generated credential.
+It uses a disposable Chrome profile, a local login fixture, synthetic phishing and malware indicators, and an isolated backend with a generated credential. The synthetic sites are served locally.
 
 ## Authentication and CORS configuration
 
@@ -146,6 +148,7 @@ It uses a disposable Chrome profile, a local login fixture, and an isolated back
 
 | Method and route | Input and access |
 | --- | --- |
+| `GET /api/threat/reputation/snapshot` | Browser bearer token. An authenticated download without query parameters, browsing data, or body. Returns `503` if a current snapshot is unavailable. |
 | `POST /api/threat/session/start` | Browser bearer token. JSON with only `domain`, a hostname with DNS-style labels, up to 253 characters. Send IDNs as ASCII Punycode. Do not send a URL, port, user-agent hash, or client-supplied session ID. The API normalizes the hostname and returns a new lowercase UUID v4 in `sessionId`. Cache that returned ID and obtain a new one after a **404** for an expired or missing session. |
 | `POST /api/threat/analyze`, `POST /api/threat/event` | Browser bearer token. JSON with required `sessionId` and `eventType`, plus the optional metadata below. The backend gets the hostname from the authorized session. The client must omit `domain`, `url`, `path`, `referrer`, `fieldType`, `timestamp`, and `userAgentHash`. Unknown fields and invalid types return **400**. |
 | `GET /api/threat/session/{sessionId}` and its `/summary`, `/timeline` subroutes | Owner or admin bearer token. A canonical UUID v4 is required. |
@@ -156,11 +159,11 @@ It uses a disposable Chrome profile, a local login fixture, and an isolated back
 - `eventType` accepts `page_view`, `sensitive_page_visit`, `navigation_change`, `password_focus`, `form_focus`, `form_submit`, `copy_paste`, `rapid_clicking`, `tab_blur`, `tab_focus`, `heartbeat`, or `recheck_risk`.
 - `actionType` accepts `normal_action` (default), `navigation`, `sensitive_action`, `behavior_anomaly`, or `session_anomaly`. `pageCategory` accepts `normal_page` (default) or `sensitive_page`.
 - `redirectCount` is an integer from 0 to 100. `averageClickGapMs` is an integer from −1 to 10,000, with −1 meaning unavailable. Each of `clicksLast10Sec`, `pagesVisitedLast30Sec`, `tabSwitchCount`, `copyPasteCount`, `formSubmitCount`, and `failedActionCount` is an integer from 0 to 1,000. Counts default to zero. `deviceChanged` is a boolean that defaults to false.
-- Behavior-based verdicts can reach **Suspicious / SHOW_WARNING**, with a maximum score of 60. Ordinary password or form focus and ordinary form submission add no risk points on their own. The verdict timestamp comes from the server. A **Safe** result means no warning was reached by these behavior rules.
+- Behavior by itself can reach **Suspicious / SHOW_WARNING**, with a maximum score of 60. Only an exact host present in the current reputation snapshot can elevate backend analysis to **Critical / ADMIN_ALERT**. The backend returns a separate `reputationStatus`, and the popup describes a miss as **No known threat match**. Exact URL-path matches are evaluated only in Chrome.
 - The extension uses a configured HTTPS backend origin or an HTTP loopback origin for local development. Use a separate browser token per identity. Keep admin credentials and shared credentials out of the extension package.
 
 ## Data handling and remaining release work
 
 Full URLs, paths, referrers, user-agent hashes, and field types are rejected at the API and excluded from the new persistence model. Protected JSON risk logs retain a canonical hostname for domain triage. CSVs and application log messages omit it. Previous unowned sessions and unmarked risk or alert rows are hidden by the secured API. If an older externally managed database was used, start with a fresh secured database or purge and migrate legacy tables and backups explicitly. Java schema updates do not erase previously stored columns or data.
 
-The local bearer registry is suitable for a controlled pilot. A public release still needs managed identity and credential lifecycle, rate limits and ingress request-size controls, durable storage with migrations and retention, and verified URL reputation signals. The backend upgrade brings Spring Security 7.1.3, Spring Framework 7.0.11, Tomcat 11.0.27, and Jackson 3.1.8 through Spring Boot 4.1.3. Spring Boot DevTools was removed from the backend. The Swing dependency set is separate.
+The local bearer registry is suitable for a controlled pilot. A public release still needs managed identity and credential lifecycle, rate limits and ingress request-size controls, durable storage with migrations and retention, and licensed threat feeds with operational monitoring. The backend uses Spring Security 7.1.3, Spring Framework 7.0.11, Tomcat 11.0.27, and Jackson 3.1.8 through Spring Boot 4.1.3. The Swing dependency set is separate.

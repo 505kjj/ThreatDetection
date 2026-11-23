@@ -1,5 +1,6 @@
 package com.example.threatdetection.dto;
 
+import com.example.threatdetection.reputation.ReputationStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RiskResponse {
+    private ReputationStatus reputationStatus;
 
     private int riskScore;
     private int trustScore;

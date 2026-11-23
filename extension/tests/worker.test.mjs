@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { createHash } from 'node:crypto';
 import { analysisFields } from '../backend-api.mjs';
 import { backendOrigin, matchingSite, newSite } from '../settings.mjs';
 
@@ -12,11 +13,18 @@ const renewedSession = '1c37f557-0a20-4b9c-b557-c7b8b7daebc7';
 const pageUrl = 'https://bank.example.test/login/private?fixture=secret#fragment';
 const safe = { riskLevel: 'Safe', action: 'ALLOW', riskScore: 0, reasons: ['No warning'] };
 const event = { type: 'TELEMETRY', eventType: 'password_focus', sensitivePage: true };
+const snapshot = (entries = []) => ({
+  generatedAt: new Date(Date.now() - 1000).toISOString(),
+  expiresAt: new Date(Date.now() + 60000).toISOString(),
+  entries
+});
 
 function chromeModel() {
   const handlers = {};
   const hook = name => ({ addListener(fn) { handlers[name] = fn; } });
   const accessLevels = {};
+  const alarms = new Map();
+  const badges = new Map();
   const stored = {
     local: { backendUrl: defaultOrigin, monitoredSites: [newSite('bank.example.test')],
       session_old: 'legacy-id', _latestRisk: { riskLevel: 'High Risk' } },
@@ -51,8 +59,20 @@ function chromeModel() {
   const api = {
     runtime: { id: extensionId, getURL: path => extensionUrl + path, onMessage: hook('message') },
     storage: { local: area('local'), session: area('session'), onChanged: hook('change') },
-    webNavigation: { async getFrame({ tabId }) { return frames[tabId]; }, onCommitted: hook('committed') },
-    tabs: { async query() { return []; }, onRemoved: hook('removed') },
+    webNavigation: {
+      async getFrame({ tabId }) { return frames[tabId]; },
+      onCommitted: hook('committed'), onHistoryStateUpdated: hook('history')
+    },
+    tabs: { async query() { return []; }, async sendMessage() {}, onRemoved: hook('removed') },
+    action: {
+      async setBadgeText({ tabId, text }) { badges.set(tabId, text); },
+      async setBadgeBackgroundColor() {}
+    },
+    alarms: {
+      async get(name) { return alarms.get(name); },
+      async create(name, { when }) { alarms.set(name, { scheduledTime: when }); },
+      onAlarm: hook('alarm')
+    },
     permissions: {
       async contains({ origins }) {
         return origins.every(origin => origin === 'http://127.0.0.1/*' || origin === 'https://api.example.test/*');
@@ -61,7 +81,7 @@ function chromeModel() {
     }
   };
   return {
-    api, stored, accessLevels, frames, sender, handlers,
+    api, stored, accessLevels, frames, sender, handlers, badges,
     message(body, from = sender()) {
       return new Promise(resolve => {
         if (!handlers.message(body, from, resolve)) resolve(undefined);
@@ -70,14 +90,19 @@ function chromeModel() {
   };
 }
 
-async function worker(response) {
+async function worker(response, feed = () => json(snapshot())) {
   const mock = chromeModel();
   const previousChrome = globalThis.chrome;
   const previousFetch = globalThis.fetch;
   const calls = [];
+  const downloads = [];
   globalThis.chrome = mock.api;
   globalThis.fetch = async (url, options) => {
     options.signal.throwIfAborted();
+    if (options.method === 'GET') {
+      downloads.push({ url, options });
+      return feed();
+    }
     const call = { url, options, body: JSON.parse(options.body) };
     calls.push(call);
     return response(call, calls.length);
@@ -88,7 +113,7 @@ async function worker(response) {
     const popup = { id: extensionId, url: extensionUrl + 'popup.html' };
     const save = (origin, value) => mock.message({ type: 'SAVE_CONNECTION', origin, token: value }, options);
     const status = (tabId = 1) => mock.message({ type: 'GET_TAB_STATUS', tabId }, popup);
-    return { ...mock, calls, options, save, status, restore() {
+    return { ...mock, calls, downloads, options, save, status, restore() {
       globalThis.chrome = previousChrome;
       globalThis.fetch = previousFetch;
     } };
@@ -125,7 +150,7 @@ test('origin validation and telemetry allowlisting match the secured contract', 
 test('worker authenticates only the allowlisted requests and strips legacy browsing data', async t => {
   const state = await worker(call => json(call.url.endsWith('/session/start') ? { sessionId: originalSession } : safe));
   t.after(state.restore);
-  assert.deepEqual(await state.message({ type: 'PAGE_CONFIGURATION' }), { active: false });
+  assert.equal((await state.message({ type: 'PAGE_CONFIGURATION' })).active, false);
   assert.deepEqual(await state.save(defaultOrigin, token), { saved: true });
   assert.equal((await state.message({ type: 'PAGE_CONFIGURATION' })).active, true);
   const verdict = await state.message({ ...event, url: pageUrl, domain: 'untrusted.test', sessionId: 'untrusted',
@@ -146,8 +171,11 @@ test('worker authenticates only the allowlisted requests and strips legacy brows
   assert.equal(state.stored.local._latestRisk, undefined);
   assert.equal(JSON.stringify(state.stored.local).includes(token), false);
   assert.deepEqual(state.accessLevels, { local: 'TRUSTED_CONTEXTS', session: 'TRUSTED_CONTEXTS' });
-  assert.equal((await state.status()).state, 'safe');
-  assert.equal((await state.status(2)).state, 'waiting');
+  assert.equal((await state.status()).state, 'no_match');
+  assert.equal((await state.status(2)).reasons, undefined);
+  assert.equal(state.downloads.length, 1);
+  assert.equal(state.downloads[0].url, defaultOrigin + '/api/threat/reputation/snapshot');
+  assert.equal(state.downloads[0].options.body, undefined);
 });
 
 test('worker rejects stale documents, subframes, and content attempts to change the backend', async t => {
@@ -200,4 +228,56 @@ test('failed and unsupported responses never become blocking verdicts', async t 
   await state.api.storage.local.set({ monitoringEnabled: false });
   assert.equal((await state.message(recheck)).state, 'inactive');
   assert.equal((await state.status()).state, 'paused');
+});
+
+test('confirms a URL-path hash only on its current tab and skips behavior telemetry', async t => {
+  const hash = createHash('sha256').update('https://bank.example.test/login/private').digest('hex');
+  const state = await worker(() => { throw new Error('Unexpected browsing telemetry'); },
+    () => json(snapshot([{ kind: 'URL_SHA256', value: hash, threat: 'PHISHING' }])));
+  t.after(state.restore);
+  await state.save(defaultOrigin, token);
+  state.frames[2].url = 'https://bank.example.test/login/public';
+  assert.equal((await state.status(1)).state, 'confirmed');
+  assert.equal((await state.status(2)).state, 'no_match');
+  assert.equal(state.badges.get(1), 'STOP');
+  assert.equal(state.badges.get(2), '');
+  assert.equal((await state.message(event)).state, 'confirmed');
+  assert.equal(state.calls.length, 0);
+  assert.equal(state.downloads.length, 1);
+  assert.ok(!JSON.stringify(state.stored.session).includes('/login/private'));
+  state.frames[1].url = state.frames[2].url;
+  state.handlers.history({ tabId: 1, frameId: 0, documentId: state.frames[1].documentId });
+  assert.equal((await state.status(1)).state, 'no_match');
+  assert.equal(state.badges.get(1), '');
+});
+
+test('does not publish a confirmation that arrives after same-document navigation', async t => {
+  let release;
+  let downloading;
+  const started = new Promise(resolve => { downloading = resolve; });
+  const body = new Promise(resolve => { release = resolve; });
+  const hash = createHash('sha256').update('https://bank.example.test/login/private').digest('hex');
+  const state = await worker(() => { throw new Error('Unexpected browsing telemetry'); }, () => {
+    downloading();
+    return body;
+  });
+  t.after(state.restore);
+  await state.save(defaultOrigin, token);
+  const old = state.status();
+  await started;
+  state.frames[1].url = 'https://bank.example.test/login/public';
+  state.handlers.history({ tabId: 1, frameId: 0, documentId: state.frames[1].documentId });
+  release(json(snapshot([{ kind: 'URL_SHA256', value: hash, threat: 'MALWARE' }])));
+  assert.equal((await old).state, 'inactive');
+  assert.equal((await state.status()).state, 'no_match');
+  assert.notEqual(state.badges.get(1), 'STOP');
+});
+
+test('a missing provider returns unavailable, never no-match or a warning', async t => {
+  const state = await worker(() => { throw new Error('Unexpected browsing telemetry'); }, () => json({}, 503));
+  t.after(state.restore);
+  await state.save(defaultOrigin, token);
+  assert.equal((await state.status()).state, 'unavailable');
+  assert.equal((await state.message(event)).cause, 'reputation');
+  assert.equal(state.calls.length, 0);
 });

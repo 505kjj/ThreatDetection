@@ -1,12 +1,17 @@
-import { analysisFields, analyze, requestFailure, startSession, validToken } from './backend-api.mjs';
+import { analysisFields, analyze, downloadSnapshot, requestFailure, startSession, validToken } from './backend-api.mjs';
+import { checkDestination, createSnapshotCache, destinationFor } from './reputation.mjs';
 import { DEFAULT_ORIGIN, backendOrigin, backendPermission, matchingSite, pageHostname, readSites } from './settings.mjs';
 
 const CREDENTIAL = 'backendCredential';
 const statusKey = tabId => 'tab-status:' + tabId;
 const navigationKey = tabId => 'tab-navigation:' + tabId;
 const requests = new Map();
+const navigations = new Map();
 const local = chrome.storage.local;
 const session = chrome.storage.session;
+const reputation = createSnapshotCache(session, downloadSnapshot);
+const REPUTATION_EXPIRY = 'reputation-expiry';
+let connectionRevision = 0;
 
 const setup = initialize();
 async function initialize() {
@@ -43,14 +48,21 @@ async function credentialFor(origin) {
 
 async function currentPage(tabId) {
   if (!Number.isInteger(tabId) || tabId < 0) return null;
+  const navigation = navigations.get(tabId);
+  const settingsRevision = connectionRevision;
   try {
     const frame = await chrome.webNavigation.getFrame({ tabId, frameId: 0 });
-    const host = pageHostname(frame?.url);
-    return host && frame.documentId && frame.documentLifecycle === 'active'
-      ? { tabId, documentId: frame.documentId, host } : null;
+    const destination = destinationFor(frame?.url);
+    return destination && frame.documentId && frame.documentLifecycle === 'active'
+      ? { tabId, documentId: frame.documentId, host: destination.host, destination, navigation, settingsRevision } : null;
   } catch {
     return null;
   }
+}
+
+function samePage(page, latest) {
+  return latest?.documentId === page.documentId && latest.destination.key === page.destination.key &&
+    latest.navigation === page.navigation && navigations.get(page.tabId) === page.navigation;
 }
 
 async function verifiedPage(sender) {
@@ -63,9 +75,43 @@ async function pageSettings(page) {
   const config = await settings();
   const site = matchingSite(config.sites, page.host);
   const canMonitor = config.enabled && site?.enabled === true;
-  const credential = canMonitor ? await credentialFor(config.origin) : null;
+  const credential = config.enabled ? await credentialFor(config.origin) : null;
   const permitted = credential ? await chrome.permissions.contains(backendPermission(credential.origin)) : false;
   return { ...config, site, canMonitor, credential, permitted };
+}
+
+function clearBadge(tabId) {
+  return chrome.action.setBadgeText({ tabId, text: '' });
+}
+
+async function reputationFor(page, config) {
+  const revision = page.settingsRevision;
+  let result;
+  if (!config.enabled) result = { state: 'paused' };
+  else if (!config.credential) result = { state: 'unavailable', cause: 'credential' };
+  else if (!config.permitted) result = { state: 'unavailable', cause: 'permission' };
+  else result = await checkDestination(await reputation.current(config.credential), page.destination);
+  const latest = await currentPage(page.tabId);
+  if (revision !== connectionRevision || !samePage(page, latest)) return { state: 'inactive' };
+  if (result.expires <= Date.now()) result = { state: 'unavailable', cause: 'reputation' };
+  if (result.expires) {
+    const alarm = await chrome.alarms.get(REPUTATION_EXPIRY);
+    if (revision !== connectionRevision || !samePage(page, latest)) return { state: 'inactive' };
+    if (result.expires <= Date.now()) result = { state: 'unavailable', cause: 'reputation' };
+    else if (!alarm || alarm.scheduledTime > result.expires) {
+      await chrome.alarms.create(REPUTATION_EXPIRY, { when: result.expires });
+    }
+  }
+  if (revision !== connectionRevision || !samePage(page, latest)) return { state: 'inactive' };
+  if (result.state === 'confirmed') {
+    await Promise.all([
+      chrome.action.setBadgeBackgroundColor({ tabId: page.tabId, color: '#b91c1c' }),
+      chrome.action.setBadgeText({ tabId: page.tabId, text: 'STOP' })
+    ]);
+  } else {
+    await clearBadge(page.tabId);
+  }
+  return result;
 }
 
 async function saveConnection(message) {
@@ -82,9 +128,13 @@ async function saveConnection(message) {
 
 async function pageConfiguration(page) {
   const config = await pageSettings(page);
-  if (!config.permitted) return { active: false };
+  const verdict = await reputationFor(page, config);
+  if (!config.canMonitor || verdict.state !== 'no_match') {
+    return { active: false, verdict, recheck: config.permitted && verdict.state !== 'inactive' };
+  }
   return {
     active: true,
+    verdict,
     sensitivePaths: config.site.sensitivePaths,
     sensitiveFields: config.site.sensitiveFields
   };
@@ -96,17 +146,16 @@ async function tabStatus(tabId) {
   const config = await pageSettings(page);
   const display = { host: page.host, monitoringEnabled: config.enabled, site: config.site?.domain ?? null,
     siteEnabled: config.site?.enabled === true };
-  if (!config.enabled) return { ...display, state: 'paused' };
-  if (!config.canMonitor) return { ...display, state: 'unmonitored' };
-  if (!config.credential) return { ...display, state: 'unavailable', cause: 'credential' };
-  if (!config.permitted) return { ...display, state: 'unavailable', cause: 'permission' };
+  const verdict = await reputationFor(page, config);
+  if (verdict.state !== 'no_match' || !config.canMonitor) return { ...display, ...verdict };
   const key = statusKey(tabId);
   const { [key]: previous } = await session.get(key);
   if (previous?.documentId === page.documentId && previous.credentialId === config.credential.id &&
-      Date.now() - previous.checkedAt < 45000) {
+      previous.navigation === (page.navigation ?? null) && Date.now() - previous.checkedAt < 45000 &&
+      previous.verdict.state !== 'safe') {
     return { ...display, ...previous.verdict };
   }
-  return { ...display, state: 'waiting' };
+  return { ...display, ...verdict };
 }
 
 async function submitTelemetry(page, message) {
@@ -121,10 +170,8 @@ async function submitTelemetry(page, message) {
     const config = await pageSettings(page);
     if (!config.canMonitor) return { state: 'inactive' };
     const { credential } = config;
-    if (!credential) return { state: 'unavailable', cause: 'credential' };
-    if (!config.permitted) {
-      return { state: 'unavailable', cause: 'permission' };
-    }
+    const localVerdict = await reputationFor(page, config);
+    if (localVerdict.state !== 'no_match') return localVerdict;
 
     const key = statusKey(tabId);
     const navKey = navigationKey(tabId);
@@ -133,9 +180,9 @@ async function submitTelemetry(page, message) {
     const fields = analysisFields(message, nav?.documentId === documentId && nav.redirected);
     if (!fields) return { state: 'inactive' };
     const previous = saved[key];
-    let id = previous?.documentId === documentId && previous.credentialId === credential.id
-      ? previous.sessionId : null;
-    if (previous?.documentId === documentId && previous.credentialId === credential.id &&
+    const previousDocument = previous?.documentId === documentId && previous.credentialId === credential.id;
+    let id = previousDocument ? previous.sessionId : null;
+    if (previousDocument && previous.navigation === (page.navigation ?? null) &&
         Date.now() - previous.checkedAt < 500 &&
         message.eventType !== 'recheck_risk') {
       return previous.verdict;
@@ -145,6 +192,7 @@ async function submitTelemetry(page, message) {
     try {
       signal.throwIfAborted();
       id ??= await startSession(credential, host, signal);
+      signal.throwIfAborted();
       verdict = await analyze(credential, id, fields, signal);
       if (!verdict) {
         // In-memory backend sessions disappear on restart. Renew once on a 404.
@@ -159,9 +207,13 @@ async function submitTelemetry(page, message) {
     }
 
     const latest = await currentPage(tabId);
-    if (signal.aborted || latest?.documentId !== documentId) return { state: 'inactive' };
+    if (signal.aborted || page.settingsRevision !== connectionRevision || !samePage(page, latest)) {
+      return { state: 'inactive' };
+    }
+    if (localVerdict.expires <= Date.now()) verdict = { state: 'unavailable', cause: 'reputation' };
     await session.set({
-      [key]: { documentId, credentialId: credential.id, sessionId: id, verdict, checkedAt: Date.now() }
+      [key]: { documentId, navigation: page.navigation ?? null, credentialId: credential.id,
+        sessionId: id, verdict, checkedAt: Date.now() }
     });
     return verdict;
   } finally {
@@ -201,30 +253,50 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
 
 chrome.webNavigation.onCommitted.addListener(({ tabId, frameId, documentId, transitionQualifiers = [] }) => {
   if (frameId !== 0) return;
-  const task = requests.get(tabId);
-  if (task && task.documentId !== documentId) task.controller.abort();
+  navigations.set(tabId, crypto.randomUUID());
+  requests.get(tabId)?.controller.abort();
+  void clearBadge(tabId).catch(() => {});
   const redirected = transitionQualifiers.includes('server_redirect') || transitionQualifiers.includes('client_redirect');
   void session.set({ [navigationKey(tabId)]: { documentId, redirected } }).catch(() => {});
 });
 
+chrome.webNavigation.onHistoryStateUpdated.addListener(({ tabId, frameId, documentId }) => {
+  if (frameId !== 0) return;
+  navigations.set(tabId, crypto.randomUUID());
+  requests.get(tabId)?.controller.abort();
+  void clearBadge(tabId).catch(() => {});
+  void chrome.tabs.sendMessage(tabId, { type: 'REFRESH_CONFIGURATION' }, { documentId }).catch(() => {});
+});
+
 chrome.tabs.onRemoved.addListener(tabId => {
+  navigations.delete(tabId);
   requests.get(tabId)?.controller.abort();
   void session.remove([statusKey(tabId), navigationKey(tabId)]).catch(() => {});
 });
 
 async function refreshOpenPages() {
+  connectionRevision++;
   for (const task of requests.values()) task.controller.abort();
   const tabs = await chrome.tabs.query({});
-  await Promise.allSettled(tabs.map(tab => chrome.tabs.sendMessage(tab.id, { type: 'REFRESH_CONFIGURATION' }, { frameId: 0 })));
+  await Promise.allSettled(tabs.map(async tab => {
+    await clearBadge(tab.id);
+    await chrome.tabs.sendMessage(tab.id, { type: 'REFRESH_CONFIGURATION' }, { frameId: 0 });
+  }));
 }
 
 chrome.storage.onChanged.addListener((changes, area) => {
-  if ((area === 'session' && CREDENTIAL in changes) ||
-      (area === 'local' && ['backendOrigin', 'monitoredSites', 'monitoringEnabled'].some(key => key in changes))) {
+  if (area === 'session' && CREDENTIAL in changes) {
+    void reputation.clear().catch(() => {});
+    void refreshOpenPages().catch(() => {});
+  } else if (area === 'local' && ['backendOrigin', 'monitoredSites', 'monitoringEnabled'].some(key => key in changes)) {
     void refreshOpenPages().catch(() => {});
   }
 });
 
 chrome.permissions.onRemoved.addListener(() => {
   void refreshOpenPages().catch(() => {});
+});
+
+chrome.alarms.onAlarm.addListener(alarm => {
+  if (alarm.name === REPUTATION_EXPIRY) void refreshOpenPages().catch(() => {});
 });

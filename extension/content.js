@@ -10,6 +10,7 @@
   let lastPath = '';
   let heartbeat;
   let banner;
+  let bannerState;
   let warningExpiry;
 
   function sensitivePage() {
@@ -50,8 +51,8 @@
     try {
       const verdict = await chrome.runtime.sendMessage(telemetry(eventType));
       if (revision !== sendingRevision) return;
-      if (verdict?.state === 'warning') showWarning();
-      else if (verdict?.state !== 'waiting') clearWarning();
+      if (verdict?.state === 'confirmed' || verdict?.cause === 'reputation') config = null;
+      renderVerdict(verdict);
     } catch {
       if (revision === sendingRevision) clearWarning();
     } finally {
@@ -63,13 +64,27 @@
     clearTimeout(warningExpiry);
     banner?.remove();
     banner = null;
+    bannerState = null;
   }
 
-  function showWarning() {
+  function renderVerdict(verdict) {
+    if (verdict?.state === 'confirmed' || verdict?.state === 'warning') showWarning(verdict);
+    else if (verdict?.state !== 'waiting') clearWarning();
+  }
+
+  function showWarning(verdict) {
+    const confirmed = verdict.state === 'confirmed';
+    const timeout = confirmed ? Math.min(verdict.expires - Date.now(), 45000) : 45000;
+    if (timeout <= 0) {
+      clearWarning();
+      return;
+    }
+    if (bannerState !== verdict.state) clearWarning();
     clearTimeout(warningExpiry);
-    warningExpiry = setTimeout(clearWarning, 45000);
+    warningExpiry = setTimeout(clearWarning, timeout);
     if (banner?.isConnected) return;
     banner = document.createElement('div');
+    bannerState = verdict.state;
     const shadow = banner.attachShadow({ mode: 'closed' });
     const style = document.createElement('style');
     style.textContent = `
@@ -79,11 +94,15 @@
         border-radius:10px;padding:12px;box-shadow:0 4px 18px #0005}
       span{flex:1}
       button{background:#fef3c7;color:#422006;border:0;border-radius:5px;padding:6px 10px;cursor:pointer}
+      div.confirmed{background:#450a0a;border-color:#ef4444;color:#fef2f2}
     `;
     const alert = document.createElement('div');
-    alert.setAttribute('role', 'status');
+    alert.setAttribute('role', confirmed ? 'alert' : 'status');
+    if (confirmed) alert.className = 'confirmed';
     const description = document.createElement('span');
-    description.textContent = 'Threat Monitor detected unusual activity. Check the website address before entering information.';
+    description.textContent = confirmed
+      ? 'Threat Monitor found a known phishing or malware match. Leave this page without entering information.'
+      : 'Threat Monitor observed unusual activity. The site has not been confirmed malicious.';
     const dismiss = document.createElement('button');
     dismiss.textContent = 'Dismiss';
     dismiss.type = 'button';
@@ -113,11 +132,21 @@
     tabSwitchCount = copyPasteCount = formSubmitCount = 0;
     try {
       const next = await chrome.runtime.sendMessage({ type: 'PAGE_CONFIGURATION' });
-      if (revision !== refreshingRevision || !next?.active) return;
+      if (revision !== refreshingRevision || !next) return;
+      renderVerdict(next.verdict);
+      if (!next.active) {
+        if (next.recheck) {
+          heartbeat = setInterval(() => { if (!document.hidden) void refresh(); }, 15000);
+        }
+        return;
+      }
       config = next;
       lastPath = location.pathname;
       navigationTimes.push(Date.now());
-      heartbeat = setInterval(heartbeatCheck, 15000);
+      heartbeat = setInterval(() => {
+        if (config) heartbeatCheck();
+        else if (!document.hidden) void refresh();
+      }, 15000);
       if (!document.hidden) void send('page_view');
     } catch {
       // An unloaded or unavailable worker supplies no verdict.
@@ -158,7 +187,10 @@
   }
 
   document.addEventListener('visibilitychange', () => {
-    if (!config) return;
+    if (!config) {
+      if (!document.hidden) void refresh();
+      return;
+    }
     if (document.hidden) {
       tabSwitchCount = Math.min(tabSwitchCount + 1, 1000);
       if (sensitivePage()) void send('tab_blur');
