@@ -1,0 +1,2216 @@
+{
+  "dataset": {
+    "dataset": "phiusiil-uci-967",
+    "sourceSha256": "a236549cd369cd80bd478ff8e1779cbf44c58d5c3f79f7a51a1adbed7d06d1c6",
+    "splitSeed": "phase3a-v1",
+    "referenceReportSha256": "2f797c236de6b18923c54db4e6f1cf5f701de206ef5f4c9d56c2ccf37d67fb0d",
+    "featureVersion": "url-lexical-v1",
+    "featureColumns": [
+      "https",
+      "nondefault_port",
+      "ip_host",
+      "idn_labels",
+      "hostname_length",
+      "host_labels",
+      "host_digits",
+      "host_hyphens",
+      "registrant_length",
+      "subdomain_labels",
+      "path_length",
+      "path_depth",
+      "path_digits",
+      "path_percent_escapes"
+    ]
+  },
+  "trainingPartition": {
+    "file": "train.tsv",
+    "sha256": "48f340ba837f78450d561cafbef9ad14e115772fe35a92c780b7301f4074e811",
+    "phishing": 67270,
+    "legitimate": 94269,
+    "groups": 137851
+  },
+  "calibrationPartition": {
+    "file": "validation.tsv",
+    "sha256": "0c9bbf605e8b2f320ffb0a04c5d866526fdc877c0b16892376d0c1dad417f434",
+    "phishing": 16980,
+    "legitimate": 20289,
+    "groups": 29689
+  },
+  "config": {
+    "seed": 37,
+    "folds": 5,
+    "workers": 4,
+    "usedFeatures": [
+      "ip_host",
+      "idn_labels",
+      "hostname_length",
+      "host_labels",
+      "host_digits",
+      "host_hyphens",
+      "registrant_length",
+      "subdomain_labels"
+    ],
+    "falsePositiveTargets": [
+      0.01,
+      0.001
+    ],
+    "calibrationRisk": 0.05,
+    "curveFractions": [
+      0.25,
+      0.5,
+      1.0
+    ],
+    "candidates": {
+      "logistic_regression": [
+        {
+          "C": 0.25,
+          "max_iter": 300
+        },
+        {
+          "C": 2.0,
+          "max_iter": 300
+        }
+      ],
+      "random_forest": [
+        {
+          "n_estimators": 64,
+          "max_depth": 10,
+          "min_samples_leaf": 6
+        },
+        {
+          "n_estimators": 64,
+          "max_depth": 16,
+          "min_samples_leaf": 3
+        }
+      ],
+      "xgboost": [
+        {
+          "n_estimators": 180,
+          "max_depth": 3,
+          "learning_rate": 0.1,
+          "patience": 15
+        },
+        {
+          "n_estimators": 180,
+          "max_depth": 5,
+          "learning_rate": 0.08,
+          "patience": 15
+        }
+      ],
+      "mlp": [
+        {
+          "hidden_layer_sizes": [
+            24
+          ],
+          "alpha": 0.001,
+          "batch_size": 512,
+          "max_epochs": 24,
+          "patience": 4
+        },
+        {
+          "hidden_layer_sizes": [
+            32,
+            16
+          ],
+          "alpha": 0.0005,
+          "batch_size": 512,
+          "max_epochs": 24,
+          "patience": 4
+        }
+      ]
+    }
+  },
+  "configSha256": "60a0902b3e1fd48e41ff2edf93a977d852d0f42fb80b62d31a6ceea6e5183633",
+  "featureAuditTrainingOnly": {
+    "https": {
+      "used": false,
+      "phishingMean": 0.48143303394317627,
+      "legitimateMean": 1.0,
+      "phishingZeroRate": 0.5185669689311729,
+      "legitimateZeroRate": 0.0,
+      "singleFeatureDirectionFreeRocAuc": 0.7592834844655865
+    },
+    "nondefault_port": {
+      "used": false,
+      "phishingMean": 0.00014865466800983995,
+      "legitimateMean": 0.0,
+      "phishingZeroRate": 0.9998513453248105,
+      "legitimateZeroRate": 1.0,
+      "singleFeatureDirectionFreeRocAuc": 0.5000743273375947
+    },
+    "ip_host": {
+      "used": true,
+      "phishingMean": 0.0024676676839590073,
+      "legitimateMean": 0.0,
+      "phishingZeroRate": 0.9975323323918537,
+      "legitimateZeroRate": 1.0,
+      "singleFeatureDirectionFreeRocAuc": 0.5012338338040732
+    },
+    "idn_labels": {
+      "used": true,
+      "phishingMean": 0.002110896399244666,
+      "legitimateMean": 0.0,
+      "phishingZeroRate": 0.9983499331053962,
+      "legitimateZeroRate": 1.0,
+      "singleFeatureDirectionFreeRocAuc": 0.5008250334473019
+    },
+    "hostname_length": {
+      "used": true,
+      "phishingMean": 24.395673751831055,
+      "legitimateMean": 19.234403610229492,
+      "phishingZeroRate": 0.0,
+      "legitimateZeroRate": 0.0,
+      "singleFeatureDirectionFreeRocAuc": 0.6280452229696576
+    },
+    "host_labels": {
+      "used": true,
+      "phishingMean": 3.161914587020874,
+      "legitimateMean": 3.15989351272583,
+      "phishingZeroRate": 0.0,
+      "legitimateZeroRate": 0.0,
+      "singleFeatureDirectionFreeRocAuc": 0.5177577478918736
+    },
+    "host_digits": {
+      "used": true,
+      "phishingMean": 2.0074923038482666,
+      "legitimateMean": 0.05131061002612114,
+      "phishingZeroRate": 0.6363460680838412,
+      "legitimateZeroRate": 0.973427107532699,
+      "singleFeatureDirectionFreeRocAuc": 0.6712560837358291
+    },
+    "host_hyphens": {
+      "used": true,
+      "phishingMean": 0.5586739778518677,
+      "legitimateMean": 0.08395124226808548,
+      "phishingZeroRate": 0.6838115058718597,
+      "legitimateZeroRate": 0.9245032831577719,
+      "singleFeatureDirectionFreeRocAuc": 0.6246140323809775
+    },
+    "registrant_length": {
+      "used": true,
+      "phishingMean": 12.016173362731934,
+      "legitimateMean": 10.838376998901367,
+      "phishingZeroRate": 0.002467667608146276,
+      "legitimateZeroRate": 0.0,
+      "singleFeatureDirectionFreeRocAuc": 0.5002109225956294
+    },
+    "subdomain_labels": {
+      "used": true,
+      "phishingMean": 0.8188493847846985,
+      "legitimateMean": 1.0292673110961914,
+      "phishingZeroRate": 0.3573361082206035,
+      "legitimateZeroRate": 0.00025459058651306366,
+      "singleFeatureDirectionFreeRocAuc": 0.6253077427658584
+    },
+    "path_length": {
+      "used": false,
+      "phishingMean": 7.466537952423096,
+      "legitimateMean": 0.0,
+      "phishingZeroRate": 0.7481492492938903,
+      "legitimateZeroRate": 1.0,
+      "singleFeatureDirectionFreeRocAuc": 0.6259253753530548
+    },
+    "path_depth": {
+      "used": false,
+      "phishingMean": 0.530875563621521,
+      "legitimateMean": 0.0,
+      "phishingZeroRate": 0.7481789802289281,
+      "legitimateZeroRate": 1.0,
+      "singleFeatureDirectionFreeRocAuc": 0.6259105098855359
+    },
+    "path_digits": {
+      "used": false,
+      "phishingMean": 1.082429051399231,
+      "legitimateMean": 0.0,
+      "phishingZeroRate": 0.8785193994351123,
+      "legitimateZeroRate": 1.0,
+      "singleFeatureDirectionFreeRocAuc": 0.5607403002824439
+    },
+    "path_percent_escapes": {
+      "used": false,
+      "phishingMean": 0.015504682436585426,
+      "legitimateMean": 0.0,
+      "phishingZeroRate": 0.9968782518210197,
+      "legitimateZeroRate": 1.0,
+      "singleFeatureDirectionFreeRocAuc": 0.5015608740894901
+    }
+  },
+  "foldPartitions": [
+    {
+      "trainingRows": 129231,
+      "validationRows": 32308,
+      "trainingDomains": 110341,
+      "validationDomains": 27510,
+      "validationPhishingRows": 13454
+    },
+    {
+      "trainingRows": 129231,
+      "validationRows": 32308,
+      "trainingDomains": 110274,
+      "validationDomains": 27577,
+      "validationPhishingRows": 13454
+    },
+    {
+      "trainingRows": 129232,
+      "validationRows": 32307,
+      "trainingDomains": 110265,
+      "validationDomains": 27586,
+      "validationPhishingRows": 13454
+    },
+    {
+      "trainingRows": 129231,
+      "validationRows": 32308,
+      "trainingDomains": 110260,
+      "validationDomains": 27591,
+      "validationPhishingRows": 13454
+    },
+    {
+      "trainingRows": 129231,
+      "validationRows": 32308,
+      "trainingDomains": 110264,
+      "validationDomains": 27587,
+      "validationPhishingRows": 13454
+    }
+  ],
+  "crossValidation": {
+    "logistic_regression": {
+      "selectedCandidate": 1,
+      "candidates": [
+        {
+          "parameters": {
+            "C": 0.25,
+            "max_iter": 300
+          },
+          "folds": [
+            {
+              "training": {
+                "prAucAveragePrecision": 0.8462897868254879,
+                "rocAuc": 0.8222577059876235,
+                "logLoss": 0.4508058428764343
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8706091129736689,
+                "rocAuc": 0.8491255889793003,
+                "logLoss": 0.40557050704956055,
+                "threshold": 0.5,
+                "tp": 9253,
+                "fp": 593,
+                "tn": 18261,
+                "fn": 4201,
+                "precision": 0.939772496445257,
+                "recall": 0.6877508547643824,
+                "f1": 0.7942489270386266,
+                "falsePositiveRate": 0.03145221173225841,
+                "falseAlertDomains": 519,
+                "legitimateDomains": 18485,
+                "negativeDomainFalsePositiveRate": 0.028076819042466866,
+                "negativeDomainFpr95Upper": 0.030158227605993678
+              },
+              "fitSeconds": 0.1185946999976295,
+              "selectedRounds": null
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.8524174737761696,
+                "rocAuc": 0.8268255055044954,
+                "logLoss": 0.4374086558818817
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8480814591196258,
+                "rocAuc": 0.8291310108459569,
+                "logLoss": 0.4600648880004883,
+                "threshold": 0.5,
+                "tp": 8564,
+                "fp": 574,
+                "tn": 18280,
+                "fn": 4890,
+                "precision": 0.9371853797329831,
+                "recall": 0.6365393191615877,
+                "f1": 0.7581444759206799,
+                "falsePositiveRate": 0.03044446801739684,
+                "falseAlertDomains": 499,
+                "legitimateDomains": 18483,
+                "negativeDomainFalsePositiveRate": 0.026997781745387653,
+                "negativeDomainFpr95Upper": 0.029041771334481523
+              },
+              "fitSeconds": 0.11497729999973672,
+              "selectedRounds": null
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.8516905676822593,
+                "rocAuc": 0.8271215067787365,
+                "logLoss": 0.44270145893096924
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8509906423825143,
+                "rocAuc": 0.8251650389782682,
+                "logLoss": 0.43746161460876465,
+                "threshold": 0.5,
+                "tp": 8649,
+                "fp": 561,
+                "tn": 18292,
+                "fn": 4805,
+                "precision": 0.9390879478827362,
+                "recall": 0.6428571428571429,
+                "f1": 0.7632368513942817,
+                "falsePositiveRate": 0.029756537421100092,
+                "falseAlertDomains": 525,
+                "legitimateDomains": 18482,
+                "negativeDomainFalsePositiveRate": 0.02840601666486311,
+                "negativeDomainFpr95Upper": 0.030498895725629534
+              },
+              "fitSeconds": 0.11435789999814006,
+              "selectedRounds": null
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.8550268495109039,
+                "rocAuc": 0.8307254544525593,
+                "logLoss": 0.43596670031547546
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8375750674483384,
+                "rocAuc": 0.8090861768040708,
+                "logLoss": 0.4643685221672058,
+                "threshold": 0.5,
+                "tp": 8482,
+                "fp": 597,
+                "tn": 18257,
+                "fn": 4972,
+                "precision": 0.9342438594558872,
+                "recall": 0.6304444774788167,
+                "f1": 0.7528513735410287,
+                "falsePositiveRate": 0.03166436830380821,
+                "falseAlertDomains": 533,
+                "legitimateDomains": 18486,
+                "negativeDomainFalsePositiveRate": 0.028832630098452883,
+                "negativeDomainFpr95Upper": 0.03093980317081154
+              },
+              "fitSeconds": 0.1148726000028546,
+              "selectedRounds": null
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.8525574081948286,
+                "rocAuc": 0.8284074594981059,
+                "logLoss": 0.44041958451271057
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8480995728432668,
+                "rocAuc": 0.8205227350902253,
+                "logLoss": 0.44667908549308777,
+                "threshold": 0.5,
+                "tp": 8592,
+                "fp": 569,
+                "tn": 18285,
+                "fn": 4862,
+                "precision": 0.9378888767601791,
+                "recall": 0.6386204846142411,
+                "f1": 0.7598496573070971,
+                "falsePositiveRate": 0.030179272302959585,
+                "falseAlertDomains": 481,
+                "legitimateDomains": 18482,
+                "negativeDomainFalsePositiveRate": 0.026025321934855534,
+                "negativeDomainFpr95Upper": 0.028034833523220934
+              },
+              "fitSeconds": 0.10743740000179969,
+              "selectedRounds": null
+            }
+          ],
+          "validationSummary": {
+            "prAucAveragePrecision": {
+              "mean": 0.8510711709534828,
+              "sd": 0.012058723452698171
+            },
+            "rocAuc": {
+              "mean": 0.8266061101395643,
+              "sd": 0.014658907300285354
+            },
+            "logLoss": {
+              "mean": 0.4428289234638214,
+              "sd": 0.023413960213448062
+            },
+            "precision": {
+              "mean": 0.9376357120554085,
+              "sd": 0.0021474631575487163
+            },
+            "recall": {
+              "mean": 0.6472424557752342,
+              "sd": 0.02308261766444551
+            },
+            "f1": {
+              "mean": 0.7656662570403427,
+              "sd": 0.016412665069952915
+            },
+            "falsePositiveRate": {
+              "mean": 0.030699371555504628,
+              "sd": 0.0008249851979289215
+            }
+          }
+        },
+        {
+          "parameters": {
+            "C": 2.0,
+            "max_iter": 300
+          },
+          "folds": [
+            {
+              "training": {
+                "prAucAveragePrecision": 0.8464024439516318,
+                "rocAuc": 0.8224091737477874,
+                "logLoss": 0.45078253746032715
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8706606242503416,
+                "rocAuc": 0.8492074401168207,
+                "logLoss": 0.40566393733024597,
+                "threshold": 0.5,
+                "tp": 9258,
+                "fp": 597,
+                "tn": 18257,
+                "fn": 4196,
+                "precision": 0.9394216133942161,
+                "recall": 0.6881224914523562,
+                "f1": 0.7943712728988802,
+                "falsePositiveRate": 0.03166436830380821,
+                "falseAlertDomains": 520,
+                "legitimateDomains": 18485,
+                "negativeDomainFalsePositiveRate": 0.028130916959697053,
+                "negativeDomainFpr95Upper": 0.030214186417773566
+              },
+              "fitSeconds": 0.1055728999999701,
+              "selectedRounds": null
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.8524071423121998,
+                "rocAuc": 0.826867083575535,
+                "logLoss": 0.437388151884079
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8480828642825436,
+                "rocAuc": 0.8291756884590342,
+                "logLoss": 0.45989519357681274,
+                "threshold": 0.5,
+                "tp": 8585,
+                "fp": 587,
+                "tn": 18267,
+                "fn": 4869,
+                "precision": 0.9360008722197994,
+                "recall": 0.6381001932510777,
+                "f1": 0.7588614867851144,
+                "falsePositiveRate": 0.031133976874933703,
+                "falseAlertDomains": 501,
+                "legitimateDomains": 18483,
+                "negativeDomainFalsePositiveRate": 0.027105989287453336,
+                "negativeDomainFpr95Upper": 0.02915377951419668
+              },
+              "fitSeconds": 0.11099560000002384,
+              "selectedRounds": null
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.8518097063847678,
+                "rocAuc": 0.8273222986820368,
+                "logLoss": 0.4426800608634949
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8511439814721227,
+                "rocAuc": 0.8253855175242636,
+                "logLoss": 0.4373093247413635,
+                "threshold": 0.5,
+                "tp": 8670,
+                "fp": 571,
+                "tn": 18282,
+                "fn": 4784,
+                "precision": 0.9382101504166216,
+                "recall": 0.6444180169466329,
+                "f1": 0.7640449438202247,
+                "falsePositiveRate": 0.030286956982973533,
+                "falseAlertDomains": 530,
+                "legitimateDomains": 18482,
+                "negativeDomainFalsePositiveRate": 0.028676550156909425,
+                "negativeDomainFpr95Upper": 0.0307786577439661
+              },
+              "fitSeconds": 0.09115340000425931,
+              "selectedRounds": null
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.8551947039276733,
+                "rocAuc": 0.8310830471519759,
+                "logLoss": 0.4359436333179474
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8378198661721932,
+                "rocAuc": 0.8096302419557866,
+                "logLoss": 0.4644315242767334,
+                "threshold": 0.5,
+                "tp": 8499,
+                "fp": 612,
+                "tn": 18242,
+                "fn": 4955,
+                "precision": 0.9328284491274283,
+                "recall": 0.6317080422179278,
+                "f1": 0.7532904941280745,
+                "falsePositiveRate": 0.03245995544711997,
+                "falseAlertDomains": 543,
+                "legitimateDomains": 18486,
+                "negativeDomainFalsePositiveRate": 0.029373580006491398,
+                "negativeDomainFpr95Upper": 0.031499008438723344
+              },
+              "fitSeconds": 0.10550180000427645,
+              "selectedRounds": null
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.8523406875606084,
+                "rocAuc": 0.8282587454418635,
+                "logLoss": 0.4403969645500183
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.847810166349982,
+                "rocAuc": 0.8202807849017311,
+                "logLoss": 0.4467144012451172,
+                "threshold": 0.5,
+                "tp": 8600,
+                "fp": 575,
+                "tn": 18279,
+                "fn": 4854,
+                "precision": 0.9373297002724795,
+                "recall": 0.6392151033149993,
+                "f1": 0.7600866145211896,
+                "falsePositiveRate": 0.03049750716028429,
+                "falseAlertDomains": 483,
+                "legitimateDomains": 18482,
+                "negativeDomainFalsePositiveRate": 0.026133535331674063,
+                "negativeDomainFpr95Upper": 0.028146924246956046
+              },
+              "fitSeconds": 0.1080943000051775,
+              "selectedRounds": null
+            }
+          ],
+          "validationSummary": {
+            "prAucAveragePrecision": {
+              "mean": 0.8511035005054366,
+              "sd": 0.012030253135658166
+            },
+            "rocAuc": {
+              "mean": 0.8267359345915273,
+              "sd": 0.01455178909815709
+            },
+            "logLoss": {
+              "mean": 0.44280287623405457,
+              "sd": 0.023370524422418673
+            },
+            "precision": {
+              "mean": 0.936758157086109,
+              "sd": 0.0025271046060756424
+            },
+            "recall": {
+              "mean": 0.6483127694365988,
+              "sd": 0.022708832373889338
+            },
+            "f1": {
+              "mean": 0.7661309624306967,
+              "sd": 0.016249028071135152
+            },
+            "falsePositiveRate": {
+              "mean": 0.03120855295382394,
+              "sd": 0.0008851924478679182
+            }
+          }
+        }
+      ],
+      "learningCurveOuterFold1": [
+        {
+          "trainingDomainFraction": 0.25,
+          "trainingRows": 34433,
+          "trainingAveragePrecision": 0.8714253451197491,
+          "validationAveragePrecision": 0.8700893499340911
+        },
+        {
+          "trainingDomainFraction": 0.5,
+          "trainingRows": 65447,
+          "trainingAveragePrecision": 0.8492492895000645,
+          "validationAveragePrecision": 0.8704281096247786
+        },
+        {
+          "trainingDomainFraction": 1.0,
+          "trainingRows": 129231,
+          "trainingAveragePrecision": 0.8464024439516318,
+          "validationAveragePrecision": 0.8706606242503416
+        }
+      ],
+      "earlyStopTraceOuterFold1": null,
+      "outerFitSeconds": 1.0915579000138678
+    },
+    "random_forest": {
+      "selectedCandidate": 1,
+      "candidates": [
+        {
+          "parameters": {
+            "n_estimators": 64,
+            "max_depth": 10,
+            "min_samples_leaf": 6
+          },
+          "folds": [
+            {
+              "training": {
+                "prAucAveragePrecision": 0.894428019318294,
+                "rocAuc": 0.8830683287129288,
+                "logLoss": 0.36383431427779156
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8975965227456517,
+                "rocAuc": 0.8844683641578771,
+                "logLoss": 0.35156417893497244,
+                "threshold": 0.5,
+                "tp": 9517,
+                "fp": 521,
+                "tn": 18333,
+                "fn": 3937,
+                "precision": 0.9480972305240087,
+                "recall": 0.7073732718894009,
+                "f1": 0.8102332709007322,
+                "falsePositiveRate": 0.02763339344436194,
+                "falseAlertDomains": 367,
+                "legitimateDomains": 18485,
+                "negativeDomainFalsePositiveRate": 0.019853935623478498,
+                "negativeDomainFpr95Upper": 0.021625754149525223
+              },
+              "fitSeconds": 0.7922577000063029,
+              "selectedRounds": null
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.8951533298474361,
+                "rocAuc": 0.8838213574595379,
+                "logLoss": 0.3604991289132963
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8868743386991165,
+                "rocAuc": 0.8774872693047617,
+                "logLoss": 0.37618368059875273,
+                "threshold": 0.5,
+                "tp": 9053,
+                "fp": 619,
+                "tn": 18235,
+                "fn": 4401,
+                "precision": 0.9360008271298594,
+                "recall": 0.6728853872454289,
+                "f1": 0.7829283058029923,
+                "falsePositiveRate": 0.03283122944733213,
+                "falseAlertDomains": 478,
+                "legitimateDomains": 18483,
+                "negativeDomainFalsePositiveRate": 0.02586160255369799,
+                "negativeDomainFpr95Upper": 0.027865174861754338
+              },
+              "fitSeconds": 1.1788779999988037,
+              "selectedRounds": null
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.8957669758839446,
+                "rocAuc": 0.8840433435026119,
+                "logLoss": 0.35888163254857314
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8904622025974342,
+                "rocAuc": 0.8776501393886942,
+                "logLoss": 0.37106592374183583,
+                "threshold": 0.5,
+                "tp": 9296,
+                "fp": 496,
+                "tn": 18357,
+                "fn": 4158,
+                "precision": 0.9493464052287581,
+                "recall": 0.6909469302809573,
+                "f1": 0.799793512862428,
+                "falsePositiveRate": 0.02630881026892272,
+                "falseAlertDomains": 345,
+                "legitimateDomains": 18482,
+                "negativeDomainFalsePositiveRate": 0.018666810951195757,
+                "negativeDomainFpr95Upper": 0.02038873110147155
+              },
+              "fitSeconds": 1.0240545999986352,
+              "selectedRounds": null
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.8954039366322523,
+                "rocAuc": 0.883927794054209,
+                "logLoss": 0.3578790232636735
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8896091895771195,
+                "rocAuc": 0.8803688787629269,
+                "logLoss": 0.38001843931606133,
+                "threshold": 0.5,
+                "tp": 9096,
+                "fp": 521,
+                "tn": 18333,
+                "fn": 4358,
+                "precision": 0.9458251013829677,
+                "recall": 0.6760814627620039,
+                "f1": 0.7885223874127693,
+                "falsePositiveRate": 0.02763339344436194,
+                "falseAlertDomains": 403,
+                "legitimateDomains": 18486,
+                "negativeDomainFalsePositiveRate": 0.02180028129395218,
+                "negativeDomainFpr95Upper": 0.023650767732515354
+              },
+              "fitSeconds": 1.1074460999952862,
+              "selectedRounds": null
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.8934346721310946,
+                "rocAuc": 0.8824824194385634,
+                "logLoss": 0.364315262609575
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8934000942839081,
+                "rocAuc": 0.8820196107165024,
+                "logLoss": 0.3637285456635018,
+                "threshold": 0.5,
+                "tp": 9395,
+                "fp": 492,
+                "tn": 18362,
+                "fn": 4059,
+                "precision": 0.9502376858501062,
+                "recall": 0.6983053367028393,
+                "f1": 0.8050212073175956,
+                "falsePositiveRate": 0.02609525830062586,
+                "falseAlertDomains": 389,
+                "legitimateDomains": 18482,
+                "negativeDomainFalsePositiveRate": 0.021047505681203334,
+                "negativeDomainFpr95Upper": 0.02286821614065659
+              },
+              "fitSeconds": 0.9839682999954675,
+              "selectedRounds": null
+            }
+          ],
+          "validationSummary": {
+            "prAucAveragePrecision": {
+              "mean": 0.891588469580646,
+              "sd": 0.004086188429240251
+            },
+            "rocAuc": {
+              "mean": 0.8803988524661525,
+              "sd": 0.0029673818942769284
+            },
+            "logLoss": {
+              "mean": 0.36851215365102485,
+              "sd": 0.01126815678744871
+            },
+            "precision": {
+              "mean": 0.9459014500231401,
+              "sd": 0.005777548621898023
+            },
+            "recall": {
+              "mean": 0.6891184777761261,
+              "sd": 0.01461554063553643
+            },
+            "f1": {
+              "mean": 0.7972997368593034,
+              "sd": 0.011365476469397486
+            },
+            "falsePositiveRate": {
+              "mean": 0.028100416981120917,
+              "sd": 0.0027407719945022556
+            }
+          }
+        },
+        {
+          "parameters": {
+            "n_estimators": 64,
+            "max_depth": 16,
+            "min_samples_leaf": 3
+          },
+          "folds": [
+            {
+              "training": {
+                "prAucAveragePrecision": 0.9044990987009232,
+                "rocAuc": 0.893719972714086,
+                "logLoss": 0.33492144815345776
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.9041214961237967,
+                "rocAuc": 0.8928200186109282,
+                "logLoss": 0.33239174720137304,
+                "threshold": 0.5,
+                "tp": 9721,
+                "fp": 558,
+                "tn": 18296,
+                "fn": 3733,
+                "precision": 0.9457145636735091,
+                "recall": 0.7225360487587335,
+                "f1": 0.8191968988328487,
+                "falsePositiveRate": 0.029595841731197624,
+                "falseAlertDomains": 408,
+                "legitimateDomains": 18485,
+                "negativeDomainFalsePositiveRate": 0.02207195022991615,
+                "negativeDomainFpr95Upper": 0.023933173333916747
+              },
+              "fitSeconds": 1.0759382000032929,
+              "selectedRounds": null
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.9054027927187486,
+                "rocAuc": 0.894411651716653,
+                "logLoss": 0.33100147391540297
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8982384487692865,
+                "rocAuc": 0.8888913571806003,
+                "logLoss": 0.35385503864920437,
+                "threshold": 0.5,
+                "tp": 9149,
+                "fp": 539,
+                "tn": 18315,
+                "fn": 4305,
+                "precision": 0.944364161849711,
+                "recall": 0.6800208116545265,
+                "f1": 0.7906836055656382,
+                "falsePositiveRate": 0.028588098016336057,
+                "falseAlertDomains": 420,
+                "legitimateDomains": 18483,
+                "negativeDomainFalsePositiveRate": 0.022723583833793217,
+                "negativeDomainFpr95Upper": 0.024610257547316185
+              },
+              "fitSeconds": 0.9579793000011705,
+              "selectedRounds": null
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.905505176225823,
+                "rocAuc": 0.8947541348730764,
+                "logLoss": 0.33026645724983306
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8982522706535773,
+                "rocAuc": 0.8862669597160496,
+                "logLoss": 0.3480888829881694,
+                "threshold": 0.5,
+                "tp": 9595,
+                "fp": 615,
+                "tn": 18238,
+                "fn": 3859,
+                "precision": 0.9397649363369246,
+                "recall": 0.7131708042217928,
+                "f1": 0.8109364435429344,
+                "falsePositiveRate": 0.032620803055216675,
+                "falseAlertDomains": 476,
+                "legitimateDomains": 18482,
+                "negativeDomainFalsePositiveRate": 0.02575478844280922,
+                "negativeDomainFpr95Upper": 0.02775456828866794
+              },
+              "fitSeconds": 0.9220182999997633,
+              "selectedRounds": null
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.9051616599097783,
+                "rocAuc": 0.8943419009088218,
+                "logLoss": 0.33118525206734917
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8980010923626934,
+                "rocAuc": 0.887741311739766,
+                "logLoss": 0.3542892790825974,
+                "threshold": 0.5,
+                "tp": 9293,
+                "fp": 473,
+                "tn": 18381,
+                "fn": 4161,
+                "precision": 0.9515666598402621,
+                "recall": 0.6907239482681731,
+                "f1": 0.8004306632213609,
+                "falsePositiveRate": 0.025087514585764293,
+                "falseAlertDomains": 381,
+                "legitimateDomains": 18486,
+                "negativeDomainFalsePositiveRate": 0.020610191496267447,
+                "negativeDomainFpr95Upper": 0.022413014510677672
+              },
+              "fitSeconds": 1.4042852999991737,
+              "selectedRounds": null
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.9047823701990987,
+                "rocAuc": 0.893739846271177,
+                "logLoss": 0.3320266195986771
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.9020443143164552,
+                "rocAuc": 0.8916782223455433,
+                "logLoss": 0.3415087151736041,
+                "threshold": 0.5,
+                "tp": 9530,
+                "fp": 529,
+                "tn": 18325,
+                "fn": 3924,
+                "precision": 0.9474102793518242,
+                "recall": 0.7083395272781329,
+                "f1": 0.8106154042444605,
+                "falsePositiveRate": 0.028057706587461546,
+                "falseAlertDomains": 436,
+                "legitimateDomains": 18482,
+                "negativeDomainFalsePositiveRate": 0.023590520506438697,
+                "negativeDomainFpr95Upper": 0.025510370520238107
+              },
+              "fitSeconds": 1.7600594000032288,
+              "selectedRounds": null
+            }
+          ],
+          "validationSummary": {
+            "prAucAveragePrecision": {
+              "mean": 0.9001315244451618,
+              "sd": 0.002794311644833879
+            },
+            "rocAuc": {
+              "mean": 0.8894795739185775,
+              "sd": 0.002724016794894068
+            },
+            "logLoss": {
+              "mean": 0.34602673261898964,
+              "sd": 0.009221304442519328
+            },
+            "precision": {
+              "mean": 0.9457641202104462,
+              "sd": 0.004310796112227823
+            },
+            "recall": {
+              "mean": 0.7029582280362717,
+              "sd": 0.017265202213050095
+            },
+            "f1": {
+              "mean": 0.8063726030814485,
+              "sd": 0.01100844965626556
+            },
+            "falsePositiveRate": {
+              "mean": 0.02878999279519524,
+              "sd": 0.002720746645638852
+            }
+          }
+        }
+      ],
+      "learningCurveOuterFold1": [
+        {
+          "trainingDomainFraction": 0.25,
+          "trainingRows": 34433,
+          "trainingAveragePrecision": 0.9260444564639179,
+          "validationAveragePrecision": 0.9013452037398946
+        },
+        {
+          "trainingDomainFraction": 0.5,
+          "trainingRows": 65447,
+          "trainingAveragePrecision": 0.9075854848734378,
+          "validationAveragePrecision": 0.9035916591911236
+        },
+        {
+          "trainingDomainFraction": 1.0,
+          "trainingRows": 129231,
+          "trainingAveragePrecision": 0.9044990987009232,
+          "validationAveragePrecision": 0.9041214961237967
+        }
+      ],
+      "earlyStopTraceOuterFold1": null,
+      "outerFitSeconds": 11.206885200001125
+    },
+    "xgboost": {
+      "selectedCandidate": 1,
+      "candidates": [
+        {
+          "parameters": {
+            "n_estimators": 180,
+            "max_depth": 3,
+            "learning_rate": 0.1,
+            "patience": 15
+          },
+          "folds": [
+            {
+              "training": {
+                "prAucAveragePrecision": 0.8948634452766369,
+                "rocAuc": 0.884107614542281,
+                "logLoss": 0.35423585772514343
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.898048632169155,
+                "rocAuc": 0.8858316384645132,
+                "logLoss": 0.34064698219299316,
+                "threshold": 0.5,
+                "tp": 9588,
+                "fp": 565,
+                "tn": 18289,
+                "fn": 3866,
+                "precision": 0.9443514232246627,
+                "recall": 0.7126505128586295,
+                "f1": 0.8123014360147414,
+                "falsePositiveRate": 0.02996711573140978,
+                "falseAlertDomains": 403,
+                "legitimateDomains": 18485,
+                "negativeDomainFalsePositiveRate": 0.021801460643765216,
+                "negativeDomainFpr95Upper": 0.02365204597902607
+              },
+              "fitSeconds": 2.466651099995943,
+              "selectedRounds": 180
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.893622651857795,
+                "rocAuc": 0.8842975076338162,
+                "logLoss": 0.3518074154853821
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8799565359005734,
+                "rocAuc": 0.8705635520497702,
+                "logLoss": 0.3723887503147125,
+                "threshold": 0.5,
+                "tp": 9025,
+                "fp": 613,
+                "tn": 18241,
+                "fn": 4429,
+                "precision": 0.9363975928615895,
+                "recall": 0.6708042217927754,
+                "f1": 0.7816559847566257,
+                "falsePositiveRate": 0.03251299459000743,
+                "falseAlertDomains": 453,
+                "legitimateDomains": 18483,
+                "negativeDomainFalsePositiveRate": 0.024509008277876967,
+                "negativeDomainFpr95Upper": 0.02646318853329477
+              },
+              "fitSeconds": 2.108432200002426,
+              "selectedRounds": 180
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.8958655492489357,
+                "rocAuc": 0.8850564347676336,
+                "logLoss": 0.35035204887390137
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8914905216755379,
+                "rocAuc": 0.8797229803214659,
+                "logLoss": 0.3584236204624176,
+                "threshold": 0.5,
+                "tp": 9317,
+                "fp": 503,
+                "tn": 18350,
+                "fn": 4137,
+                "precision": 0.9487780040733198,
+                "recall": 0.6925078043704475,
+                "f1": 0.8006359027240698,
+                "falsePositiveRate": 0.026680103962234126,
+                "falseAlertDomains": 348,
+                "legitimateDomains": 18482,
+                "negativeDomainFalsePositiveRate": 0.018829131046423548,
+                "negativeDomainFpr95Upper": 0.02055799230384363
+              },
+              "fitSeconds": 2.033533499998157,
+              "selectedRounds": 180
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.8963204312552691,
+                "rocAuc": 0.8848548108868207,
+                "logLoss": 0.3490517735481262
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8905949886926761,
+                "rocAuc": 0.8817442597447381,
+                "logLoss": 0.3730998933315277,
+                "threshold": 0.5,
+                "tp": 9148,
+                "fp": 565,
+                "tn": 18289,
+                "fn": 4306,
+                "precision": 0.9418305363945229,
+                "recall": 0.6799464843169317,
+                "f1": 0.7897440324599646,
+                "falsePositiveRate": 0.02996711573140978,
+                "falseAlertDomains": 435,
+                "legitimateDomains": 18486,
+                "negativeDomainFalsePositiveRate": 0.02353132099967543,
+                "negativeDomainFpr95Upper": 0.02544871354699159
+              },
+              "fitSeconds": 2.327475099998992,
+              "selectedRounds": 180
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.8948286576219776,
+                "rocAuc": 0.8837985827314716,
+                "logLoss": 0.35149720311164856
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8944004268394738,
+                "rocAuc": 0.8825243045347845,
+                "logLoss": 0.3506833016872406,
+                "threshold": 0.5,
+                "tp": 9507,
+                "fp": 549,
+                "tn": 18305,
+                "fn": 3947,
+                "precision": 0.9454057279236276,
+                "recall": 0.7066299985134532,
+                "f1": 0.808762228838792,
+                "falsePositiveRate": 0.029118489445210564,
+                "falseAlertDomains": 435,
+                "legitimateDomains": 18482,
+                "negativeDomainFalsePositiveRate": 0.023536413808029434,
+                "negativeDomainFpr95Upper": 0.02545421591940434
+              },
+              "fitSeconds": 2.2375503000002936,
+              "selectedRounds": 180
+            }
+          ],
+          "validationSummary": {
+            "prAucAveragePrecision": {
+              "mean": 0.8908982210554832,
+              "sd": 0.006774161726137818
+            },
+            "rocAuc": {
+              "mean": 0.8800773470230544,
+              "sd": 0.005755778392885958
+            },
+            "logLoss": {
+              "mean": 0.35904850959777834,
+              "sd": 0.014003453215777707
+            },
+            "precision": {
+              "mean": 0.9433526568955445,
+              "sd": 0.0046188957923397
+            },
+            "recall": {
+              "mean": 0.6925078043704475,
+              "sd": 0.017564149074501947
+            },
+            "f1": {
+              "mean": 0.7986199169588387,
+              "sd": 0.012851760326425302
+            },
+            "falsePositiveRate": {
+              "mean": 0.029649163892054336,
+              "sd": 0.002091688626817723
+            }
+          }
+        },
+        {
+          "parameters": {
+            "n_estimators": 180,
+            "max_depth": 5,
+            "learning_rate": 0.08,
+            "patience": 15
+          },
+          "folds": [
+            {
+              "training": {
+                "prAucAveragePrecision": 0.8997093575718849,
+                "rocAuc": 0.8890324786121523,
+                "logLoss": 0.34322088956832886
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.901993976534512,
+                "rocAuc": 0.8901815321630956,
+                "logLoss": 0.33409029245376587,
+                "threshold": 0.5,
+                "tp": 9657,
+                "fp": 507,
+                "tn": 18347,
+                "fn": 3797,
+                "precision": 0.9501180637544274,
+                "recall": 0.7177790991526684,
+                "f1": 0.817766110593615,
+                "falsePositiveRate": 0.026890845443937626,
+                "falseAlertDomains": 355,
+                "legitimateDomains": 18485,
+                "negativeDomainFalsePositiveRate": 0.019204760616716256,
+                "negativeDomainFpr95Upper": 0.020949415282522758
+              },
+              "fitSeconds": 2.5334497000003466,
+              "selectedRounds": 180
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.8997555660419374,
+                "rocAuc": 0.8894015743577772,
+                "logLoss": 0.34015604853630066
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8932954466728016,
+                "rocAuc": 0.8846386105816615,
+                "logLoss": 0.3593233823776245,
+                "threshold": 0.5,
+                "tp": 9054,
+                "fp": 485,
+                "tn": 18369,
+                "fn": 4400,
+                "precision": 0.9491560960268371,
+                "recall": 0.6729597145830236,
+                "f1": 0.7875440351411299,
+                "falsePositiveRate": 0.025723984300413706,
+                "falseAlertDomains": 354,
+                "legitimateDomains": 18483,
+                "negativeDomainFalsePositiveRate": 0.01915273494562571,
+                "negativeDomainFpr95Upper": 0.0208952906289851
+              },
+              "fitSeconds": 3.3450808999987203,
+              "selectedRounds": 180
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.9019722385474194,
+                "rocAuc": 0.8912422914904903,
+                "logLoss": 0.3393446207046509
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8964235821276505,
+                "rocAuc": 0.8841176408297251,
+                "logLoss": 0.34947729110717773,
+                "threshold": 0.5,
+                "tp": 9398,
+                "fp": 478,
+                "tn": 18375,
+                "fn": 4056,
+                "precision": 0.9515998379910895,
+                "recall": 0.6985283187156236,
+                "f1": 0.8056579511358766,
+                "falsePositiveRate": 0.025354055057550524,
+                "falseAlertDomains": 326,
+                "legitimateDomains": 18482,
+                "negativeDomainFalsePositiveRate": 0.01763878368141976,
+                "negativeDomainFpr95Upper": 0.019315981963408155
+              },
+              "fitSeconds": 3.125738899994758,
+              "selectedRounds": 180
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.9006527195344809,
+                "rocAuc": 0.8901771300828739,
+                "logLoss": 0.3397082984447479
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8963169915253922,
+                "rocAuc": 0.8868009826126069,
+                "logLoss": 0.3573114275932312,
+                "threshold": 0.5,
+                "tp": 9376,
+                "fp": 452,
+                "tn": 18402,
+                "fn": 4078,
+                "precision": 0.954008954008954,
+                "recall": 0.6968931172885388,
+                "f1": 0.8054290868482089,
+                "falsePositiveRate": 0.023973692585127826,
+                "falseAlertDomains": 339,
+                "legitimateDomains": 18486,
+                "negativeDomainFalsePositiveRate": 0.01833820188250568,
+                "negativeDomainFpr95Upper": 0.020045777496131845
+              },
+              "fitSeconds": 2.7354331000024104,
+              "selectedRounds": 180
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.900921361364668,
+                "rocAuc": 0.8902360190859474,
+                "logLoss": 0.34179195761680603
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.9003470273664012,
+                "rocAuc": 0.8897511104907925,
+                "logLoss": 0.34425365924835205,
+                "threshold": 0.5,
+                "tp": 9491,
+                "fp": 455,
+                "tn": 18399,
+                "fn": 3963,
+                "precision": 0.954252966016489,
+                "recall": 0.705440761111937,
+                "f1": 0.8111965811965812,
+                "falsePositiveRate": 0.02413281001379018,
+                "falseAlertDomains": 351,
+                "legitimateDomains": 18482,
+                "negativeDomainFalsePositiveRate": 0.018991451141651336,
+                "negativeDomainFpr95Upper": 0.020727221871132514
+              },
+              "fitSeconds": 3.18321350000042,
+              "selectedRounds": 180
+            }
+          ],
+          "validationSummary": {
+            "prAucAveragePrecision": {
+              "mean": 0.8976754048453515,
+              "sd": 0.0034779307349011366
+            },
+            "rocAuc": {
+              "mean": 0.8870979753355763,
+              "sd": 0.002809204615965493
+            },
+            "logLoss": {
+              "mean": 0.3488912105560303,
+              "sd": 0.010254850231506955
+            },
+            "precision": {
+              "mean": 0.9518271835595594,
+              "sd": 0.0022777196900332472
+            },
+            "recall": {
+              "mean": 0.6983202021703583,
+              "sd": 0.01639043353478134
+            },
+            "f1": {
+              "mean": 0.8055187529830823,
+              "sd": 0.011240033355172532
+            },
+            "falsePositiveRate": {
+              "mean": 0.025215077480163973,
+              "sd": 0.0012040388815895942
+            }
+          }
+        }
+      ],
+      "learningCurveOuterFold1": [
+        {
+          "trainingDomainFraction": 0.25,
+          "trainingRows": 34433,
+          "trainingAveragePrecision": 0.9202197851277896,
+          "validationAveragePrecision": 0.8995547463258313
+        },
+        {
+          "trainingDomainFraction": 0.5,
+          "trainingRows": 65447,
+          "trainingAveragePrecision": 0.9023011974863495,
+          "validationAveragePrecision": 0.9010867149536641
+        },
+        {
+          "trainingDomainFraction": 1.0,
+          "trainingRows": 129231,
+          "trainingAveragePrecision": 0.8997093575718849,
+          "validationAveragePrecision": 0.901993976534512
+        }
+      ],
+      "earlyStopTraceOuterFold1": {
+        "fitLogLoss": [
+          0.6432384346640269,
+          0.6135331672164053,
+          0.5879972598399739,
+          0.5661421803755867,
+          0.5470249919164787,
+          0.5309845880838503,
+          0.5163969050304784,
+          0.5030166956682478,
+          0.4912972645224615,
+          0.48170853784898715,
+          0.47243756008247795,
+          0.46484783096112525,
+          0.457435247312105,
+          0.451385250709835,
+          0.4441598749155438,
+          0.4382078054181039,
+          0.4326666924399723,
+          0.42741506743178503,
+          0.42383698361939115,
+          0.419932845873234,
+          0.4169891711356831,
+          0.41372527687479016,
+          0.41077826479814367,
+          0.4086013745639917,
+          0.40623340122310053,
+          0.40320797318329,
+          0.4015374019432544,
+          0.3982346542083308,
+          0.3958055033183595,
+          0.3939331592662071,
+          0.39243880247412133,
+          0.39052844348705834,
+          0.3892409126557923,
+          0.3877747904482698,
+          0.38683230001688423,
+          0.3855079273552097,
+          0.3841362600581832,
+          0.3832430023203913,
+          0.38246178907080247,
+          0.3818142549118388,
+          0.3809182248867206,
+          0.3792968528361746,
+          0.3787707198068358,
+          0.3780316049083389,
+          0.3765223584680448,
+          0.3752658596488469,
+          0.37419139167745513,
+          0.37333448832100774,
+          0.37201058853680846,
+          0.3715369698268478,
+          0.3705207961016854,
+          0.3699948133236943,
+          0.3695283414265042,
+          0.36875979641341056,
+          0.36770744473759737,
+          0.36727053292442585,
+          0.36698209871778015,
+          0.3667289946965783,
+          0.366227447607829,
+          0.36598989856526665,
+          0.365033376767142,
+          0.36458202984521637,
+          0.3643279599676496,
+          0.3636480494855959,
+          0.3629035740881605,
+          0.3627446735180288,
+          0.36258369371529864,
+          0.3624384199249675,
+          0.36229675292663854,
+          0.3617283567087094,
+          0.36126240959204037,
+          0.360516673951284,
+          0.3602134737032978,
+          0.36001411612292483,
+          0.3595396140193192,
+          0.3590922042726603,
+          0.3589755870465908,
+          0.3587356654331381,
+          0.3576816769135156,
+          0.35735887343544503,
+          0.35701410377654047,
+          0.3568695584429935,
+          0.3564550748556765,
+          0.35613092983441547,
+          0.3559084702034216,
+          0.35576579275817477,
+          0.3555607195403738,
+          0.35527032494404587,
+          0.35484229844276766,
+          0.3547362861572281,
+          0.35463917756557406,
+          0.35428570830326156,
+          0.35345579668903937,
+          0.35316066945286356,
+          0.353072333967967,
+          0.3530205081439435,
+          0.35277186488825624,
+          0.3527251120227643,
+          0.3526773778078972,
+          0.3522948835990886,
+          0.3520208193297158,
+          0.35178091873162876,
+          0.35168765565856636,
+          0.3516230782462239,
+          0.3514080837804717,
+          0.3513685518623123,
+          0.35106441278242967,
+          0.35102810155675057,
+          0.3509467224058591,
+          0.35092484130154683,
+          0.35060606238854175,
+          0.3505917327471114,
+          0.35040070532601836,
+          0.3502591047362256,
+          0.3499118234991264,
+          0.34975658490998546,
+          0.3497407919364711,
+          0.3495863621706612,
+          0.3492995385050805,
+          0.3492740372078392,
+          0.3488425381334904,
+          0.34864770520800803,
+          0.34862720586658796,
+          0.3485990488441083,
+          0.3484351464754946,
+          0.348392952694331,
+          0.3481867756260255,
+          0.34817173330132983,
+          0.3479188888883122,
+          0.34791105314791104,
+          0.3477438401810913,
+          0.34762615671368446,
+          0.3475815712178077,
+          0.34741724730321066,
+          0.34702218914493166,
+          0.3469186999370362,
+          0.34681576780219486,
+          0.34680070277725955,
+          0.3467942461203144,
+          0.34667906455983516,
+          0.3466604576282421,
+          0.34641481006280495,
+          0.3463147558881945,
+          0.3463044861109986,
+          0.3462558154024217,
+          0.34603855264717703,
+          0.34582693170538686,
+          0.34559090201786186,
+          0.34552080238563465,
+          0.3455109468339337,
+          0.345503476999824,
+          0.34541463416742246,
+          0.34537616271496696,
+          0.34529467659450885,
+          0.3451462624573262,
+          0.3450539369620895,
+          0.3450492906526458,
+          0.34504495485870773,
+          0.3450044745479159,
+          0.3449336330953291,
+          0.3448712619404662,
+          0.34480312413969144,
+          0.3447992294343948,
+          0.3447222102136655,
+          0.3446569634143135,
+          0.3445212654369497,
+          0.3444682391021126,
+          0.3444356757663737,
+          0.3444268851469674,
+          0.3444223939643335,
+          0.3442800340403017,
+          0.34406593216919173,
+          0.3440069177883473,
+          0.3439693094313964,
+          0.3438212844199521,
+          0.34371760335512197,
+          0.3435974167809589,
+          0.34359349876774764,
+          0.343581572842622,
+          0.3435114586005961
+        ],
+        "stopLogLoss": [
+          0.6473522125610611,
+          0.6175622443559904,
+          0.5921490467412907,
+          0.5703427349376327,
+          0.5514782973603859,
+          0.5354500213139752,
+          0.5209958218930134,
+          0.5085341032191987,
+          0.4970336319795569,
+          0.48742891079134193,
+          0.4783491733753707,
+          0.4711399233728308,
+          0.46388472052088664,
+          0.45782595437447743,
+          0.4514042787494642,
+          0.44590501684836514,
+          0.4410212187518997,
+          0.43621239895112845,
+          0.4325786639838521,
+          0.42917156619965463,
+          0.42618687147358886,
+          0.4234001915990187,
+          0.4210915010932703,
+          0.4188613751194007,
+          0.4165761631198867,
+          0.41378561003886394,
+          0.4120395494710394,
+          0.40673118687457543,
+          0.40461504386503466,
+          0.4028596900414966,
+          0.4014158730678061,
+          0.3974739962713503,
+          0.396244631902131,
+          0.39402003646052847,
+          0.39302055971091,
+          0.3918601722138621,
+          0.3904061286194521,
+          0.3890112043437214,
+          0.3882154572592282,
+          0.38719781360747485,
+          0.38641589889036265,
+          0.38298674230783414,
+          0.3823794013077881,
+          0.38101667136242845,
+          0.38009320806417235,
+          0.37735503368732076,
+          0.37487945435927,
+          0.37420395188556427,
+          0.3718836829141952,
+          0.37136442851717794,
+          0.3707001527458333,
+          0.370259980116184,
+          0.36985436380041375,
+          0.36794359680897537,
+          0.3659690812075606,
+          0.3655875335273781,
+          0.3652731238066331,
+          0.3648390003631941,
+          0.36441914897260713,
+          0.36417853731903393,
+          0.3624447951125421,
+          0.36177839851859644,
+          0.3615663538313714,
+          0.3609939636631931,
+          0.3595654623785333,
+          0.3594126785838608,
+          0.359222252324376,
+          0.3590686231681308,
+          0.3588297338042782,
+          0.3583529522354411,
+          0.35808632762758097,
+          0.35686971696910486,
+          0.3563783819193984,
+          0.35598387078091986,
+          0.3551660918261169,
+          0.35500185304818255,
+          0.3548642612253733,
+          0.3545735840440222,
+          0.3538885711199596,
+          0.353719454047248,
+          0.3535622158748158,
+          0.3534250714362209,
+          0.35321857476886875,
+          0.352980807489159,
+          0.35284738193712406,
+          0.3527186676515232,
+          0.35260236463905437,
+          0.352443979265775,
+          0.3521517734409279,
+          0.35204080436998236,
+          0.3519954612747562,
+          0.3511833790492815,
+          0.34995059766199327,
+          0.34924663720197874,
+          0.3491849170363976,
+          0.3491359108508431,
+          0.34893731978051623,
+          0.34889343978044046,
+          0.34888507812585273,
+          0.3486200430579637,
+          0.34838986712172687,
+          0.3478381444801375,
+          0.3477716936198043,
+          0.34771295617188963,
+          0.3475947481487222,
+          0.3475735336489001,
+          0.34744702517161485,
+          0.34739826158274556,
+          0.3473435225443515,
+          0.3473437430905532,
+          0.3471171006702432,
+          0.3471067914634974,
+          0.34701325494064583,
+          0.3465520150364785,
+          0.34627976010346356,
+          0.3462070901947816,
+          0.34620842157533066,
+          0.3457816424170057,
+          0.34557293130363514,
+          0.34557462546522105,
+          0.3450070672418702,
+          0.34483873185395186,
+          0.34477729003069363,
+          0.34473559762830974,
+          0.344674388838811,
+          0.34464930541889094,
+          0.34416005228356833,
+          0.3441421959986006,
+          0.34394205452544757,
+          0.34393594137493205,
+          0.343782802194884,
+          0.34372961691709913,
+          0.34372146775211354,
+          0.34349721300375347,
+          0.3432682596597993,
+          0.34319613597272886,
+          0.34315623060438705,
+          0.34314845444975073,
+          0.3431492281879555,
+          0.34310574092679913,
+          0.34310567479871484,
+          0.34307032372676344,
+          0.3430320492764206,
+          0.3430304893577529,
+          0.3429906393528119,
+          0.34272965953761375,
+          0.34271242621929354,
+          0.34253265996404636,
+          0.34251259385527416,
+          0.34250698390121104,
+          0.34249730779450765,
+          0.3424609652196786,
+          0.34243207336916365,
+          0.3423945637396518,
+          0.34225705450029015,
+          0.3421879120654956,
+          0.342185841234812,
+          0.34218266363753963,
+          0.3421649357879277,
+          0.34205027706533836,
+          0.3420153652801263,
+          0.3419752537364249,
+          0.341974517666648,
+          0.34191574219081233,
+          0.34183331958460256,
+          0.3417712726442382,
+          0.34174301583886424,
+          0.34172341181092075,
+          0.3417228432331651,
+          0.3417259819861217,
+          0.34151030106033414,
+          0.3414352739104976,
+          0.34142561174865765,
+          0.341400044776811,
+          0.34126980941544227,
+          0.3412545041171806,
+          0.34124281919479743,
+          0.34124411255356685,
+          0.3412161168303554,
+          0.3411997515310232
+        ]
+      },
+      "outerFitSeconds": 26.096558299992466
+    },
+    "mlp": {
+      "selectedCandidate": 1,
+      "candidates": [
+        {
+          "parameters": {
+            "hidden_layer_sizes": [
+              24
+            ],
+            "alpha": 0.001,
+            "batch_size": 512,
+            "max_epochs": 24,
+            "patience": 4
+          },
+          "folds": [
+            {
+              "training": {
+                "prAucAveragePrecision": 0.8940927246889407,
+                "rocAuc": 0.8818757564862763,
+                "logLoss": 0.35389718413352966
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8994401542080839,
+                "rocAuc": 0.8856798043580214,
+                "logLoss": 0.33931732177734375,
+                "threshold": 0.5,
+                "tp": 9678,
+                "fp": 613,
+                "tn": 18241,
+                "fn": 3776,
+                "precision": 0.940433388397629,
+                "recall": 0.7193399732421585,
+                "f1": 0.8151610865445357,
+                "falsePositiveRate": 0.03251299459000743,
+                "falseAlertDomains": 408,
+                "legitimateDomains": 18485,
+                "negativeDomainFalsePositiveRate": 0.02207195022991615,
+                "negativeDomainFpr95Upper": 0.023933173333916747
+              },
+              "fitSeconds": 3.4865342999983113,
+              "selectedRounds": 24
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.8984097347145226,
+                "rocAuc": 0.8865482868093216,
+                "logLoss": 0.3487393856048584
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8970404394787705,
+                "rocAuc": 0.8860911809805782,
+                "logLoss": 0.3546879291534424,
+                "threshold": 0.5,
+                "tp": 9423,
+                "fp": 679,
+                "tn": 18175,
+                "fn": 4031,
+                "precision": 0.9327855870124728,
+                "recall": 0.7003865021554928,
+                "f1": 0.8000509424350484,
+                "falsePositiveRate": 0.03601357802057919,
+                "falseAlertDomains": 435,
+                "legitimateDomains": 18483,
+                "negativeDomainFalsePositiveRate": 0.02353514039928583,
+                "negativeDomainFpr95Upper": 0.025452840103247536
+              },
+              "fitSeconds": 4.587504200004332,
+              "selectedRounds": 24
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.8953965966992223,
+                "rocAuc": 0.882577622099663,
+                "logLoss": 0.3498726189136505
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8919389786378968,
+                "rocAuc": 0.87831945010528,
+                "logLoss": 0.3556872308254242,
+                "threshold": 0.5,
+                "tp": 9435,
+                "fp": 555,
+                "tn": 18298,
+                "fn": 4019,
+                "precision": 0.9444444444444444,
+                "recall": 0.7012784302066299,
+                "f1": 0.8048967752943184,
+                "falsePositiveRate": 0.029438285683976027,
+                "falseAlertDomains": 393,
+                "legitimateDomains": 18482,
+                "negativeDomainFalsePositiveRate": 0.021263932474840385,
+                "negativeDomainFpr95Upper": 0.023093321787598087
+              },
+              "fitSeconds": 4.079495800004224,
+              "selectedRounds": 23
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.8975718195421091,
+                "rocAuc": 0.8854109929220644,
+                "logLoss": 0.3480224311351776
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8947414501983956,
+                "rocAuc": 0.8835555756470558,
+                "logLoss": 0.3562288284301758,
+                "threshold": 0.5,
+                "tp": 9486,
+                "fp": 581,
+                "tn": 18273,
+                "fn": 3968,
+                "precision": 0.9422866792490315,
+                "recall": 0.7050691244239631,
+                "f1": 0.8065983589133116,
+                "falsePositiveRate": 0.030815742017608994,
+                "falseAlertDomains": 413,
+                "legitimateDomains": 18486,
+                "negativeDomainFalsePositiveRate": 0.022341231201990695,
+                "negativeDomainFpr95Upper": 0.02421292248430795
+              },
+              "fitSeconds": 3.8932860999993864,
+              "selectedRounds": 24
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.8977654850068045,
+                "rocAuc": 0.8858142272291231,
+                "logLoss": 0.35032030940055847
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8978844523913384,
+                "rocAuc": 0.886149027707437,
+                "logLoss": 0.3517099916934967,
+                "threshold": 0.5,
+                "tp": 9546,
+                "fp": 592,
+                "tn": 18262,
+                "fn": 3908,
+                "precision": 0.9416058394160584,
+                "recall": 0.7095287646796492,
+                "f1": 0.8092573753814852,
+                "falsePositiveRate": 0.03139917258937096,
+                "falseAlertDomains": 387,
+                "legitimateDomains": 18482,
+                "negativeDomainFalsePositiveRate": 0.020939292284384806,
+                "negativeDomainFpr95Upper": 0.022755645450077727
+              },
+              "fitSeconds": 3.7401326000035624,
+              "selectedRounds": 24
+            }
+          ],
+          "validationSummary": {
+            "prAucAveragePrecision": {
+              "mean": 0.896209094982897,
+              "sd": 0.002929401587646175
+            },
+            "rocAuc": {
+              "mean": 0.8839590077596745,
+              "sd": 0.003326817509089956
+            },
+            "logLoss": {
+              "mean": 0.35152626037597656,
+              "sd": 0.0070447837040284195
+            },
+            "precision": {
+              "mean": 0.9403111877039272,
+              "sd": 0.00445286705281815
+            },
+            "recall": {
+              "mean": 0.7071205589415787,
+              "sd": 0.0077265761055608844
+            },
+            "f1": {
+              "mean": 0.8071929077137399,
+              "sd": 0.005576452300440499
+            },
+            "falsePositiveRate": {
+              "mean": 0.03203595458030852,
+              "sd": 0.002484519526013512
+            }
+          }
+        },
+        {
+          "parameters": {
+            "hidden_layer_sizes": [
+              32,
+              16
+            ],
+            "alpha": 0.0005,
+            "batch_size": 512,
+            "max_epochs": 24,
+            "patience": 4
+          },
+          "folds": [
+            {
+              "training": {
+                "prAucAveragePrecision": 0.8988564249795554,
+                "rocAuc": 0.8868417105198616,
+                "logLoss": 0.3484829366207123
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.903601976900116,
+                "rocAuc": 0.8903790609853006,
+                "logLoss": 0.33619728684425354,
+                "threshold": 0.5,
+                "tp": 9890,
+                "fp": 772,
+                "tn": 18082,
+                "fn": 3564,
+                "precision": 0.9275933220784093,
+                "recall": 0.7350973688122492,
+                "f1": 0.8202023552827998,
+                "falsePositiveRate": 0.040946218309112124,
+                "falseAlertDomains": 566,
+                "legitimateDomains": 18485,
+                "negativeDomainFalsePositiveRate": 0.030619421152285636,
+                "negativeDomainFpr95Upper": 0.03278626371467867
+              },
+              "fitSeconds": 8.08868409999559,
+              "selectedRounds": 24
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.9002541549143206,
+                "rocAuc": 0.8884475438276765,
+                "logLoss": 0.34418612718582153
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8979183214273041,
+                "rocAuc": 0.8866329241421672,
+                "logLoss": 0.35047030448913574,
+                "threshold": 0.5,
+                "tp": 9433,
+                "fp": 585,
+                "tn": 18269,
+                "fn": 4021,
+                "precision": 0.941605110800559,
+                "recall": 0.7011297755314405,
+                "f1": 0.8037661895023859,
+                "falsePositiveRate": 0.0310278985891588,
+                "falseAlertDomains": 386,
+                "legitimateDomains": 18483,
+                "negativeDomainFalsePositiveRate": 0.020884055618676622,
+                "negativeDomainFpr95Upper": 0.022698128616041383
+              },
+              "fitSeconds": 6.416945299999497,
+              "selectedRounds": 24
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.8936972807908208,
+                "rocAuc": 0.880532443428515,
+                "logLoss": 0.3508523106575012
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8904889371503942,
+                "rocAuc": 0.8771113341986942,
+                "logLoss": 0.3569343686103821,
+                "threshold": 0.5,
+                "tp": 9424,
+                "fp": 580,
+                "tn": 18273,
+                "fn": 4030,
+                "precision": 0.9420231907237105,
+                "recall": 0.7004608294930875,
+                "f1": 0.8034785574217751,
+                "falsePositiveRate": 0.03076433458865963,
+                "falseAlertDomains": 420,
+                "legitimateDomains": 18482,
+                "negativeDomainFalsePositiveRate": 0.022724813331890487,
+                "negativeDomainFpr95Upper": 0.024611587841144415
+              },
+              "fitSeconds": 4.37020610000036,
+              "selectedRounds": 6
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.8994008661204058,
+                "rocAuc": 0.8871174367055389,
+                "logLoss": 0.34448766708374023
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8962483455646084,
+                "rocAuc": 0.884872794521346,
+                "logLoss": 0.35284486413002014,
+                "threshold": 0.5,
+                "tp": 9469,
+                "fp": 567,
+                "tn": 18287,
+                "fn": 3985,
+                "precision": 0.943503387803906,
+                "recall": 0.703805559684852,
+                "f1": 0.806215410813112,
+                "falsePositiveRate": 0.030073194017184682,
+                "falseAlertDomains": 383,
+                "legitimateDomains": 18486,
+                "negativeDomainFalsePositiveRate": 0.02071838147787515,
+                "negativeDomainFpr95Upper": 0.022525597240572896
+              },
+              "fitSeconds": 8.757276200005435,
+              "selectedRounds": 23
+            },
+            {
+              "training": {
+                "prAucAveragePrecision": 0.900184449133181,
+                "rocAuc": 0.8886450969518144,
+                "logLoss": 0.3438636064529419
+              },
+              "validation": {
+                "prAucAveragePrecision": 0.8997375167272769,
+                "rocAuc": 0.8886829615234487,
+                "logLoss": 0.34747985005378723,
+                "threshold": 0.5,
+                "tp": 9558,
+                "fp": 515,
+                "tn": 18339,
+                "fn": 3896,
+                "precision": 0.9488732254541844,
+                "recall": 0.7104206927307863,
+                "f1": 0.8125132826114677,
+                "falsePositiveRate": 0.027315158587037234,
+                "falseAlertDomains": 350,
+                "legitimateDomains": 18482,
+                "negativeDomainFalsePositiveRate": 0.018937344443242073,
+                "negativeDomainFpr95Upper": 0.02067081550575418
+              },
+              "fitSeconds": 8.710064200000488,
+              "selectedRounds": 24
+            }
+          ],
+          "validationSummary": {
+            "prAucAveragePrecision": {
+              "mean": 0.89759901955394,
+              "sd": 0.00482411164768655
+            },
+            "rocAuc": {
+              "mean": 0.8855358150741913,
+              "sd": 0.005147248884372518
+            },
+            "logLoss": {
+              "mean": 0.34878533482551577,
+              "sd": 0.007840422422231425
+            },
+            "precision": {
+              "mean": 0.9407196473721539,
+              "sd": 0.007890084486251867
+            },
+            "recall": {
+              "mean": 0.7101828452504831,
+              "sd": 0.014473557688455386
+            },
+            "f1": {
+              "mean": 0.8092351591263081,
+              "sd": 0.007127279581403923
+            },
+            "falsePositiveRate": {
+              "mean": 0.03202536081823049,
+              "sd": 0.005200090785278481
+            }
+          }
+        }
+      ],
+      "learningCurveOuterFold1": [
+        {
+          "trainingDomainFraction": 0.25,
+          "trainingRows": 34433,
+          "trainingAveragePrecision": 0.9131621554085885,
+          "validationAveragePrecision": 0.8956030705756874
+        },
+        {
+          "trainingDomainFraction": 0.5,
+          "trainingRows": 65447,
+          "trainingAveragePrecision": 0.898682428633283,
+          "validationAveragePrecision": 0.9015427724828096
+        },
+        {
+          "trainingDomainFraction": 1.0,
+          "trainingRows": 129231,
+          "trainingAveragePrecision": 0.8988564249795554,
+          "validationAveragePrecision": 0.903601976900116
+        }
+      ],
+      "earlyStopTraceOuterFold1": {
+        "fitLogLoss": [
+          0.38071882724761963,
+          0.3653718829154968,
+          0.36190950870513916,
+          0.3604978621006012,
+          0.35918790102005005,
+          0.35764849185943604,
+          0.3568990230560303,
+          0.35590413212776184,
+          0.3554825782775879,
+          0.35432618856430054,
+          0.35429203510284424,
+          0.3535354435443878,
+          0.3534454107284546,
+          0.3529684841632843,
+          0.3524589538574219,
+          0.3518478274345398,
+          0.35147377848625183,
+          0.3515288531780243,
+          0.35075902938842773,
+          0.3504176437854767,
+          0.3501458168029785,
+          0.34991684556007385,
+          0.34973520040512085,
+          0.34950217604637146
+        ],
+        "stopLogLoss": [
+          0.3744087219238281,
+          0.3548309803009033,
+          0.35218656063079834,
+          0.35130226612091064,
+          0.35024726390838623,
+          0.3486629128456116,
+          0.34781286120414734,
+          0.3467077910900116,
+          0.34626707434654236,
+          0.3450593054294586,
+          0.34505587816238403,
+          0.34438470005989075,
+          0.34445706009864807,
+          0.3439677357673645,
+          0.3434952199459076,
+          0.34304991364479065,
+          0.34278443455696106,
+          0.3430006206035614,
+          0.3422931134700775,
+          0.3420661687850952,
+          0.34184882044792175,
+          0.34171465039253235,
+          0.34154418110847473,
+          0.3413940966129303
+        ]
+      },
+      "outerFitSeconds": 56.13012890001119
+    }
+  },
+  "preselectedChampion": "random_forest",
+  "elapsedDevelopmentSeconds": 195.52870289999555,
+  "environment": {
+    "platform": "Windows-10-10.0.26300-SP0",
+    "processor": "Intel64 Family 6 Model 170 Stepping 4, GenuineIntel",
+    "python": "3.11.9",
+    "scikit-learn": "1.9.1",
+    "xgboost-cpu": "3.2.0",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "joblib": "1.6.0"
+  }
+}

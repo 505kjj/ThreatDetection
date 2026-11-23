@@ -1,4 +1,6 @@
-# Phase 3B research preflight
+# Phase 3B phishing URL research
+
+The [PhiUSIIL experiment report](../docs/experiments/phiusiil/README.md) records four models trained and scored on the frozen retrospective holdout. The preflight below still runs independently of training. The experiment leaves the product and production training gate unchanged.
 
 This environment prepares unfitted Logistic Regression, Random Forest, CPU XGBoost, and a small MLP. Logistic Regression and MLP package scaling inside their estimator pipelines. All candidates use a fixed seed, and both tree ensembles use one worker. The preflight verifies constructor and input compatibility. It performs no fit, evaluation, model serialization, or deployment.
 
@@ -28,6 +30,6 @@ node evaluation/run.mjs --manifest evaluation/manifests/synthetic.json --input-d
 .\.venv\Scripts\python.exe research/preflight.py --features $features
 ```
 
-## Training gate
+## Production training gate
 
-The Phase 3A **NO-GO for training** still applies. Obtain dated, independently adjudicated Indian financial positives and hard negatives with training rights, plus frozen independent reputation snapshots. Score the unchanged rules on an untouched chronological holdout before fitting any classifier. Fit preprocessors and estimators using the train partition, select settings on validation, and reserve the test partition for final evaluation. Keep synthetic fixtures out of any real-world accuracy claim. [Phase 3A evaluation and gate](../docs/dataset-evaluation.md)
+The Phase 3A **NO-GO for production training** still applies. The authorized PhiUSIIL experiment is a retrospective, single-corpus benchmark. Obtain dated, independently adjudicated Indian financial positives and hard negatives with training rights, plus frozen independent reputation snapshots. Reserve future test partitions for final evaluation. [Phase 3A evaluation and gate](../docs/dataset-evaluation.md)
