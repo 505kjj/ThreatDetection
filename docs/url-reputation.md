@@ -1,5 +1,7 @@
 # URL reputation operations
 
+For scheduled upstream ingestion, signed snapshots, and the current commercial provider comparison, see [threat intelligence ingestion](threat-intelligence-ingestion.md). This page describes the browser contract and the legacy operator-file mode.
+
 ## How detection works
 
 The Spring Boot service reads an operator-published threat snapshot through the `ReputationProvider` interface. The Chrome service worker downloads the same snapshot for every authenticated browser. The request has no destination, body, referrer, cookies, or query parameters. It does not call a vendor when a user visits a page. The worker checks committed HTTP(S) documents in Chrome using exact hostnames and whole SHA-256 digests of canonical URLs with the query and fragment removed. It keeps only the downloaded indicators in the reputation cache, in trusted extension session storage. Browsing destinations and computed lookup hashes are not written to that cache.
@@ -17,7 +19,7 @@ The warning is advisory. The Chrome badge and popup are extension-owned. The in-
 
 ## Provider evaluation
 
-Use a provider contract that expressly permits commercial customer protection **and distribution to end-user extensions** of the exact derivative data and scope being published. Paying for access, obtaining an API key, or hashing an indicator does not itself grant distribution rights. No vendor feed is bundled or contacted by this branch.
+Use a provider contract that expressly permits commercial customer protection **and distribution to end-user extensions** of the exact derivative data and scope being published. Paying for access, obtaining an API key, or hashing an indicator does not itself grant distribution rights. Managed ingestion is optional and includes its own browser distribution gate.
 
 | Candidate | Commercial terms and limits | Privacy and integration fit |
 | --- | --- | --- |

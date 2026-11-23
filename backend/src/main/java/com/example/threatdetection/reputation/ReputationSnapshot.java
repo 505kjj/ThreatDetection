@@ -15,7 +15,7 @@ public record ReputationSnapshot(
         @JsonFormat(shape = JsonFormat.Shape.STRING) Instant expiresAt,
         List<Entry> entries) {
 
-    private static final int MAX_ENTRIES = 20_000;
+    static final int MAX_ENTRIES = 20_000;
     private static final Comparator<Entry> ORDER = Comparator.comparing(Entry::kind).thenComparing(Entry::value);
 
     public ReputationSnapshot {

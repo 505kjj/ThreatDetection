@@ -47,6 +47,7 @@ public class ApiSecurityConfig {
                         .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/health", "/api/threat/health").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/threat/reputation/snapshot").hasRole("BROWSER")
+                        .requestMatchers(HttpMethod.GET, "/api/threat/reputation/feed-status").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/threat/session/start", "/api/threat/analyze",
                                 "/api/threat/event").hasRole("BROWSER")
                         .requestMatchers(HttpMethod.GET, "/api/threat/session/{id}",

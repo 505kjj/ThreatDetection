@@ -2,7 +2,7 @@
 
 Threat Detection contains a Java 21 Spring Boot API, a Manifest V3 Chrome extension, and a Java Swing admin client. Chrome matches exact hostnames and URL-path hashes locally against an authenticated reputation snapshot. Optional activity monitoring on configured sites can produce an unconfirmed warning.
 
-See [URL reputation operations and provider evaluation](docs/url-reputation.md) for the snapshot format, licensing requirements, and deployment configuration. An instance without a configured, current snapshot reports **Protection unavailable**.
+See [threat intelligence ingestion](docs/threat-intelligence-ingestion.md) for the managed CERT Polska source, provider terms, signed publication, and operations. [URL reputation operations](docs/url-reputation.md) describes the browser contract and the legacy operator-file format. An instance without a current, authorized browser snapshot reports **Protection unavailable**.
 
 | Module | Location | Current behavior |
 | --- | --- | --- |
