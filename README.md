@@ -1,11 +1,11 @@
 # Threat Detection
 
-Threat Detection contains a Java 21 Spring Boot API, a Manifest V3 Chrome extension, and a Java Swing admin client. The API evaluates browser-reported activity and returns a score, reasons, and a suggested action. Phase 1A hardens the backend API. Its behavioral signals can support a warning and do not establish whether a website is phishing.
+Threat Detection contains a Java 21 Spring Boot API, a Manifest V3 Chrome extension, and a Java Swing admin client. The Chrome extension uses the secured backend to check activity on configured websites. These behavioral signals can support a warning and do not establish whether a website is phishing.
 
 | Module | Location | Phase 1A status |
 | --- | --- | --- |
 | Spring Boot REST API, rules and JPA persistence | [`backend/`](backend/) | Secured API. Temporary H2 database is configured by default. |
-| Chrome extension | [`extension/`](extension/) | Existing client needs the authentication and payload changes below before it can use the secured API. Its current failure path can show a High Risk warning when the API rejects a request. |
+| Chrome extension | [`extension/`](extension/) | Connects to the secured API using a browser bearer token and the returned session UUID. Authentication and network failures show protection as unavailable. |
 | Swing admin client | [`admin-swing/`](admin-swing/) | Existing client needs admin bearer authentication. The simulator also needs the new browser session contract. |
 | Static browser demos | [`backend/src/main/resources/static/`](backend/src/main/resources/static/) | Assets retained for reference. The server disables static mappings and denies the demo routes. |
 
@@ -94,6 +94,46 @@ try {
 
 For manual requests with an HTTP client, see [`backend/test.http`](backend/test.http). Keep generated tokens in your local shell or private client settings.
 
+## Connect the Chrome extension
+
+1. In Chrome 116 or later, open `chrome://extensions`, enable **Developer mode**, and load the repository’s `extension/` directory as an unpacked extension. Copy the displayed extension ID.
+2. Register a separate `BROWSER` client and its token digest in the backend configuration. Include the extension's exact `chrome-extension://<extension-id>` origin in `threat.security.allowed-origins`. For a disposable local client, use the `New-LocalApiClient` helper from the verification block above and the configuration below. Run it from `backend/` after building the JAR.
+
+   ```powershell
+   $extensionId = Read-Host 'ID shown in chrome://extensions'
+   $browser = New-LocalApiClient BROWSER
+   $env:SPRING_APPLICATION_JSON = @{
+       threat = @{ security = @{
+           clients = @{ 'local-chrome' = $browser.Settings }
+           'allowed-origins' = @("chrome-extension://$extensionId")
+       } }
+   } | ConvertTo-Json -Depth 7 -Compress
+   $backend = Start-Process -FilePath java -ArgumentList '-jar', 'target/threat-detection-0.0.1-SNAPSHOT.jar' -PassThru -WindowStyle Hidden
+   Set-Clipboard -Value $browser.Token
+   ```
+
+3. Open the extension's **Settings**, use `http://127.0.0.1:8081` for local verification, paste the browser token, and choose **Save connection**. For a remote backend, use its HTTPS origin and approve the host permission requested by Chrome. Changing the origin requires a new token for that origin.
+4. Add a test hostname such as `example.com` and visit it. The popup should display the activity-check result when the worker has received one. Clear the token or stop the backend to check that the popup says **Protection unavailable**. Pausing monitoring stops collection on open tabs. Stop the disposable backend with `Stop-Process -InputObject $backend` when finished.
+
+The token is kept in trusted extension memory for the browser session. Reloading or updating the extension, or restarting Chrome, clears it. Per-document session IDs and verdicts are also in memory. The service worker renews a session once if the backend loses it. Each session starts with the hostname only. Analysis contains that server-issued UUID, bounded counts, and activity categories. Path and field-name matching happen on the device. Requests never include page URLs, paths, query strings, fragments, referrers, or form values.
+
+### Extension regression checks
+
+Run `node --test extension/tests/worker.test.mjs` from the repository root with Node.js 24. The tests exercise message validation, the outgoing payload, credential isolation and origin binding, session recovery, and failure states.
+
+The browser smoke test requires the built backend JAR and a separate Playwright installation. From the repository root in PowerShell 7:
+
+```powershell
+$toolPath = Join-Path ([IO.Path]::GetTempPath()) ('threat-chrome-' + [guid]::NewGuid())
+npm install --prefix $toolPath playwright --no-audit --no-fund
+$env:NODE_PATH = Join-Path $toolPath 'node_modules'
+$env:PLAYWRIGHT_BROWSERS_PATH = Join-Path $toolPath 'browsers'
+node (Join-Path $env:NODE_PATH 'playwright/cli.js') install chromium --no-shell
+node extension/tests/chrome-smoke.cjs
+```
+
+It uses a disposable Chrome profile, a local login fixture, and an isolated backend with a generated credential.
+
 ## Authentication and CORS configuration
 
 - Only `GET /api/health` and `GET /api/threat/health` are public. All other API routes require an `Authorization: Bearer <token>` header. The server does not issue authentication cookies or accept tokens from query parameters.
@@ -117,10 +157,10 @@ For manual requests with an HTTP client, see [`backend/test.http`](backend/test.
 - `actionType` accepts `normal_action` (default), `navigation`, `sensitive_action`, `behavior_anomaly`, or `session_anomaly`. `pageCategory` accepts `normal_page` (default) or `sensitive_page`.
 - `redirectCount` is an integer from 0 to 100. `averageClickGapMs` is an integer from −1 to 10,000, with −1 meaning unavailable. Each of `clicksLast10Sec`, `pagesVisitedLast30Sec`, `tabSwitchCount`, `copyPasteCount`, `formSubmitCount`, and `failedActionCount` is an integer from 0 to 1,000. Counts default to zero. `deviceChanged` is a boolean that defaults to false.
 - Behavior-based verdicts can reach **Suspicious / SHOW_WARNING**, with a maximum score of 60. Ordinary password or form focus and ordinary form submission add no risk points on their own. The verdict timestamp comes from the server. A **Safe** result means no warning was reached by these behavior rules.
-- Extension integration requires sending requests from the service worker to a fixed HTTPS API, with an explicitly configured extension origin wherever CORS applies. Provision a separate browser token per identity. Never embed an admin token or shared browser token in the extension package. Handle authentication and network failures as unavailable protection before enabling this branch for extension users.
+- The extension uses a configured HTTPS backend origin or an HTTP loopback origin for local development. Use a separate browser token per identity. Keep admin credentials and shared credentials out of the extension package.
 
 ## Data handling and remaining release work
 
 Full URLs, paths, referrers, user-agent hashes, and field types are rejected at the API and excluded from the new persistence model. Protected JSON risk logs retain a canonical hostname for domain triage. CSVs and application log messages omit it. Previous unowned sessions and unmarked risk or alert rows are hidden by the secured API. If an older externally managed database was used, start with a fresh secured database or purge and migrate legacy tables and backups explicitly. Java schema updates do not erase previously stored columns or data.
 
-The local bearer registry is suitable for a controlled pilot. A public release still needs managed identity and credential lifecycle, rate limits and ingress request-size controls, durable storage with migrations and retention, browser client migration and end-to-end tests, and verified URL reputation signals. The backend upgrade brings Spring Security 7.1.3, Spring Framework 7.0.11, Tomcat 11.0.27, and Jackson 3.1.8 through Spring Boot 4.1.3. Spring Boot DevTools was removed from the backend. The Swing dependency set is separate.
+The local bearer registry is suitable for a controlled pilot. A public release still needs managed identity and credential lifecycle, rate limits and ingress request-size controls, durable storage with migrations and retention, and verified URL reputation signals. The backend upgrade brings Spring Security 7.1.3, Spring Framework 7.0.11, Tomcat 11.0.27, and Jackson 3.1.8 through Spring Boot 4.1.3. Spring Boot DevTools was removed from the backend. The Swing dependency set is separate.

@@ -184,7 +184,8 @@ body {
 .form-group label .hint {
   text-transform: none; font-weight: 400; color: #475569;
 }
-.form-group input[type="text"] {
+.form-group input[type="text"],
+.form-group input[type="password"] {
   width: 100%; padding: 10px 12px; border-radius: 8px;
   border: 1px solid #1e2444; background: #0f1225;
   color: #e2e8f0; font-size: 13px; font-family: system-ui, -apple-system, sans-serif;
