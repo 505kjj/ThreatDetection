@@ -1,0 +1,241 @@
+{
+  "frozenManifestSha256": "ed0e7020951a3600818578e82ef8a8317dd16d11838e176ca48d72f7fbef066d",
+  "models": {
+    "logistic_regression": {
+      "prAucAveragePrecision": 0.7818778026030188,
+      "rocAuc": 0.8236812917070132,
+      "logLoss": 0.6339624140662755,
+      "thresholdMetrics": {
+        "threshold": 0.5,
+        "tp": 6788,
+        "fp": 3874,
+        "tn": 7127,
+        "fn": 1781,
+        "precision": 0.6366535359219658,
+        "recall": 0.7921577780371105,
+        "f1": 0.7059435286776559,
+        "falsePositiveRate": 0.35214980456322154,
+        "falseAlertDomains": 3079,
+        "legitimateDomains": 7344,
+        "negativeDomainFalsePositiveRate": 0.41925381263616557,
+        "negativeDomainFpr95Upper": 0.4288153349358914
+      },
+      "frozenArtifactSha256": "3551d3b3a0404ef41cf98ceb95397326016c33381e7aa6e1abc8188ef0dda4bf",
+      "phase3bCutoffs": [
+        {
+          "target": 0.01,
+          "results": {
+            "threshold": 0.7772676944732667,
+            "tp": 4973,
+            "fp": 1064,
+            "tn": 9937,
+            "fn": 3596,
+            "precision": 0.8237535199602452,
+            "recall": 0.5803477652001401,
+            "f1": 0.6809530330001369,
+            "falsePositiveRate": 0.09671848013816926,
+            "falseAlertDomains": 899,
+            "legitimateDomains": 7344,
+            "negativeDomainFalsePositiveRate": 0.12241285403050109,
+            "negativeDomainFpr95Upper": 0.1288830737633728
+          }
+        },
+        {
+          "target": 0.001,
+          "results": {
+            "threshold": 0.9933381080627443,
+            "tp": 1323,
+            "fp": 209,
+            "tn": 10792,
+            "fn": 7246,
+            "precision": 0.8635770234986945,
+            "recall": 0.15439374489438673,
+            "f1": 0.26195426195426197,
+            "falsePositiveRate": 0.018998272884283247,
+            "falseAlertDomains": 189,
+            "legitimateDomains": 7344,
+            "negativeDomainFalsePositiveRate": 0.025735294117647058,
+            "negativeDomainFpr95Upper": 0.028986019046853176
+          }
+        }
+      ]
+    },
+    "random_forest": {
+      "prAucAveragePrecision": 0.6107771004555472,
+      "rocAuc": 0.7559491483226857,
+      "logLoss": 4.840703508845816,
+      "thresholdMetrics": {
+        "threshold": 0.5,
+        "tp": 7121,
+        "fp": 3823,
+        "tn": 7178,
+        "fn": 1448,
+        "precision": 0.6506761695906432,
+        "recall": 0.8310187886567861,
+        "f1": 0.7298723927637984,
+        "falsePositiveRate": 0.3475138623761476,
+        "falseAlertDomains": 3214,
+        "legitimateDomains": 7344,
+        "negativeDomainFalsePositiveRate": 0.43763616557734203,
+        "negativeDomainFpr95Upper": 0.44724330361452425
+      },
+      "frozenArtifactSha256": "3cca97d8745ce0ab9ddc9127d05115a715a0ce12e073b950b9e52327af475756",
+      "phase3bCutoffs": [
+        {
+          "target": 0.01,
+          "results": {
+            "threshold": 0.6716826708916309,
+            "tp": 6669,
+            "fp": 3533,
+            "tn": 7468,
+            "fn": 1900,
+            "precision": 0.6536953538521858,
+            "recall": 0.7782705099778271,
+            "f1": 0.7105641681316925,
+            "falsePositiveRate": 0.32115262248886467,
+            "falseAlertDomains": 3010,
+            "legitimateDomains": 7344,
+            "negativeDomainFalsePositiveRate": 0.4098583877995643,
+            "negativeDomainFpr95Upper": 0.41939139934064407
+          }
+        },
+        {
+          "target": 0.001,
+          "results": {
+            "threshold": 0.9122480699049088,
+            "tp": 5892,
+            "fp": 2872,
+            "tn": 8129,
+            "fn": 2677,
+            "precision": 0.672295755362848,
+            "recall": 0.6875948185319174,
+            "f1": 0.6798592280620781,
+            "falsePositiveRate": 0.26106717571129895,
+            "falseAlertDomains": 2527,
+            "legitimateDomains": 7344,
+            "negativeDomainFalsePositiveRate": 0.3440904139433551,
+            "negativeDomainFpr95Upper": 0.3533215974700707
+          }
+        }
+      ]
+    },
+    "xgboost": {
+      "prAucAveragePrecision": 0.6357573588599869,
+      "rocAuc": 0.7627836461975592,
+      "logLoss": 1.4871652720020783,
+      "thresholdMetrics": {
+        "threshold": 0.5,
+        "tp": 6797,
+        "fp": 3662,
+        "tn": 7339,
+        "fn": 1772,
+        "precision": 0.6498709245625777,
+        "recall": 0.793208075621426,
+        "f1": 0.7144208534790835,
+        "falsePositiveRate": 0.3328788291973457,
+        "falseAlertDomains": 3091,
+        "legitimateDomains": 7344,
+        "negativeDomainFalsePositiveRate": 0.42088779956427014,
+        "negativeDomainFpr95Upper": 0.4304539195269426
+      },
+      "frozenArtifactSha256": "9a0fa7fc5a120cf1b21c06fe9b0cfba383f83e21bcce714fa08989a86d62fd5a",
+      "phase3bCutoffs": [
+        {
+          "target": 0.01,
+          "results": {
+            "threshold": 0.5922904014587403,
+            "tp": 6650,
+            "fp": 3514,
+            "tn": 7487,
+            "fn": 1919,
+            "precision": 0.6542699724517906,
+            "recall": 0.7760532150776053,
+            "f1": 0.7099770458549084,
+            "falsePositiveRate": 0.3194255067721116,
+            "falseAlertDomains": 2996,
+            "legitimateDomains": 7344,
+            "negativeDomainFalsePositiveRate": 0.4079520697167756,
+            "negativeDomainFpr95Upper": 0.41747886325490496
+          }
+        },
+        {
+          "target": 0.001,
+          "results": {
+            "threshold": 0.9056730270385743,
+            "tp": 6074,
+            "fp": 2936,
+            "tn": 8065,
+            "fn": 2495,
+            "precision": 0.6741398446170921,
+            "recall": 0.7088341696814098,
+            "f1": 0.6910518231981342,
+            "falsePositiveRate": 0.26688482865194074,
+            "falseAlertDomains": 2575,
+            "legitimateDomains": 7344,
+            "negativeDomainFalsePositiveRate": 0.35062636165577343,
+            "negativeDomainFpr95Upper": 0.3598958313977487
+          }
+        }
+      ]
+    },
+    "mlp": {
+      "prAucAveragePrecision": 0.7752873284564998,
+      "rocAuc": 0.8109264014223173,
+      "logLoss": 1.5171974566715858,
+      "thresholdMetrics": {
+        "threshold": 0.5,
+        "tp": 7661,
+        "fp": 4111,
+        "tn": 6890,
+        "fn": 908,
+        "precision": 0.6507815154604145,
+        "recall": 0.8940366437157194,
+        "f1": 0.7532569686839389,
+        "falsePositiveRate": 0.37369330060903555,
+        "falseAlertDomains": 3291,
+        "legitimateDomains": 7344,
+        "negativeDomainFalsePositiveRate": 0.44812091503267976,
+        "negativeDomainFpr95Upper": 0.4577481117695944
+      },
+      "frozenArtifactSha256": "052df522461e56afd5847cbf4e2d859db3f83499b63eaa7c3043be87a8137825",
+      "phase3bCutoffs": [
+        {
+          "target": 0.01,
+          "results": {
+            "threshold": 0.6978968381881715,
+            "tp": 6919,
+            "fp": 3896,
+            "tn": 7105,
+            "fn": 1650,
+            "precision": 0.6397595931576514,
+            "recall": 0.8074454428754814,
+            "f1": 0.7138877424680149,
+            "falsePositiveRate": 0.35414962276156714,
+            "falseAlertDomains": 3121,
+            "legitimateDomains": 7344,
+            "negativeDomainFalsePositiveRate": 0.4249727668845316,
+            "negativeDomainFpr95Upper": 0.43454991574428914
+          }
+        },
+        {
+          "target": 0.001,
+          "results": {
+            "threshold": 0.9623747467994691,
+            "tp": 5975,
+            "fp": 2893,
+            "tn": 8108,
+            "fn": 2594,
+            "precision": 0.6737708615245828,
+            "recall": 0.6972808962539386,
+            "f1": 0.685324310374491,
+            "falsePositiveRate": 0.26297609308244707,
+            "falseAlertDomains": 2539,
+            "legitimateDomains": 7344,
+            "negativeDomainFalsePositiveRate": 0.34572440087145967,
+            "negativeDomainFpr95Upper": 0.3549653341126407
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,2 @@
+# Optional column projection dependency. Install alongside the Phase 3B CPU lock.
+pyarrow==21.0.0 --hash=sha256:555ca6935b2cbca2c0e932bedd853e9bc523098c39636de9ad4693b5b1df86d6

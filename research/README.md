@@ -2,6 +2,8 @@
 
 The [PhiUSIIL experiment report](../docs/experiments/phiusiil/README.md) records four models trained and scored on the frozen retrospective holdout. The preflight below still runs independently of training. The experiment leaves the product and production training gate unchanged.
 
+The [Phase 3C cross-dataset report](../docs/experiments/phase3c/README.md) covers frozen model transfer, matched-budget experiments, feature expansion, fusion and browser measurements.
+
 This environment prepares unfitted Logistic Regression, Random Forest, CPU XGBoost, and a small MLP. Logistic Regression and MLP package scaling inside their estimator pipelines. All candidates use a fixed seed, and both tree ensembles use one worker. The preflight verifies constructor and input compatibility. It performs no fit, evaluation, model serialization, or deployment.
 
 ## Reproduce the environment
