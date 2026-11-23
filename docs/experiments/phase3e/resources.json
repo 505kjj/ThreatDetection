@@ -1,0 +1,32 @@
+{
+  "projection": {
+    "exitCode": 0,
+    "stopReason": null,
+    "resourceViolations": [],
+    "wallSeconds": 1.5,
+    "jobCpuSeconds": 1.4375,
+    "peakJobCommitBytes": 347398144,
+    "hostCpuMaxPercent": null,
+    "hostCpuMeanPercent": null,
+    "cpuSamples": 0,
+    "samplesAbove30Percent": 0,
+    "logicalCpuAffinityCount": 2,
+    "jobCommitLimitBytes": 8000000000,
+    "memoryTargetBytes": 4000000000
+  },
+  "scoring": {
+    "exitCode": 0,
+    "stopReason": null,
+    "resourceViolations": [],
+    "wallSeconds": 2.936999999998079,
+    "jobCpuSeconds": 2.640625,
+    "peakJobCommitBytes": 139042816,
+    "hostCpuMaxPercent": 9.430331023864513,
+    "hostCpuMeanPercent": 9.430331023864513,
+    "cpuSamples": 1,
+    "samplesAbove30Percent": 0,
+    "logicalCpuAffinityCount": 2,
+    "jobCommitLimitBytes": 8000000000,
+    "memoryTargetBytes": 4000000000
+  }
+}

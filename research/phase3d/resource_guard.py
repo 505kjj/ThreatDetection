@@ -139,7 +139,7 @@ def stop_reason(peak_commit, busy_seconds):
     return None
 
 
-def monitor(kernel, job, process):
+def monitor(kernel, job, process, memory_target):
     prior = clock_ticks(kernel)
     started = last = time.monotonic()
     busy_seconds = 0.0
@@ -154,6 +154,8 @@ def monitor(kernel, job, process):
         busy_seconds = busy_seconds + (now - last) if host_cpu > 50 else 0.0
         peak = job_value(kernel, job, 9, ExtendedLimits()).peakJobMemory
         reason = stop_reason(peak, busy_seconds)
+        if not reason and memory_target < MEMORY_TARGET and peak >= memory_target:
+            reason = "reduced-memory-target-reached"
         if reason:
             checked(kernel.TerminateJobObject(job, 75))
             break
@@ -163,8 +165,8 @@ def monitor(kernel, job, process):
     peak = max(peak, job_value(kernel, job, 9, ExtendedLimits()).peakJobMemory)
     accounting = job_value(kernel, job, 1, Accounting())
     violations = []
-    if peak > MEMORY_TARGET:
-        violations.append("6-GB-target-exceeded")
+    if peak > memory_target:
+        violations.append("memory-target-exceeded")
     if peak >= MEMORY_CEILING:
         violations.append("8-GB-ceiling-reached")
     if reason:
@@ -180,7 +182,9 @@ def monitor(kernel, job, process):
     return report
 
 
-def run(command):
+def run(command, memory_target=MEMORY_TARGET):
+    if not 0 < memory_target <= MEMORY_TARGET:
+        raise ValueError("Only reductions to the default committed-memory target are allowed")
     kernel = win_api()
     current = kernel.GetCurrentProcess()
     eligible, machine = ct.c_size_t(), ct.c_size_t()
@@ -214,8 +218,9 @@ def run(command):
         assigned = True
         if kernel.ResumeThread(thread) == 0xFFFFFFFF:
             raise ct.WinError(ct.get_last_error())
-        report = monitor(kernel, job, process)
-        return report | {"logicalCpuAffinityCount": affinity.bit_count(), "jobCommitLimitBytes": MEMORY_CEILING}
+        report = monitor(kernel, job, process, memory_target)
+        return report | {"logicalCpuAffinityCount": affinity.bit_count(), "jobCommitLimitBytes": MEMORY_CEILING,
+                         "memoryTargetBytes": memory_target}
     finally:
         if process:
             if assigned:
@@ -233,6 +238,7 @@ def run(command):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--metrics", type=Path, required=True)
+    parser.add_argument("--memory-target", type=int, default=MEMORY_TARGET)
     parser.add_argument("command", nargs=argparse.REMAINDER)
     args = parser.parse_args()
     if sys.platform != "win32" or len(args.command) < 2 or args.command[0] != "--":
@@ -242,7 +248,7 @@ def main():
     if metrics.is_relative_to(repo) or not metrics.parent.is_dir() or metrics.exists():
         parser.error("Use a new metrics file in an existing private directory outside Git")
     try:
-        report = run(args.command[1:])
+        report = run(args.command[1:], args.memory_target)
     except (OSError, ValueError, RuntimeError) as error:
         print(f"Resource guard refused the worker: {error}", file=sys.stderr)
         return 75

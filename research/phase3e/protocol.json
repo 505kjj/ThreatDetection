@@ -1,0 +1,36 @@
+{
+  "phase3dCommit": "05820b4cf1a90f639b0f25eb248c010e20b1783b",
+  "featureVersion": "url-lexical-v1",
+  "candidateOrder": [
+    "phresh-20000-path-forest",
+    "fusion-mixed-20000-two",
+    "fusion-mixed-20000-four",
+    "fusion-mixed-20000-stack"
+  ],
+  "primaryDomainTarget": 0.001,
+  "secondaryDomainTarget": 0.01,
+  "window": {
+    "firstDay": "2025-12-17",
+    "lastDay": "2026-11-24"
+  },
+  "sourcePolicy": {
+    "phishvnVersion": 5,
+    "archiveSha256": "4c610431fd275d8348695653eeacdece861dc7dc65ab09a2068d519247988968",
+    "positiveSource": "tinnhiemmang",
+    "minimumPositiveTier": "gold",
+    "negativeSources": [
+      "tinnhiem_org",
+      "tinnhiem_web"
+    ],
+    "negativeTier": "gold"
+  },
+  "limits": {
+    "developmentTargetRows": 20000,
+    "finalTargetPhishing": 10000,
+    "finalTargetLegitimate": 30000,
+    "minimumIndependentLegitimateDomainsForPointOnePercent": 2995,
+    "balanceByReplication": false,
+    "pairedBootstrapResamples": 500,
+    "seed": 219
+  }
+}
