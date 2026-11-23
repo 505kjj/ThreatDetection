@@ -119,20 +119,35 @@ async function inPageWarning(page, phrase) {
 
 async function main() {
   const java = javaExecutable();
-  const fixture = createServer((_request, response) => {
-    response.writeHead(200, { 'Content-Type': 'text/html', 'Set-Cookie': 'fixture=private-cookie-value; HttpOnly' });
-    response.end('<!doctype html><title>Local login fixture</title><input id="other">' +
-      '<input id="password" type="password" value="private-form-value">' +
-      '<input id="otp" autocomplete="one-time-code" value="private-otp-value">' +
-      '<input id="card" autocomplete="cc-number" value="private-card-value">');
+  const requests = [];
+  let holdCleanRoot = false;
+  let releaseCleanRoot;
+  const phishingHost = 'hdfcbank-help.example.net';
+  const cautionHost = 'sbi.bank.in.example.org';
+  const fixture = createServer((request, response) => {
+    const url = new URL(request.url, 'http://' + request.headers.host);
+    requests.push({ host: url.hostname, path: url.pathname, query: url.search });
+    if (url.pathname === '/redirect-threat') {
+      response.writeHead(302, { Location: `http://${phishingHost}:${fixture.address().port}/redirected?case=private-query` });
+      response.end();
+      return;
+    }
+    const send = () => {
+      response.writeHead(200, { 'Content-Type': 'text/html', 'Set-Cookie': 'fixture=private-cookie-value; HttpOnly' });
+      response.end('<!doctype html><title>Local login fixture</title><link rel="icon" href="data:,"><input id="other">' +
+        '<input id="password" type="password" value="private-form-value">' +
+        '<input id="otp" autocomplete="one-time-code" value="private-otp-value">' +
+        '<input id="card" autocomplete="cc-number" value="private-card-value">');
+    };
+    if (holdCleanRoot && url.hostname === phishingHost && url.pathname === '/') releaseCleanRoot = send;
+    else send();
   });
   await new Promise(resolve => fixture.listen(0, '127.0.0.1', resolve));
   const folder = mkdtempSync(path.join(tmpdir(), 'threat-reputation-smoke-'));
   const snapshotPath = path.join(folder, 'snapshot.json');
   const localSite = 'http://127.0.0.1:' + fixture.address().port;
-  const phishingHost = 'hdfcbank-help.example.net';
-  const cautionHost = 'sbi.bank.in.example.org';
-  const phishingFixture = 'http://' + phishingHost + ':' + fixture.address().port + '/login-fixture';
+  const phishingRoot = 'http://' + phishingHost + ':' + fixture.address().port + '/';
+  const phishingFixture = phishingRoot + 'private-path?fixture=private-query#private-fragment';
   const cautionFixture = 'http://' + cautionHost + ':' + fixture.address().port + '/private-path?x=private-query';
   function publish(lifetime) {
     writeFixture(snapshotPath, {
@@ -140,7 +155,8 @@ async function main() {
       expiresAt: new Date(Date.now() + lifetime).toISOString(),
       entries: [
         { kind: 'HOST', value: phishingHost, threat: 'PHISHING' },
-        { kind: 'URL_SHA256', value: createHash('sha256').update(localSite + '/download-fixture').digest('hex'),
+        { kind: 'URL_PATH', value: localSite + '/download-fixture', threat: 'MALWARE' },
+        { kind: 'URL_SHA256', value: createHash('sha256').update(localSite + '/legacy-hash').digest('hex'),
           threat: 'MALWARE' }
       ]
     });
@@ -214,16 +230,75 @@ async function main() {
       await options.evaluate(() => chrome.storage.session.set({ smokeRefresh: crypto.randomUUID() }));
       await popup.locator('#statusText').getByText(label, { exact: true }).waitFor();
     }
+    const hits = (host, route) => requests.filter(request => request.host === host && (!route || request.path === route));
+    const installed = () => worker.evaluate(() => chrome.declarativeNetRequest.getSessionRules());
+    async function blocked(page, url, label = 'Known threat blocked') {
+      await page.goto(url).catch(error => {
+        if (!/ERR_BLOCKED_BY_CLIENT|ERR_ABORTED/.test(error.message)) throw error;
+      });
+      await page.waitForURL(new RegExp('^' + extensionOrigin + '/warning.html#'));
+      await page.getByRole('heading', { name: label, exact: true }).waitFor({ timeout: 6000 }).catch(async error => {
+        const diagnostics = await worker.evaluate(async () => ({
+          frames: await Promise.all((await chrome.tabs.query({})).map(async tab => {
+            const frame = await chrome.webNavigation.getFrame({ tabId: tab.id, frameId: 0 }).catch(() => null);
+            const key = 'network-warning:' + tab.id;
+            const record = (await chrome.storage.session.get(key))[key];
+            return { id: tab.id, warningPage: frame?.url?.includes('/warning.html'), fragment: frame?.url?.includes('#'),
+              lifecycle: frame?.documentLifecycle, hasDocument: !!frame?.documentId,
+              hasRecord: !!record, tokenMatches: !!record && frame?.url?.endsWith('#' + record.token) };
+          }))
+        }));
+        throw new Error((await page.locator('#headline').textContent()) + ' ' + JSON.stringify(diagnostics), { cause: error });
+      });
+      for (const marker of privateMarkers) assert.ok(!page.url().includes(marker));
+    }
+    await eventually(installed, rules => rules.filter(rule => rule.action.type === 'block').length === 2,
+      'installed network rules');
     await assertStatus(site, 'No known threat match');
     const malware = await browser.newPage();
-    await malware.goto(localSite + '/download-fixture?case=private-query#private-fragment');
-    await eventually(() => badge(worker, malware.url()), value => value === 'STOP', 'malware toolbar warning');
+    const sessionStarts = () => apiCalls.filter(call => call.url().endsWith('/session/start'));
+    const firstStarts = sessionStarts().length;
+    await blocked(malware, localSite + '/download-fixture?case=private-query#private-fragment');
+    await malware.getByText('Reported threat: malware.').waitFor();
+    assert.equal(hits('127.0.0.1', '/download-fixture').length, 0);
+    assert.equal(sessionStarts().length, firstStarts, 'blocked exact path must not start a behavioral session');
+    assert.equal(await malware.locator('#review').isVisible(), false);
+    await malware.getByRole('button', { name: 'Leave this site' }).click();
+    await malware.waitForURL('about:blank');
+    await malware.goto(localSite + '/download-fixture/help');
+    assert.equal(hits('127.0.0.1', '/download-fixture/help').length, 1);
+    await malware.goto(localSite + '/Download-fixture');
+    assert.equal(hits('127.0.0.1', '/Download-fixture').length, 1);
     const phish = await browser.newPage();
-    await phish.goto(phishingFixture);
+    await blocked(phish, phishingFixture);
+    await phish.getByText(/subdomain uses the HDFC Bank name/).waitFor();
+    assert.equal(hits(phishingHost).length, 0);
     await assertStatus(phish, 'Known malicious website');
-    await popup.locator('#impersonationReasons').getByText(/subdomain uses the HDFC Bank name/).waitFor();
-    assert.equal(await badge(worker, phish.url()), 'STOP');
-    assert.equal(await badge(worker, malware.url()), 'STOP');
+    assert.equal(await worker.evaluate(async markers => {
+      const state = JSON.stringify(await chrome.storage.session.get(null));
+      return markers.some(marker => state.includes(marker));
+    }, privateMarkers), false, 'warning state must not store private navigation components');
+    const redirect = await browser.newPage();
+    await blocked(redirect, localSite + '/redirect-threat');
+    assert.equal(hits('127.0.0.1', '/redirect-threat').length, 1);
+    assert.equal(hits(phishingHost).length, 0);
+    console.log('Chrome: DNR blocked the host, exact path and redirect target before any request reached them');
+    const forged = await browser.newPage();
+    await forged.goto(phish.url());
+    await forged.getByRole('heading', { name: 'Protection unavailable' }).waitFor();
+    assert.equal(await forged.locator('#review').isVisible(), false);
+    await forged.close();
+
+    const legacy = await browser.newPage();
+    await blocked(legacy, localSite + '/legacy-hash', 'Known threat detected');
+    assert.equal(hits('127.0.0.1', '/legacy-hash').length, 1);
+    assert.equal(await legacy.locator('#review').isVisible(), false);
+    await legacy.goto(localSite + '/help-fixture');
+    await legacy.evaluate(() => history.pushState({}, '', '/legacy-hash'));
+    await legacy.getByRole('heading', { name: 'Known threat detected' }).waitFor();
+    assert.equal(hits('127.0.0.1', '/legacy-hash').length, 1);
+    await legacy.close();
+    console.log('Chrome: hash-only and same-document matches used an accurately labeled post-navigation warning');
     assert.equal(await badge(worker, site.url()), '');
     const caution = await browser.newPage();
     await caution.goto(cautionFixture);
@@ -232,7 +307,7 @@ async function main() {
     await eventually(() => inPageWarning(caution, 'official State Bank of India address is embedded'),
       value => value === true, 'in-page explanation');
     assert.equal(await badge(worker, caution.url()), '!');
-    assert.equal(await badge(worker, phish.url()), 'STOP');
+    await phish.getByRole('heading', { name: 'Known threat blocked' }).waitFor();
     assert.equal(await badge(worker, site.url()), '');
     assert.equal(caution.url(), cautionFixture, 'a name-only warning must leave the user on the page');
     assert.equal(apiCalls.some(call => call.postData()?.includes(cautionHost)), false,
@@ -248,15 +323,33 @@ async function main() {
       assert.equal(headers.referer, undefined);
       assert.equal(headers.cookie, undefined);
     }
-    assert.equal(apiCalls.filter(call => call.url().endsWith('/session/start')).length, 1,
-      'confirmed destinations must not register behavioral sessions');
-    await malware.evaluate(() => history.pushState({}, '', '/help-fixture'));
-    await assertStatus(malware, 'No known threat match');
-    assert.equal(await badge(worker, malware.url()), '');
-    assert.equal(await badge(worker, phish.url()), 'STOP');
-    console.log('Chrome: phishing host and exact malware path warn in separate tabs; SPA navigation clears only its own warning');
+    assert.equal(sessionStarts().some(call => call.postDataJSON().domain === phishingHost), false,
+      'blocked phishing host must not start a behavioral session');
     await malware.close();
+    const parallel = await browser.newPage();
+    holdCleanRoot = true;
+    await phish.getByRole('button', { name: 'Review one-time exception' }).click();
+    const proceeding = phish.getByRole('button', { name: 'Continue once' }).click();
+    await eventually(() => releaseCleanRoot, release => typeof release === 'function', 'the exception request');
+    try {
+      assert.ok((await installed()).some(rule => rule.action.type === 'allow'));
+      await blocked(parallel, phishingRoot);
+      assert.equal(hits(phishingHost, '/').length, 1, 'the other tab may not reuse the exception');
+    } finally {
+      holdCleanRoot = false;
+      releaseCleanRoot();
+      await proceeding;
+    }
+    await phish.waitForURL(phishingRoot);
+    assert.deepEqual(hits(phishingHost).map(({ path, query }) => [path, query]), [['/', '']]);
+    await eventually(installed, rules => rules.every(rule => rule.action.type !== 'allow'), 'consumed bypass');
+    await redirect.getByRole('heading', { name: 'Known threat blocked' }).waitFor();
+    await blocked(phish, phishingRoot);
+    assert.equal(hits(phishingHost).length, 1);
+    await redirect.close();
+    await parallel.close();
     await phish.close();
+    console.log('Chrome: private interstitial is bound to its tab; a clean one-time exception is consumed after navigation');
     await site.bringToFront();
     await wait(650);
     for (let i = 0; i < 28; i++) {
@@ -268,6 +361,10 @@ async function main() {
     console.log('Chrome: behavior-only signals stay unconfirmed and never set the malicious badge');
 
     await stop(backend.process);
+    const offline = await browser.newPage();
+    await blocked(offline, phishingFixture);
+    assert.equal(hits(phishingHost).length, 1);
+    await offline.close();
     await wait(600);
     await focusPassword(site);
     await eventually(() => tabRecord(worker), result =>
@@ -285,6 +382,7 @@ async function main() {
     await assertStatus(caution, 'Monitoring paused');
     await popup.locator('#impersonationSection').waitFor({ state: 'hidden' });
     assert.equal(await badge(worker, caution.url()), '');
+    await eventually(installed, rules => rules.length === 0, 'paused rules cleared');
     await wait(600);
     const before = apiCalls.length;
     await focusPassword(site);
@@ -307,15 +405,19 @@ async function main() {
     await eventually(() => inPageWarning(stale, 'The protection service is unavailable.'),
       value => value === true, 'degraded in-page warning');
     assert.equal(await badge(worker, stale.url()), '');
-    publish(14000);
+    publish(17000);
     await eventually(async () => (await fetch(snapshotEndpoint, { headers })).status,
       status => status === 200, 'restored short-lived snapshot');
     await refreshCredential();
-    await assertStatus(stale, 'Known malicious website');
-    assert.equal(await badge(worker, stale.url()), 'STOP');
-    await popup.locator('#statusText').getByText('Protection unavailable', { exact: true }).waitFor();
-    assert.equal(await badge(worker, stale.url()), '');
-    console.log('Chrome: invalid and expired snapshots report unavailable and clear the toolbar warning');
+    await eventually(installed, rules => rules.length === 2, 'restored network rules');
+    await stale.goto('about:blank');
+    await blocked(stale, phishingFixture);
+    await stale.getByRole('heading', { name: 'Protection unavailable' }).waitFor();
+    await eventually(installed, rules => rules.length === 0, 'expired rules removed', 260);
+    await stale.goto(phishingFixture);
+    await assertStatus(stale, 'Protection unavailable');
+    assert.equal(hits(phishingHost, '/private-path').length, 2);
+    console.log('Chrome: invalid and expired snapshots report unavailable and stop blocking');
   } finally {
     if (browser) await browser.close();
     await stop(backend?.process);

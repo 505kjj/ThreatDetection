@@ -98,7 +98,7 @@ For manual requests with an HTTP client, see [`backend/test.http`](backend/test.
 
 ## Connect the Chrome extension
 
-1. In Chrome 116 or later, open `chrome://extensions`, enable **Developer mode**, and load the repository’s `extension/` directory as an unpacked extension. Copy the displayed extension ID.
+1. In Chrome 120 or later, open `chrome://extensions`, enable **Developer mode**, and load the repository’s `extension/` directory as an unpacked extension. Copy the displayed extension ID.
 2. Register a separate `BROWSER` client and its token digest in the backend configuration. Include the extension's exact `chrome-extension://<extension-id>` origin in `threat.security.allowed-origins`. Set `THREAT_REPUTATION_SNAPSHOT_PATH` to an absolute path to an authorized, current [snapshot](docs/url-reputation.md#snapshot-format). For a disposable local client, use the `New-LocalApiClient` helper from the verification block above and the configuration below. Run it from `backend/` after building the JAR.
 
    ```powershell
@@ -120,6 +120,8 @@ For manual requests with an HTTP client, see [`backend/test.http`](backend/test.
 The token and snapshot are kept in trusted extension memory for the browser session. Reloading or updating the extension, or restarting Chrome, clears them. The snapshot request contains no destination. For opted-in activity monitoring, the service worker renews a session once if the backend loses it. Each such session starts with the hostname only. Analysis sends the server-issued UUID, bounded counts, and activity categories. Requests never include page URLs, paths, query strings, fragments, referrers, or form values.
 
 Financial impersonation checks use only the hostname and run locally, including when reputation is unavailable. See the [verified domain registry, decision policy, and evaluation](docs/financial-impersonation.md).
+
+Confirmed host and authorized exact-path indicators can stop navigations before they reach the destination. See the [blocking policy and verification](docs/browser-protection.md).
 
 ### Extension regression checks
 

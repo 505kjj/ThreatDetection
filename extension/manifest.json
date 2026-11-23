@@ -1,13 +1,14 @@
 {
   "manifest_version": 3,
   "name": "Generic Threat Detection Monitor",
-  "version": "1.3.0",
-  "minimum_chrome_version": "116",
-  "description": "Checks websites locally for known threats and possible financial impersonation.",
+  "version": "1.4.0",
+  "minimum_chrome_version": "120",
+  "description": "Blocks known threats with local rules and warns about possible financial impersonation.",
   "permissions": [
     "storage",
     "alarms",
-    "webNavigation"
+    "webNavigation",
+    "declarativeNetRequest"
   ],
   "host_permissions": [
     "http://127.0.0.1/*",

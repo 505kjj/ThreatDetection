@@ -5,6 +5,7 @@ const MINUTE = 60000;
 const MAX_AGE = 24 * 60 * MINUTE;
 const HASH = /^[0-9a-f]{64}$/;
 const THREATS = new Set(['PHISHING', 'MALWARE']);
+const PATH_INDICATOR = /^https?:\/\/[a-z0-9.-]+(?::[0-9]+)?\/[A-Za-z0-9._~/-]*$/;
 
 export function destinationFor(value) {
   try {
@@ -32,28 +33,42 @@ export function parseSnapshot(raw, now = Date.now()) {
       !Array.isArray(raw.entries) || raw.entries.length > 20000) return null;
   const hosts = new Map();
   const paths = new Map();
+  const urlPaths = new Map();
   for (const entry of raw.entries) {
     if (typeof entry?.value !== 'string' || !THREATS.has(entry.threat) || Object.keys(entry).length !== 3) return null;
     const { kind, value, threat } = entry;
     const map = kind === 'HOST' && siteHostname(value) === value ? hosts
-      : kind === 'URL_SHA256' && HASH.test(value) ? paths : null;
+      : kind === 'URL_SHA256' && HASH.test(value) ? paths
+        : kind === 'URL_PATH' && value.length <= 512 && PATH_INDICATOR.test(value) &&
+          destinationFor(value)?.key === value ? urlPaths : null;
     if (!map || map.has(value)) return null;
     map.set(value, threat);
   }
-  return { expires, hosts, paths };
+  return { expires, hosts, paths, urlPaths };
 }
 
 export async function checkDestination(snapshot, destination, now = Date.now) {
   if (!snapshot || snapshot.expires <= now()) return { state: 'unavailable', cause: 'reputation' };
-  let threat = snapshot.hosts.get(destination.host);
-  if (!threat && snapshot.paths.size) {
+  let evidence;
+  if (snapshot.hosts.has(destination.host)) evidence = { kind: 'HOST', value: destination.host };
+  else if (snapshot.urlPaths.has(destination.key)) evidence = { kind: 'URL_PATH', value: destination.key };
+  else if (snapshot.paths.size) {
     const bytes = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(destination.key));
     const hash = Array.from(new Uint8Array(bytes), byte => byte.toString(16).padStart(2, '0')).join('');
-    threat = snapshot.paths.get(hash);
+    if (snapshot.paths.has(hash)) evidence = { kind: 'URL_SHA256', value: hash };
   }
   if (snapshot.expires <= now()) return { state: 'unavailable', cause: 'reputation' };
-  return threat ? { state: 'confirmed', threat, expires: snapshot.expires }
+  return evidence ? { state: 'confirmed', threat: threatFor(snapshot, evidence), evidence, expires: snapshot.expires }
     : { state: 'no_match', expires: snapshot.expires };
+}
+
+export function threatFor(snapshot, { kind, value }) {
+  switch (kind) {
+    case 'HOST': return snapshot.hosts.get(value);
+    case 'URL_PATH': return snapshot.urlPaths.get(value);
+    case 'URL_SHA256': return snapshot.paths.get(value);
+    default: return undefined;
+  }
 }
 
 export function createSnapshotCache(storage, download, now = Date.now) {
@@ -84,6 +99,13 @@ export function createSnapshotCache(storage, download, now = Date.now) {
   }
 
   return {
+    async cached(credential) {
+      if (active?.id === credential.id && active.snapshot) {
+        return active.snapshot.expires > now() ? active.snapshot : null;
+      }
+      const { [STORAGE_KEY]: stored } = await storage.get(STORAGE_KEY);
+      return stored?.credentialId === credential.id ? parseSnapshot(stored.raw, now()) : null;
+    },
     async current(credential) {
       if (active?.id !== credential.id) active = { id: credential.id, next: 0 };
       const entry = active;

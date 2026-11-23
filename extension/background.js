@@ -1,4 +1,6 @@
 import { analysisFields, analyze, downloadSnapshot, requestFailure, startSession, validToken } from './backend-api.mjs';
+import { createBlockRules } from './block-rules.mjs';
+import { BYPASS_ALARM, createBrowserProtection } from './browser-protection.mjs';
 import { detectImpersonation } from './impersonation.mjs';
 import { checkDestination, createSnapshotCache, destinationFor } from './reputation.mjs';
 import { DEFAULT_ORIGIN, backendOrigin, backendPermission, matchingSite, pageHostname, readSites } from './settings.mjs';
@@ -11,7 +13,9 @@ const navigations = new Map();
 const local = chrome.storage.local;
 const session = chrome.storage.session;
 const reputation = createSnapshotCache(session, downloadSnapshot);
-const REPUTATION_EXPIRY = 'reputation-expiry';
+const rules = createBlockRules(chrome.declarativeNetRequest, chrome.runtime.id);
+const protection = createBrowserProtection(chrome, rules);
+const REPUTATION_REFRESH = 'reputation-refresh';
 let connectionRevision = 0;
 
 const setup = initialize();
@@ -45,6 +49,27 @@ async function settings() {
 async function credentialFor(origin) {
   const { [CREDENTIAL]: credential } = await session.get(CREDENTIAL);
   return origin && credential?.origin === origin && validToken(credential.token) ? credential : null;
+}
+
+async function synchronizeRules(revision = connectionRevision) {
+  const config = await settings();
+  const credential = config.enabled ? await credentialFor(config.origin) : null;
+  const permitted = credential && await chrome.permissions.contains(backendPermission(credential.origin));
+  if (!rules.snapshot()) {
+    const cached = permitted ? await reputation.cached(credential) : null;
+    if (revision !== connectionRevision) return null;
+    await rules.setSnapshot(cached);
+  }
+  const snapshot = permitted ? await reputation.current(credential) : null;
+  if (revision !== connectionRevision) return null;
+  await rules.setSnapshot(snapshot);
+  if (revision !== connectionRevision) return null;
+  if (permitted) {
+    const when = Math.min(Date.now() + 60000, snapshot?.expires ?? Infinity);
+    const alarm = await chrome.alarms.get(REPUTATION_REFRESH);
+    if (!alarm || alarm.scheduledTime > when) await chrome.alarms.create(REPUTATION_REFRESH, { when });
+  }
+  return snapshot;
 }
 
 async function currentPage(tabId) {
@@ -95,19 +120,15 @@ async function reputationFor(page, config) {
   if (!config.enabled) result = { state: 'paused' };
   else if (!config.credential) result = { state: 'unavailable', cause: 'credential' };
   else if (!config.permitted) result = { state: 'unavailable', cause: 'permission' };
-  else result = await checkDestination(await reputation.current(config.credential), page.destination);
+  else {
+    const snapshot = await synchronizeRules(revision).catch(() => null);
+    result = await checkDestination(snapshot, page.destination);
+  }
   const latest = await currentPage(page.tabId);
   if (revision !== connectionRevision || !samePage(page, latest)) return { state: 'inactive' };
   if (result.expires <= Date.now()) result = { state: 'unavailable', cause: 'reputation' };
-  if (result.expires) {
-    const alarm = await chrome.alarms.get(REPUTATION_EXPIRY);
-    if (revision !== connectionRevision || !samePage(page, latest)) return { state: 'inactive' };
-    if (result.expires <= Date.now()) result = { state: 'unavailable', cause: 'reputation' };
-    else if (!alarm || alarm.scheduledTime > result.expires) {
-      await chrome.alarms.create(REPUTATION_EXPIRY, { when: result.expires });
-    }
-  }
-  if (revision !== connectionRevision || !samePage(page, latest)) return { state: 'inactive' };
+  // Indicator values are needed only by the worker's private warning flow.
+  delete result.evidence;
   const impersonation = config.enabled ? detectImpersonation(page.host) : [];
   if (result.state === 'confirmed') {
     await Promise.all([
@@ -153,7 +174,10 @@ async function pageConfiguration(page) {
 
 async function tabStatus(tabId) {
   const page = await currentPage(tabId);
-  if (!page) return { state: 'unsupported' };
+  if (!page) {
+    if (!Number.isInteger(tabId) || tabId < 0) return { state: 'unsupported' };
+    return await protection.tabStatus(tabId) ?? { state: 'unsupported' };
+  }
   const config = await pageSettings(page);
   const display = { host: page.host, monitoringEnabled: config.enabled, site: config.site?.domain ?? null,
     siteEnabled: config.site?.enabled === true };
@@ -248,6 +272,10 @@ async function handleMessage(message, sender) {
   if (sender.url === chrome.runtime.getURL('popup.html') && message.type === 'GET_TAB_STATUS') {
     return tabStatus(message.tabId);
   }
+  if (['GET_NETWORK_WARNING', 'PROCEED_ONCE', 'LEAVE_NETWORK_WARNING'].includes(message.type)) {
+    if (!rules.snapshot()) void synchronizeRules().catch(() => {});
+    return protection.message(message.type, sender, message.token);
+  }
   if (message.type === 'PAGE_CONFIGURATION' || message.type === 'TELEMETRY') {
     const page = await verifiedPage(sender);
     if (!page) return { state: 'inactive' };
@@ -262,32 +290,43 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
   return true;
 });
 
-chrome.webNavigation.onCommitted.addListener(({ tabId, frameId, documentId, transitionQualifiers = [] }) => {
+chrome.webNavigation.onBeforeNavigate.addListener(details => void protection.start(details).catch(() => {}));
+chrome.webNavigation.onErrorOccurred.addListener(details => {
+  if (details.frameId !== 0 || (details.error !== 'net::ERR_BLOCKED_BY_CLIENT' && !rules.bypass(details.tabId))) return;
+  void setup.then(async () => {
+    if (!rules.snapshot()) await synchronizeRules();
+    await protection.failed(details);
+  }).catch(() => {});
+});
+chrome.webNavigation.onCommitted.addListener(details => {
+  const { tabId, frameId, documentId, transitionQualifiers = [] } = details;
   if (frameId !== 0) return;
   navigations.set(tabId, crypto.randomUUID());
   requests.get(tabId)?.controller.abort();
   void clearBadge(tabId).catch(() => {});
   const redirected = transitionQualifiers.includes('server_redirect') || transitionQualifiers.includes('client_redirect');
   void session.set({ [navigationKey(tabId)]: { documentId, redirected } }).catch(() => {});
+  void setup.then(() => protection.committed(details)).catch(() => {});
 });
 
-chrome.webNavigation.onHistoryStateUpdated.addListener(({ tabId, frameId, documentId }) => {
+chrome.webNavigation.onHistoryStateUpdated.addListener(details => {
+  const { tabId, frameId, documentId } = details;
   if (frameId !== 0) return;
   navigations.set(tabId, crypto.randomUUID());
   requests.get(tabId)?.controller.abort();
   void clearBadge(tabId).catch(() => {});
   void chrome.tabs.sendMessage(tabId, { type: 'REFRESH_CONFIGURATION' }, { documentId }).catch(() => {});
+  void setup.then(() => protection.history(details)).catch(() => {});
 });
 
 chrome.tabs.onRemoved.addListener(tabId => {
   navigations.delete(tabId);
   requests.get(tabId)?.controller.abort();
   void session.remove([statusKey(tabId), navigationKey(tabId)]).catch(() => {});
+  void protection.remove(tabId).catch(() => {});
 });
 
 async function refreshOpenPages() {
-  connectionRevision++;
-  for (const task of requests.values()) task.controller.abort();
   const tabs = await chrome.tabs.query({});
   await Promise.allSettled(tabs.map(async tab => {
     await clearBadge(tab.id);
@@ -295,19 +334,39 @@ async function refreshOpenPages() {
   }));
 }
 
+function invalidateRequests() {
+  connectionRevision++;
+  for (const task of requests.values()) task.controller.abort();
+}
+
+async function resetProtection(clearCache) {
+  invalidateRequests();
+  const clearingRules = rules.setSnapshot(null, true);
+  if (clearCache) await reputation.clear();
+  await clearingRules;
+  await Promise.all([refreshOpenPages(), synchronizeRules()]);
+}
+
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === 'session' && CREDENTIAL in changes) {
-    void reputation.clear().catch(() => {});
-    void refreshOpenPages().catch(() => {});
-  } else if (area === 'local' && ['backendOrigin', 'monitoredSites', 'monitoringEnabled'].some(key => key in changes)) {
+    void resetProtection(true).catch(() => {});
+  } else if (area === 'local' && ['backendOrigin', 'monitoringEnabled'].some(key => key in changes)) {
+    void resetProtection(false).catch(() => {});
+  } else if (area === 'local' && 'monitoredSites' in changes) {
+    invalidateRequests();
     void refreshOpenPages().catch(() => {});
   }
 });
 
 chrome.permissions.onRemoved.addListener(() => {
-  void refreshOpenPages().catch(() => {});
+  void resetProtection(false).catch(() => {});
 });
 
 chrome.alarms.onAlarm.addListener(alarm => {
-  if (alarm.name === REPUTATION_EXPIRY) void refreshOpenPages().catch(() => {});
+  if (alarm.name === REPUTATION_REFRESH) {
+    void setup.then(synchronizeRules).then(refreshOpenPages).catch(() => {});
+  } else if (alarm.name.startsWith(BYPASS_ALARM)) {
+    void protection.expire(Number(alarm.name.slice(BYPASS_ALARM.length))).catch(() => {});
+  }
 });
+void setup.then(synchronizeRules).catch(() => {});

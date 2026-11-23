@@ -37,4 +37,19 @@ class ReputationSnapshotTests {
         assertThatThrownBy(() -> new ReputationSnapshot(time, time.plusSeconds(10), List.of(entry, entry)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @Test
+    void explicitNetworkPathsRequireCanonicalUrlsWithoutSensitiveComponents() {
+        var path = new ReputationSnapshot.Entry(ReputationSnapshot.Kind.URL_PATH,
+                "http://127.0.0.1:9000/Fixture/download", ReputationSnapshot.Threat.MALWARE);
+        assertThat(new ReputationSnapshot(time, time.plusSeconds(10), List.of(path))
+                .confirmsHost("127.0.0.1")).isFalse();
+        for (String value : List.of("https://example.test", "https://user@example.test/fixture",
+                "https://example.test/fixture?token=private", "https://example.test/fixture#secret",
+                "https://example.test:443/fixture", "http://127.01/fixture", "https://example.test/a/../fixture",
+                "https://example.test/%2E/fixture", "https://example.test/fixture*")) {
+            assertThatThrownBy(() -> new ReputationSnapshot.Entry(ReputationSnapshot.Kind.URL_PATH, value,
+                    ReputationSnapshot.Threat.MALWARE)).isInstanceOf(IllegalArgumentException.class);
+        }
+    }
 }

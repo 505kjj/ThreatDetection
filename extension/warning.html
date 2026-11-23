@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>Threat Monitor</title>
+  <link rel="stylesheet" href="warning.css">
+</head>
+<body>
+  <main>
+    <p class="product">Threat Monitor</p>
+    <h1 id="headline">Checking threat evidence…</h1>
+    <p id="destination" class="hostname" hidden></p>
+    <p id="detail" role="status"></p>
+    <ul id="evidence" hidden></ul>
+    <p id="guidance" hidden>Leave this site. If you were trying to reach a financial provider, use its official app or a trusted bookmark.</p>
+    <div class="actions">
+      <button id="leave" type="button" autofocus>Leave this site</button>
+      <button id="review" type="button" class="secondary" hidden>Review one-time exception</button>
+    </div>
+    <section id="exception" aria-label="One-time exception" hidden>
+      <p>This bypass opens a clean address in this tab once. The site may still steal information. Avoid entering financial or sign-in details.</p>
+      <button id="proceed" type="button" class="secondary">Continue once</button>
+    </section>
+  </main>
+  <script type="module" src="warning.mjs"></script>
+</body>
+</html>

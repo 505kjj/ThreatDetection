@@ -57,13 +57,19 @@ function chromeModel() {
     };
   }
   const api = {
-    runtime: { id: extensionId, getURL: path => extensionUrl + path, onMessage: hook('message') },
+    runtime: { id: extensionId, getURL: path => extensionUrl + path, async getContexts() { return []; },
+      onMessage: hook('message') },
     storage: { local: area('local'), session: area('session'), onChanged: hook('change') },
     webNavigation: {
       async getFrame({ tabId }) { return frames[tabId]; },
-      onCommitted: hook('committed'), onHistoryStateUpdated: hook('history')
+      onCommitted: hook('committed'), onHistoryStateUpdated: hook('history'),
+      onBeforeNavigate: hook('before'), onErrorOccurred: hook('error')
     },
-    tabs: { async query() { return []; }, async sendMessage() {}, onRemoved: hook('removed') },
+    tabs: { async query() { return []; }, async sendMessage() {}, async update() {}, onRemoved: hook('removed') },
+    declarativeNetRequest: {
+      async getSessionRules() { return []; },
+      async updateSessionRules() {}
+    },
     action: {
       async setBadgeText({ tabId, text }) { badges.set(tabId, text); },
       async setBadgeBackgroundColor() {}

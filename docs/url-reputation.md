@@ -10,12 +10,12 @@ On opted-in activity sites, the existing API can still receive the hostname at r
 
 | Extension result | Behavior |
 | --- | --- |
-| **Known malicious website** | Shows a per-tab red **STOP** badge in Chrome and an extension popup warning with the threat category. The content script also displays a dismissible warning on the page. |
+| **Known malicious website** | Chrome can block an exact host or explicit path rule before the request. A private extension page explains the match. Hash-only, uninstalled rules, and same-document matches use a separately labeled post-navigation warning. |
 | **Suspicious activity, unconfirmed** | Shows an advisory on opted-in sites when behavior exceeds the Phase 1 warning threshold and local reputation has no match. |
 | **No known threat match** | Shows a neutral result and states that the website may still be unsafe. |
 | **Protection unavailable** | Shows when credentials, host permission, or a current snapshot are missing. If an opted-in activity check fails, that tab also reports unavailable unless local reputation has a confirmed match. |
 
-The warning is advisory. The Chrome badge and popup are extension-owned. The in-page message appears after the document loads and can be removed by the website or dismissed. This release does not stop a network request, form submission, or payment. Navigation and SPA path changes invalidate in-flight results. Conflicting results between tabs remain local to their original tab.
+See [browser protection](browser-protection.md) for Chrome rule coverage, warning isolation, fallback behavior, and one-time exceptions. Financial and behavior-only advisories continue to allow navigation.
 
 ## Provider evaluation
 
@@ -48,14 +48,15 @@ The two dates are UTC ISO-8601 strings. The lifetime must be greater than zero a
 
 - `HOST` is a lowercase ASCII DNS name or Punycode, with no wildcard, dot suffix, scheme, port, or path. It matches that exact host only. Do not derive a host entry by discarding the path of a URL indicator.
 - `URL_SHA256` is 64 lowercase hexadecimal characters. Hash UTF-8 bytes of `destinationFor(url).key` from [reputation.mjs](../extension/reputation.mjs). It uses the WHATWG browser URL parser, the scheme, canonical ASCII hostname with any nondefault port, and the serialized pathname with percent-escape hex uppercased. It excludes userinfo, query, and fragment. It is a project-specific key and is not a vendor's native hash format.
-- Supported categories are `PHISHING` and `MALWARE`. Omit query- or fragment-dependent indicators. Removing their distinguishing component would broaden the match. Keep the input and intermediate artifacts in the trusted publisher pipeline. Browser clients never receive raw paths.
+- `URL_PATH` is an optional Phase 2C indicator containing a canonical HTTP(S) scheme, lowercase ASCII hostname, optional nondefault port, and a path made from ASCII letters, digits, slash, dot, underscore, tilde or hyphen. The complete indicator is limited to 512 characters. It carries no credentials, query, fragment, encoded path or wildcard. Use only publisher-owned or expressly redistributable indicator paths with no sensitive content. Phase 2B and earlier extensions reject snapshots with this new kind.
+- Supported categories are `PHISHING` and `MALWARE`. Omit query- or fragment-dependent indicators. Removing their distinguishing component would broaden the match. Keep input and intermediate artifacts in the trusted publisher pipeline.
 
-The Chrome smoke test generates fresh fixture timestamps, uses a reserved `.test` hostname mapped to a loopback server, and uses a local URL hash for the synthetic malware path. A benign path on that same host must miss. It never contacts a real phishing or malware site.
+The Chrome smoke test generates fresh fixture timestamps, maps reserved example hostnames to loopback, and covers both a local URL hash and an explicit path. It never contacts a real phishing or malware site.
 
 ## Release operations and limitations
 
 - Serve the snapshot endpoint through the Phase 1 HTTPS and exact-origin policy. Keep a distinct browser credential per installation. The endpoint is restricted to the browser role and performs no database writes. Restrict write access to the publisher and monitor validity, loader failures, indicator counts, and feed age.
-- The worker refreshes a current snapshot on demand after one minute or at expiry, whichever comes first. When a snapshot is unavailable, it waits 15 seconds before retrying. A transport outage may reuse the previously verified snapshot until that snapshot's original expiry. An explicit server rejection or invalid response discards it on the next refresh. A revoked indicator can persist on an offline browser until expiry. In-page warnings are time-limited, and the popup rechecks the current tab when opened.
+- The worker refreshes on demand and schedules an alarm for the next poll or expiry. Its cache backs off for 15 seconds on an unavailable response. A transport outage may reuse the previously verified snapshot until its original expiry. An explicit server rejection or invalid response discards it on refresh. A revoked indicator can persist on an offline browser until expiry.
 - Authenticated clients can inspect the distributed hashes and host indicators. Hashes are not anonymization or an entitlement control. Publish only data authorized for distribution. The backend learns that a browser requested a refresh, and it still sees opt-in activity data. Per-visit reputation destinations do not leave the browser.
 - Exact matching does not cover unknown or newly registered domains, URL schemes outside HTTP(S), URLs where a query or fragment changes the threat, or scam content hosted at an unlisted destination. Reputation misses give no assurance. A confirmed match means a match to current vetted indicators, which can still contain mistakes.
 - The operational gate for a public pilot includes signed commercial and redistribution rights, a trustworthy publisher and revocation process, production HTTPS and credential management, and measured feed coverage, false warnings, and latency. The synthetic test run does not establish vendor latency, coverage, or live-feed availability.
