@@ -6,6 +6,8 @@ See [threat intelligence ingestion](docs/threat-intelligence-ingestion.md) for t
 
 The [offline evaluation guide](docs/dataset-evaluation.md) covers Phase 3A dataset provenance, held-out rule baselines, and the versioned URL feature interface. It is separate from the browser and backend.
 
+The [Phase 3B research preflight](research/README.md) verifies the CPU model environment and accepts the Phase 3A numeric feature contract.
+
 | Module | Location | Current behavior |
 | --- | --- | --- |
 | Spring Boot REST API, rules and JPA persistence | [`backend/`](backend/) | Secured API. Temporary H2 database is configured by default. |
