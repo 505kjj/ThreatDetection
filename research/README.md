@@ -6,6 +6,8 @@ The [Phase 3C cross-dataset report](../docs/experiments/phase3c/README.md) cover
 
 The [Phase 3D laptop-bounded report](../docs/experiments/phase3d/README.md) records a new chronological holdout, training through 100,000 URLs, feature ablation, fusion, and measured resource limits.
 
+The [Phase 3E financial validation report](../docs/experiments/phase3e/README.md) records the frozen-model comparison, eligible Indian financial controls, and the remaining evidence required to evaluate phishing recall.
+
 This environment prepares unfitted Logistic Regression, Random Forest, CPU XGBoost, and a small MLP. Logistic Regression and MLP package scaling inside their estimator pipelines. All candidates use a fixed seed, and both tree ensembles use one worker. The preflight verifies constructor and input compatibility. It performs no fit, evaluation, model serialization, or deployment.
 
 ## Reproduce the environment
