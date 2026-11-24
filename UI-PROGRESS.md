@@ -7,14 +7,15 @@ Product base is Phase 4C `b9b4add`. The inspected remote main includes Phase 5E 
 - Replaced the Spring-served `/monitor` design with black-and-violet tokens, a responsive rail, dark and light themes, visible focus, and reduced-motion styling.
 - Kept the original same-origin API, administrator bearer token, scope checks, request cancellation and storage/outage handling. Added a token visibility control, sign-in feedback and keyboard focus transitions. Secrets remain in memory.
 - Wired Overview and Threat Centre to the existing reports. Added count transitions, an activity plot, category donut, source bars, scoped loading and empty states, latest-event filters, sortable columns and an accessible details dialog.
+- Added Threat Intelligence using the administrator feed-status endpoint, Connected Browsers using scoped heartbeat aggregates, and System Health using dashboard and feed outcomes. Added Privacy Centre, working appearance and reduced-motion preferences, and updated Windows startup documentation.
 - Counts and the category chart cover the configured retention window. Activity and source charts use only the detections in the API's latest 20-event window. The UI does not send new telemetry or query historical raw records.
 - The working frontend is served by Spring Boot without a separate build or dependency install.
 
 ## Verification completed
 
-- Login and shell stage passed all 62 Maven tests. The dashboard and Threat Centre stage passed all 29 extension unit tests and packaged successfully with the Spring Boot wrapper.
-- The secure Windows Chromium smoke passed against Spring Boot. It verified authenticated reporting, fixture isolation, dashboard and Threat Centre interactions, reduced motion, responsive widths from 390 to 1920 px, and recovery after a backend restart.
-- Private synthetic screenshots are in `C:/Users/kj/threat-detection-experiments/ui-1-evidence` for login, Overview, Threat Centre, event details, light theme, and mobile. The three console assets total about 43 KB before compression. Browser loading and memory measurements remain open.
+- Maven `verify` passed all 62 tests after the operational views. The dashboard and Threat Centre stage passed all 29 extension unit tests.
+- The secure Windows Chromium smoke passed against Spring Boot. It verified authenticated reporting, fixture isolation, dashboard and Threat Centre interactions, feed status, preferences, responsive widths from 390 to 1920 px, and recovery after a backend restart.
+- Private synthetic screenshots are in `C:/Users/kj/threat-detection-experiments/ui-1-evidence` for login, Overview, Threat Centre, event details, Threat Intelligence, Connected Browsers, System Health, Privacy Centre, Settings, light theme, and mobile. Browser loading and memory measurements remain open.
 
 ## Verification commands
 
@@ -24,10 +25,9 @@ Product base is Phase 4C `b9b4add`. The inspected remote main includes Phase 5E 
 
 ## Continue here
 
-1. In `backend/src/main/resources/monitoring/index.html` add navigation and views beyond Overview and Threat Centre. Use the heartbeat and `clientStatus` already returned by `MonitoringService.Dashboard` for Connected Browsers, System Health and Threat Intelligence. Where feed identity, update time, or individual-browser data is unavailable, show that limitation explicitly. Continue to distinguish storage failure from backend failure. Use the product's `extension/financial-domains.mjs` for verified financial cards.
-2. Add Privacy Centre and Settings using the existing consent and retention contract. Extend the current appearance and reduced-motion controls. Keep administrative credentials out of storage, URLs, and logs.
-3. Build ML, Dataset and Visual Intelligence screens from whitelisted aggregates. Source Phase 5F JSON at `a09394b:docs/experiments/phase5f/results.json`, the Phase 5G registry and preflight at `ebe0f4f`, and Phase 6A results at `9908b49:docs/experiments/phase6a/results.json`. Record the source revisions, cohort and operating points. Copy only the fields needed by the UI. Do not merge the research branches into this product branch.
-4. Style `extension/popup.html`, `options.html`, `styles.css`, and the warning surfaces using the shared design tokens. Keep the existing IDs, scripts, permission model and blocking, advisory, consent and bypass controls. Re-run both Chromium smoke modes and capture the remaining views.
-5. Obtain the missing dashboard reference image for image-to-image visual sign-off. Complete the full screenshot list, animation recordings, browser performance and accessibility review. Current responsive checks cover the implemented console views only.
+1. Add Financial Protection using the verified product scopes in `extension/financial-domains.mjs`. Extend the `views` map in `backend/src/main/resources/monitoring/monitor.js` and add the matching navigation and view in `index.html`.
+2. Build ML, Dataset and Visual Intelligence screens from whitelisted aggregates. Source Phase 5F JSON at `a09394b:docs/experiments/phase5f/results.json`, the Phase 5G registry and preflight at `ebe0f4f`, and Phase 6A results at `9908b49:docs/experiments/phase6a/results.json`. Record the source revisions, cohort and operating points. Copy only the fields needed by the UI. Do not merge the research branches into this product branch.
+3. Style `extension/popup.html`, `options.html`, `styles.css`, `warning.html`, `warning.css`, and the closed-shadow advisory in `content.js` using the shared design tokens. Keep the existing IDs, scripts, permission model and blocking, advisory, consent and bypass controls. Re-run both Chromium smoke modes and capture the remaining views.
+4. Obtain the missing dashboard reference image for image-to-image visual sign-off. Complete the full screenshot list, animation recordings, browser performance and accessibility review. Current responsive checks cover the implemented console views only.
 
 The console uses system typography pending local font review. Do not import research binaries, add production model functionality, or introduce unsupported live statistics.

@@ -534,7 +534,35 @@ async function main() {
       assert.equal(await dashboard.evaluate(() => document.documentElement.scrollWidth), width);
     }
     await capture('mobile');
+    for (const [label, id, expected] of [
+      ['Threat Intelligence', 'intelligence', 'Managed feed disabled'],
+      ['Connected Browsers', 'browsers', 'Fresh browser heartbeats'],
+      ['System Health', 'health', 'Dashboard query succeeded'],
+      ['Privacy Centre', 'privacy', 'The configured reporting window is'],
+      ['Settings', 'settings', 'Console display']
+    ]) {
+      await dashboard.getByRole('button', { name: label }).click();
+      await dashboard.getByRole('heading', { name: label, exact: true }).waitFor();
+      await dashboard.locator('#' + id).getByText(expected, { exact: id !== 'privacy' }).waitFor();
+      assert.equal(await dashboard.evaluate(() => document.documentElement.scrollWidth), 390, label);
+      if (id === 'browsers') {
+        assert.equal(await dashboard.locator('#browser-report dd').first().textContent(), '1');
+        await dashboard.getByText('Synthetic test data.').waitFor();
+      }
+    }
+    await dashboard.emulateMedia({ reducedMotion: 'no-preference' });
+    await dashboard.getByLabel('Reduce motion').check();
+    assert.notEqual(await dashboard.locator('html').getAttribute('data-reduced-motion'), null);
+    await dashboard.getByLabel('Appearance', { exact: true }).selectOption('light');
+    assert.equal(await dashboard.locator('html').getAttribute('data-theme'), 'light');
+    await dashboard.getByRole('button', { name: 'Use dark appearance' }).click();
+    assert.equal(await dashboard.getByLabel('Appearance', { exact: true }).inputValue(), 'dark');
     await dashboard.setViewportSize({ width: 1280, height: 820 });
+    for (const id of ['intelligence', 'browsers', 'health', 'privacy', 'settings']) {
+      await dashboard.locator('#nav-' + id).click();
+      if (id === 'intelligence') await dashboard.locator('#feed-message').getByText('Managed feed disabled').waitFor();
+      await capture(id);
+    }
     await dashboard.getByRole('button', { name: 'Sign out' }).click();
     assert.equal(await dashboard.locator('#history').textContent(), '');
     await login(adminToken);
@@ -578,6 +606,11 @@ async function main() {
     await dashboard.getByRole('button', { name: 'Refresh' }).click();
     await dashboard.locator('#load-state').getByText(/Backend unavailable/).waitFor();
     assert.equal(await dashboard.locator('#snapshot').isVisible(), false);
+    await dashboard.getByRole('button', { name: 'System Health' }).click();
+    assert.equal(await dashboard.locator('#health-backend').textContent(), 'Unavailable');
+    assert.equal(await dashboard.locator('#health-storage').textContent(), 'Unknown');
+    await dashboard.locator('#health-feed').getByText('Feed status unavailable').waitFor();
+    await dashboard.getByRole('button', { name: 'Overview' }).click();
     if (globalThis.process.env.THREAT_MONITOR_OFFLINE_SCREENSHOT) {
       await dashboard.screenshot({ path: globalThis.process.env.THREAT_MONITOR_OFFLINE_SCREENSHOT, fullPage: true });
     }

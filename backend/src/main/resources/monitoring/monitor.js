@@ -11,12 +11,24 @@ const actions = { BLOCKED: 'Blocked', WARNED: 'Warned', BYPASSED: 'Bypassed' };
 const severities = { HIGH: 'High', CAUTION: 'Caution' };
 const number = new Intl.NumberFormat();
 const date = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'medium' });
+const views = {
+  overview: ['Security overview', 'Reports from browsers that opted in to monitoring.'],
+  threats: ['Threat Centre', 'Review the latest reported event evidence.'],
+  intelligence: ['Threat Intelligence', 'Check the reputation provider and its current snapshot.'],
+  browsers: ['Connected Browsers', 'Heartbeat and reputation availability in the selected scope.'],
+  health: ['System Health', 'Check the APIs used by this console.'],
+  privacy: ['Privacy Centre', 'Review the data used by optional browser reporting.'],
+  settings: ['Settings', 'Set your console preferences and find local setup instructions.']
+};
+const reportViews = new Set(['overview', 'threats', 'browsers', 'health']);
+const feedViews = new Set(['intelligence', 'health']);
 let token = '';
 let scope = 'REAL';
 let pending;
+let feedPending;
+let activeView = 'overview';
 let recentEvents = [];
 let chartData = '';
-let threatView = false;
 let sortKey = 'detectedAt';
 let sortDirection = -1;
 const counts = new Map();
@@ -29,22 +41,39 @@ function status(text, state = '') {
   byId('backend-state').dataset.state = state;
 }
 
+function health(backend, storage, auth) {
+  byId('health-backend').textContent = backend;
+  byId('health-storage').textContent = storage;
+  byId('health-auth').textContent = auth;
+}
+
 function showToken(visible) {
   byId('token').type = visible ? 'text' : 'password';
   byId('show-token').setAttribute('aria-pressed', String(visible));
   byId('show-token').setAttribute('aria-label', visible ? 'Hide token' : 'Show token');
 }
 
-function navigate(threats, focus = true) {
-  threatView = threats;
+function navigate(view, focus = true) {
+  const threats = view === 'threats';
+  activeView = view;
   byId('event-filters').hidden = !threats;
-  byId('overview').hidden = threats;
-  byId('page-title').textContent = threats ? 'Threat Centre' : 'Security overview';
-  byId('page-description').textContent = threats ? 'Review the latest reported event evidence.' : 'Reports from browsers that opted in to monitoring.';
+  byId('report-toolbar').hidden = !reportViews.has(view);
+  byId('load-state').classList.toggle('scope-independent', !reportViews.has(view));
+  byId('scope-notice').classList.toggle('scope-independent', !reportViews.has(view));
+  for (const [id, [title, description]] of Object.entries(views)) {
+    const button = byId('nav-' + id);
+    if (view === id) {
+      button.setAttribute('aria-current', 'page');
+      byId('page-title').textContent = title;
+      byId('page-description').textContent = description;
+    } else button.removeAttribute('aria-current');
+    byId(id).hidden = id === 'threats' ? !['overview', 'threats'].includes(view) : id !== view;
+  }
   byId('history-title').textContent = threats ? 'Reported events' : 'Recent detections';
-  byId(threats ? 'nav-threats' : 'nav-overview').setAttribute('aria-current', 'page');
-  byId(threats ? 'nav-overview' : 'nav-threats').removeAttribute('aria-current');
-  renderHistory();
+  if (view === 'overview' || threats) renderHistory();
+  if (feedViews.has(view)) {
+    if (!feedPending || feedPending.signal.aborted) void refreshFeed();
+  } else feedPending?.abort();
   if (focus) byId('page-title').focus();
 }
 
@@ -70,6 +99,8 @@ function clearData() {
   byId('reputation-state').textContent = '';
   byId('last-contact').textContent = '';
   byId('retention').textContent = '';
+  byId('privacy-retention').textContent = 'The configured retention window is unavailable.';
+  renderReporting();
   for (const id of ['activity-chart', 'category-chart', 'source-chart']) byId(id).replaceChildren();
   for (const metric of metricNames) {
     const state = counts.get(metric);
@@ -83,6 +114,9 @@ function clearData() {
 function signOut(message = '') {
   pending?.abort();
   pending = undefined;
+  feedPending?.abort();
+  feedPending = undefined;
+  setFeedStatus('Unavailable');
   token = '';
   clearData();
   resetFilters();
@@ -96,13 +130,17 @@ function signOut(message = '') {
   status('Signed out');
 }
 
+function reducedMotion() {
+  return motion.matches || byId('reduce-motion').checked;
+}
+
 function metricValue(metric, value, animate) {
   byId(metric).textContent = number.format(value);
   const visual = byId(metric + '-visual');
   const previous = counts.get(metric);
   if (previous?.target === value && (animate || previous.value === value)) return;
   if (previous) cancelAnimationFrame(previous.frame);
-  const start = animate && !motion.matches ? (previous?.value ?? 0) : value;
+  const start = animate && !reducedMotion() ? (previous?.value ?? 0) : value;
   const state = { value: start, target: value, frame: 0 };
   counts.set(metric, state);
   visual.textContent = number.format(start);
@@ -264,7 +302,7 @@ function inspect(entry) {
 function renderHistory() {
   const query = byId('event-search').value.trim().toLowerCase();
   const day = byId('filter-day').value;
-  const entries = recentEvents.filter(entry => !threatView ||
+  const entries = recentEvents.filter(entry => activeView !== 'threats' ||
     ((!day || entry.detectedAt.startsWith(day)) && Object.entries(filters).every(([field, id]) => !byId(id).value || byId(id).value === entry[field]) &&
       (!query || [entry.reason, ...Object.keys(labels).map(key => labels[key][entry[key]])].join(' ').toLowerCase().includes(query))));
   entries.sort((a, b) => sortDirection * String(labels[sortKey]?.[a[sortKey]] ?? a[sortKey])
@@ -308,6 +346,7 @@ function render(result, animate) {
     chartData = nextChartData;
   }
   byId('retention').textContent = result.retentionDays + '-day reporting window';
+  byId('privacy-retention').textContent = `The configured reporting window is ${result.retentionDays} days. Expired reports are removed by the backend.`;
   const available = result.clientStatus.REPUTATION_AVAILABLE;
   const unavailable = result.clientStatus.REPUTATION_UNAVAILABLE;
   const count = available + unavailable;
@@ -319,8 +358,82 @@ function render(result, animate) {
       .filter(Boolean).join(' · ')
     : 'Unknown until a browser reports';
   byId('last-contact').textContent = result.lastContact ? date.format(new Date(result.lastContact)) : 'No heartbeat received';
+  renderReporting(result);
   byId('snapshot').hidden = false;
   byId('load-state').hidden = true;
+}
+
+function statusRows(id, fields) {
+  byId(id).replaceChildren(...fields.map(([key, value]) => {
+    const row = document.createElement('div');
+    row.append(plain('dt', key), plain('dd', value));
+    return row;
+  }));
+}
+
+function renderReporting(result) {
+  const contact = result?.lastContact ? date.format(new Date(result.lastContact)) : 'No heartbeat received';
+  const available = result?.clientStatus.REPUTATION_AVAILABLE;
+  const unavailable = result?.clientStatus.REPUTATION_UNAVAILABLE;
+  const unknown = 'Unavailable';
+  const fields = [
+    ['Fresh browser heartbeats', result ? number.format(available + unavailable) : unknown],
+    ['Reputation available', result ? number.format(available) : unknown],
+    ['Reputation unavailable', result ? number.format(unavailable) : unknown],
+    ['Last successful heartbeat', result ? contact : unknown]
+  ];
+  statusRows('browser-report', fields);
+  statusRows('health-report', fields);
+}
+
+function authenticatedGet(path, request) {
+  return fetch(path, {
+    headers: { Authorization: 'Bearer ' + token, Accept: 'application/json' },
+    credentials: 'omit', redirect: 'error', referrerPolicy: 'no-referrer', cache: 'no-store',
+    signal: AbortSignal.any([request.signal, AbortSignal.timeout(5000)])
+  });
+}
+
+function setFeedStatus(label, fields = []) {
+  byId('health-feed').textContent = label;
+  byId('feed-message').textContent = label;
+  statusRows('feed-details', fields);
+}
+
+async function refreshFeed() {
+  if (!token || !feedViews.has(activeView)) return;
+  feedPending?.abort();
+  const request = new AbortController();
+  feedPending = request;
+  setFeedStatus('Checking the managed feed…');
+  try {
+    const response = await authenticatedGet('/api/threat/reputation/feed-status', request);
+    if (request.signal.aborted) return;
+    if (response.status === 401 || response.status === 403) {
+      signOut('Access denied. Enter a valid admin token for this backend.');
+      return;
+    }
+    if (!response.ok) throw new Error('Feed status request failed');
+    const result = await response.json();
+    if (request.signal.aborted) return;
+    if (result.pollState === 'DISABLED') {
+      setFeedStatus('Managed feed disabled');
+      return;
+    }
+    const snapshots = { CURRENT: 'Current snapshot', STALE: 'Snapshot expired', MISSING: 'Snapshot unavailable' };
+    const polls = { WAITING: 'Waiting for first poll', AVAILABLE: 'Latest poll succeeded', FEED_FAILED: 'Feed request failed', PUBLISH_FAILED: 'Snapshot publication failed' };
+    setFeedStatus(snapshots[result.dataState] ?? 'Snapshot status unknown', [
+      ['Provider', result.provider === 'CERT_POLSKA' ? 'CERT Polska' : 'Unknown'],
+      ['Poll status', polls[result.pollState] ?? 'Unknown'],
+      ['Last successful update', result.lastSuccessAt ? date.format(new Date(result.lastSuccessAt)) : 'No successful update'],
+      ['Snapshot expires', result.expiresAt ? date.format(new Date(result.expiresAt)) : 'Unavailable'],
+      ['Browser distribution', result.browserDistributionApproved ? 'Approved' : 'Disabled']
+    ]);
+  } catch {
+    if (!request.signal.aborted) setFeedStatus('Feed status unavailable');
+  } finally {
+    if (feedPending === request) feedPending = undefined;
+  }
 }
 
 async function refresh(initial = false, preserve = false) {
@@ -334,14 +447,11 @@ async function refresh(initial = false, preserve = false) {
     byId('load-state').textContent = 'Loading reports…';
     byId('load-state').hidden = false;
     status('Connecting…');
+    health('Checking…', 'Checking…', initial ? 'Checking…' : 'Previously verified');
   }
   byId('scope-notice').hidden = requestedScope !== 'SYNTHETIC';
   try {
-    const response = await fetch('/api/threat/monitoring/dashboard?scope=' + requestedScope, {
-      headers: { Authorization: 'Bearer ' + token, Accept: 'application/json' },
-      credentials: 'omit', redirect: 'error', referrerPolicy: 'no-referrer', cache: 'no-store',
-      signal: AbortSignal.any([request.signal, AbortSignal.timeout(5000)])
-    });
+    const response = await authenticatedGet('/api/threat/monitoring/dashboard?scope=' + requestedScope, request);
     if (request.signal.aborted) return;
     if (response.status === 401 || response.status === 403) {
       signOut('Access denied. Enter a valid admin token for this backend.');
@@ -352,6 +462,7 @@ async function refresh(initial = false, preserve = false) {
       byId('sign-in').hidden = true;
       byId('dashboard').hidden = false;
       status('Backend reachable', 'error');
+      health('Reachable', 'Unavailable', 'Verified');
       byId('load-state').textContent = 'Monitoring storage unavailable. Try refreshing after the database recovers.';
       byId('load-state').hidden = false;
       return;
@@ -364,6 +475,7 @@ async function refresh(initial = false, preserve = false) {
     byId('sign-in').hidden = true;
     byId('dashboard').hidden = false;
     status('Backend connected', 'ok');
+    health('Reachable', 'Dashboard query succeeded', 'Verified');
     if (initial) byId('page-title').focus();
   } catch {
     if (request.signal.aborted) return;
@@ -373,6 +485,7 @@ async function refresh(initial = false, preserve = false) {
     } else {
       clearData();
       status('Backend unavailable', 'error');
+      health('Unavailable', 'Unknown', 'Unable to recheck');
       byId('load-state').textContent = message;
       byId('load-state').hidden = false;
     }
@@ -401,20 +514,21 @@ byId('token-form').addEventListener('submit', event => {
   }
   token = supplied;
   selectScope('REAL');
-  navigate(false, false);
+  navigate('overview', false);
   byId('sign-in-error').hidden = true;
   byId('sign-in-button').disabled = true;
   void refresh(true);
 });
 byId('show-token').addEventListener('click', () => showToken(byId('token').type === 'password'));
-byId('theme').addEventListener('click', () => {
-  const light = document.documentElement.dataset.theme !== 'light';
+function setTheme(light) {
   document.documentElement.dataset.theme = light ? 'light' : 'dark';
+  byId('appearance').value = light ? 'light' : 'dark';
   byId('theme').setAttribute('aria-pressed', String(light));
   byId('theme').setAttribute('aria-label', light ? 'Use dark appearance' : 'Use light appearance');
-});
-byId('nav-overview').addEventListener('click', () => navigate(false));
-byId('nav-threats').addEventListener('click', () => navigate(true));
+}
+byId('theme').addEventListener('click', () => setTheme(document.documentElement.dataset.theme !== 'light'));
+byId('appearance').addEventListener('change', event => setTheme(event.target.value === 'light'));
+for (const id of Object.keys(views)) byId('nav-' + id).addEventListener('click', () => navigate(id));
 for (const [id, value] of [['real', 'REAL'], ['synthetic', 'SYNTHETIC']]) {
   byId(id).addEventListener('click', () => {
     if (scope === value) return;
@@ -423,7 +537,11 @@ for (const [id, value] of [['real', 'REAL'], ['synthetic', 'SYNTHETIC']]) {
     void refresh();
   });
 }
-byId('refresh').addEventListener('click', () => void refresh(false, true));
+function refreshConsole() {
+  void refresh(false, true);
+  if (feedViews.has(activeView)) void refreshFeed();
+}
+byId('refresh').addEventListener('click', refreshConsole);
 byId('event-filters').addEventListener('submit', event => event.preventDefault());
 byId('event-filters').addEventListener('input', renderHistory);
 byId('clear-filters').addEventListener('click', () => {
@@ -437,15 +555,18 @@ for (const button of document.querySelectorAll('[data-sort]')) button.addEventLi
   updateSort();
   renderHistory();
 });
-motion.addEventListener('change', () => {
-  if (!motion.matches) return;
+function applyMotionPreference() {
+  document.documentElement.toggleAttribute('data-reduced-motion', reducedMotion());
+  if (!reducedMotion()) return;
   for (const [name, state] of counts) metricValue(name, state.target, false);
-});
+}
+motion.addEventListener('change', applyMotionPreference);
+byId('reduce-motion').addEventListener('change', applyMotionPreference);
 byId('sign-out').addEventListener('click', () => {
   signOut();
   byId('token').focus();
 });
 window.addEventListener('pagehide', () => signOut());
 setInterval(() => {
-  if (!pending && !byId('dashboard').hidden && document.visibilityState === 'visible') void refresh(false, true);
+  if (!pending && !byId('dashboard').hidden && document.visibilityState === 'visible') refreshConsole();
 }, 30000);

@@ -16,6 +16,11 @@
     <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1 1m12 12 1 1m0-14-1 1M6 18l-1 1"/></symbol>
     <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
     <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-radar" viewBox="0 0 24 24"><path d="M12 12 19 5m-2 7a5 5 0 1 1-5-5m9 5a9 9 0 1 1-9-9"/><circle cx="12" cy="12" r="1"/></symbol>
+    <symbol id="i-browser" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18m-14-2h1"/></symbol>
+    <symbol id="i-pulse" viewBox="0 0 24 24"><path d="M2 12h5l3-7 4 14 3-7h5"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 4v3"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 6h6m4 0h6M4 12h11m4 0h1M4 18h2m4 0h10"/><circle cx="12" cy="6" r="2"/><circle cx="17" cy="12" r="2"/><circle cx="8" cy="18" r="2"/></symbol>
   </svg>
   <a href="#main" class="skip">Skip to content</a>
   <header class="masthead">
@@ -54,6 +59,11 @@
       <nav class="rail" aria-label="Workspace">
         <button id="nav-overview" type="button" aria-current="page" title="Overview"><svg aria-hidden="true"><use href="#i-grid"/></svg><span>Overview</span></button>
         <button id="nav-threats" type="button" title="Threat Centre"><svg aria-hidden="true"><use href="#i-target"/></svg><span>Threat Centre</span></button>
+        <button id="nav-intelligence" type="button" title="Threat Intelligence"><svg aria-hidden="true"><use href="#i-radar"/></svg><span>Threat Intelligence</span></button>
+        <button id="nav-browsers" type="button" title="Connected Browsers"><svg aria-hidden="true"><use href="#i-browser"/></svg><span>Connected Browsers</span></button>
+        <button id="nav-health" type="button" title="System Health"><svg aria-hidden="true"><use href="#i-pulse"/></svg><span>System Health</span></button>
+        <button id="nav-privacy" type="button" title="Privacy Centre"><svg aria-hidden="true"><use href="#i-lock"/></svg><span>Privacy Centre</span></button>
+        <button id="nav-settings" type="button" title="Settings"><svg aria-hidden="true"><use href="#i-settings"/></svg><span>Settings</span></button>
       </nav>
       <div class="page">
         <div class="page-heading">
@@ -63,7 +73,7 @@
             <button id="sign-out" type="button" class="quiet">Sign out</button>
           </div>
         </div>
-        <div class="toolbar">
+        <div class="toolbar" id="report-toolbar">
           <div class="scopes" role="group" aria-label="Reporting scope">
             <button id="real" type="button" aria-pressed="true">Live reports</button>
             <button id="synthetic" type="button" aria-pressed="false">Synthetic fixtures</button>
@@ -127,6 +137,26 @@
             </div>
           </section>
         </div>
+        <section class="details service-view" id="intelligence" aria-labelledby="page-title" hidden>
+          <div class="panel"><h2>Managed reputation</h2><p class="muted" id="feed-message" role="status"></p><dl id="feed-details" class="status-list"></dl></div>
+          <div class="panel"><h2>How protection is applied</h2><p>A reputation match can confirm phishing or malware. The browser reports whether reputation protection is available in its latest heartbeat.</p><p class="muted">Financial lookalikes and suspicious activity generate advisories. Machine learning and visual recognition are research features and are disabled in browser protection.</p></div>
+        </section>
+        <section class="details service-view" id="browsers" aria-labelledby="page-title" hidden>
+          <div class="panel"><h2>Recent reporting activity</h2><dl id="browser-report" class="status-list"></dl></div>
+          <div class="panel"><h2>Reporting coverage</h2><p class="muted">Opted-in browser credentials are counted in aggregate while their heartbeat is fresh. An expired heartbeat can indicate a browser that closed, opted out or lost its connection. Device identities are unavailable.</p></div>
+        </section>
+        <section class="details service-view" id="health" aria-labelledby="page-title" hidden>
+          <div class="panel"><h2>Administrative API checks</h2><dl class="status-list"><div><dt>Spring Boot backend</dt><dd id="health-backend"></dd></div><div><dt>Monitoring storage</dt><dd id="health-storage"></dd></div><div><dt>Administrator access</dt><dd id="health-auth"></dd></div><div><dt>Managed reputation</dt><dd id="health-feed"></dd></div></dl></div>
+          <div class="panel"><h2>Reporting checks</h2><dl id="health-report" class="status-list"></dl><p class="muted">Checks describe this console's API responses and the selected reporting scope.</p></div>
+        </section>
+        <section class="details service-view" id="privacy" aria-labelledby="page-title" hidden>
+          <div class="panel"><h2>Optional browser reporting</h2><p>When enabled in extension settings, the browser sends its reporting credential, event identifier, detection time, signal and action. Heartbeats include reputation availability.</p><p class="muted">Monitoring excludes site addresses, visited pages, page content, passwords and form values.</p></div>
+          <div class="panel"><h2>Retention and access</h2><p id="privacy-retention" class="muted"></p><p>Live and synthetic reports are queried separately. The administrator credential is issued by local setup and held in memory for this session. Manage browser reporting and its separate credential in the extension settings.</p></div>
+        </section>
+        <section class="details service-view" id="settings" aria-labelledby="page-title" hidden>
+          <div class="panel"><h2>Console display</h2><div class="preference"><label for="appearance">Appearance</label><select id="appearance"><option value="dark">Dark</option><option value="light">Light</option></select></div><div class="preference"><label for="reduce-motion">Reduce motion</label><input id="reduce-motion" type="checkbox" aria-describedby="motion-note"></div><p id="motion-note" class="muted">Your system's reduced-motion setting also applies.</p></div>
+          <div class="panel"><h2>Local protection and setup</h2><p>Open Chrome's Extensions page and choose ThreatDetection → Details → Extension options to manage consent and browser credentials.</p><p class="muted">For startup, credential rotation and retention configuration, see <code>docs/windows-local-setup.md</code> in the repository.</p></div>
+        </section>
       </div>
     </section>
   </main>

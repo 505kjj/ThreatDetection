@@ -39,6 +39,8 @@ Use Java 21, Windows PowerShell 5.1 or PowerShell 7, and Chromium or Chrome. Run
 
 6. For the built-in synthetic profile, visit `http://127.0.0.1:8081/phase4b-demo-phishing` using your selected port. The local snapshot contains only that synthetic exact-path indicator and is refreshed when the backend starts. It expires after two hours. The browser warning should appear before a request reaches that path. Select **Synthetic fixtures** on the dashboard and refresh to see the block. The **Live reports** view should remain empty for this profile.
 
+   Spring Boot serves the console with the backend build. Overview shows counts for the configured retention window. The activity charts and Threat Centre use the latest 20 events from the selected scope. Use Connected Browsers for heartbeat coverage and System Health to distinguish a storage error from an API outage. Threat Intelligence displays managed feed health. A local snapshot can provide browser protection while managed ingestion is disabled.
+
 For authorized real reputation data, use a separate name and supply `-SnapshotPath 'C:\path\to\current-authorized-snapshot.json'` during setup without `-Synthetic`. For an operator-provided synthetic snapshot, use both options. Keep real and synthetic profiles separate. If no snapshot is provided for a live profile, reputation is unavailable until you set up a profile with an authorized snapshot. See the [reputation snapshot format](url-reputation.md#snapshot-format).
 
 ## Lifecycle and credential rotation

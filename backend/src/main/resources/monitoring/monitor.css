@@ -72,6 +72,7 @@ button:disabled { opacity:.7; cursor:wait }
 .page-heading h1 { margin:4px 0 }
 .controls button { display:flex; align-items:center; gap:6px }
 .toolbar { margin-bottom:14px }
+.scope-independent { display:none }
 .scopes { display:flex; gap:4px; padding:4px; border:1px solid var(--line); border-radius:999px; background:var(--card) }
 .scopes button { border-radius:999px; border-color:transparent; background:transparent; color:var(--muted); min-height:34px; font-weight:620 }
 .scopes button[aria-pressed="true"] { background:color-mix(in srgb,var(--accent) 23%,var(--card)); color:var(--violet) }
@@ -89,6 +90,12 @@ button:disabled { opacity:.7; cursor:wait }
 .breakdown dl,.status-list { margin-top:12px }
 .breakdown dl > div,.status-list > div { display:flex; justify-content:space-between; align-items:baseline; gap:14px; padding:8px 0; border-bottom:1px solid var(--line) }
 .status-list dd { text-align:right }
+.service-view { grid-template-columns:repeat(2,minmax(0,1fr)); animation:arrive var(--entrance) var(--ease) both }
+.service-view .panel > p { margin-top:12px; max-width:70ch }
+.preference { display:flex; justify-content:space-between; align-items:center; gap:14px; padding:10px 0; border-bottom:1px solid var(--line) }
+.preference select { min-height:36px; padding:4px 10px; background:var(--bg); border:1px solid var(--line); border-radius:8px }
+.preference input { width:19px; height:19px; accent-color:var(--accent) }
+:root[data-reduced-motion] *, :root[data-reduced-motion] *::before, :root[data-reduced-motion] *::after { animation-duration:0s !important; transition-duration:0s !important; scroll-behavior:auto !important }
 .table-shell { position:relative; overflow-x:auto; margin-top:11px }
 table { width:100%; border-collapse:collapse; text-align:left }
 th,td { padding:10px 8px; border-bottom:1px solid var(--line); vertical-align:top }
@@ -149,7 +156,7 @@ th[aria-sort="descending"] .sort::after { content:" ↓" }
 @keyframes arrive { from { opacity:0; transform:translateY(8px) } to {opacity:1;transform:none} }
 @media (max-width:850px) {
   .workspace { width:calc(100% - 32px); grid-template-columns:minmax(0,1fr); gap:14px; margin-top:16px }
-  .rail { position:static; display:flex; padding:5px; justify-self:start }
+  .rail { position:static; display:flex; flex-wrap:wrap; padding:5px; justify-self:start }
   .rail button { width:auto; padding:0 10px; height:40px; display:flex; gap:6px }
   .rail span { position:static; width:auto; height:auto; clip-path:none }
   .metrics { grid-template-columns:repeat(2,minmax(0,1fr)) }
