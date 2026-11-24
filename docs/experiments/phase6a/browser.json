@@ -1,0 +1,38 @@
+{
+  "engine": "159.0.8154.6",
+  "permissions": [],
+  "hostPermissions": [],
+  "wasmThreads": 1,
+  "runtimeBytes": 11975718,
+  "modelBytes": 6078504,
+  "initializationMs": 427.59999999403954,
+  "extraction": {
+    "medianMs": 1.25,
+    "p95Ms": 2.920000008493659
+  },
+  "inference": {
+    "medianMs": 8.350000008940697,
+    "p95Ms": 15.179999997466801
+  },
+  "extractionPlusInference": {
+    "medianMs": 9.800000004470348,
+    "p95Ms": 18.16999999955296
+  },
+  "rendererJsHeapBytes": 20421547,
+  "measuredIterations": 24,
+  "minimumCanvasPreprocessCosine": 0.9681901987575199,
+  "minimumIdenticalInputCosine": 0.9999999437498196,
+  "canvasParityAt097": false,
+  "fixtureCount": 3,
+  "canvasReadback": {
+    "local": "readable",
+    "foreign": "SecurityError"
+  },
+  "observationLimits": {
+    "initialImageCount": 2,
+    "laterImageCount": 3,
+    "crossOriginFrameReadable": false
+  },
+  "syntheticRequests": 4,
+  "blockedRequests": 0
+}
