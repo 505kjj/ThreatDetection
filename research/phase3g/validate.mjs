@@ -232,10 +232,10 @@ async function addHistory(index, input, published, expected) {
   for (const group of domains) index.domains.add(group);
 }
 
-export async function historical(paths) {
+export async function historical(paths, options) {
   if (!paths.length) return null;
   const [uci, c, d, e, f] = paths.map(privatePath);
-  const index = await priorIndex(uci, c, d);
+  const index = await priorIndex(uci, c, d, options);
   const [earlier, later] = await Promise.all([read(phase3e), read(phase3f)]);
   await addHistory(index, e, earlier, earlier.freeze.projection.sha256);
   await addHistory(index, f, later, later.manifest.numericSha256);

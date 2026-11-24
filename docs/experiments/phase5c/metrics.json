@@ -1,0 +1,2225 @@
+{
+  "1000": [
+    {
+      "model": "logistic",
+      "trainRows": 1000,
+      "trainIdsSha256": "223e0508edb5a87462bfce62b603db287a4869f0d5d657a46a234b8fd43137cf",
+      "cohortSha256": "b05c458d47a7840a484419bb2f20953728e9171cb7557eb3158b6a43ccee86ac",
+      "preflight": true,
+      "latencyMedianMs": 0.19425000209594145,
+      "latencyP95Ms": 0.2198950001911726,
+      "calibration": {
+        "0.01": {
+          "targetNegativeDomainFpr": 0.01,
+          "calibrationDomains": 235,
+          "threshold": null
+        },
+        "0.001": {
+          "targetNegativeDomainFpr": 0.001,
+          "calibrationDomains": 235,
+          "threshold": null
+        }
+      },
+      "evaluation": {
+        "validation": {
+          "rows": 1000,
+          "phishing": 729,
+          "idsSha256": "5935ecd99a7c2b3b38f7e3cdbf6d68f8de39b7d05279f897ff12290599ce1546",
+          "prAucAveragePrecision": 0.9767589671087376,
+          "rocAuc": 0.9358976305812441,
+          "logLoss": 0.3526027202606201,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 563,
+            "fp": 23,
+            "tn": 248,
+            "fn": 166,
+            "precision": 0.9607508532423208,
+            "recall": 0.7722908093278463,
+            "f1": 0.8562737642585552,
+            "falsePositiveRate": 0.08487084870848709,
+            "falseAlertDomains": 23,
+            "legitimateDomains": 264,
+            "negativeDomainFalsePositiveRate": 0.08712121212121213,
+            "negativeDomainFpr95Upper": 0.12116920547319515
+          },
+          "confusionMatrix": [
+            [
+              248,
+              23
+            ],
+            [
+              166,
+              563
+            ]
+          ],
+          "atCalibratedConstraints": {
+            "0.01": null,
+            "0.001": null
+          }
+        }
+      },
+      "fitSeconds": 0.009805699999560602,
+      "modelBytes": 1163,
+      "modelSha256": "e40ac78601f6e0d4d0695e265c0a5e6ebcb2094b04b37ab3725c2ed6e4c1aa43",
+      "resources": {
+        "exitCode": 0,
+        "stopReason": null,
+        "resourceViolations": [],
+        "wallSeconds": 3.797000000005937,
+        "jobCpuSeconds": 3.453125,
+        "peakJobCommitBytes": 531824640,
+        "hostCpuMaxPercent": 8.33951074870274,
+        "hostCpuMeanPercent": 8.33951074870274,
+        "cpuSamples": 1,
+        "samplesAbove30Percent": 0,
+        "logicalCpuAffinityCount": 2,
+        "jobCommitLimitBytes": 8000000000,
+        "memoryTargetBytes": 6000000000
+      }
+    },
+    {
+      "model": "forest",
+      "trainRows": 1000,
+      "trainIdsSha256": "223e0508edb5a87462bfce62b603db287a4869f0d5d657a46a234b8fd43137cf",
+      "cohortSha256": "b05c458d47a7840a484419bb2f20953728e9171cb7557eb3158b6a43ccee86ac",
+      "preflight": true,
+      "latencyMedianMs": 12.761049998516683,
+      "latencyP95Ms": 14.08691999677103,
+      "calibration": {
+        "0.01": {
+          "targetNegativeDomainFpr": 0.01,
+          "calibrationDomains": 235,
+          "threshold": null
+        },
+        "0.001": {
+          "targetNegativeDomainFpr": 0.001,
+          "calibrationDomains": 235,
+          "threshold": null
+        }
+      },
+      "evaluation": {
+        "validation": {
+          "rows": 1000,
+          "phishing": 729,
+          "idsSha256": "5935ecd99a7c2b3b38f7e3cdbf6d68f8de39b7d05279f897ff12290599ce1546",
+          "prAucAveragePrecision": 0.9808261844060073,
+          "rocAuc": 0.9496732621647205,
+          "logLoss": 0.3298330879188437,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 630,
+            "fp": 27,
+            "tn": 244,
+            "fn": 99,
+            "precision": 0.958904109589041,
+            "recall": 0.8641975308641975,
+            "f1": 0.9090909090909091,
+            "falsePositiveRate": 0.0996309963099631,
+            "falseAlertDomains": 27,
+            "legitimateDomains": 264,
+            "negativeDomainFalsePositiveRate": 0.10227272727272728,
+            "negativeDomainFpr95Upper": 0.13827254444375198
+          },
+          "confusionMatrix": [
+            [
+              244,
+              27
+            ],
+            [
+              99,
+              630
+            ]
+          ],
+          "atCalibratedConstraints": {
+            "0.01": null,
+            "0.001": null
+          }
+        }
+      },
+      "fitSeconds": 0.06067419999453705,
+      "modelBytes": 76860,
+      "modelSha256": "d54d0d7a5cf3fdaaecff2e0f6876fbe8057de351dc60b1656970d398fe5f2066",
+      "resources": {
+        "exitCode": 0,
+        "stopReason": null,
+        "resourceViolations": [],
+        "wallSeconds": 7.906999999991967,
+        "jobCpuSeconds": 5.125,
+        "peakJobCommitBytes": 532955136,
+        "hostCpuMaxPercent": 11.693834160170091,
+        "hostCpuMeanPercent": 7.361420052803228,
+        "cpuSamples": 3,
+        "samplesAbove30Percent": 0,
+        "logicalCpuAffinityCount": 2,
+        "jobCommitLimitBytes": 8000000000,
+        "memoryTargetBytes": 6000000000
+      }
+    },
+    {
+      "model": "xgboost",
+      "trainRows": 1000,
+      "trainIdsSha256": "223e0508edb5a87462bfce62b603db287a4869f0d5d657a46a234b8fd43137cf",
+      "cohortSha256": "b05c458d47a7840a484419bb2f20953728e9171cb7557eb3158b6a43ccee86ac",
+      "preflight": true,
+      "latencyMedianMs": 0.22149999858811498,
+      "latencyP95Ms": 0.29363499488681555,
+      "calibration": {
+        "0.01": {
+          "targetNegativeDomainFpr": 0.01,
+          "calibrationDomains": 235,
+          "threshold": null
+        },
+        "0.001": {
+          "targetNegativeDomainFpr": 0.001,
+          "calibrationDomains": 235,
+          "threshold": null
+        }
+      },
+      "evaluation": {
+        "validation": {
+          "rows": 1000,
+          "phishing": 729,
+          "idsSha256": "5935ecd99a7c2b3b38f7e3cdbf6d68f8de39b7d05279f897ff12290599ce1546",
+          "prAucAveragePrecision": 0.9826891527284981,
+          "rocAuc": 0.9536467586898091,
+          "logLoss": 0.3031608760356903,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 625,
+            "fp": 25,
+            "tn": 246,
+            "fn": 104,
+            "precision": 0.9615384615384616,
+            "recall": 0.8573388203017832,
+            "f1": 0.9064539521392313,
+            "falsePositiveRate": 0.09225092250922509,
+            "falseAlertDomains": 25,
+            "legitimateDomains": 264,
+            "negativeDomainFalsePositiveRate": 0.0946969696969697,
+            "negativeDomainFpr95Upper": 0.12974859917331108
+          },
+          "confusionMatrix": [
+            [
+              246,
+              25
+            ],
+            [
+              104,
+              625
+            ]
+          ],
+          "atCalibratedConstraints": {
+            "0.01": null,
+            "0.001": null
+          }
+        }
+      },
+      "fitSeconds": 0.019072299997787923,
+      "modelBytes": 20352,
+      "modelSha256": "e84de642db35863a588f064e62bada4f51e4700e0319a4526f9c60c1ad984ad8",
+      "resources": {
+        "exitCode": 0,
+        "stopReason": null,
+        "resourceViolations": [],
+        "wallSeconds": 3.7190000000118744,
+        "jobCpuSeconds": 3.15625,
+        "peakJobCommitBytes": 533090304,
+        "hostCpuMaxPercent": 6.049947238832221,
+        "hostCpuMeanPercent": 6.049947238832221,
+        "cpuSamples": 1,
+        "samplesAbove30Percent": 0,
+        "logicalCpuAffinityCount": 2,
+        "jobCommitLimitBytes": 8000000000,
+        "memoryTargetBytes": 6000000000
+      }
+    },
+    {
+      "model": "ngram",
+      "trainRows": 1000,
+      "trainIdsSha256": "223e0508edb5a87462bfce62b603db287a4869f0d5d657a46a234b8fd43137cf",
+      "cohortSha256": "b05c458d47a7840a484419bb2f20953728e9171cb7557eb3158b6a43ccee86ac",
+      "preflight": true,
+      "latencyMedianMs": 0.5138999986229464,
+      "latencyP95Ms": 0.6406350017641671,
+      "calibration": {
+        "0.01": {
+          "targetNegativeDomainFpr": 0.01,
+          "calibrationDomains": 235,
+          "threshold": null
+        },
+        "0.001": {
+          "targetNegativeDomainFpr": 0.001,
+          "calibrationDomains": 235,
+          "threshold": null
+        }
+      },
+      "evaluation": {
+        "validation": {
+          "rows": 1000,
+          "phishing": 729,
+          "idsSha256": "5935ecd99a7c2b3b38f7e3cdbf6d68f8de39b7d05279f897ff12290599ce1546",
+          "prAucAveragePrecision": 0.987958368362256,
+          "rocAuc": 0.9657013854089158,
+          "logLoss": 0.34729354649570243,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 625,
+            "fp": 13,
+            "tn": 258,
+            "fn": 104,
+            "precision": 0.9796238244514106,
+            "recall": 0.8573388203017832,
+            "f1": 0.9144111192392099,
+            "falsePositiveRate": 0.04797047970479705,
+            "falseAlertDomains": 13,
+            "legitimateDomains": 264,
+            "negativeDomainFalsePositiveRate": 0.04924242424242424,
+            "negativeDomainFpr95Upper": 0.07715102999429767
+          },
+          "confusionMatrix": [
+            [
+              258,
+              13
+            ],
+            [
+              104,
+              625
+            ]
+          ],
+          "atCalibratedConstraints": {
+            "0.01": null,
+            "0.001": null
+          }
+        }
+      },
+      "fitSeconds": 0.1264134999946691,
+      "modelBytes": 205105,
+      "modelSha256": "f8a0489e5becb4b144f9f7d13de3cc0131d2290953ea446b7301b83809357b02",
+      "resources": {
+        "exitCode": 0,
+        "stopReason": null,
+        "resourceViolations": [],
+        "wallSeconds": 4.328000000008615,
+        "jobCpuSeconds": 3.859375,
+        "peakJobCommitBytes": 533843968,
+        "hostCpuMaxPercent": 18.319802329685842,
+        "hostCpuMeanPercent": 13.239399072792713,
+        "cpuSamples": 2,
+        "samplesAbove30Percent": 0,
+        "logicalCpuAffinityCount": 2,
+        "jobCommitLimitBytes": 8000000000,
+        "memoryTargetBytes": 6000000000
+      }
+    },
+    {
+      "model": "cnn",
+      "trainRows": 1000,
+      "trainIdsSha256": "223e0508edb5a87462bfce62b603db287a4869f0d5d657a46a234b8fd43137cf",
+      "cohortSha256": "b05c458d47a7840a484419bb2f20953728e9171cb7557eb3158b6a43ccee86ac",
+      "preflight": true,
+      "latencyMedianMs": 0.9608499967725947,
+      "latencyP95Ms": 1.0815399989951402,
+      "calibration": {
+        "0.01": {
+          "targetNegativeDomainFpr": 0.01,
+          "calibrationDomains": 235,
+          "threshold": null
+        },
+        "0.001": {
+          "targetNegativeDomainFpr": 0.001,
+          "calibrationDomains": 235,
+          "threshold": null
+        }
+      },
+      "evaluation": {
+        "validation": {
+          "rows": 1000,
+          "phishing": 729,
+          "idsSha256": "5935ecd99a7c2b3b38f7e3cdbf6d68f8de39b7d05279f897ff12290599ce1546",
+          "prAucAveragePrecision": 0.9575621679903974,
+          "rocAuc": 0.8907263146705542,
+          "logLoss": 0.6141507625579834,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 516,
+            "fp": 26,
+            "tn": 245,
+            "fn": 213,
+            "precision": 0.9520295202952029,
+            "recall": 0.7078189300411523,
+            "f1": 0.8119590873328089,
+            "falsePositiveRate": 0.0959409594095941,
+            "falseAlertDomains": 26,
+            "legitimateDomains": 264,
+            "negativeDomainFalsePositiveRate": 0.09848484848484848,
+            "negativeDomainFpr95Upper": 0.13401715066105435
+          },
+          "confusionMatrix": [
+            [
+              245,
+              26
+            ],
+            [
+              213,
+              516
+            ]
+          ],
+          "atCalibratedConstraints": {
+            "0.01": null,
+            "0.001": null
+          }
+        }
+      },
+      "fitSeconds": 2.4767090999957873,
+      "modelBytes": 24994,
+      "modelSha256": "12d2d51368a370773dce0b2318172975e746bfff82413c3749b896b82dc87d88",
+      "tuningAveragePrecisionByEpoch": [
+        0.8948340667326186,
+        0.9513024186656924
+      ],
+      "bestEpoch": 2,
+      "parameters": 5489,
+      "vocabularySize": 97,
+      "sequenceLength": 160,
+      "truncation": "prefix",
+      "kernels": [
+        3,
+        5,
+        7
+      ],
+      "batchSize": 256,
+      "resources": {
+        "exitCode": 0,
+        "stopReason": null,
+        "resourceViolations": [],
+        "wallSeconds": 9.797000000005937,
+        "jobCpuSeconds": 8.5625,
+        "peakJobCommitBytes": 531968000,
+        "hostCpuMaxPercent": 12.07312866505692,
+        "hostCpuMeanPercent": 9.307033195506719,
+        "cpuSamples": 4,
+        "samplesAbove30Percent": 0,
+        "logicalCpuAffinityCount": 2,
+        "jobCommitLimitBytes": 8000000000,
+        "memoryTargetBytes": 6000000000
+      }
+    }
+  ],
+  "20000": [
+    {
+      "model": "logistic",
+      "trainRows": 20000,
+      "trainIdsSha256": "03403498d06142bbc86c7be4568646f6611141b98154864576540990f6a47a1b",
+      "cohortSha256": "b05c458d47a7840a484419bb2f20953728e9171cb7557eb3158b6a43ccee86ac",
+      "preflight": false,
+      "latencyMedianMs": 0.20155000675003976,
+      "latencyP95Ms": 0.4613999910361599,
+      "calibration": {
+        "0.01": {
+          "targetNegativeDomainFpr": 0.01,
+          "calibrationRisk": 0.05,
+          "calibrationDomains": 4166,
+          "maximumAllowedCalibrationFalseAlertDomains": 30,
+          "observedCalibrationFalseAlertDomains": 30,
+          "threshold": 0.9681029319763185
+        },
+        "0.001": {
+          "targetNegativeDomainFpr": 0.001,
+          "calibrationRisk": 0.05,
+          "calibrationDomains": 4166,
+          "maximumAllowedCalibrationFalseAlertDomains": 0,
+          "observedCalibrationFalseAlertDomains": 0,
+          "threshold": 0.9999995231628419
+        }
+      },
+      "evaluation": {
+        "validation": {
+          "rows": 18026,
+          "phishing": 12944,
+          "idsSha256": "a2d3d0871b9cc9c84af6e665903e2409a9900cf13a0ccdd6eef755315c8629d0",
+          "prAucAveragePrecision": 0.9726004128986148,
+          "rocAuc": 0.9350565512370912,
+          "logLoss": 0.3423583507537842,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 10259,
+            "fp": 614,
+            "tn": 4468,
+            "fn": 2685,
+            "precision": 0.9435298445691161,
+            "recall": 0.7925679851668727,
+            "f1": 0.8614854935550237,
+            "falsePositiveRate": 0.12081857536402991,
+            "falseAlertDomains": 580,
+            "legitimateDomains": 4273,
+            "negativeDomainFalsePositiveRate": 0.1357360168499883,
+            "negativeDomainFpr95Upper": 0.14465604133427676
+          },
+          "confusionMatrix": [
+            [
+              4468,
+              614
+            ],
+            [
+              2685,
+              10259
+            ]
+          ],
+          "atCalibratedConstraints": {
+            "0.01": {
+              "threshold": 0.9681029319763185,
+              "tp": 4746,
+              "fp": 24,
+              "tn": 5058,
+              "fn": 8198,
+              "precision": 0.9949685534591195,
+              "recall": 0.3666563658838072,
+              "f1": 0.5358473523766513,
+              "falsePositiveRate": 0.004722550177095631,
+              "falseAlertDomains": 21,
+              "legitimateDomains": 4273,
+              "negativeDomainFalsePositiveRate": 0.004914579920430611,
+              "negativeDomainFpr95Upper": 0.007069443427904763
+            },
+            "0.001": {
+              "threshold": 0.9999995231628419,
+              "tp": 163,
+              "fp": 0,
+              "tn": 5082,
+              "fn": 12781,
+              "precision": 1.0,
+              "recall": 0.012592707045735476,
+              "f1": 0.024872205691615166,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 4273,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.0007008383779121109
+            }
+          }
+        },
+        "uci-validation": {
+          "rows": 32608,
+          "phishing": 13733,
+          "idsSha256": "efca3e499a3d2534fd34f3c82547064cbf71f6514d765130803c697c18c47fe0",
+          "prAucAveragePrecision": 0.932741090882603,
+          "rocAuc": 0.9050957740406802,
+          "logLoss": 0.3845037817955017,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 11784,
+            "fp": 1261,
+            "tn": 17614,
+            "fn": 1949,
+            "precision": 0.9033346109620545,
+            "recall": 0.8580790795893104,
+            "f1": 0.8801254761371274,
+            "falsePositiveRate": 0.06680794701986754,
+            "falseAlertDomains": 1256,
+            "legitimateDomains": 18760,
+            "negativeDomainFalsePositiveRate": 0.06695095948827293,
+            "negativeDomainFpr95Upper": 0.07002911406531118
+          },
+          "confusionMatrix": [
+            [
+              17614,
+              1261
+            ],
+            [
+              1949,
+              11784
+            ]
+          ],
+          "atCalibratedConstraints": {
+            "0.01": {
+              "threshold": 0.9681029319763185,
+              "tp": 3613,
+              "fp": 8,
+              "tn": 18867,
+              "fn": 10120,
+              "precision": 0.9977906655619995,
+              "recall": 0.26308890992499817,
+              "f1": 0.4163881525872998,
+              "falsePositiveRate": 0.000423841059602649,
+              "falseAlertDomains": 8,
+              "legitimateDomains": 18760,
+              "negativeDomainFalsePositiveRate": 0.00042643923240938164,
+              "negativeDomainFpr95Upper": 0.0007693056626257888
+            },
+            "0.001": {
+              "threshold": 0.9999995231628419,
+              "tp": 309,
+              "fp": 0,
+              "tn": 18875,
+              "fn": 13424,
+              "precision": 1.0,
+              "recall": 0.02250054612976043,
+              "f1": 0.04401082466885059,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 18760,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.00015967447207910078
+            }
+          }
+        }
+      },
+      "fitSeconds": 0.022809400004916824,
+      "modelBytes": 1192,
+      "modelSha256": "772a67b854d19c0dc5a79b51b4dc730099488576159c6fde65021928fb1c0c34",
+      "resources": {
+        "exitCode": 0,
+        "stopReason": null,
+        "resourceViolations": [],
+        "wallSeconds": 4.562000000005355,
+        "jobCpuSeconds": 4.03125,
+        "peakJobCommitBytes": 618872832,
+        "hostCpuMaxPercent": 10.267229254571031,
+        "hostCpuMeanPercent": 8.277594620140105,
+        "cpuSamples": 2,
+        "samplesAbove30Percent": 0,
+        "logicalCpuAffinityCount": 2,
+        "jobCommitLimitBytes": 8000000000,
+        "memoryTargetBytes": 6000000000
+      }
+    },
+    {
+      "model": "forest",
+      "trainRows": 20000,
+      "trainIdsSha256": "03403498d06142bbc86c7be4568646f6611141b98154864576540990f6a47a1b",
+      "cohortSha256": "b05c458d47a7840a484419bb2f20953728e9171cb7557eb3158b6a43ccee86ac",
+      "preflight": false,
+      "latencyMedianMs": 12.693900003796443,
+      "latencyP95Ms": 14.107695000711828,
+      "calibration": {
+        "0.01": {
+          "targetNegativeDomainFpr": 0.01,
+          "calibrationRisk": 0.05,
+          "calibrationDomains": 4166,
+          "maximumAllowedCalibrationFalseAlertDomains": 30,
+          "observedCalibrationFalseAlertDomains": 30,
+          "threshold": 0.7726707311379384
+        },
+        "0.001": {
+          "targetNegativeDomainFpr": 0.001,
+          "calibrationRisk": 0.05,
+          "calibrationDomains": 4166,
+          "maximumAllowedCalibrationFalseAlertDomains": 0,
+          "observedCalibrationFalseAlertDomains": 0,
+          "threshold": 0.9930492529391237
+        }
+      },
+      "evaluation": {
+        "validation": {
+          "rows": 18026,
+          "phishing": 12944,
+          "idsSha256": "a2d3d0871b9cc9c84af6e665903e2409a9900cf13a0ccdd6eef755315c8629d0",
+          "prAucAveragePrecision": 0.9828733333421269,
+          "rocAuc": 0.9558827396944742,
+          "logLoss": 0.3043365523218796,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 11255,
+            "fp": 545,
+            "tn": 4537,
+            "fn": 1689,
+            "precision": 0.9538135593220339,
+            "recall": 0.8695148331273177,
+            "f1": 0.9097154865826059,
+            "falsePositiveRate": 0.10724124360487997,
+            "falseAlertDomains": 535,
+            "legitimateDomains": 4273,
+            "negativeDomainFalsePositiveRate": 0.12520477416335127,
+            "negativeDomainFpr95Upper": 0.13383963350792558
+          },
+          "confusionMatrix": [
+            [
+              4537,
+              545
+            ],
+            [
+              1689,
+              11255
+            ]
+          ],
+          "atCalibratedConstraints": {
+            "0.01": {
+              "threshold": 0.7726707311379384,
+              "tp": 7799,
+              "fp": 28,
+              "tn": 5054,
+              "fn": 5145,
+              "precision": 0.9964226395809378,
+              "recall": 0.6025185414091471,
+              "f1": 0.7509508449280247,
+              "falsePositiveRate": 0.005509641873278237,
+              "falseAlertDomains": 28,
+              "legitimateDomains": 4273,
+              "negativeDomainFalsePositiveRate": 0.006552773227240814,
+              "negativeDomainFpr95Upper": 0.008973133731531868
+            },
+            "0.001": {
+              "threshold": 0.9930492529391237,
+              "tp": 620,
+              "fp": 0,
+              "tn": 5082,
+              "fn": 12324,
+              "precision": 1.0,
+              "recall": 0.04789864029666255,
+              "f1": 0.09141846063108228,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 4273,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.0007008383779121109
+            }
+          }
+        },
+        "uci-validation": {
+          "rows": 32608,
+          "phishing": 13733,
+          "idsSha256": "efca3e499a3d2534fd34f3c82547064cbf71f6514d765130803c697c18c47fe0",
+          "prAucAveragePrecision": 0.8902272935565749,
+          "rocAuc": 0.8547974131050888,
+          "logLoss": 0.6092253203196156,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 12003,
+            "fp": 10931,
+            "tn": 7944,
+            "fn": 1730,
+            "precision": 0.523371413621697,
+            "recall": 0.8740260685938979,
+            "f1": 0.6547031390623722,
+            "falsePositiveRate": 0.5791258278145696,
+            "falseAlertDomains": 10887,
+            "legitimateDomains": 18760,
+            "negativeDomainFalsePositiveRate": 0.5803304904051173,
+            "negativeDomainFpr95Upper": 0.5862742032411863
+          },
+          "confusionMatrix": [
+            [
+              7944,
+              10931
+            ],
+            [
+              1730,
+              12003
+            ]
+          ],
+          "atCalibratedConstraints": {
+            "0.01": {
+              "threshold": 0.7726707311379384,
+              "tp": 5526,
+              "fp": 4,
+              "tn": 18871,
+              "fn": 8207,
+              "precision": 0.9992766726943942,
+              "recall": 0.4023884074856186,
+              "f1": 0.5737424077246535,
+              "falsePositiveRate": 0.0002119205298013245,
+              "falseAlertDomains": 4,
+              "legitimateDomains": 18760,
+              "negativeDomainFalsePositiveRate": 0.00021321961620469082,
+              "negativeDomainFpr95Upper": 0.00048786043772412524
+            },
+            "0.001": {
+              "threshold": 0.9930492529391237,
+              "tp": 50,
+              "fp": 0,
+              "tn": 18875,
+              "fn": 13683,
+              "precision": 1.0,
+              "recall": 0.0036408650695405227,
+              "f1": 0.0072553145178843505,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 18760,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.00015967447207910078
+            }
+          }
+        }
+      },
+      "fitSeconds": 0.18605990000651218,
+      "modelBytes": 311240,
+      "modelSha256": "78c183dfc293a4c930ac2b6e6da0b41124d83346a2e6c71d4f67de9abfcbea39",
+      "resources": {
+        "exitCode": 0,
+        "stopReason": null,
+        "resourceViolations": [],
+        "wallSeconds": 9.078000000008615,
+        "jobCpuSeconds": 6.703125,
+        "peakJobCommitBytes": 554098688,
+        "hostCpuMaxPercent": 5.865314989138303,
+        "hostCpuMeanPercent": 4.9359112332724555,
+        "cpuSamples": 4,
+        "samplesAbove30Percent": 0,
+        "logicalCpuAffinityCount": 2,
+        "jobCommitLimitBytes": 8000000000,
+        "memoryTargetBytes": 6000000000
+      }
+    },
+    {
+      "model": "xgboost",
+      "trainRows": 20000,
+      "trainIdsSha256": "03403498d06142bbc86c7be4568646f6611141b98154864576540990f6a47a1b",
+      "cohortSha256": "b05c458d47a7840a484419bb2f20953728e9171cb7557eb3158b6a43ccee86ac",
+      "preflight": false,
+      "latencyMedianMs": 0.4769999941345304,
+      "latencyP95Ms": 0.7087449950631709,
+      "calibration": {
+        "0.01": {
+          "targetNegativeDomainFpr": 0.01,
+          "calibrationRisk": 0.05,
+          "calibrationDomains": 4166,
+          "maximumAllowedCalibrationFalseAlertDomains": 30,
+          "observedCalibrationFalseAlertDomains": 30,
+          "threshold": 0.9266397356987001
+        },
+        "0.001": {
+          "targetNegativeDomainFpr": 0.001,
+          "calibrationRisk": 0.05,
+          "calibrationDomains": 4166,
+          "maximumAllowedCalibrationFalseAlertDomains": 0,
+          "observedCalibrationFalseAlertDomains": 0,
+          "threshold": 0.9976153373718263
+        }
+      },
+      "evaluation": {
+        "validation": {
+          "rows": 18026,
+          "phishing": 12944,
+          "idsSha256": "a2d3d0871b9cc9c84af6e665903e2409a9900cf13a0ccdd6eef755315c8629d0",
+          "prAucAveragePrecision": 0.983680905781541,
+          "rocAuc": 0.958565154154195,
+          "logLoss": 0.277596652507782,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 11123,
+            "fp": 371,
+            "tn": 4711,
+            "fn": 1821,
+            "precision": 0.9677222898903776,
+            "recall": 0.8593170580964153,
+            "f1": 0.9103036255012685,
+            "falsePositiveRate": 0.07300275482093664,
+            "falseAlertDomains": 358,
+            "legitimateDomains": 4273,
+            "negativeDomainFalsePositiveRate": 0.08378188626257899,
+            "negativeDomainFpr95Upper": 0.09108340658583636
+          },
+          "confusionMatrix": [
+            [
+              4711,
+              371
+            ],
+            [
+              1821,
+              11123
+            ]
+          ],
+          "atCalibratedConstraints": {
+            "0.01": {
+              "threshold": 0.9266397356987001,
+              "tp": 7462,
+              "fp": 25,
+              "tn": 5057,
+              "fn": 5482,
+              "precision": 0.996660878856685,
+              "recall": 0.5764833127317676,
+              "f1": 0.7304586168077921,
+              "falsePositiveRate": 0.004919323101141283,
+              "falseAlertDomains": 25,
+              "legitimateDomains": 4273,
+              "negativeDomainFalsePositiveRate": 0.005850690381465013,
+              "negativeDomainFpr95Upper": 0.008161840011766619
+            },
+            "0.001": {
+              "threshold": 0.9976153373718263,
+              "tp": 196,
+              "fp": 0,
+              "tn": 5082,
+              "fn": 12748,
+              "precision": 1.0,
+              "recall": 0.015142150803461063,
+              "f1": 0.029832572298325723,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 4273,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.0007008383779121109
+            }
+          }
+        },
+        "uci-validation": {
+          "rows": 32608,
+          "phishing": 13733,
+          "idsSha256": "efca3e499a3d2534fd34f3c82547064cbf71f6514d765130803c697c18c47fe0",
+          "prAucAveragePrecision": 0.9197445965747841,
+          "rocAuc": 0.8841165578345387,
+          "logLoss": 0.476409375667572,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 11719,
+            "fp": 4057,
+            "tn": 14818,
+            "fn": 2014,
+            "precision": 0.7428372210953347,
+            "recall": 0.8533459549989078,
+            "f1": 0.7942661560879731,
+            "falsePositiveRate": 0.21494039735099338,
+            "falseAlertDomains": 4014,
+            "legitimateDomains": 18760,
+            "negativeDomainFalsePositiveRate": 0.21396588486140725,
+            "negativeDomainFpr95Upper": 0.21895013456448312
+          },
+          "confusionMatrix": [
+            [
+              14818,
+              4057
+            ],
+            [
+              2014,
+              11719
+            ]
+          ],
+          "atCalibratedConstraints": {
+            "0.01": {
+              "threshold": 0.9266397356987001,
+              "tp": 4788,
+              "fp": 0,
+              "tn": 18875,
+              "fn": 8945,
+              "precision": 1.0,
+              "recall": 0.3486492390592005,
+              "f1": 0.5170347173478754,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 18760,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.00015967447207910078
+            },
+            "0.001": {
+              "threshold": 0.9976153373718263,
+              "tp": 84,
+              "fp": 0,
+              "tn": 18875,
+              "fn": 13649,
+              "precision": 1.0,
+              "recall": 0.006116653316828078,
+              "f1": 0.01215893464572628,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 18760,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.00015967447207910078
+            }
+          }
+        }
+      },
+      "fitSeconds": 0.19991730000765529,
+      "modelBytes": 20794,
+      "modelSha256": "c79bdc07757aa8393228ecea834d02961c271492e0105d4e897406ca291c20e9",
+      "resources": {
+        "exitCode": 0,
+        "stopReason": null,
+        "resourceViolations": [],
+        "wallSeconds": 5.984000000011292,
+        "jobCpuSeconds": 5.5,
+        "peakJobCommitBytes": 552755200,
+        "hostCpuMaxPercent": 11.733800350262701,
+        "hostCpuMeanPercent": 11.647654493072839,
+        "cpuSamples": 2,
+        "samplesAbove30Percent": 0,
+        "logicalCpuAffinityCount": 2,
+        "jobCommitLimitBytes": 8000000000,
+        "memoryTargetBytes": 6000000000
+      }
+    },
+    {
+      "model": "ngram",
+      "trainRows": 20000,
+      "trainIdsSha256": "03403498d06142bbc86c7be4568646f6611141b98154864576540990f6a47a1b",
+      "cohortSha256": "b05c458d47a7840a484419bb2f20953728e9171cb7557eb3158b6a43ccee86ac",
+      "preflight": false,
+      "latencyMedianMs": 0.7978000066941604,
+      "latencyP95Ms": 1.2960500018380117,
+      "calibration": {
+        "0.01": {
+          "targetNegativeDomainFpr": 0.01,
+          "calibrationRisk": 0.05,
+          "calibrationDomains": 4166,
+          "maximumAllowedCalibrationFalseAlertDomains": 30,
+          "observedCalibrationFalseAlertDomains": 30,
+          "threshold": 0.7444548803360985
+        },
+        "0.001": {
+          "targetNegativeDomainFpr": 0.001,
+          "calibrationRisk": 0.05,
+          "calibrationDomains": 4166,
+          "maximumAllowedCalibrationFalseAlertDomains": 0,
+          "observedCalibrationFalseAlertDomains": 0,
+          "threshold": 0.9748486034939972
+        }
+      },
+      "evaluation": {
+        "validation": {
+          "rows": 18026,
+          "phishing": 12944,
+          "idsSha256": "a2d3d0871b9cc9c84af6e665903e2409a9900cf13a0ccdd6eef755315c8629d0",
+          "prAucAveragePrecision": 0.9951675864160365,
+          "rocAuc": 0.9873369235270855,
+          "logLoss": 0.17868382174257819,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 11811,
+            "fp": 153,
+            "tn": 4929,
+            "fn": 1133,
+            "precision": 0.9872116349047142,
+            "recall": 0.9124690976514215,
+            "f1": 0.9483700016059098,
+            "falsePositiveRate": 0.03010625737898465,
+            "falseAlertDomains": 150,
+            "legitimateDomains": 4273,
+            "negativeDomainFalsePositiveRate": 0.03510414228879008,
+            "negativeDomainFpr95Upper": 0.04009458738981458
+          },
+          "confusionMatrix": [
+            [
+              4929,
+              153
+            ],
+            [
+              1133,
+              11811
+            ]
+          ],
+          "atCalibratedConstraints": {
+            "0.01": {
+              "threshold": 0.7444548803360985,
+              "tp": 10655,
+              "fp": 32,
+              "tn": 5050,
+              "fn": 2289,
+              "precision": 0.997005707869374,
+              "recall": 0.8231613102595797,
+              "f1": 0.9017815581228048,
+              "falsePositiveRate": 0.006296733569460842,
+              "falseAlertDomains": 32,
+              "legitimateDomains": 4273,
+              "negativeDomainFalsePositiveRate": 0.007488883688275216,
+              "negativeDomainFpr95Upper": 0.01004614251702692
+            },
+            "0.001": {
+              "threshold": 0.9748486034939972,
+              "tp": 5098,
+              "fp": 1,
+              "tn": 5081,
+              "fn": 7846,
+              "precision": 0.9998038831143361,
+              "recall": 0.3938504326328801,
+              "f1": 0.5650944964806296,
+              "falsePositiveRate": 0.0001967729240456513,
+              "falseAlertDomains": 1,
+              "legitimateDomains": 4273,
+              "negativeDomainFalsePositiveRate": 0.0002340276152586005,
+              "negativeDomainFpr95Upper": 0.0011097090603595736
+            }
+          }
+        },
+        "uci-validation": {
+          "rows": 32608,
+          "phishing": 13733,
+          "idsSha256": "efca3e499a3d2534fd34f3c82547064cbf71f6514d765130803c697c18c47fe0",
+          "prAucAveragePrecision": 0.9936484932169979,
+          "rocAuc": 0.9938735168297178,
+          "logLoss": 0.25030715020186844,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 9843,
+            "fp": 7,
+            "tn": 18868,
+            "fn": 3890,
+            "precision": 0.9992893401015228,
+            "recall": 0.7167406975897473,
+            "f1": 0.8347538481109273,
+            "falsePositiveRate": 0.0003708609271523179,
+            "falseAlertDomains": 7,
+            "legitimateDomains": 18760,
+            "negativeDomainFalsePositiveRate": 0.00037313432835820896,
+            "negativeDomainFpr95Upper": 0.0007007441033217277
+          },
+          "confusionMatrix": [
+            [
+              18868,
+              7
+            ],
+            [
+              3890,
+              9843
+            ]
+          ],
+          "atCalibratedConstraints": {
+            "0.01": {
+              "threshold": 0.7444548803360985,
+              "tp": 6252,
+              "fp": 0,
+              "tn": 18875,
+              "fn": 7481,
+              "precision": 1.0,
+              "recall": 0.45525376829534697,
+              "f1": 0.6256692519389542,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 18760,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.00015967447207910078
+            },
+            "0.001": {
+              "threshold": 0.9748486034939972,
+              "tp": 797,
+              "fp": 0,
+              "tn": 18875,
+              "fn": 12936,
+              "precision": 1.0,
+              "recall": 0.05803538920847593,
+              "f1": 0.10970406056434961,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 18760,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.00015967447207910078
+            }
+          }
+        }
+      },
+      "fitSeconds": 4.033842899996671,
+      "modelBytes": 1611706,
+      "modelSha256": "4a19ef62e06700ea09dc04ecf98b8e1a539b422891f7a0ec07448a3bf56ee843",
+      "resources": {
+        "exitCode": 0,
+        "stopReason": null,
+        "resourceViolations": [],
+        "wallSeconds": 15.764999999999418,
+        "jobCpuSeconds": 14.796875,
+        "peakJobCommitBytes": 731217920,
+        "hostCpuMaxPercent": 14.877789585547285,
+        "hostCpuMeanPercent": 10.604818549890888,
+        "cpuSamples": 7,
+        "samplesAbove30Percent": 0,
+        "logicalCpuAffinityCount": 2,
+        "jobCommitLimitBytes": 8000000000,
+        "memoryTargetBytes": 6000000000
+      }
+    },
+    {
+      "model": "cnn",
+      "trainRows": 20000,
+      "trainIdsSha256": "03403498d06142bbc86c7be4568646f6611141b98154864576540990f6a47a1b",
+      "cohortSha256": "b05c458d47a7840a484419bb2f20953728e9171cb7557eb3158b6a43ccee86ac",
+      "preflight": false,
+      "latencyMedianMs": 0.6026499977451749,
+      "latencyP95Ms": 1.0595899919280782,
+      "calibration": {
+        "0.01": {
+          "targetNegativeDomainFpr": 0.01,
+          "calibrationRisk": 0.05,
+          "calibrationDomains": 4166,
+          "maximumAllowedCalibrationFalseAlertDomains": 30,
+          "observedCalibrationFalseAlertDomains": 30,
+          "threshold": 0.8981561660766603
+        },
+        "0.001": {
+          "targetNegativeDomainFpr": 0.001,
+          "calibrationRisk": 0.05,
+          "calibrationDomains": 4166,
+          "maximumAllowedCalibrationFalseAlertDomains": 0,
+          "observedCalibrationFalseAlertDomains": 0,
+          "threshold": 0.9906134605407716
+        }
+      },
+      "evaluation": {
+        "validation": {
+          "rows": 18026,
+          "phishing": 12944,
+          "idsSha256": "a2d3d0871b9cc9c84af6e665903e2409a9900cf13a0ccdd6eef755315c8629d0",
+          "prAucAveragePrecision": 0.9932705794254586,
+          "rocAuc": 0.9825216419812723,
+          "logLoss": 0.18307851254940033,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 11765,
+            "fp": 227,
+            "tn": 4855,
+            "fn": 1179,
+            "precision": 0.9810707138092062,
+            "recall": 0.9089153275648949,
+            "f1": 0.9436156560795637,
+            "falsePositiveRate": 0.04466745375836285,
+            "falseAlertDomains": 216,
+            "legitimateDomains": 4273,
+            "negativeDomainFalsePositiveRate": 0.05054996489585771,
+            "negativeDomainFpr95Upper": 0.05641189520424371
+          },
+          "confusionMatrix": [
+            [
+              4855,
+              227
+            ],
+            [
+              1179,
+              11765
+            ]
+          ],
+          "atCalibratedConstraints": {
+            "0.01": {
+              "threshold": 0.8981561660766603,
+              "tp": 10154,
+              "fp": 32,
+              "tn": 5050,
+              "fn": 2790,
+              "precision": 0.9968584331435303,
+              "recall": 0.7844561186650185,
+              "f1": 0.8779939472546476,
+              "falsePositiveRate": 0.006296733569460842,
+              "falseAlertDomains": 32,
+              "legitimateDomains": 4273,
+              "negativeDomainFalsePositiveRate": 0.007488883688275216,
+              "negativeDomainFpr95Upper": 0.01004614251702692
+            },
+            "0.001": {
+              "threshold": 0.9906134605407716,
+              "tp": 6866,
+              "fp": 2,
+              "tn": 5080,
+              "fn": 6078,
+              "precision": 0.9997087944088526,
+              "recall": 0.5304388133498146,
+              "f1": 0.6931152836664648,
+              "falsePositiveRate": 0.0003935458480913026,
+              "falseAlertDomains": 2,
+              "legitimateDomains": 4273,
+              "negativeDomainFalsePositiveRate": 0.000468055230517201,
+              "negativeDomainFpr95Upper": 0.0014726491178679464
+            }
+          }
+        },
+        "uci-validation": {
+          "rows": 32608,
+          "phishing": 13733,
+          "idsSha256": "efca3e499a3d2534fd34f3c82547064cbf71f6514d765130803c697c18c47fe0",
+          "prAucAveragePrecision": 0.9754515355396554,
+          "rocAuc": 0.9738992179614724,
+          "logLoss": 0.2268601357936859,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 11410,
+            "fp": 217,
+            "tn": 18658,
+            "fn": 2323,
+            "precision": 0.9813365442504516,
+            "recall": 0.8308454088691473,
+            "f1": 0.8998422712933754,
+            "falsePositiveRate": 0.011496688741721854,
+            "falseAlertDomains": 212,
+            "legitimateDomains": 18760,
+            "negativeDomainFalsePositiveRate": 0.011300639658848614,
+            "negativeDomainFpr95Upper": 0.01265450768945508
+          },
+          "confusionMatrix": [
+            [
+              18658,
+              217
+            ],
+            [
+              2323,
+              11410
+            ]
+          ],
+          "atCalibratedConstraints": {
+            "0.01": {
+              "threshold": 0.8981561660766603,
+              "tp": 5882,
+              "fp": 5,
+              "tn": 18870,
+              "fn": 7851,
+              "precision": 0.9991506709699337,
+              "recall": 0.4283113667807471,
+              "f1": 0.599592252803262,
+              "falsePositiveRate": 0.00026490066225165563,
+              "falseAlertDomains": 4,
+              "legitimateDomains": 18760,
+              "negativeDomainFalsePositiveRate": 0.00021321961620469082,
+              "negativeDomainFpr95Upper": 0.00048786043772412524
+            },
+            "0.001": {
+              "threshold": 0.9906134605407716,
+              "tp": 1482,
+              "fp": 0,
+              "tn": 18875,
+              "fn": 12251,
+              "precision": 1.0,
+              "recall": 0.10791524066118109,
+              "f1": 0.1948077555044364,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 18760,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.00015967447207910078
+            }
+          }
+        }
+      },
+      "fitSeconds": 38.3989631000004,
+      "modelBytes": 24994,
+      "modelSha256": "e11473f6c2d6cda82188712c9eb6be2863017942e0f9db45741375bd738516c7",
+      "tuningAveragePrecisionByEpoch": [
+        0.9845561402036116,
+        0.9888643450157468,
+        0.9902903625872392,
+        0.9908627598079309,
+        0.9915419955054614,
+        0.9918401498461328,
+        0.9919740658989648,
+        0.9922646344991346
+      ],
+      "bestEpoch": 8,
+      "parameters": 5489,
+      "vocabularySize": 97,
+      "sequenceLength": 160,
+      "truncation": "prefix",
+      "kernels": [
+        3,
+        5,
+        7
+      ],
+      "batchSize": 256,
+      "resources": {
+        "exitCode": 0,
+        "stopReason": null,
+        "resourceViolations": [],
+        "wallSeconds": 49.687000000005355,
+        "jobCpuSeconds": 51.21875,
+        "peakJobCommitBytes": 900726784,
+        "hostCpuMaxPercent": 14.497878359264494,
+        "hostCpuMeanPercent": 9.082417249401368,
+        "cpuSamples": 24,
+        "samplesAbove30Percent": 0,
+        "logicalCpuAffinityCount": 2,
+        "jobCommitLimitBytes": 8000000000,
+        "memoryTargetBytes": 6000000000
+      }
+    }
+  ],
+  "50000": [
+    {
+      "model": "logistic",
+      "trainRows": 50000,
+      "trainIdsSha256": "f125a63aa978e758829943e323760658fda2b8c1cbad080fbbc3f86be71e8401",
+      "cohortSha256": "b05c458d47a7840a484419bb2f20953728e9171cb7557eb3158b6a43ccee86ac",
+      "preflight": false,
+      "latencyMedianMs": 0.3190499992342666,
+      "latencyP95Ms": 0.4316800113883801,
+      "calibration": {
+        "0.01": {
+          "targetNegativeDomainFpr": 0.01,
+          "calibrationRisk": 0.05,
+          "calibrationDomains": 4166,
+          "maximumAllowedCalibrationFalseAlertDomains": 30,
+          "observedCalibrationFalseAlertDomains": 30,
+          "threshold": 0.9688545465469361
+        },
+        "0.001": {
+          "targetNegativeDomainFpr": 0.001,
+          "calibrationRisk": 0.05,
+          "calibrationDomains": 4166,
+          "maximumAllowedCalibrationFalseAlertDomains": 0,
+          "observedCalibrationFalseAlertDomains": 0,
+          "threshold": 0.9999996423721315
+        }
+      },
+      "evaluation": {
+        "validation": {
+          "rows": 18026,
+          "phishing": 12944,
+          "idsSha256": "a2d3d0871b9cc9c84af6e665903e2409a9900cf13a0ccdd6eef755315c8629d0",
+          "prAucAveragePrecision": 0.9728819680308131,
+          "rocAuc": 0.9358309797807915,
+          "logLoss": 0.34152665734291077,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 10287,
+            "fp": 601,
+            "tn": 4481,
+            "fn": 2657,
+            "precision": 0.9448016164584864,
+            "recall": 0.7947311495673671,
+            "f1": 0.8632930513595166,
+            "falsePositiveRate": 0.11826052735143644,
+            "falseAlertDomains": 568,
+            "legitimateDomains": 4273,
+            "negativeDomainFalsePositiveRate": 0.1329276854668851,
+            "negativeDomainFpr95Upper": 0.14177343423755426
+          },
+          "confusionMatrix": [
+            [
+              4481,
+              601
+            ],
+            [
+              2657,
+              10287
+            ]
+          ],
+          "atCalibratedConstraints": {
+            "0.01": {
+              "threshold": 0.9688545465469361,
+              "tp": 4770,
+              "fp": 26,
+              "tn": 5056,
+              "fn": 8174,
+              "precision": 0.9945788156797332,
+              "recall": 0.3685105067985167,
+              "f1": 0.5377677564825254,
+              "falsePositiveRate": 0.005116096025186935,
+              "falseAlertDomains": 23,
+              "legitimateDomains": 4273,
+              "negativeDomainFalsePositiveRate": 0.005382635150947812,
+              "negativeDomainFpr95Upper": 0.007617322127756354
+            },
+            "0.001": {
+              "threshold": 0.9999996423721315,
+              "tp": 158,
+              "fp": 0,
+              "tn": 5082,
+              "fn": 12786,
+              "precision": 1.0,
+              "recall": 0.012206427688504327,
+              "f1": 0.024118455197679745,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 4273,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.0007008383779121109
+            }
+          }
+        },
+        "uci-validation": {
+          "rows": 32608,
+          "phishing": 13733,
+          "idsSha256": "efca3e499a3d2534fd34f3c82547064cbf71f6514d765130803c697c18c47fe0",
+          "prAucAveragePrecision": 0.9313767383205511,
+          "rocAuc": 0.9040122063015417,
+          "logLoss": 0.38703596591949463,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 11776,
+            "fp": 1295,
+            "tn": 17580,
+            "fn": 1957,
+            "precision": 0.9009257134113687,
+            "recall": 0.857496541178184,
+            "f1": 0.8786748246530368,
+            "falsePositiveRate": 0.0686092715231788,
+            "falseAlertDomains": 1290,
+            "legitimateDomains": 18760,
+            "negativeDomainFalsePositiveRate": 0.06876332622601279,
+            "negativeDomainFpr95Upper": 0.07187865696447078
+          },
+          "confusionMatrix": [
+            [
+              17580,
+              1295
+            ],
+            [
+              1957,
+              11776
+            ]
+          ],
+          "atCalibratedConstraints": {
+            "0.01": {
+              "threshold": 0.9688545465469361,
+              "tp": 3602,
+              "fp": 8,
+              "tn": 18867,
+              "fn": 10131,
+              "precision": 0.9977839335180055,
+              "recall": 0.26228791960969927,
+              "f1": 0.4153837283053682,
+              "falsePositiveRate": 0.000423841059602649,
+              "falseAlertDomains": 8,
+              "legitimateDomains": 18760,
+              "negativeDomainFalsePositiveRate": 0.00042643923240938164,
+              "negativeDomainFpr95Upper": 0.0007693056626257888
+            },
+            "0.001": {
+              "threshold": 0.9999996423721315,
+              "tp": 312,
+              "fp": 0,
+              "tn": 18875,
+              "fn": 13421,
+              "precision": 1.0,
+              "recall": 0.022718998033932864,
+              "f1": 0.04442862228551086,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 18760,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.00015967447207910078
+            }
+          }
+        }
+      },
+      "fitSeconds": 0.057291999997687526,
+      "modelBytes": 1219,
+      "modelSha256": "3b3266a18d23710b3b75c2e2cc718fc921b6e0451b139a3bb49bca548868835f",
+      "resources": {
+        "exitCode": 0,
+        "stopReason": null,
+        "resourceViolations": [],
+        "wallSeconds": 6.437000000005355,
+        "jobCpuSeconds": 5.609375,
+        "peakJobCommitBytes": 719560704,
+        "hostCpuMaxPercent": 17.66361717100633,
+        "hostCpuMeanPercent": 16.636253020854138,
+        "cpuSamples": 3,
+        "samplesAbove30Percent": 0,
+        "logicalCpuAffinityCount": 2,
+        "jobCommitLimitBytes": 8000000000,
+        "memoryTargetBytes": 6000000000
+      }
+    },
+    {
+      "model": "forest",
+      "trainRows": 50000,
+      "trainIdsSha256": "f125a63aa978e758829943e323760658fda2b8c1cbad080fbbc3f86be71e8401",
+      "cohortSha256": "b05c458d47a7840a484419bb2f20953728e9171cb7557eb3158b6a43ccee86ac",
+      "preflight": false,
+      "latencyMedianMs": 13.068949992884882,
+      "latencyP95Ms": 15.319485001236899,
+      "calibration": {
+        "0.01": {
+          "targetNegativeDomainFpr": 0.01,
+          "calibrationRisk": 0.05,
+          "calibrationDomains": 4166,
+          "maximumAllowedCalibrationFalseAlertDomains": 30,
+          "observedCalibrationFalseAlertDomains": 30,
+          "threshold": 0.7818801762574319
+        },
+        "0.001": {
+          "targetNegativeDomainFpr": 0.001,
+          "calibrationRisk": 0.05,
+          "calibrationDomains": 4166,
+          "maximumAllowedCalibrationFalseAlertDomains": 0,
+          "observedCalibrationFalseAlertDomains": 0,
+          "threshold": 0.9883507749974247
+        }
+      },
+      "evaluation": {
+        "validation": {
+          "rows": 18026,
+          "phishing": 12944,
+          "idsSha256": "a2d3d0871b9cc9c84af6e665903e2409a9900cf13a0ccdd6eef755315c8629d0",
+          "prAucAveragePrecision": 0.9834840247651129,
+          "rocAuc": 0.9572950308391087,
+          "logLoss": 0.3033285101766828,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 10974,
+            "fp": 373,
+            "tn": 4709,
+            "fn": 1970,
+            "precision": 0.9671278752093064,
+            "recall": 0.8478059332509271,
+            "f1": 0.9035445226627146,
+            "falsePositiveRate": 0.07339630066902794,
+            "falseAlertDomains": 364,
+            "legitimateDomains": 4273,
+            "negativeDomainFalsePositiveRate": 0.08518605195413059,
+            "negativeDomainFpr95Upper": 0.09253957376613668
+          },
+          "confusionMatrix": [
+            [
+              4709,
+              373
+            ],
+            [
+              1970,
+              10974
+            ]
+          ],
+          "atCalibratedConstraints": {
+            "0.01": {
+              "threshold": 0.7818801762574319,
+              "tp": 7828,
+              "fp": 26,
+              "tn": 5056,
+              "fn": 5116,
+              "precision": 0.996689584924879,
+              "recall": 0.6047589616810878,
+              "f1": 0.7527646889123955,
+              "falsePositiveRate": 0.005116096025186935,
+              "falseAlertDomains": 26,
+              "legitimateDomains": 4273,
+              "negativeDomainFalsePositiveRate": 0.006084717996723613,
+              "negativeDomainFpr95Upper": 0.008432961144678954
+            },
+            "0.001": {
+              "threshold": 0.9883507749974247,
+              "tp": 2354,
+              "fp": 0,
+              "tn": 5082,
+              "fn": 10590,
+              "precision": 1.0,
+              "recall": 0.1818603213844252,
+              "f1": 0.3077526474048895,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 4273,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.0007008383779121109
+            }
+          }
+        },
+        "uci-validation": {
+          "rows": 32608,
+          "phishing": 13733,
+          "idsSha256": "efca3e499a3d2534fd34f3c82547064cbf71f6514d765130803c697c18c47fe0",
+          "prAucAveragePrecision": 0.9140595791745643,
+          "rocAuc": 0.8775116621007164,
+          "logLoss": 0.5367122414313809,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 11924,
+            "fp": 5282,
+            "tn": 13593,
+            "fn": 1809,
+            "precision": 0.693014064861095,
+            "recall": 0.8682735017840238,
+            "f1": 0.7708070719803485,
+            "falsePositiveRate": 0.279841059602649,
+            "falseAlertDomains": 5259,
+            "legitimateDomains": 18760,
+            "negativeDomainFalsePositiveRate": 0.28033049040511726,
+            "negativeDomainFpr95Upper": 0.2857761077902899
+          },
+          "confusionMatrix": [
+            [
+              13593,
+              5282
+            ],
+            [
+              1809,
+              11924
+            ]
+          ],
+          "atCalibratedConstraints": {
+            "0.01": {
+              "threshold": 0.7818801762574319,
+              "tp": 5237,
+              "fp": 0,
+              "tn": 18875,
+              "fn": 8496,
+              "precision": 1.0,
+              "recall": 0.38134420738367436,
+              "f1": 0.5521349499209278,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 18760,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.00015967447207910078
+            },
+            "0.001": {
+              "threshold": 0.9883507749974247,
+              "tp": 634,
+              "fp": 0,
+              "tn": 18875,
+              "fn": 13099,
+              "precision": 1.0,
+              "recall": 0.04616616908177383,
+              "f1": 0.08825781304378089,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 18760,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.00015967447207910078
+            }
+          }
+        }
+      },
+      "fitSeconds": 0.4178812000027392,
+      "modelBytes": 411664,
+      "modelSha256": "019534787af8311603c5e92a79c531e482ed55562563ad8c6c9a6165381fc7ec",
+      "resources": {
+        "exitCode": 0,
+        "stopReason": null,
+        "resourceViolations": [],
+        "wallSeconds": 9.843000000008033,
+        "jobCpuSeconds": 7.609375,
+        "peakJobCommitBytes": 655839232,
+        "hostCpuMaxPercent": 12.654097171863665,
+        "hostCpuMeanPercent": 9.17776672246842,
+        "cpuSamples": 4,
+        "samplesAbove30Percent": 0,
+        "logicalCpuAffinityCount": 2,
+        "jobCommitLimitBytes": 8000000000,
+        "memoryTargetBytes": 6000000000
+      }
+    },
+    {
+      "model": "xgboost",
+      "trainRows": 50000,
+      "trainIdsSha256": "f125a63aa978e758829943e323760658fda2b8c1cbad080fbbc3f86be71e8401",
+      "cohortSha256": "b05c458d47a7840a484419bb2f20953728e9171cb7557eb3158b6a43ccee86ac",
+      "preflight": false,
+      "latencyMedianMs": 0.22449999960372224,
+      "latencyP95Ms": 0.3213750002032612,
+      "calibration": {
+        "0.01": {
+          "targetNegativeDomainFpr": 0.01,
+          "calibrationRisk": 0.05,
+          "calibrationDomains": 4166,
+          "maximumAllowedCalibrationFalseAlertDomains": 30,
+          "observedCalibrationFalseAlertDomains": 30,
+          "threshold": 0.9092528820037843
+        },
+        "0.001": {
+          "targetNegativeDomainFpr": 0.001,
+          "calibrationRisk": 0.05,
+          "calibrationDomains": 4166,
+          "maximumAllowedCalibrationFalseAlertDomains": 0,
+          "observedCalibrationFalseAlertDomains": 0,
+          "threshold": 0.9966207742691041
+        }
+      },
+      "evaluation": {
+        "validation": {
+          "rows": 18026,
+          "phishing": 12944,
+          "idsSha256": "a2d3d0871b9cc9c84af6e665903e2409a9900cf13a0ccdd6eef755315c8629d0",
+          "prAucAveragePrecision": 0.9841659109172459,
+          "rocAuc": 0.9594078162632212,
+          "logLoss": 0.2767135500907898,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 11098,
+            "fp": 336,
+            "tn": 4746,
+            "fn": 1846,
+            "precision": 0.9706139583697744,
+            "recall": 0.8573856613102596,
+            "f1": 0.910493067519895,
+            "falsePositiveRate": 0.06611570247933884,
+            "falseAlertDomains": 325,
+            "legitimateDomains": 4273,
+            "negativeDomainFalsePositiveRate": 0.07605897495904516,
+            "negativeDomainFpr95Upper": 0.08306371784590899
+          },
+          "confusionMatrix": [
+            [
+              4746,
+              336
+            ],
+            [
+              1846,
+              11098
+            ]
+          ],
+          "atCalibratedConstraints": {
+            "0.01": {
+              "threshold": 0.9092528820037843,
+              "tp": 7724,
+              "fp": 29,
+              "tn": 5053,
+              "fn": 5220,
+              "precision": 0.9962595124467948,
+              "recall": 0.5967243510506799,
+              "f1": 0.7463883654635938,
+              "falsePositiveRate": 0.005706414797323888,
+              "falseAlertDomains": 29,
+              "legitimateDomains": 4273,
+              "negativeDomainFalsePositiveRate": 0.006786800842499415,
+              "negativeDomainFpr95Upper": 0.009242256793134822
+            },
+            "0.001": {
+              "threshold": 0.9966207742691041,
+              "tp": 406,
+              "fp": 0,
+              "tn": 5082,
+              "fn": 12538,
+              "precision": 1.0,
+              "recall": 0.03136588380716934,
+              "f1": 0.060823970037453184,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 4273,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.0007008383779121109
+            }
+          }
+        },
+        "uci-validation": {
+          "rows": 32608,
+          "phishing": 13733,
+          "idsSha256": "efca3e499a3d2534fd34f3c82547064cbf71f6514d765130803c697c18c47fe0",
+          "prAucAveragePrecision": 0.9249814825482205,
+          "rocAuc": 0.8913782058299171,
+          "logLoss": 0.456900417804718,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 11973,
+            "fp": 2773,
+            "tn": 16102,
+            "fn": 1760,
+            "precision": 0.81194900311949,
+            "recall": 0.8718415495521736,
+            "f1": 0.8408300853260297,
+            "falsePositiveRate": 0.14691390728476822,
+            "falseAlertDomains": 2731,
+            "legitimateDomains": 18760,
+            "negativeDomainFalsePositiveRate": 0.14557569296375267,
+            "negativeDomainFpr95Upper": 0.14987832200798415
+          },
+          "confusionMatrix": [
+            [
+              16102,
+              2773
+            ],
+            [
+              1760,
+              11973
+            ]
+          ],
+          "atCalibratedConstraints": {
+            "0.01": {
+              "threshold": 0.9092528820037843,
+              "tp": 5376,
+              "fp": 0,
+              "tn": 18875,
+              "fn": 8357,
+              "precision": 1.0,
+              "recall": 0.391465812276997,
+              "f1": 0.5626668062169659,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 18760,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.00015967447207910078
+            },
+            "0.001": {
+              "threshold": 0.9966207742691041,
+              "tp": 322,
+              "fp": 0,
+              "tn": 18875,
+              "fn": 13411,
+              "precision": 1.0,
+              "recall": 0.023447171047840967,
+              "f1": 0.04581999288509427,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 18760,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.00015967447207910078
+            }
+          }
+        }
+      },
+      "fitSeconds": 0.19818039999518078,
+      "modelBytes": 20762,
+      "modelSha256": "9cec9b82b6ef9b1cae28b5a1e723a570c87facac602ebed7c362b17ded218f1f",
+      "resources": {
+        "exitCode": 0,
+        "stopReason": null,
+        "resourceViolations": [],
+        "wallSeconds": 5.860000000000582,
+        "jobCpuSeconds": 5.578125,
+        "peakJobCommitBytes": 654815232,
+        "hostCpuMaxPercent": 11.644318983768521,
+        "hostCpuMeanPercent": 11.410911688720816,
+        "cpuSamples": 2,
+        "samplesAbove30Percent": 0,
+        "logicalCpuAffinityCount": 2,
+        "jobCommitLimitBytes": 8000000000,
+        "memoryTargetBytes": 6000000000
+      }
+    },
+    {
+      "model": "ngram",
+      "trainRows": 50000,
+      "trainIdsSha256": "f125a63aa978e758829943e323760658fda2b8c1cbad080fbbc3f86be71e8401",
+      "cohortSha256": "b05c458d47a7840a484419bb2f20953728e9171cb7557eb3158b6a43ccee86ac",
+      "preflight": false,
+      "latencyMedianMs": 0.6704500046907924,
+      "latencyP95Ms": 1.2631599958695006,
+      "calibration": {
+        "0.01": {
+          "targetNegativeDomainFpr": 0.01,
+          "calibrationRisk": 0.05,
+          "calibrationDomains": 4166,
+          "maximumAllowedCalibrationFalseAlertDomains": 30,
+          "observedCalibrationFalseAlertDomains": 30,
+          "threshold": 0.740895131847896
+        },
+        "0.001": {
+          "targetNegativeDomainFpr": 0.001,
+          "calibrationRisk": 0.05,
+          "calibrationDomains": 4166,
+          "maximumAllowedCalibrationFalseAlertDomains": 0,
+          "observedCalibrationFalseAlertDomains": 0,
+          "threshold": 0.9848665211893226
+        }
+      },
+      "evaluation": {
+        "validation": {
+          "rows": 18026,
+          "phishing": 12944,
+          "idsSha256": "a2d3d0871b9cc9c84af6e665903e2409a9900cf13a0ccdd6eef755315c8629d0",
+          "prAucAveragePrecision": 0.9962012470907513,
+          "rocAuc": 0.9901460455209472,
+          "logLoss": 0.15137827157759212,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 11952,
+            "fp": 131,
+            "tn": 4951,
+            "fn": 992,
+            "precision": 0.989158321608872,
+            "recall": 0.92336217552534,
+            "f1": 0.9551284612618373,
+            "falsePositiveRate": 0.025777253049980322,
+            "falseAlertDomains": 127,
+            "legitimateDomains": 4273,
+            "negativeDomainFalsePositiveRate": 0.029721507137842267,
+            "negativeDomainFpr95Upper": 0.03435787476921965
+          },
+          "confusionMatrix": [
+            [
+              4951,
+              131
+            ],
+            [
+              992,
+              11952
+            ]
+          ],
+          "atCalibratedConstraints": {
+            "0.01": {
+              "threshold": 0.740895131847896,
+              "tp": 11138,
+              "fp": 31,
+              "tn": 5051,
+              "fn": 1806,
+              "precision": 0.9972244605604799,
+              "recall": 0.8604758961681088,
+              "f1": 0.9238170281590843,
+              "falsePositiveRate": 0.006099960645415191,
+              "falseAlertDomains": 31,
+              "legitimateDomains": 4273,
+              "negativeDomainFalsePositiveRate": 0.007254856073016616,
+              "negativeDomainFpr95Upper": 0.009778733493295217
+            },
+            "0.001": {
+              "threshold": 0.9848665211893226,
+              "tp": 5659,
+              "fp": 1,
+              "tn": 5081,
+              "fn": 7285,
+              "precision": 0.9998233215547703,
+              "recall": 0.43719097651421507,
+              "f1": 0.6083637927327457,
+              "falsePositiveRate": 0.0001967729240456513,
+              "falseAlertDomains": 1,
+              "legitimateDomains": 4273,
+              "negativeDomainFalsePositiveRate": 0.0002340276152586005,
+              "negativeDomainFpr95Upper": 0.0011097090603595736
+            }
+          }
+        },
+        "uci-validation": {
+          "rows": 32608,
+          "phishing": 13733,
+          "idsSha256": "efca3e499a3d2534fd34f3c82547064cbf71f6514d765130803c697c18c47fe0",
+          "prAucAveragePrecision": 0.9923342408083683,
+          "rocAuc": 0.9931660605791724,
+          "logLoss": 0.22388973705407775,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 10394,
+            "fp": 54,
+            "tn": 18821,
+            "fn": 3339,
+            "precision": 0.9948315467075038,
+            "recall": 0.7568630306560838,
+            "f1": 0.8596832223646664,
+            "falsePositiveRate": 0.0028609271523178806,
+            "falseAlertDomains": 54,
+            "legitimateDomains": 18760,
+            "negativeDomainFalsePositiveRate": 0.002878464818763326,
+            "negativeDomainFpr95Upper": 0.00360955602978305
+          },
+          "confusionMatrix": [
+            [
+              18821,
+              54
+            ],
+            [
+              3339,
+              10394
+            ]
+          ],
+          "atCalibratedConstraints": {
+            "0.01": {
+              "threshold": 0.740895131847896,
+              "tp": 7238,
+              "fp": 1,
+              "tn": 18874,
+              "fn": 6495,
+              "precision": 0.9998618593728416,
+              "recall": 0.5270516274666861,
+              "f1": 0.6902536715620827,
+              "falsePositiveRate": 5.298013245033112e-05,
+              "falseAlertDomains": 1,
+              "legitimateDomains": 18760,
+              "negativeDomainFalsePositiveRate": 5.3304904051172706e-05,
+              "negativeDomainFpr95Upper": 0.00025284601209254527
+            },
+            "0.001": {
+              "threshold": 0.9848665211893226,
+              "tp": 1003,
+              "fp": 0,
+              "tn": 18875,
+              "fn": 12730,
+              "precision": 1.0,
+              "recall": 0.0730357532949829,
+              "f1": 0.13612920738327905,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 18760,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.00015967447207910078
+            }
+          }
+        }
+      },
+      "fitSeconds": 7.498587399997632,
+      "modelBytes": 1672521,
+      "modelSha256": "aaf6c89ab6253bc568da909e1b11f0aae170d97255acaa7c33c0a723961a6944",
+      "resources": {
+        "exitCode": 0,
+        "stopReason": null,
+        "resourceViolations": [],
+        "wallSeconds": 19.39100000000326,
+        "jobCpuSeconds": 18.625,
+        "peakJobCommitBytes": 1060495360,
+        "hostCpuMaxPercent": 12.46478873239436,
+        "hostCpuMeanPercent": 7.9532603736657075,
+        "cpuSamples": 9,
+        "samplesAbove30Percent": 0,
+        "logicalCpuAffinityCount": 2,
+        "jobCommitLimitBytes": 8000000000,
+        "memoryTargetBytes": 6000000000
+      }
+    },
+    {
+      "model": "cnn",
+      "trainRows": 50000,
+      "trainIdsSha256": "f125a63aa978e758829943e323760658fda2b8c1cbad080fbbc3f86be71e8401",
+      "cohortSha256": "b05c458d47a7840a484419bb2f20953728e9171cb7557eb3158b6a43ccee86ac",
+      "preflight": false,
+      "latencyMedianMs": 0.7300500001292676,
+      "latencyP95Ms": 1.1452200029452797,
+      "calibration": {
+        "0.01": {
+          "targetNegativeDomainFpr": 0.01,
+          "calibrationRisk": 0.05,
+          "calibrationDomains": 4166,
+          "maximumAllowedCalibrationFalseAlertDomains": 30,
+          "observedCalibrationFalseAlertDomains": 30,
+          "threshold": 0.9212946295738221
+        },
+        "0.001": {
+          "targetNegativeDomainFpr": 0.001,
+          "calibrationRisk": 0.05,
+          "calibrationDomains": 4166,
+          "maximumAllowedCalibrationFalseAlertDomains": 0,
+          "observedCalibrationFalseAlertDomains": 0,
+          "threshold": 0.9969468712806703
+        }
+      },
+      "evaluation": {
+        "validation": {
+          "rows": 18026,
+          "phishing": 12944,
+          "idsSha256": "a2d3d0871b9cc9c84af6e665903e2409a9900cf13a0ccdd6eef755315c8629d0",
+          "prAucAveragePrecision": 0.9950542401068325,
+          "rocAuc": 0.9870547009270463,
+          "logLoss": 0.1377301812171936,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 12207,
+            "fp": 315,
+            "tn": 4767,
+            "fn": 737,
+            "precision": 0.9748442740776234,
+            "recall": 0.9430624227441285,
+            "f1": 0.9586900180633001,
+            "falsePositiveRate": 0.06198347107438017,
+            "falseAlertDomains": 301,
+            "legitimateDomains": 4273,
+            "negativeDomainFalsePositiveRate": 0.07044231219283875,
+            "negativeDomainFpr95Upper": 0.0772187421106221
+          },
+          "confusionMatrix": [
+            [
+              4767,
+              315
+            ],
+            [
+              737,
+              12207
+            ]
+          ],
+          "atCalibratedConstraints": {
+            "0.01": {
+              "threshold": 0.9212946295738221,
+              "tp": 10807,
+              "fp": 41,
+              "tn": 5041,
+              "fn": 2137,
+              "precision": 0.9962205014749262,
+              "recall": 0.8349042027194067,
+              "f1": 0.9084566240753195,
+              "falsePositiveRate": 0.008067689885871704,
+              "falseAlertDomains": 40,
+              "legitimateDomains": 4273,
+              "negativeDomainFalsePositiveRate": 0.00936110461034402,
+              "negativeDomainFpr95Upper": 0.01216843870098738
+            },
+            "0.001": {
+              "threshold": 0.9969468712806703,
+              "tp": 6900,
+              "fp": 1,
+              "tn": 5081,
+              "fn": 6044,
+              "precision": 0.9998550934647152,
+              "recall": 0.5330655129789864,
+              "f1": 0.6953892668178382,
+              "falsePositiveRate": 0.0001967729240456513,
+              "falseAlertDomains": 1,
+              "legitimateDomains": 4273,
+              "negativeDomainFalsePositiveRate": 0.0002340276152586005,
+              "negativeDomainFpr95Upper": 0.0011097090603595736
+            }
+          }
+        },
+        "uci-validation": {
+          "rows": 32608,
+          "phishing": 13733,
+          "idsSha256": "efca3e499a3d2534fd34f3c82547064cbf71f6514d765130803c697c18c47fe0",
+          "prAucAveragePrecision": 0.9826377573185767,
+          "rocAuc": 0.9832535618992873,
+          "logLoss": 0.18337023258209229,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 12074,
+            "fp": 252,
+            "tn": 18623,
+            "fn": 1659,
+            "precision": 0.979555411325653,
+            "recall": 0.8791960969926454,
+            "f1": 0.9266664108369469,
+            "falsePositiveRate": 0.013350993377483444,
+            "falseAlertDomains": 242,
+            "legitimateDomains": 18760,
+            "negativeDomainFalsePositiveRate": 0.012899786780383796,
+            "negativeDomainFpr95Upper": 0.014339066279600673
+          },
+          "confusionMatrix": [
+            [
+              18623,
+              252
+            ],
+            [
+              1659,
+              12074
+            ]
+          ],
+          "atCalibratedConstraints": {
+            "0.01": {
+              "threshold": 0.9212946295738221,
+              "tp": 6611,
+              "fp": 17,
+              "tn": 18858,
+              "fn": 7122,
+              "precision": 0.9974351237175618,
+              "recall": 0.48139517949464794,
+              "f1": 0.6493787142085359,
+              "falsePositiveRate": 0.0009006622516556292,
+              "falseAlertDomains": 11,
+              "legitimateDomains": 18760,
+              "negativeDomainFalsePositiveRate": 0.0005863539445628998,
+              "negativeDomainFpr95Upper": 0.0009703633586201924
+            },
+            "0.001": {
+              "threshold": 0.9969468712806703,
+              "tp": 1378,
+              "fp": 0,
+              "tn": 18875,
+              "fn": 12355,
+              "precision": 1.0,
+              "recall": 0.10034224131653681,
+              "f1": 0.18238369399774998,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 18760,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.00015967447207910078
+            }
+          }
+        }
+      },
+      "fitSeconds": 85.37930979998782,
+      "modelBytes": 24994,
+      "modelSha256": "5492a58abdfe800533882693d65717bc43a56f46213a03b0c7b8ddb2d63fd4aa",
+      "tuningAveragePrecisionByEpoch": [
+        0.9896070340616022,
+        0.99158376077476,
+        0.9924045390375126,
+        0.9929687799970952,
+        0.9934291695946857,
+        0.9936300785942291,
+        0.9935922481818735,
+        0.9939192299364668
+      ],
+      "bestEpoch": 8,
+      "parameters": 5489,
+      "vocabularySize": 97,
+      "sequenceLength": 160,
+      "truncation": "prefix",
+      "kernels": [
+        3,
+        5,
+        7
+      ],
+      "batchSize": 256,
+      "resources": {
+        "exitCode": 0,
+        "stopReason": null,
+        "resourceViolations": [],
+        "wallSeconds": 100.0,
+        "jobCpuSeconds": 107.703125,
+        "peakJobCommitBytes": 1005359104,
+        "hostCpuMaxPercent": 17.42477256822953,
+        "hostCpuMeanPercent": 9.724240400487146,
+        "cpuSamples": 49,
+        "samplesAbove30Percent": 0,
+        "logicalCpuAffinityCount": 2,
+        "jobCommitLimitBytes": 8000000000,
+        "memoryTargetBytes": 6000000000
+      }
+    }
+  ]
+}

@@ -80,7 +80,7 @@ function project(row, cfg, history, stats) {
 const order = (a, b) => a.observed.time - b.observed.time || a.verified.time - b.verified.time ||
   a.stableId.localeCompare(b.stableId, 'en');
 
-function components(candidates) {
+export function components(candidates) {
   const parent = candidates.map((_, index) => index);
   const owners = new Map();
   function root(index) {
