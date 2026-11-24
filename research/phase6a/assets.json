@@ -1,0 +1,44 @@
+{
+  "schema": "phase6a-private-offline-references-v1",
+  "assets": [
+    {
+      "brand": "State Bank of India",
+      "family": "sbi-horizontal-2022",
+      "variant": "2022 horizontal wordmark with keyhole symbol",
+      "filename": "sbi.png",
+      "bytes": 8048,
+      "sha256": "38ff78bb2f582531b3f4aa66291293f4e052d67ef290f6c9c53b197b19a7837d",
+      "retrievedDay": "2026-11-24",
+      "ownerEvidence": "https://sbi.bank.in/",
+      "provenance": "https://commons.wikimedia.org/wiki/File:State_Bank_of_India.svg",
+      "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/State_Bank_of_India.svg/330px-State_Bank_of_India.svg.png",
+      "usageBasis": "Commons PD-textlogo designation with documented official source. Private offline analysis only. Trademark retained."
+    },
+    {
+      "brand": "HDFC Bank",
+      "family": "hdfc-horizontal-2011",
+      "variant": "2011 horizontal wordmark with square emblem",
+      "filename": "hdfc.png",
+      "bytes": 4541,
+      "sha256": "9780cff99d6652ecbcfb938e482753236bba7c51958975471afad6329a056359",
+      "retrievedDay": "2026-11-24",
+      "ownerEvidence": "https://www.hdfc.bank.in/important-messages/all-new-website",
+      "provenance": "https://commons.wikimedia.org/wiki/File:HDFC_Bank_Logo.svg",
+      "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/HDFC_Bank_Logo.svg/330px-HDFC_Bank_Logo.svg.png",
+      "usageBasis": "Commons PD-textlogo designation with website attribution. Private offline analysis only. Trademark retained."
+    },
+    {
+      "brand": "Axis Bank",
+      "family": "axis-horizontal-2010",
+      "variant": "2010 horizontal wordmark with maroon emblem",
+      "filename": "axis.png",
+      "bytes": 24410,
+      "sha256": "ae3e2d8e60254df528e9b10d521949ee642eaa61564ddcc44819dea757b2aefb",
+      "retrievedDay": "2026-11-24",
+      "ownerEvidence": "https://www.axis.bank.in/",
+      "provenance": "https://commons.wikimedia.org/wiki/File:Axis_Bank_logo.svg",
+      "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Axis_Bank_logo.svg/960px-Axis_Bank_logo.svg.png",
+      "usageBasis": "Commons PD-textlogo designation, Axis website attribution and historical uploader rendition. Private offline analysis only. Trademark retained."
+    }
+  ]
+}

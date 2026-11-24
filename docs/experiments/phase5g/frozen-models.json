@@ -1,0 +1,328 @@
+{
+  "schema": "phase5g-frozen-v1",
+  "phase5dRevision": "3e08561efb7150c414ceb231f3313c49b27a0c81",
+  "phase5fRevision": "a09394be5689b421c610d2679aa4cd7e6f3f2872",
+  "phase5fReportSha256": "d8ac49ef14d423d75237efbaef005f4fc4a5c3a20b233a45c5c21eee78eb2dcd",
+  "phase5eRegistrySha256": "890b9ea651ac43e3c4dea2efa3b8ff8d36afc2fff94c16ad4e50ef587982b707",
+  "runtimeVersions": {
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "sklearn": "1.9.1",
+    "xgboost": "3.2.0",
+    "torch": "2.6.0+cpu",
+    "joblib": "1.6.0"
+  },
+  "phase5dPreprocessingSha256": {
+    "evaluation/features.mjs": "f05528f4641b37d08cc5b6ea6b118f1c4272e386efd0e95087aef337e3b90e10",
+    "extension/reputation.mjs": "87bb2cc831fb5dcb7a7f8307ade00038efdcf9f393ef16df68b4199df6b8cfe0",
+    "research/phase5c/sequence.py": "f3e61f0f4e7aa9e56018438b9f4e22d8dd598a291f86c332d0a62474760a51ba",
+    "research/phase5c/train.py": "f72a78e2a808cf97c96ccfa215d929ec19d309acdde23b03aa3fc4921c55c2e5",
+    "research/phase5d/evaluate.py": "51f21f8a2b232d19efbb6221def508539f09e24222fa1aa7e3a415a4f8f2c5c2",
+    "research/phase5d/transformer.py": "0eb47a08783b0e6c034865153bf9ab0beb51b018320285b83af9c1745cf456ff"
+  },
+  "preprocessingSha256": {
+    "evaluation/features.mjs": "f05528f4641b37d08cc5b6ea6b118f1c4272e386efd0e95087aef337e3b90e10",
+    "extension/reputation.mjs": "87bb2cc831fb5dcb7a7f8307ade00038efdcf9f393ef16df68b4199df6b8cfe0",
+    "extension/vendor/tldts.mjs": "14eab4490b4235108754b3c15318d02fa06188541a333c487ac112aad3799ecf",
+    "research/phase5e/feature-schema.json": "1a05408f9deefb31994b6dbf19d40a2383127c04c0a7c288e2b13f23cb214285",
+    "research/phase5e/acquire.py": "9908fa550ab9c50e8e898ede7ebaae761a70bac94da161ecc5ceebac5b375e71",
+    "research/phase5e/dom.mjs": "0f680c2ff6ee78749bdc9bea3b88d288549b2f4f5c3fa9ef9ae8732aab113543",
+    "research/phase5e/parse.mjs": "0e81789e3ca7e24e5b0e2a215f41725e1f1db806210bcd280b102844feb1a62c",
+    "research/phase5e/worker.mjs": "560c82755962f334b61832df887f91c1f90454bc2fa50d25e479ae7ca3541a64",
+    "research/phase5e/package-lock.json": "04a336f8a4cbfe6b50d608b0fae1c62c5379db852cc3ffe9fd2475258c59833c",
+    "research/phase5f/fusion_lab.py": "7e4b6ccd904af95ce44c665f09ee4041e0a111bbf74cbcae14134491c20341c0",
+    "research/phase5f/grouping.py": "79619e22c4e1357f26a108226c36b47227e97569296f094265f3d77fb000223a",
+    "research/phase5c/sequence.py": "f3e61f0f4e7aa9e56018438b9f4e22d8dd598a291f86c332d0a62474760a51ba",
+    "research/phase5c/train.py": "f72a78e2a808cf97c96ccfa215d929ec19d309acdde23b03aa3fc4921c55c2e5",
+    "research/phase5d/evaluate.py": "d78e07dd25078558d167b05e123e25bb44b026dca7fa307fa0aea95594b76f28"
+  },
+  "evaluationCodeSha256": {
+    "research/phase3g/validate.mjs": "f064e32a386a0f0865bfec816e2cf298f3d5c9c8b1c72ed4418bde4bac07e00e",
+    "research/phase3d/partition.mjs": "b626ec8a182e588d01cb998c9d70eacaf4d05713353c19290d68a0e089f58477",
+    "research/phase3e/prepare.mjs": "06c665dacfa8a7e600b611d4edef175098e824038b2c32d78a6861c9b3a2b5e4",
+    "extension/impersonation.mjs": "bc29ed431152fbbfa6b0f040769462d1b6e5c39ca9bdc5377465155f54d9a313",
+    "extension/financial-domains.mjs": "8ac14ce996ca3b333767a098fb7143f1be00cee5183c0b9870cf7e62e92d037c",
+    "research/phase5g/project.mjs": "69c67bc6d43807f49f367c899b3fe5add422ada205650a0c5699316fead1d95d",
+    "research/phase5g/protocol.json": "98ed937a85412fbb7b8220b1bf96b0f81cc1b4f8370094d621ff3bb222404cdc",
+    "research/phase5g/frozen.py": "d51defc433c00dc39a141e76bcecaf16470bcb3950aaf813447795ea9c5e9b93",
+    "research/phase5g/preflight.py": "38b9b310ca9848232c3efedc0919bc936a3494e221b9e748f957d576030e0e62",
+    "research/phase5g/custodian.py": "f7c9959246743c41e0761bcab2b13028613859a886bf679fb87ebc12ffab8c62",
+    "research/phase5g/aggregate.py": "3924fb9bbc469abea0827aa8926ac58cd3469601ef344d993d7221088b1020dc"
+  },
+  "historySha256": {
+    "phase-5c-v1/cohort/manifest.json": "b05c458d47a7840a484419bb2f20953728e9171cb7557eb3158b6a43ccee86ac",
+    "phase-5c-v1/history.jsonl": "0ad23e05daf64f7bf6a85e937c5a9f064e153c3c5e6002bafdb9c0ca3a0248ed",
+    "phase-5c-v1/phresh-custody-final/manifest.json": "e1a576f186ba6c23c217c562f5175edb420cc33671c70c6cd106a1ad9eb1f033",
+    "phase-5d-v1/prepared-balanced-fusion/auxiliary/manifest.json": "8bcc81ffe4465f4648336e8e42f0257f89f83f22f176c01deac0832a468f4d6b",
+    "phase-5d-v1/prepared/temporal/manifest.json": "34e4b65539aea1dc862f3b18308c9eb2e27d2f4700353f6b2247758ce9b02675"
+  },
+  "groupedMembershipSha256": {
+    "validation": "905c31e24c275ea479c65b68010da7ad41116fc558def23a36afd31f0644798a",
+    "calibration": "3fe9fc6971563635d73dec6886c8f56c80b7336826ef84172c41ae103c834752",
+    "tuning": "ed20b59e91c56638c19638a2fd8bbd9ab9715479f1f3161bc61cd542a97a3364",
+    "train": "0c346be61052c534f47f251b1e0831904dd4225b84f625c029871cc0d8d3d3a0"
+  },
+  "phase5fArtifacts": {
+    "ngram": {
+      "artifact": "phase-5f-v1/main-final/ngram/model.joblib",
+      "sha256": "ad3469440341ac015b5b82ef9a0a6e9d18b04cd22c0964d38478c6695cac0967",
+      "bytes": 1531828
+    },
+    "xgboost": {
+      "artifact": "phase-5f-v1/main-final/xgboost/model.joblib",
+      "sha256": "0183cf840f0196099aff68969cf7373689ffeda3c2fd1e29c17ce586fc5ee74a",
+      "bytes": 20736
+    },
+    "dom-full": {
+      "artifact": "phase-5f-v1/main-final/dom-full/model.joblib",
+      "sha256": "4a2b9b448ecd6fceeda0d857cf0fa61c6be4f3678309779c69913ee77ca5f637",
+      "bytes": 21422
+    },
+    "dom-reduced": {
+      "artifact": "phase-5f-v1/main-final/dom-reduced/model.joblib",
+      "sha256": "a67249916508a76669225c2f59025012186be0df0cee3af20c3471293bb702a6",
+      "bytes": 20934
+    },
+    "dom-regularized": {
+      "artifact": "phase-5f-v1/main-final/dom-regularized/model.joblib",
+      "sha256": "b4aff74c442712ea0e6d3a6cda1b4aeebd5adc3843e297265aadcdfbc44531ee",
+      "bytes": 39260
+    },
+    "dom-context": {
+      "artifact": "phase-5f-v1/main-final/dom-context/model.joblib",
+      "sha256": "80f34540faae513b3c3825b4bb44b2119288fd2691b10ab5ef4f182255eb5eff",
+      "bytes": 39375
+    },
+    "dom-weighted": {
+      "artifact": "phase-5f-v1/main-final/dom-weighted/model.joblib",
+      "sha256": "52e65e23ca010777dc80b41ec5b3d8e062f4a1288c98fdfdffb5db5662240db4",
+      "bytes": 39434
+    },
+    "fusion": {
+      "artifact": "phase-5f-v1/main-final/fusion.joblib",
+      "sha256": "5706453e888fa01e73dc4c0e03026eece743271d0f848268076fc08216c4dd1a",
+      "bytes": 513
+    }
+  },
+  "models": {
+    "ngram": {
+      "artifact": "phase-5c-v1/scale-20000/ngram/model.joblib",
+      "kind": "ngram",
+      "sha256": "4a19ef62e06700ea09dc04ecf98b8e1a539b422891f7a0ec07448a3bf56ee843",
+      "bytes": 1611706,
+      "trainingRows": 20000,
+      "calibration": "PhreshPhish development",
+      "operatingPoints": {
+        "fixed": 0.5,
+        "0.01": 0.7444548803360985,
+        "0.001": 0.9748486034939972,
+        "0.0001": null
+      },
+      "modality": "url"
+    },
+    "cnn": {
+      "artifact": "phase-5c-v1/scale-20000/cnn/model.pt",
+      "kind": "cnn",
+      "sha256": "e11473f6c2d6cda82188712c9eb6be2863017942e0f9db45741375bd738516c7",
+      "bytes": 24994,
+      "trainingRows": 20000,
+      "calibration": "PhreshPhish development",
+      "operatingPoints": {
+        "fixed": 0.5,
+        "0.01": 0.8981561660766603,
+        "0.001": 0.9906134605407716,
+        "0.0001": null
+      },
+      "modality": "url"
+    },
+    "xgboost": {
+      "artifact": "phase-5c-v1/scale-20000/xgboost/model.joblib",
+      "kind": "xgboost",
+      "sha256": "c79bdc07757aa8393228ecea834d02961c271492e0105d4e897406ca291c20e9",
+      "bytes": 20794,
+      "trainingRows": 20000,
+      "calibration": "PhreshPhish development",
+      "operatingPoints": {
+        "fixed": 0.5,
+        "0.01": 0.9266397356987001,
+        "0.001": 0.9976153373718263,
+        "0.0001": null
+      },
+      "modality": "url"
+    },
+    "fusion": {
+      "components": {
+        "ngram": 0.75,
+        "xgboost": 0.25
+      },
+      "probabilityScales": {
+        "ngram": {
+          "coefficient": 1.6281506093633609,
+          "intercept": 0.3148307383580449
+        },
+        "xgboost": {
+          "coefficient": 1.1958770224530932,
+          "intercept": -0.13114079734325718
+        }
+      },
+      "calibration": "PhreshPhish development",
+      "operatingPoints": {
+        "fixed": 0.5,
+        "0.01": 0.7611078574383651,
+        "0.001": 0.9654823799825953,
+        "0.0001": null
+      },
+      "modality": "url"
+    },
+    "mixed": {
+      "artifact": "phase-5d-v1/mixed/model.joblib",
+      "kind": "ngram",
+      "sha256": "e650a74fac5c2274174cfac08254dbc8e03d03f757b70b1913d34693e10706c3",
+      "bytes": 1593356,
+      "trainingRows": 20000,
+      "calibration": "UCI development",
+      "operatingPoints": {
+        "fixed": 0.5,
+        "0.01": 0.16884007981805166,
+        "0.001": 0.292800217499405,
+        "0.0001": null
+      },
+      "modality": "url"
+    },
+    "fixed": {
+      "modality": "url-dom",
+      "trainingRows": 9570,
+      "components": [
+        "phase5f-ngram",
+        "phase5f-dom-weighted",
+        "phase5f-fusion"
+      ],
+      "operatingPoints": {
+        "fixed": 0.5,
+        "0.01": 0.7963963524112841,
+        "0.001": null,
+        "0.0001": null
+      }
+    },
+    "stack": {
+      "modality": "url-dom",
+      "trainingRows": 9570,
+      "components": [
+        "phase5f-ngram",
+        "phase5f-dom-weighted",
+        "phase5f-fusion"
+      ],
+      "operatingPoints": {
+        "fixed": 0.5,
+        "0.01": 0.9160534623105493,
+        "0.001": null,
+        "0.0001": null
+      }
+    },
+    "adaptive": {
+      "modality": "url-dom",
+      "trainingRows": 9570,
+      "components": [
+        "phase5f-ngram",
+        "phase5f-dom-weighted",
+        "phase5f-fusion"
+      ],
+      "operatingPoints": {
+        "fixed": 0.5,
+        "0.01": 0.8460501779387779,
+        "0.001": null,
+        "0.0001": null
+      }
+    }
+  },
+  "phase5fParameters": {
+    "calibration": {
+      "url-ngram": [
+        1.6836663981987923,
+        -0.08511147039223207
+      ],
+      "url-xgboost": [
+        1.1752703814842935,
+        -0.35743642864284086
+      ],
+      "dom-full": [
+        0.9679943091457591,
+        -0.3784241062946252
+      ],
+      "dom-reduced": [
+        0.9554551653578208,
+        -0.4525425451293788
+      ],
+      "dom-regularized": [
+        0.9437332378757973,
+        -0.3769025796369312
+      ],
+      "dom-context": [
+        0.9584687659564591,
+        -0.3617872622881112
+      ],
+      "dom-weighted": [
+        0.8821292019693106,
+        -0.5326238277192155
+      ]
+    },
+    "stackCoefficients": [
+      0.8420411044725322,
+      0.8737105430615059,
+      -0.08327398516338247,
+      -0.6242670577431081
+    ],
+    "stackIntercept": 0.015771239593560474,
+    "routeCenter": 0.8993388750067035,
+    "routeHalfWidth": 0.2,
+    "domUpperQuantile": [
+      5328.35986328125,
+      38.0,
+      247.15499877929688,
+      7.15500020980835,
+      14.0,
+      11.0,
+      13.0,
+      3.0,
+      5.0,
+      2.0,
+      123.46499633789062,
+      6.0,
+      4.0,
+      63.0,
+      0.0,
+      0.0,
+      4.0,
+      0.0,
+      2.0,
+      19.0,
+      12.0,
+      7.15500020980835,
+      1.0,
+      1010.6199951171875,
+      1.0,
+      43.154998779296875,
+      206.15499877929688,
+      103.15499877929688,
+      75.0,
+      7.0,
+      1.0,
+      0.0,
+      128.0,
+      1.0,
+      1.0,
+      0.0
+    ],
+    "fixedWeights": {
+      "url": 0.75,
+      "dom": 0.25
+    },
+    "adaptiveWeights": {
+      "auth": 0.15,
+      "other": 0.35,
+      "outlyingFeatureLimit": 2,
+      "disagreementCut": 0.55,
+      "disagreementMultiplier": 0.5
+    }
+  }
+}
