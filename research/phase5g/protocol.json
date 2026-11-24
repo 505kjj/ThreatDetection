@@ -1,0 +1,29 @@
+{
+  "schema": "phase5g-custody-v1",
+  "minObservedDay": "2025-12-17",
+  "registrationDay": "2026-11-24",
+  "scoringNamespace": "threat-detection-phase5g",
+  "prevalenceScenarios": [0.0001, 0.001, 0.01],
+  "maxRows": 60000,
+  "maxLedgerBytes": 100000000,
+  "phishvn": {
+    "publisher": "Thai Nguyen Vu",
+    "doi": "10.17632/b97hxbxtpd.5",
+    "version": 5,
+    "license": "CC BY 4.0",
+    "bytes": 6697259,
+    "sha256": "4c610431fd275d8348695653eeacdece861dc7dc65ab09a2068d519247988968",
+    "lastEligibleSourceObservationDay": "2025-02-18",
+    "exclusions": ["out-of-forward-window", "source-abuse-label-requires-adjudication", "undated-trusted-negatives", "popularity-proxy-negatives", "no-paired-captures-in-open-tier"]
+  },
+  "productionDecision": {
+    "primaryPoint": "0.001",
+    "negativeDomainFprUpper95Maximum": 0.001,
+    "minimumBenignDomainsEvenWithZeroErrors": 2995,
+    "requiresPairedRecallConfidenceIncrease": true,
+    "requiresTemporalAndCrossSourceEvidence": true,
+    "requiresAuthAndPaymentControls": true,
+    "requiresHistoricalProtectionComparator": true,
+    "requiresPrivacyBrowserAndLatencyReview": true
+  }
+}

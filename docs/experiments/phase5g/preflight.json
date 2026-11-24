@@ -1,0 +1,1941 @@
+{
+  "registrySha256": "442b422792e4b6773325e35b263f7489d741519dcf90dcc20230e19b1c61753f",
+  "restorationAndVerificationSeconds": 3.5957483000092907,
+  "developmentVerification": {
+    "viewsVerified": 4,
+    "validationRows": 5011,
+    "multimodalCandidatesReplayed": [
+      "fixed",
+      "stack",
+      "adaptive"
+    ]
+  },
+  "phishvn": {
+    "status": "ineligible-for-registered-forward-test",
+    "release": {
+      "publisher": "Thai Nguyen Vu",
+      "doi": "10.17632/b97hxbxtpd.5",
+      "version": 5,
+      "license": "CC BY 4.0",
+      "bytes": 6697259,
+      "sha256": "4c610431fd275d8348695653eeacdece861dc7dc65ab09a2068d519247988968",
+      "lastEligibleSourceObservationDay": "2025-02-18",
+      "exclusions": [
+        "out-of-forward-window",
+        "source-abuse-label-requires-adjudication",
+        "undated-trusted-negatives",
+        "popularity-proxy-negatives",
+        "no-paired-captures-in-open-tier"
+      ]
+    },
+    "zipEntries": 16,
+    "publisherDocumentationMembersOpened": 4,
+    "protectedRowsOpened": 0,
+    "rowsScored": 0,
+    "forwardWindowFirstDay": "2025-12-17"
+  },
+  "historicalControls": {
+    "status": "previously-observed-url-only-controls",
+    "ledgerSha256": "5509ff9c5378bcc44d6d115f042045b2f01139aa9c0005f8a1e0ee1657ade9ad",
+    "phase3eControlFreezeSha256": "0ef4cd9e7e30c4d504484bda0a537e5fcaabfe8103a8dcb35d34cfe24bb56b6e",
+    "dateCounts": {
+      "2026-11-24": 15
+    },
+    "providerCount": 8,
+    "missingDomRows": 15,
+    "urlAndFinancialRules": {
+      "rows": 15,
+      "phishing": 0,
+      "benign": 15,
+      "domains": 8,
+      "phishingDomains": 0,
+      "benignDomains": 8,
+      "models": {
+        "ngram": {
+          "ranking": null,
+          "calibration": null,
+          "operatingPoints": {
+            "fixed": {
+              "threshold": 0.5,
+              "tp": 0,
+              "fp": 3,
+              "tn": 12,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": null,
+              "f1": 0.0,
+              "falsePositiveRate": 0.2,
+              "falseAlertDomains": 2,
+              "legitimateDomains": 8,
+              "negativeDomainFalsePositiveRate": 0.25,
+              "negativeDomainFpr95Upper": 0.5996893891908329,
+              "intervals": {
+                "recall95": null,
+                "precision95": [
+                  0.0,
+                  0.0
+                ],
+                "f1_95": [
+                  0.0,
+                  0.0
+                ],
+                "urlFpr95": [
+                  0.0,
+                  0.35
+                ],
+                "domainFpr95": [
+                  0.03185402624994421,
+                  0.6508557944128242
+                ]
+              },
+              "scenarioPrecisionFromUrlRates": {
+                "0.0001": null,
+                "0.001": null,
+                "0.01": null
+              }
+            },
+            "0.01": {
+              "threshold": 0.7444548803360985,
+              "tp": 0,
+              "fp": 0,
+              "tn": 15,
+              "fn": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 8,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.3123439780663678,
+              "intervals": {
+                "recall95": null,
+                "precision95": null,
+                "f1_95": null,
+                "urlFpr95": [
+                  0.0,
+                  0.0
+                ],
+                "domainFpr95": [
+                  0.0,
+                  0.36941664755281917
+                ]
+              },
+              "scenarioPrecisionFromUrlRates": {
+                "0.0001": null,
+                "0.001": null,
+                "0.01": null
+              }
+            },
+            "0.001": {
+              "threshold": 0.9748486034939972,
+              "tp": 0,
+              "fp": 0,
+              "tn": 15,
+              "fn": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 8,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.3123439780663678,
+              "intervals": {
+                "recall95": null,
+                "precision95": null,
+                "f1_95": null,
+                "urlFpr95": [
+                  0.0,
+                  0.0
+                ],
+                "domainFpr95": [
+                  0.0,
+                  0.36941664755281917
+                ]
+              },
+              "scenarioPrecisionFromUrlRates": {
+                "0.0001": null,
+                "0.001": null,
+                "0.01": null
+              }
+            },
+            "0.0001": null
+          }
+        },
+        "cnn": {
+          "ranking": null,
+          "calibration": null,
+          "operatingPoints": {
+            "fixed": {
+              "threshold": 0.5,
+              "tp": 0,
+              "fp": 5,
+              "tn": 10,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": null,
+              "f1": 0.0,
+              "falsePositiveRate": 0.3333333333333333,
+              "falseAlertDomains": 3,
+              "legitimateDomains": 8,
+              "negativeDomainFalsePositiveRate": 0.375,
+              "negativeDomainFpr95Upper": 0.7107591834981906,
+              "intervals": {
+                "recall95": null,
+                "precision95": [
+                  0.0,
+                  0.0
+                ],
+                "f1_95": [
+                  0.0,
+                  0.0
+                ],
+                "urlFpr95": [
+                  0.06500000000000003,
+                  0.6673076923076924
+                ],
+                "domainFpr95": [
+                  0.08523341413725352,
+                  0.7551367836334484
+                ]
+              },
+              "scenarioPrecisionFromUrlRates": {
+                "0.0001": null,
+                "0.001": null,
+                "0.01": null
+              }
+            },
+            "0.01": {
+              "threshold": 0.8981561660766603,
+              "tp": 0,
+              "fp": 0,
+              "tn": 15,
+              "fn": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 8,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.3123439780663678,
+              "intervals": {
+                "recall95": null,
+                "precision95": null,
+                "f1_95": null,
+                "urlFpr95": [
+                  0.0,
+                  0.0
+                ],
+                "domainFpr95": [
+                  0.0,
+                  0.36941664755281917
+                ]
+              },
+              "scenarioPrecisionFromUrlRates": {
+                "0.0001": null,
+                "0.001": null,
+                "0.01": null
+              }
+            },
+            "0.001": {
+              "threshold": 0.9906134605407716,
+              "tp": 0,
+              "fp": 0,
+              "tn": 15,
+              "fn": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 8,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.3123439780663678,
+              "intervals": {
+                "recall95": null,
+                "precision95": null,
+                "f1_95": null,
+                "urlFpr95": [
+                  0.0,
+                  0.0
+                ],
+                "domainFpr95": [
+                  0.0,
+                  0.36941664755281917
+                ]
+              },
+              "scenarioPrecisionFromUrlRates": {
+                "0.0001": null,
+                "0.001": null,
+                "0.01": null
+              }
+            },
+            "0.0001": null
+          }
+        },
+        "xgboost": {
+          "ranking": null,
+          "calibration": null,
+          "operatingPoints": {
+            "fixed": {
+              "threshold": 0.5,
+              "tp": 0,
+              "fp": 0,
+              "tn": 15,
+              "fn": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 8,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.3123439780663678,
+              "intervals": {
+                "recall95": null,
+                "precision95": null,
+                "f1_95": null,
+                "urlFpr95": [
+                  0.0,
+                  0.0
+                ],
+                "domainFpr95": [
+                  0.0,
+                  0.36941664755281917
+                ]
+              },
+              "scenarioPrecisionFromUrlRates": {
+                "0.0001": null,
+                "0.001": null,
+                "0.01": null
+              }
+            },
+            "0.01": {
+              "threshold": 0.9266397356987001,
+              "tp": 0,
+              "fp": 0,
+              "tn": 15,
+              "fn": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 8,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.3123439780663678,
+              "intervals": {
+                "recall95": null,
+                "precision95": null,
+                "f1_95": null,
+                "urlFpr95": [
+                  0.0,
+                  0.0
+                ],
+                "domainFpr95": [
+                  0.0,
+                  0.36941664755281917
+                ]
+              },
+              "scenarioPrecisionFromUrlRates": {
+                "0.0001": null,
+                "0.001": null,
+                "0.01": null
+              }
+            },
+            "0.001": {
+              "threshold": 0.9976153373718263,
+              "tp": 0,
+              "fp": 0,
+              "tn": 15,
+              "fn": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 8,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.3123439780663678,
+              "intervals": {
+                "recall95": null,
+                "precision95": null,
+                "f1_95": null,
+                "urlFpr95": [
+                  0.0,
+                  0.0
+                ],
+                "domainFpr95": [
+                  0.0,
+                  0.36941664755281917
+                ]
+              },
+              "scenarioPrecisionFromUrlRates": {
+                "0.0001": null,
+                "0.001": null,
+                "0.01": null
+              }
+            },
+            "0.0001": null
+          }
+        },
+        "mixed": {
+          "ranking": null,
+          "calibration": null,
+          "operatingPoints": {
+            "fixed": {
+              "threshold": 0.5,
+              "tp": 0,
+              "fp": 6,
+              "tn": 9,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": null,
+              "f1": 0.0,
+              "falsePositiveRate": 0.4,
+              "falseAlertDomains": 4,
+              "legitimateDomains": 8,
+              "negativeDomainFalsePositiveRate": 0.5,
+              "negativeDomainFpr95Upper": 0.8070970500058688,
+              "intervals": {
+                "recall95": null,
+                "precision95": [
+                  0.0,
+                  0.0
+                ],
+                "f1_95": [
+                  0.0,
+                  0.0
+                ],
+                "urlFpr95": [
+                  0.16666666666666666,
+                  0.6429621848739496
+                ],
+                "domainFpr95": [
+                  0.15701277048705797,
+                  0.842987229512942
+                ]
+              },
+              "scenarioPrecisionFromUrlRates": {
+                "0.0001": null,
+                "0.001": null,
+                "0.01": null
+              }
+            },
+            "0.01": {
+              "threshold": 0.16884007981805166,
+              "tp": 0,
+              "fp": 12,
+              "tn": 3,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": null,
+              "f1": 0.0,
+              "falsePositiveRate": 0.8,
+              "falseAlertDomains": 6,
+              "legitimateDomains": 8,
+              "negativeDomainFalsePositiveRate": 0.75,
+              "negativeDomainFpr95Upper": 0.9536107360203888,
+              "intervals": {
+                "recall95": null,
+                "precision95": [
+                  0.0,
+                  0.0
+                ],
+                "f1_95": [
+                  0.0,
+                  0.0
+                ],
+                "urlFpr95": [
+                  0.5555555555555556,
+                  1.0
+                ],
+                "domainFpr95": [
+                  0.3491442055871758,
+                  0.9681459737500557
+                ]
+              },
+              "scenarioPrecisionFromUrlRates": {
+                "0.0001": null,
+                "0.001": null,
+                "0.01": null
+              }
+            },
+            "0.001": {
+              "threshold": 0.292800217499405,
+              "tp": 0,
+              "fp": 7,
+              "tn": 8,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": null,
+              "f1": 0.0,
+              "falsePositiveRate": 0.4666666666666667,
+              "falseAlertDomains": 4,
+              "legitimateDomains": 8,
+              "negativeDomainFalsePositiveRate": 0.5,
+              "negativeDomainFpr95Upper": 0.8070970500058688,
+              "intervals": {
+                "recall95": null,
+                "precision95": [
+                  0.0,
+                  0.0
+                ],
+                "f1_95": [
+                  0.0,
+                  0.0
+                ],
+                "urlFpr95": [
+                  0.2,
+                  0.8237745098039216
+                ],
+                "domainFpr95": [
+                  0.15701277048705797,
+                  0.842987229512942
+                ]
+              },
+              "scenarioPrecisionFromUrlRates": {
+                "0.0001": null,
+                "0.001": null,
+                "0.01": null
+              }
+            },
+            "0.0001": null
+          }
+        },
+        "fusion": {
+          "ranking": null,
+          "calibration": null,
+          "operatingPoints": {
+            "fixed": {
+              "threshold": 0.5,
+              "tp": 0,
+              "fp": 3,
+              "tn": 12,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": null,
+              "f1": 0.0,
+              "falsePositiveRate": 0.2,
+              "falseAlertDomains": 2,
+              "legitimateDomains": 8,
+              "negativeDomainFalsePositiveRate": 0.25,
+              "negativeDomainFpr95Upper": 0.5996893891908329,
+              "intervals": {
+                "recall95": null,
+                "precision95": [
+                  0.0,
+                  0.0
+                ],
+                "f1_95": [
+                  0.0,
+                  0.0
+                ],
+                "urlFpr95": [
+                  0.0,
+                  0.35
+                ],
+                "domainFpr95": [
+                  0.03185402624994421,
+                  0.6508557944128242
+                ]
+              },
+              "scenarioPrecisionFromUrlRates": {
+                "0.0001": null,
+                "0.001": null,
+                "0.01": null
+              }
+            },
+            "0.01": {
+              "threshold": 0.7611078574383651,
+              "tp": 0,
+              "fp": 0,
+              "tn": 15,
+              "fn": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 8,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.3123439780663678,
+              "intervals": {
+                "recall95": null,
+                "precision95": null,
+                "f1_95": null,
+                "urlFpr95": [
+                  0.0,
+                  0.0
+                ],
+                "domainFpr95": [
+                  0.0,
+                  0.36941664755281917
+                ]
+              },
+              "scenarioPrecisionFromUrlRates": {
+                "0.0001": null,
+                "0.001": null,
+                "0.01": null
+              }
+            },
+            "0.001": {
+              "threshold": 0.9654823799825953,
+              "tp": 0,
+              "fp": 0,
+              "tn": 15,
+              "fn": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 8,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.3123439780663678,
+              "intervals": {
+                "recall95": null,
+                "precision95": null,
+                "f1_95": null,
+                "urlFpr95": [
+                  0.0,
+                  0.0
+                ],
+                "domainFpr95": [
+                  0.0,
+                  0.36941664755281917
+                ]
+              },
+              "scenarioPrecisionFromUrlRates": {
+                "0.0001": null,
+                "0.001": null,
+                "0.01": null
+              }
+            },
+            "0.0001": null
+          }
+        },
+        "financial-rules": {
+          "ranking": null,
+          "calibration": null,
+          "operatingPoints": {
+            "fixed": {
+              "threshold": 0.5,
+              "tp": 0,
+              "fp": 0,
+              "tn": 15,
+              "fn": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 8,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.3123439780663678,
+              "intervals": {
+                "recall95": null,
+                "precision95": null,
+                "f1_95": null,
+                "urlFpr95": [
+                  0.0,
+                  0.0
+                ],
+                "domainFpr95": [
+                  0.0,
+                  0.36941664755281917
+                ]
+              },
+              "scenarioPrecisionFromUrlRates": {
+                "0.0001": null,
+                "0.001": null,
+                "0.01": null
+              }
+            }
+          }
+        }
+      },
+      "paired": {
+        "ngram+cnn": {
+          "0.0001": null,
+          "0.001": {
+            "predictionDisagreement": 0,
+            "bothErrors": 0,
+            "firstOnlyErrors": 0,
+            "secondOnlyErrors": 0,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": 0.0
+          },
+          "0.01": {
+            "predictionDisagreement": 0,
+            "bothErrors": 0,
+            "firstOnlyErrors": 0,
+            "secondOnlyErrors": 0,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": 0.0
+          },
+          "fixed": {
+            "predictionDisagreement": 4,
+            "bothErrors": 2,
+            "firstOnlyErrors": 1,
+            "secondOnlyErrors": 3,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 2,
+            "pairedRecall": null,
+            "observedDomainFprDelta": 0.125
+          }
+        },
+        "ngram+xgboost": {
+          "0.0001": null,
+          "0.001": {
+            "predictionDisagreement": 0,
+            "bothErrors": 0,
+            "firstOnlyErrors": 0,
+            "secondOnlyErrors": 0,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": 0.0
+          },
+          "0.01": {
+            "predictionDisagreement": 0,
+            "bothErrors": 0,
+            "firstOnlyErrors": 0,
+            "secondOnlyErrors": 0,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": 0.0
+          },
+          "fixed": {
+            "predictionDisagreement": 3,
+            "bothErrors": 0,
+            "firstOnlyErrors": 3,
+            "secondOnlyErrors": 0,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": -0.25
+          }
+        },
+        "ngram+mixed": {
+          "0.0001": null,
+          "0.001": {
+            "predictionDisagreement": 7,
+            "bothErrors": 0,
+            "firstOnlyErrors": 0,
+            "secondOnlyErrors": 7,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": 0.5
+          },
+          "0.01": {
+            "predictionDisagreement": 12,
+            "bothErrors": 0,
+            "firstOnlyErrors": 0,
+            "secondOnlyErrors": 12,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": 0.75
+          },
+          "fixed": {
+            "predictionDisagreement": 3,
+            "bothErrors": 3,
+            "firstOnlyErrors": 0,
+            "secondOnlyErrors": 3,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 3,
+            "pairedRecall": null,
+            "observedDomainFprDelta": 0.25
+          }
+        },
+        "ngram+fusion": {
+          "0.0001": null,
+          "0.001": {
+            "predictionDisagreement": 0,
+            "bothErrors": 0,
+            "firstOnlyErrors": 0,
+            "secondOnlyErrors": 0,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": 0.0
+          },
+          "0.01": {
+            "predictionDisagreement": 0,
+            "bothErrors": 0,
+            "firstOnlyErrors": 0,
+            "secondOnlyErrors": 0,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": 0.0
+          },
+          "fixed": {
+            "predictionDisagreement": 0,
+            "bothErrors": 3,
+            "firstOnlyErrors": 0,
+            "secondOnlyErrors": 0,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 3,
+            "pairedRecall": null,
+            "observedDomainFprDelta": 0.0
+          }
+        },
+        "ngram+financial-rules": {
+          "fixed": {
+            "predictionDisagreement": 3,
+            "bothErrors": 0,
+            "firstOnlyErrors": 3,
+            "secondOnlyErrors": 0,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": -0.25
+          }
+        },
+        "cnn+xgboost": {
+          "0.0001": null,
+          "0.001": {
+            "predictionDisagreement": 0,
+            "bothErrors": 0,
+            "firstOnlyErrors": 0,
+            "secondOnlyErrors": 0,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": 0.0
+          },
+          "0.01": {
+            "predictionDisagreement": 0,
+            "bothErrors": 0,
+            "firstOnlyErrors": 0,
+            "secondOnlyErrors": 0,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": 0.0
+          },
+          "fixed": {
+            "predictionDisagreement": 5,
+            "bothErrors": 0,
+            "firstOnlyErrors": 5,
+            "secondOnlyErrors": 0,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": -0.375
+          }
+        },
+        "cnn+mixed": {
+          "0.0001": null,
+          "0.001": {
+            "predictionDisagreement": 7,
+            "bothErrors": 0,
+            "firstOnlyErrors": 0,
+            "secondOnlyErrors": 7,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": 0.5
+          },
+          "0.01": {
+            "predictionDisagreement": 12,
+            "bothErrors": 0,
+            "firstOnlyErrors": 0,
+            "secondOnlyErrors": 12,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": 0.75
+          },
+          "fixed": {
+            "predictionDisagreement": 3,
+            "bothErrors": 4,
+            "firstOnlyErrors": 1,
+            "secondOnlyErrors": 2,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 4,
+            "pairedRecall": null,
+            "observedDomainFprDelta": 0.125
+          }
+        },
+        "cnn+fusion": {
+          "0.0001": null,
+          "0.001": {
+            "predictionDisagreement": 0,
+            "bothErrors": 0,
+            "firstOnlyErrors": 0,
+            "secondOnlyErrors": 0,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": 0.0
+          },
+          "0.01": {
+            "predictionDisagreement": 0,
+            "bothErrors": 0,
+            "firstOnlyErrors": 0,
+            "secondOnlyErrors": 0,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": 0.0
+          },
+          "fixed": {
+            "predictionDisagreement": 4,
+            "bothErrors": 2,
+            "firstOnlyErrors": 3,
+            "secondOnlyErrors": 1,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 2,
+            "pairedRecall": null,
+            "observedDomainFprDelta": -0.125
+          }
+        },
+        "cnn+financial-rules": {
+          "fixed": {
+            "predictionDisagreement": 5,
+            "bothErrors": 0,
+            "firstOnlyErrors": 5,
+            "secondOnlyErrors": 0,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": -0.375
+          }
+        },
+        "xgboost+mixed": {
+          "0.0001": null,
+          "0.001": {
+            "predictionDisagreement": 7,
+            "bothErrors": 0,
+            "firstOnlyErrors": 0,
+            "secondOnlyErrors": 7,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": 0.5
+          },
+          "0.01": {
+            "predictionDisagreement": 12,
+            "bothErrors": 0,
+            "firstOnlyErrors": 0,
+            "secondOnlyErrors": 12,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": 0.75
+          },
+          "fixed": {
+            "predictionDisagreement": 6,
+            "bothErrors": 0,
+            "firstOnlyErrors": 0,
+            "secondOnlyErrors": 6,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": 0.5
+          }
+        },
+        "xgboost+fusion": {
+          "0.0001": null,
+          "0.001": {
+            "predictionDisagreement": 0,
+            "bothErrors": 0,
+            "firstOnlyErrors": 0,
+            "secondOnlyErrors": 0,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": 0.0
+          },
+          "0.01": {
+            "predictionDisagreement": 0,
+            "bothErrors": 0,
+            "firstOnlyErrors": 0,
+            "secondOnlyErrors": 0,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": 0.0
+          },
+          "fixed": {
+            "predictionDisagreement": 3,
+            "bothErrors": 0,
+            "firstOnlyErrors": 0,
+            "secondOnlyErrors": 3,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": 0.25
+          }
+        },
+        "xgboost+financial-rules": {
+          "fixed": {
+            "predictionDisagreement": 0,
+            "bothErrors": 0,
+            "firstOnlyErrors": 0,
+            "secondOnlyErrors": 0,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": 0.0
+          }
+        },
+        "mixed+fusion": {
+          "0.0001": null,
+          "0.001": {
+            "predictionDisagreement": 7,
+            "bothErrors": 0,
+            "firstOnlyErrors": 7,
+            "secondOnlyErrors": 0,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": -0.5
+          },
+          "0.01": {
+            "predictionDisagreement": 12,
+            "bothErrors": 0,
+            "firstOnlyErrors": 12,
+            "secondOnlyErrors": 0,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": -0.75
+          },
+          "fixed": {
+            "predictionDisagreement": 3,
+            "bothErrors": 3,
+            "firstOnlyErrors": 3,
+            "secondOnlyErrors": 0,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 3,
+            "pairedRecall": null,
+            "observedDomainFprDelta": -0.25
+          }
+        },
+        "mixed+financial-rules": {
+          "fixed": {
+            "predictionDisagreement": 6,
+            "bothErrors": 0,
+            "firstOnlyErrors": 6,
+            "secondOnlyErrors": 0,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": -0.5
+          }
+        },
+        "fusion+financial-rules": {
+          "fixed": {
+            "predictionDisagreement": 3,
+            "bothErrors": 0,
+            "firstOnlyErrors": 3,
+            "secondOnlyErrors": 0,
+            "firstOnlyTruePositives": 0,
+            "secondOnlyTruePositives": 0,
+            "bothFalsePositives": 0,
+            "pairedRecall": null,
+            "observedDomainFprDelta": -0.25
+          }
+        }
+      }
+    },
+    "urlFallbackAtMultimodalCuts": {
+      "rows": 15,
+      "phishing": 0,
+      "benign": 15,
+      "domains": 8,
+      "phishingDomains": 0,
+      "benignDomains": 8,
+      "models": {
+        "fixed": {
+          "ranking": null,
+          "calibration": null,
+          "operatingPoints": {
+            "fixed": {
+              "threshold": 0.5,
+              "tp": 0,
+              "fp": 3,
+              "tn": 12,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": null,
+              "f1": 0.0,
+              "falsePositiveRate": 0.2,
+              "falseAlertDomains": 2,
+              "legitimateDomains": 8,
+              "negativeDomainFalsePositiveRate": 0.25,
+              "negativeDomainFpr95Upper": 0.5996893891908329,
+              "intervals": {
+                "recall95": null,
+                "precision95": [
+                  0.0,
+                  0.0
+                ],
+                "f1_95": [
+                  0.0,
+                  0.0
+                ],
+                "urlFpr95": [
+                  0.0,
+                  0.35
+                ],
+                "domainFpr95": [
+                  0.03185402624994421,
+                  0.6508557944128242
+                ]
+              },
+              "scenarioPrecisionFromUrlRates": {
+                "0.0001": null,
+                "0.001": null,
+                "0.01": null
+              }
+            },
+            "0.01": {
+              "threshold": 0.7963963524112841,
+              "tp": 0,
+              "fp": 0,
+              "tn": 15,
+              "fn": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 8,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.3123439780663678,
+              "intervals": {
+                "recall95": null,
+                "precision95": null,
+                "f1_95": null,
+                "urlFpr95": [
+                  0.0,
+                  0.0
+                ],
+                "domainFpr95": [
+                  0.0,
+                  0.36941664755281917
+                ]
+              },
+              "scenarioPrecisionFromUrlRates": {
+                "0.0001": null,
+                "0.001": null,
+                "0.01": null
+              }
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "stack": {
+          "ranking": null,
+          "calibration": null,
+          "operatingPoints": {
+            "fixed": {
+              "threshold": 0.5,
+              "tp": 0,
+              "fp": 3,
+              "tn": 12,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": null,
+              "f1": 0.0,
+              "falsePositiveRate": 0.2,
+              "falseAlertDomains": 2,
+              "legitimateDomains": 8,
+              "negativeDomainFalsePositiveRate": 0.25,
+              "negativeDomainFpr95Upper": 0.5996893891908329,
+              "intervals": {
+                "recall95": null,
+                "precision95": [
+                  0.0,
+                  0.0
+                ],
+                "f1_95": [
+                  0.0,
+                  0.0
+                ],
+                "urlFpr95": [
+                  0.0,
+                  0.35
+                ],
+                "domainFpr95": [
+                  0.03185402624994421,
+                  0.6508557944128242
+                ]
+              },
+              "scenarioPrecisionFromUrlRates": {
+                "0.0001": null,
+                "0.001": null,
+                "0.01": null
+              }
+            },
+            "0.01": {
+              "threshold": 0.9160534623105493,
+              "tp": 0,
+              "fp": 0,
+              "tn": 15,
+              "fn": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 8,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.3123439780663678,
+              "intervals": {
+                "recall95": null,
+                "precision95": null,
+                "f1_95": null,
+                "urlFpr95": [
+                  0.0,
+                  0.0
+                ],
+                "domainFpr95": [
+                  0.0,
+                  0.36941664755281917
+                ]
+              },
+              "scenarioPrecisionFromUrlRates": {
+                "0.0001": null,
+                "0.001": null,
+                "0.01": null
+              }
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "adaptive": {
+          "ranking": null,
+          "calibration": null,
+          "operatingPoints": {
+            "fixed": {
+              "threshold": 0.5,
+              "tp": 0,
+              "fp": 3,
+              "tn": 12,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": null,
+              "f1": 0.0,
+              "falsePositiveRate": 0.2,
+              "falseAlertDomains": 2,
+              "legitimateDomains": 8,
+              "negativeDomainFalsePositiveRate": 0.25,
+              "negativeDomainFpr95Upper": 0.5996893891908329,
+              "intervals": {
+                "recall95": null,
+                "precision95": [
+                  0.0,
+                  0.0
+                ],
+                "f1_95": [
+                  0.0,
+                  0.0
+                ],
+                "urlFpr95": [
+                  0.0,
+                  0.35
+                ],
+                "domainFpr95": [
+                  0.03185402624994421,
+                  0.6508557944128242
+                ]
+              },
+              "scenarioPrecisionFromUrlRates": {
+                "0.0001": null,
+                "0.001": null,
+                "0.01": null
+              }
+            },
+            "0.01": {
+              "threshold": 0.8460501779387779,
+              "tp": 0,
+              "fp": 0,
+              "tn": 15,
+              "fn": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "falsePositiveRate": 0.0,
+              "falseAlertDomains": 0,
+              "legitimateDomains": 8,
+              "negativeDomainFalsePositiveRate": 0.0,
+              "negativeDomainFpr95Upper": 0.3123439780663678,
+              "intervals": {
+                "recall95": null,
+                "precision95": null,
+                "f1_95": null,
+                "urlFpr95": [
+                  0.0,
+                  0.0
+                ],
+                "domainFpr95": [
+                  0.0,
+                  0.36941664755281917
+                ]
+              },
+              "scenarioPrecisionFromUrlRates": {
+                "0.0001": null,
+                "0.001": null,
+                "0.01": null
+              }
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        }
+      },
+      "paired": {}
+    },
+    "freshIndependent": false
+  },
+  "syntheticDiagnosticReplay": {
+    "ngram": {
+      "banking-login": {
+        "score": 0.38158580523458707,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      },
+      "payment-gateway": {
+        "score": 0.3460711175106677,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      },
+      "oauth-sso": {
+        "score": 0.5691300844343457,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      },
+      "cross-origin-form": {
+        "score": 0.3265970686207907,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      },
+      "ordinary-password": {
+        "score": 0.3174327605006661,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      },
+      "embedded-payment-auth": {
+        "score": 0.3222384392758583,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      },
+      "dynamic-login": {
+        "score": 0.42629427960258615,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      },
+      "dynamic-login-materialized": {
+        "score": 0.27406098940217954,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      }
+    },
+    "cnn": {
+      "banking-login": {
+        "score": 0.6660216450691223,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      },
+      "payment-gateway": {
+        "score": 0.7757957577705383,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      },
+      "oauth-sso": {
+        "score": 0.7765437960624695,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      },
+      "cross-origin-form": {
+        "score": 0.7187268733978271,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      },
+      "ordinary-password": {
+        "score": 0.7054111361503601,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      },
+      "embedded-payment-auth": {
+        "score": 0.6746087074279785,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      },
+      "dynamic-login": {
+        "score": 0.7334383130073547,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      },
+      "dynamic-login-materialized": {
+        "score": 0.7165356278419495,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      }
+    },
+    "xgboost": {
+      "banking-login": {
+        "score": 0.09762641042470932,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      },
+      "payment-gateway": {
+        "score": 0.09426812082529068,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      },
+      "oauth-sso": {
+        "score": 0.15156494081020355,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      },
+      "cross-origin-form": {
+        "score": 0.09426812082529068,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      },
+      "ordinary-password": {
+        "score": 0.09426812082529068,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      },
+      "embedded-payment-auth": {
+        "score": 0.0680646300315857,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      },
+      "dynamic-login": {
+        "score": 0.09762641042470932,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      },
+      "dynamic-login-materialized": {
+        "score": 0.06113258749246597,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      }
+    },
+    "mixed": {
+      "banking-login": {
+        "score": 0.6041864050404521,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": true,
+          "0.001": true,
+          "0.0001": null
+        }
+      },
+      "payment-gateway": {
+        "score": 0.4623720765834768,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": true,
+          "0.001": true,
+          "0.0001": null
+        }
+      },
+      "oauth-sso": {
+        "score": 0.666697227300709,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": true,
+          "0.001": true,
+          "0.0001": null
+        }
+      },
+      "cross-origin-form": {
+        "score": 0.4416008203518738,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": true,
+          "0.001": true,
+          "0.0001": null
+        }
+      },
+      "ordinary-password": {
+        "score": 0.45312323392303083,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": true,
+          "0.001": true,
+          "0.0001": null
+        }
+      },
+      "embedded-payment-auth": {
+        "score": 0.5043086600304348,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": true,
+          "0.001": true,
+          "0.0001": null
+        }
+      },
+      "dynamic-login": {
+        "score": 0.6561021018554225,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": true,
+          "0.001": true,
+          "0.0001": null
+        }
+      },
+      "dynamic-login-materialized": {
+        "score": 0.5182409171099768,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": true,
+          "0.001": true,
+          "0.0001": null
+        }
+      }
+    },
+    "fusion": {
+      "banking-login": {
+        "score": 0.30269364277063737,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      },
+      "payment-gateway": {
+        "score": 0.25917853681182484,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      },
+      "oauth-sso": {
+        "score": 0.5374506741645101,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      },
+      "cross-origin-form": {
+        "score": 0.2363238482386934,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      },
+      "ordinary-password": {
+        "score": 0.22577921123125178,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      },
+      "embedded-payment-auth": {
+        "score": 0.22668806619132925,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      },
+      "dynamic-login": {
+        "score": 0.357900185089206,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      },
+      "dynamic-login-materialized": {
+        "score": 0.1723828503933372,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": false,
+          "0.0001": null
+        }
+      }
+    },
+    "fixed": {
+      "banking-login": {
+        "score": 0.6345894702953525,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": null,
+          "0.0001": null
+        }
+      },
+      "payment-gateway": {
+        "score": 0.4852180447480798,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": null,
+          "0.0001": null
+        }
+      },
+      "oauth-sso": {
+        "score": 0.7198145017746063,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": null,
+          "0.0001": null
+        }
+      },
+      "cross-origin-form": {
+        "score": 0.5010188562524651,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": null,
+          "0.0001": null
+        }
+      },
+      "ordinary-password": {
+        "score": 0.4642053379873282,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": null,
+          "0.0001": null
+        }
+      },
+      "embedded-payment-auth": {
+        "score": 0.3960981429339756,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": null,
+          "0.0001": null
+        }
+      },
+      "dynamic-login": {
+        "score": 0.6638114376415236,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": null,
+          "0.0001": null
+        }
+      },
+      "dynamic-login-materialized": {
+        "score": 0.4556587690198426,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": null,
+          "0.0001": null
+        }
+      }
+    },
+    "stack": {
+      "banking-login": {
+        "score": 0.7225849088904003,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": null,
+          "0.0001": null
+        }
+      },
+      "payment-gateway": {
+        "score": 0.5573651638149947,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": null,
+          "0.0001": null
+        }
+      },
+      "oauth-sso": {
+        "score": 0.7865500014106915,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": null,
+          "0.0001": null
+        }
+      },
+      "cross-origin-form": {
+        "score": 0.5574456461612737,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": null,
+          "0.0001": null
+        }
+      },
+      "ordinary-password": {
+        "score": 0.5231523671382525,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": null,
+          "0.0001": null
+        }
+      },
+      "embedded-payment-auth": {
+        "score": 0.37251823822290087,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": null,
+          "0.0001": null
+        }
+      },
+      "dynamic-login": {
+        "score": 0.9554585436011865,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": true,
+          "0.001": null,
+          "0.0001": null
+        }
+      },
+      "dynamic-login-materialized": {
+        "score": 0.511487934712701,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": null,
+          "0.0001": null
+        }
+      }
+    },
+    "adaptive": {
+      "banking-login": {
+        "score": 0.5886707150989475,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": null,
+          "0.0001": null
+        }
+      },
+      "payment-gateway": {
+        "score": 0.37064972503002774,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": null,
+          "0.0001": null
+        }
+      },
+      "oauth-sso": {
+        "score": 0.6859020248156494,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": null,
+          "0.0001": null
+        }
+      },
+      "cross-origin-form": {
+        "score": 0.39254260752879455,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": null,
+          "0.0001": null
+        }
+      },
+      "ordinary-password": {
+        "score": 0.3454513715433108,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": null,
+          "0.0001": null
+        }
+      },
+      "embedded-payment-auth": {
+        "score": 0.2744779430762217,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": null,
+          "0.0001": null
+        }
+      },
+      "dynamic-login": {
+        "score": 0.7036194245819756,
+        "atHalf": true,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": null,
+          "0.0001": null
+        }
+      },
+      "dynamic-login-materialized": {
+        "score": 0.33491060315007853,
+        "atHalf": false,
+        "atConstraints": {
+          "0.01": false,
+          "0.001": null,
+          "0.0001": null
+        }
+      }
+    }
+  },
+  "freshIndependentRowsScored": 0,
+  "freshPairedRowsScored": 0,
+  "independentFinancialPositives": {
+    "india": 0,
+    "outsideIndia": 0
+  }
+}
