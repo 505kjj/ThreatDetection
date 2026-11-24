@@ -140,6 +140,7 @@ async function main() {
   let releaseCleanRoot;
   const phishingHost = 'hdfcbank-help.example.net';
   const cautionHost = 'sbi.bank.in.example.org';
+  const destinationHost = 'forms.example.net';
   const fixture = createServer((request, response) => {
     const url = new URL(request.url, 'http://' + request.headers.host);
     requests.push({ host: url.hostname, path: url.pathname, query: url.search });
@@ -148,10 +149,25 @@ async function main() {
       response.end();
       return;
     }
+    if (url.pathname === '/redirect-financial-login') {
+      response.writeHead(302, { Location: 'http://' + cautionHost + ':' + fixture.address().port + '/redirected-form' });
+      response.end();
+      return;
+    }
+    if (url.pathname === '/redirect-normal-login') {
+      response.writeHead(302, { Location: '/sso-fixture' });
+      response.end();
+      return;
+    }
     const send = () => {
       response.writeHead(200, { 'Content-Type': 'text/html', 'Set-Cookie': 'fixture=private-cookie-value; HttpOnly' });
+      const action = url.pathname === '/sso-fixture' ? 'https://accounts.google.com/o/oauth2/v2/auth'
+        : url.hostname === cautionHost ? 'http://' + destinationHost + '/private-path?marker=private-query#private-fragment' : '/local-form';
+      const credentialInputs = url.pathname === '/pay-fixture'
+        ? '<input name="number" autocomplete="cc-number" value="private-card-value"><input name="expiry" autocomplete="cc-exp">'
+        : '<input id="password" name="fixture-password" type="password" value="private-form-value">';
       response.end('<!doctype html><title>Local login fixture</title><link rel="icon" href="data:,"><input id="other">' +
-        '<input id="password" type="password" value="private-form-value">' +
+        '<form method="post" action="' + action + '">' + credentialInputs + '</form>' +
         '<input id="otp" autocomplete="one-time-code" value="private-otp-value">' +
         '<input id="card" autocomplete="cc-number" value="private-card-value">');
     };
@@ -186,7 +202,7 @@ async function main() {
       channel: 'chromium',
       args: ['--disable-extensions-except=' + extension, '--load-extension=' + extension,
         '--no-proxy-server', '--host-resolver-rules=' +
-          [phishingHost, cautionHost].map(host => 'MAP ' + host + ' 127.0.0.1').join(',')]
+          [phishingHost, cautionHost, destinationHost].map(host => 'MAP ' + host + ' 127.0.0.1').join(',')]
     });
     const worker = browser.serviceWorkers()[0] ?? await browser.waitForEvent('serviceworker');
     const extensionOrigin = new URL(worker.url()).origin === 'null'
@@ -203,7 +219,9 @@ async function main() {
     const origin = 'http://127.0.0.1:' + backend.port;
     const apiCalls = [];
     const snapshotCalls = [];
+    const formActionRequests = [];
     browser.on('request', request => {
+      if (new URL(request.url()).hostname === destinationHost) formActionRequests.push(request);
       if (request.method() === 'POST' && request.url().startsWith(origin + '/api/threat/')) {
         apiCalls.push(request);
       }
@@ -217,9 +235,15 @@ async function main() {
     await options.locator('#tokenStatus').getByText('Browser token required.').waitFor();
     await options.locator('#backendOrigin').fill(origin);
     async function refreshCredential(credential = token) {
+      const credentialId = () => worker.evaluate(async () =>
+        (await chrome.storage.session.get('backendCredential')).backendCredential?.id);
+      const previous = await credentialId();
       await options.locator('#browserToken').fill(credential);
       await options.locator('#saveConnection').click();
-      await eventually(() => options.locator('#browserToken').inputValue(), value => value === '', 'saved token');
+      await eventually(() => options.locator('#browserToken').inputValue(), value => value === '', 'cleared token input');
+      if (credential === token) {
+        await eventually(credentialId, id => !!id && id !== previous, 'verified credential stored');
+      }
     }
     if (useWindowsSetup) {
       await refreshCredential(randomBytes(32).toString('base64url'));
@@ -364,12 +388,17 @@ async function main() {
     await popup.locator('#impersonationReasons').getByText(/official State Bank of India address is embedded/).waitFor();
     await eventually(() => inPageWarning(caution, 'official State Bank of India address is embedded'),
       value => value === true, 'in-page explanation');
+    await eventually(() => inPageWarning(caution, 'A visible password field was found'),
+      value => value === true, 'password form explanation');
+    await popup.locator('#impersonationReasons').getByText(/credential form points to an unrelated origin/).waitFor();
     assert.equal(await badge(worker, caution.url()), '!');
     await phish.getByRole('heading', { name: 'Known threat blocked' }).waitFor();
     assert.equal(await badge(worker, site.url()), '');
     assert.equal(caution.url(), cautionFixture, 'a name-only warning must leave the user on the page');
     assert.equal(apiCalls.some(call => call.postData()?.includes(cautionHost)), false,
       'the local impersonation check must not send the hostname to the API');
+    assert.equal(apiCalls.some(call => call.postData()?.includes(destinationHost)), false,
+      'the form action origin must stay in the extension');
     console.log('Chrome: local impersonation explains the address evidence without transmitting the hostname or blocking');
     assert.ok(snapshotCalls.length > 0);
     for (const request of snapshotCalls) {
@@ -434,7 +463,7 @@ async function main() {
       assert.equal(headers.referer, undefined);
       const keys = request.url().endsWith('/events') ? ['action', 'detectedAt', 'id', 'signal'] : ['protection'];
       assert.deepEqual(Object.keys(request.postDataJSON()).sort(), keys);
-      for (const marker of [...privateMarkers, phishingHost, cautionHost, localSite]) {
+      for (const marker of [...privateMarkers, phishingHost, cautionHost, destinationHost, localSite]) {
         assert.ok(!request.postData().includes(marker));
         assert.ok(!JSON.stringify(report).includes(marker));
         assert.ok(!backend.logs().includes(marker));
@@ -456,7 +485,7 @@ async function main() {
     await dashboard.getByText('No events reported for this view.').waitFor();
     await dashboard.getByRole('button', { name: 'Synthetic fixtures' }).click();
     await dashboard.getByText('Synthetic test data.').waitFor();
-    await dashboard.locator('#history').getByText(/A verified financial address/).first().waitFor();
+    await dashboard.locator('#history').getByText(/declared action on an unrelated origin/).first().waitFor();
     await dashboard.locator('#history').getByText('Bypassed', { exact: true }).first().waitFor();
     assert.equal(Number(await dashboard.locator('#total').textContent()), report.total);
     assert.match(await dashboard.locator('#reputation-state').textContent(), /1 with current reputation data/);
@@ -477,6 +506,25 @@ async function main() {
 
     await options.locator('#threatReporting').uncheck();
     await options.locator('#reportingStatus').getByText('Reporting is off.').waitFor();
+    const formChecks = await browser.newPage();
+    await formChecks.goto(localSite + '/redirect-normal-login');
+    await assertStatus(formChecks, 'No known threat match');
+    assert.equal(await inPageWarning(formChecks, 'Possible financial website impersonation'), false);
+    await formChecks.goto(cautionFixture.replace('/private-path?x=private-query', '/sso-fixture'));
+    await assertStatus(formChecks, 'Possible financial website impersonation');
+    await popup.locator('#impersonationReasons').getByText(/State Bank of India/).first().waitFor();
+    await wait(1300);
+    assert.equal(await inPageWarning(formChecks, 'A visible password field was found'), false);
+    await formChecks.goto(cautionFixture.replace('/private-path?x=private-query', '/pay-fixture'));
+    await eventually(() => inPageWarning(formChecks, 'A visible payment form asks for card details'),
+      value => value === true, 'payment form explanation');
+    await formChecks.goto(localSite + '/redirect-financial-login');
+    await eventually(() => inPageWarning(formChecks, 'The browser observed a redirect before arriving'),
+      value => value === true, 'redirect context');
+    assert.equal(hits(cautionHost, '/redirected-form').length, 1, 'financial advice cannot block the target');
+    assert.equal(formActionRequests.length, 0, 'observing an action must never visit its destination');
+    await formChecks.close();
+    console.log('Chrome: bounded form metadata added password, payment and redirect reasons; recognized SSO kept the baseline advisory');
     const beforeOptOut = eventCalls().length;
     const optedOut = await browser.newPage();
     await blocked(optedOut, localSite + '/download-fixture');
@@ -578,6 +626,7 @@ async function main() {
     await eventually(async () => (await fetch(snapshotEndpoint, { headers })).status,
       status => status === 503, 'provider failure response');
     await refreshCredential();
+    await eventually(installed, rules => rules.length === 0, 'rejected snapshot rules removed');
     const stale = await browser.newPage();
     await stale.goto(phishingFixture);
     await assertStatus(stale, 'Protection unavailable');

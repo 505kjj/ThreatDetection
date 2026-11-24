@@ -1,5 +1,7 @@
 # Financial website impersonation
 
+This document records the Phase 2B baseline. See the [Phase 4C registry expansion, credential-form policy, and evaluation](financial-login-protection.md) for current behavior.
+
 ## Verified registry
 
 The starter registry records domain scopes and name aliases for four organizations. Sources were checked on 23 November 2026. A scope suppresses name-based hints for its own brand. The documented co-branded HDFC and Razorpay hostname also suppresses HDFC name hints on that exact host. A current exact reputation match on any of these hosts still produces the existing known-threat warning.

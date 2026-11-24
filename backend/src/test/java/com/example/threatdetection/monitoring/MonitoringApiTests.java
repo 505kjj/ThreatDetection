@@ -41,6 +41,7 @@ class MonitoringApiTests {
     private static final String API = "/api/threat/monitoring";
     private static final String ADMIN = token();
     private static final String TEST_BROWSER = token();
+    private static final String FINANCIAL_BROWSER = token();
     private static final String LIVE_BROWSER = token();
     private static final String LIMITED_BROWSER = token();
     private static final String INVALID_BROWSER = token();
@@ -54,10 +55,12 @@ class MonitoringApiTests {
     static void configuration(DynamicPropertyRegistry config) {
         client(config, "ops", "ADMIN", ADMIN);
         client(config, "fixture", "BROWSER", TEST_BROWSER);
+        client(config, "financial-fixture", "BROWSER", FINANCIAL_BROWSER);
         client(config, "live", "BROWSER", LIVE_BROWSER);
         client(config, "limited", "BROWSER", LIMITED_BROWSER);
         client(config, "validation", "BROWSER", INVALID_BROWSER);
         config.add("threat.monitoring.synthetic-clients[0]", () -> "fixture");
+        config.add("threat.monitoring.synthetic-clients[1]", () -> "financial-fixture");
     }
 
     @BeforeEach
@@ -109,6 +112,23 @@ class MonitoringApiTests {
                 .andExpect(jsonPath("$.clientStatus.REPUTATION_UNAVAILABLE").value(1))
                 .andExpect(jsonPath("$.recent[0].reason").value(containsString("Unicode")))
                 .andExpect(jsonPath("$.recent[0].eventId").doesNotExist());
+    }
+
+    @Test
+    void newFinancialEvidenceUsesFixedAdvisoryCodesAndCannotClaimABlock() throws Exception {
+        heartbeat(FINANCIAL_BROWSER, "REPUTATION_AVAILABLE");
+        for (String code : new String[]{"FINANCIAL_PASSWORD_FORM", "FINANCIAL_PAYMENT_FORM",
+                "FINANCIAL_EXTERNAL_FORM", "SUBDOMAIN_TYPO"}) {
+            mvc.perform(write("events", FINANCIAL_BROWSER, event(code, "WARNED"))).andExpect(status().isNoContent());
+        }
+        mvc.perform(auth(get(API + "/dashboard").param("scope", "SYNTHETIC"), ADMIN))
+                .andExpect(jsonPath("$.total").value(4))
+                .andExpect(jsonPath("$.blocked").value(0))
+                .andExpect(jsonPath("$.categories.FINANCIAL_IMPERSONATION").value(4))
+                .andExpect(jsonPath("$.recent[0].severity").value("CAUTION"));
+        heartbeat(LIVE_BROWSER, "REPUTATION_AVAILABLE");
+        mvc.perform(write("events", LIVE_BROWSER, event("FINANCIAL_EXTERNAL_FORM", "BLOCKED")))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
