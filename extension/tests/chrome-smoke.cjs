@@ -857,7 +857,7 @@ async function main() {
       assert.ok(sameBrowser === token, 'admin rotation changed the browser credential');
       assert.ok(rotatedAdmin !== oldAdmin, 'admin rotation did not replace the old credential');
       adminToken = rotatedAdmin;
-      backend = await runtime.start('pwsh.exe');
+      backend = await runtime.start(runtime.secondaryHost);
       const rejected = await fetch(monitoring + '/dashboard', { headers: { Authorization: 'Bearer ' + oldAdmin } });
       assert.equal(rejected.status, 401);
       assert.equal((await adminReports('REAL')).total, 0);

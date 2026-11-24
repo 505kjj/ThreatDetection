@@ -1,11 +1,22 @@
 const assert = require('node:assert/strict');
-const { spawn } = require('node:child_process');
+const { spawn, spawnSync } = require('node:child_process');
 const { randomUUID } = require('node:crypto');
 const { readFileSync, renameSync, rmSync, writeFileSync } = require('node:fs');
 const { createServer } = require('node:net');
 const path = require('node:path');
 const script = path.resolve(__dirname, '../../scripts/local.ps1');
 const powershell = ['-NoLogo', '-NoProfile', '-NonInteractive'];
+
+function resolveSecondaryHost() {
+  const probe = spawnSync('pwsh.exe', ['-NoLogo', '-NoProfile', '-NonInteractive', '-Command', '$PSVersionTable.PSVersion.Major'],
+    { encoding: 'utf8', windowsHide: true });
+  if (probe.status === 0) return 'pwsh.exe';
+  if (process.env.THREAT_REQUIRE_PWSH7 === '1') {
+    throw new Error('pwsh.exe (PowerShell 7) is required when THREAT_REQUIRE_PWSH7=1');
+  }
+  console.log('Windows setup note: pwsh.exe (PowerShell 7) not found on PATH; exercising secondary checks with powershell.exe');
+  return 'powershell.exe';
+}
 function run(host, command, args = [], env = {}) {
   const childEnv = { ...process.env, ...env };
   // Let each PowerShell host supply its own module directories.
@@ -55,6 +66,7 @@ async function freePort() {
 }
 
 async function createRuntime(extensionId, snapshotPath) {
+  const secondaryHost = resolveSecondaryHost();
   const profile = 'smoke-' + randomUUID();
   const directory = (await run('powershell.exe', ['-Command',
     "[Environment]::GetFolderPath([Environment+SpecialFolder]::LocalApplicationData)"])).stdout.trim();
@@ -75,7 +87,7 @@ async function createRuntime(extensionId, snapshotPath) {
     const configured = await invoke('Setup', ['-ExtensionId', extensionId, '-Port', String(port),
       '-Synthetic', '-SnapshotPath', snapshotPath]);
     assert.match(configured.stdout, /is ready/);
-    assert.match((await invoke('Status', [], 'pwsh.exe')).stdout, /Backend stopped/);
+    assert.match((await invoke('Status', [], secondaryHost)).stdout, /Backend stopped/);
   } catch (error) {
     await dispose().catch(() => {});
     throw error;
@@ -126,16 +138,16 @@ async function createRuntime(extensionId, snapshotPath) {
     renameSync(database, backup);
     try {
       writeFileSync(database, 'disposable invalid H2 test data');
-      await assert.rejects(invoke('Start', [], 'pwsh.exe'), /Backend startup failed/);
-      assert.match((await invoke('Status', [], 'pwsh.exe')).stdout, /Backend stopped/);
+      await assert.rejects(invoke('Start', [], secondaryHost), /Backend startup failed/);
+      assert.match((await invoke('Status', [], secondaryHost)).stdout, /Backend stopped/);
     } finally {
       rmSync(database, { force: true });
       renameSync(backup, database);
     }
   }
 
-  return { start, tokens, dispose, checkStartupFailure,
-    rotateAdmin: () => invoke('Rotate', ['-Role', 'Admin'], 'pwsh.exe') };
+  return { start, tokens, dispose, checkStartupFailure, secondaryHost,
+    rotateAdmin: () => invoke('Rotate', ['-Role', 'Admin'], secondaryHost) };
 }
 
 module.exports = { createRuntime };
