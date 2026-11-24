@@ -82,7 +82,7 @@ export function createThreatReporting(chrome, connection, reputationAvailable) {
     return true;
   }
 
-  function report(signalCode, action, navigationKey) {
+  function report(signalCode, action, navigationKey, dedupeSignal = signalCode) {
     const signal = cancellation.signal;
     const detectedAt = Date.now();
     // Limit queued requests even during an outage. Protection does not wait for this queue.
@@ -92,7 +92,7 @@ export function createThreatReporting(chrome, connection, reputationAvailable) {
       if (signal.aborted || Date.now() - detectedAt > 15000) return;
       const credential = await connection();
       if (!credential || signal.aborted ||
-          !await remember(credential.id, [signalCode, action, navigationKey].join(':'), detectedAt) ||
+          !await remember(credential.id, [dedupeSignal, action, navigationKey].join(':'), detectedAt) ||
           signal.aborted) return;
       const body = { id: crypto.randomUUID(), signal: signalCode, action,
         detectedAt: new Date(detectedAt).toISOString() };

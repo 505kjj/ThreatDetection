@@ -2,7 +2,8 @@ import { analysisFields, analyze, downloadSnapshot, probeReputationConnection,
   requestFailure, startSession, validToken } from './backend-api.mjs';
 import { createBlockRules } from './block-rules.mjs';
 import { BYPASS_ALARM, createBrowserProtection } from './browser-protection.mjs';
-import { detectImpersonation } from './impersonation.mjs';
+import { detectImpersonation, verifiedFinancialHost } from './impersonation.mjs';
+import { loginEvidence } from './login-risk.mjs';
 import { checkDestination, createSnapshotCache, destinationFor } from './reputation.mjs';
 import { DEFAULT_ORIGIN, backendOrigin, backendPermission, matchingSite, pageHostname, readSites } from './settings.mjs';
 import { createThreatReporting, REPORTING_ALARM } from './threat-reporting.mjs';
@@ -12,6 +13,7 @@ const statusKey = tabId => 'tab-status:' + tabId;
 const navigationKey = tabId => 'tab-navigation:' + tabId;
 const requests = new Map();
 const navigations = new Map();
+const financialChecks = new Map();
 const local = chrome.storage.local;
 const session = chrome.storage.session;
 const reputation = createSnapshotCache(session, downloadSnapshot);
@@ -127,6 +129,60 @@ function withImpersonation(verdict, evidence) {
   return evidence?.length ? { ...verdict, impersonation: evidence } : verdict;
 }
 
+function discardFinancialCheck(tabId) {
+  clearTimeout(financialChecks.get(tabId)?.timer);
+  financialChecks.delete(tabId);
+}
+
+function financialCheck(page, config, result, domainEvidence) {
+  if (!domainEvidence.length || !['no_match', 'unavailable'].includes(result.state)) {
+    discardFinancialCheck(page.tabId);
+    return null;
+  }
+  let check = financialChecks.get(page.tabId);
+  if (!check || check.documentId !== page.documentId || check.navigation !== page.navigation ||
+      check.revision !== page.settingsRevision) {
+    discardFinancialCheck(page.tabId);
+    check = { id: crypto.randomUUID(), documentId: page.documentId, navigation: page.navigation,
+      revision: page.settingsRevision, inspected: [], observations: 0 };
+    financialChecks.set(page.tabId, check);
+  }
+  check.domainEvidence = domainEvidence;
+  if (config.reporting && !check.reported && !check.timer) {
+    check.timer = setTimeout(() => {
+      if (financialChecks.get(page.tabId) === check && check.revision === connectionRevision) publishFinancial(page, check);
+    }, 1100);
+  }
+  return check;
+}
+
+function publishFinancial(page, check) {
+  if (!check.timer || check.reported) return;
+  clearTimeout(check.timer);
+  check.timer = null;
+  check.reported = true;
+  const key = check.inspected.find(item => item.kind === 'financial_external_form')?.kind ??
+    check.inspected[0]?.kind ?? check.domainEvidence[0].kind;
+  reporting.report(key.toUpperCase(), 'WARNED', page.documentId, 'FINANCIAL_IMPERSONATION');
+}
+
+async function inspectLogin(page, message) {
+  const check = financialChecks.get(page.tabId);
+  if (!check || verifiedFinancialHost(page.host) || message.id !== check.id || check.documentId !== page.documentId ||
+      check.navigation !== page.navigation || check.revision !== connectionRevision ||
+      check.observations >= 8) return { inspected: false };
+  check.observations++;
+  const key = navigationKey(page.tabId);
+  const { [key]: nav } = await session.get(key);
+  const latest = await currentPage(page.tabId);
+  if (financialChecks.get(page.tabId) !== check || check.revision !== connectionRevision ||
+      !samePage(page, latest)) return { inspected: false };
+  check.inspected = loginEvidence(message.forms, new URL(page.destination.key).origin,
+    check.domainEvidence, nav?.documentId === page.documentId && nav.redirected);
+  publishFinancial(page, check);
+  return { inspected: true, evidence: [...check.domainEvidence, ...check.inspected] };
+}
+
 async function reputationFor(page, config) {
   const revision = page.settingsRevision;
   let result;
@@ -156,10 +212,9 @@ async function reputationFor(page, config) {
   } else {
     await clearBadge(page.tabId);
   }
-  if (config.reporting && impersonation.length && ['no_match', 'unavailable'].includes(result.state)) {
-    reporting.report(impersonation[0].kind.toUpperCase(), 'WARNED', page.documentId);
-  }
-  return withImpersonation(result, impersonation);
+  if (revision !== connectionRevision || navigations.get(page.tabId) !== page.navigation) return { state: 'inactive' };
+  const financial = financialCheck(page, config, result, impersonation);
+  return withImpersonation(result, financial ? [...impersonation, ...financial.inspected] : impersonation);
 }
 
 async function saveConnection(message) {
@@ -178,12 +233,15 @@ async function saveConnection(message) {
 async function pageConfiguration(page) {
   const config = await pageSettings(page);
   const verdict = await reputationFor(page, config);
+  const scan = !verifiedFinancialHost(page.host) && ['no_match', 'unavailable'].includes(verdict.state)
+    ? financialChecks.get(page.tabId)?.id : null;
   if (!config.canMonitor || verdict.state !== 'no_match') {
-    return { active: false, verdict, recheck: config.permitted && verdict.state !== 'inactive' };
+    return { active: false, verdict, scan, recheck: config.permitted && verdict.state !== 'inactive' };
   }
   return {
     active: true,
     verdict,
+    scan,
     sensitivePaths: config.site.sensitivePaths,
     sensitiveFields: config.site.sensitiveFields
   };
@@ -324,6 +382,10 @@ async function handleMessage(message, sender) {
     if (!rules.snapshot()) void synchronizeRules().catch(() => {});
     return protection.message(message.type, sender, message.token);
   }
+  if (message.type === 'LOGIN_STRUCTURE') {
+    const page = await verifiedPage(sender);
+    return page ? inspectLogin(page, message) : { inspected: false };
+  }
   if (message.type === 'PAGE_CONFIGURATION' || message.type === 'TELEMETRY') {
     const page = await verifiedPage(sender);
     if (!page) return { state: 'inactive' };
@@ -350,6 +412,7 @@ chrome.webNavigation.onCommitted.addListener(details => {
   const { tabId, frameId, documentId, transitionQualifiers = [] } = details;
   if (frameId !== 0) return;
   navigations.set(tabId, crypto.randomUUID());
+  discardFinancialCheck(tabId);
   requests.get(tabId)?.controller.abort();
   void clearBadge(tabId).catch(() => {});
   const redirected = transitionQualifiers.includes('server_redirect') || transitionQualifiers.includes('client_redirect');
@@ -361,6 +424,7 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(details => {
   const { tabId, frameId, documentId } = details;
   if (frameId !== 0) return;
   navigations.set(tabId, crypto.randomUUID());
+  discardFinancialCheck(tabId);
   requests.get(tabId)?.controller.abort();
   void clearBadge(tabId).catch(() => {});
   void chrome.tabs.sendMessage(tabId, { type: 'REFRESH_CONFIGURATION' }, { documentId }).catch(() => {});
@@ -369,6 +433,7 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(details => {
 
 chrome.tabs.onRemoved.addListener(tabId => {
   navigations.delete(tabId);
+  discardFinancialCheck(tabId);
   requests.get(tabId)?.controller.abort();
   void session.remove([statusKey(tabId), navigationKey(tabId)]).catch(() => {});
   void protection.remove(tabId).catch(() => {});
@@ -384,6 +449,7 @@ async function refreshOpenPages() {
 
 function invalidateRequests() {
   connectionRevision++;
+  for (const tabId of financialChecks.keys()) discardFinancialCheck(tabId);
   for (const task of requests.values()) task.controller.abort();
 }
 

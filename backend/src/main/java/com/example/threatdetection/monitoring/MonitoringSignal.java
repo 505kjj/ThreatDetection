@@ -13,8 +13,16 @@ public enum MonitoringSignal {
             "The registered domain used Unicode characters resembling a financial brand name."),
     SUBDOMAIN_BRAND(Category.FINANCIAL_IMPERSONATION, Source.FINANCIAL_RULES,
             "A subdomain used a financial brand name under a different registered domain."),
+    SUBDOMAIN_TYPO(Category.FINANCIAL_IMPERSONATION, Source.FINANCIAL_RULES,
+            "A subdomain combined a financial term with a one-character variant of a financial brand."),
     SUBDOMAIN_HOMOGRAPH(Category.FINANCIAL_IMPERSONATION, Source.FINANCIAL_RULES,
             "A subdomain used Unicode characters resembling a financial brand name."),
+    FINANCIAL_PASSWORD_FORM(Category.FINANCIAL_IMPERSONATION, Source.FINANCIAL_RULES,
+            "The browser observed a visible password field on an unverified financial lookalike."),
+    FINANCIAL_PAYMENT_FORM(Category.FINANCIAL_IMPERSONATION, Source.FINANCIAL_RULES,
+            "The browser observed visible card-detail fields on an unverified financial lookalike."),
+    FINANCIAL_EXTERNAL_FORM(Category.FINANCIAL_IMPERSONATION, Source.FINANCIAL_RULES,
+            "The browser observed a credential form with a declared action on an unrelated origin."),
     SUSPICIOUS_BEHAVIOR(Category.SUSPICIOUS_BEHAVIOR, Source.BEHAVIOR_RULES,
             "The activity analysis returned a suspicious-behavior advisory.");
 

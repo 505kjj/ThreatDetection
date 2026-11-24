@@ -12,6 +12,11 @@
   let banner;
   let bannerState;
   let warningExpiry;
+  let scanId;
+  let scanRetry;
+  let lastScanAt = 0;
+  let currentVerdict;
+  let loginReasons = null;
 
   function sensitivePage() {
     const path = location.pathname.toLowerCase();
@@ -68,10 +73,70 @@
   }
 
   function renderVerdict(verdict) {
+    currentVerdict = verdict;
+    if (verdict?.impersonation?.length && verdict.state !== 'confirmed' && loginReasons) {
+      const domainReasons = verdict.impersonation.filter(item => !item.kind.startsWith('financial_'));
+      verdict = { ...verdict, impersonation: [...domainReasons, ...loginReasons] };
+    }
     if (verdict?.state === 'confirmed' || verdict?.state === 'warning' || verdict?.impersonation?.length) {
       showWarning(verdict);
     } else if (verdict?.state !== 'waiting') {
       clearWarning();
+    }
+  }
+
+  function declaredDestination(form, controls) {
+    // A submitter override makes the destination ambiguous without observing a submission.
+    if (controls.some(control => control.hasAttribute('formaction'))) return null;
+    const action = form.getAttribute('action')?.trim();
+    if (!action) return location.origin;
+    if (action.length > 4096) return null;
+    try {
+      const url = new URL(action, document.baseURI);
+      return ['http:', 'https:'].includes(url.protocol) ? url.origin : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function credentialForms() {
+    const observations = [];
+    const forms = document.forms;
+    for (let i = 0; i < Math.min(forms.length, 20) && observations.length < 4; i++) {
+      const form = forms[i];
+      const elements = form.elements;
+      if (!(elements instanceof HTMLFormControlsCollection) || elements.length > 32) continue;
+      const controls = Array.from(elements);
+      let password = false;
+      let cardNumber = false;
+      let cardDetail = false;
+      for (const field of controls) {
+        if (!(field instanceof HTMLInputElement) || !field.hasAttribute('name') ||
+            field.matches(':disabled') || field.readOnly || field.type === 'hidden') continue;
+        const autocomplete = field.autocomplete.toLowerCase().split(/\s+/).at(-1);
+        if (field.type !== 'password' && !['cc-number', 'cc-csc', 'cc-exp', 'cc-exp-month', 'cc-exp-year'].includes(autocomplete)) continue;
+        if (!(field.checkVisibility?.({ visibilityProperty: true, opacityProperty: true }) ?? field.getClientRects().length)) continue;
+        if (field.type === 'password' && autocomplete !== 'new-password') password = true;
+        if (autocomplete === 'cc-number') cardNumber = true;
+        if (['cc-csc', 'cc-exp', 'cc-exp-month', 'cc-exp-year'].includes(autocomplete)) cardDetail = true;
+      }
+      const kind = password ? 'password' : cardNumber && cardDetail ? 'payment' : null;
+      if (kind) observations.push({ kind, destination: declaredDestination(form, controls) });
+    }
+    return observations;
+  }
+
+  async function scanLogin() {
+    if (!scanId || document.hidden || Date.now() - lastScanAt < 750) return;
+    const checking = revision;
+    lastScanAt = Date.now();
+    try {
+      const result = await chrome.runtime.sendMessage({ type: 'LOGIN_STRUCTURE', id: scanId, forms: credentialForms() });
+      if (checking !== revision || !result?.inspected) return;
+      loginReasons = result.evidence.filter(item => item.kind.startsWith('financial_'));
+      if (currentVerdict) renderVerdict(currentVerdict);
+    } catch {
+      // Address evidence is still present when the structural check cannot complete.
     }
   }
 
@@ -135,6 +200,10 @@
   async function refresh() {
     const refreshingRevision = ++revision;
     config = null;
+    scanId = null;
+    loginReasons = null;
+    currentVerdict = null;
+    clearTimeout(scanRetry);
     clearInterval(heartbeat);
     clearWarning();
     clickTimes.length = navigationTimes.length = 0;
@@ -143,6 +212,12 @@
       const next = await chrome.runtime.sendMessage({ type: 'PAGE_CONFIGURATION' });
       if (revision !== refreshingRevision || !next) return;
       renderVerdict(next.verdict);
+      if (next.scan) {
+        scanId = next.scan;
+        void scanLogin();
+        // Cover a common delayed render without observing or polling the whole page.
+        scanRetry = setTimeout(() => void scanLogin(), 1200);
+      }
       if (!next.active) {
         if (next.recheck) {
           heartbeat = setInterval(() => { if (!document.hidden) void refresh(); }, 15000);
@@ -174,6 +249,7 @@
 
   document.addEventListener('focusin', event => {
     const field = event.target;
+    if (scanId && event.isTrusted && field instanceof HTMLInputElement) void scanLogin();
     if (!config || !event.isTrusted || !field?.matches?.('input, textarea, select')) return;
     const attrs = [field.type, field.name, field.autocomplete, field.id].join(' ').toLowerCase();
     if (config.sensitiveFields.some(name => attrs.includes(name.toLowerCase()))) {
@@ -196,6 +272,7 @@
   }
 
   document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) void scanLogin();
     if (!config) {
       if (!document.hidden) void refresh();
       return;

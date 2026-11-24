@@ -20,5 +20,25 @@ export const financialBrands = [
     name: 'Razorpay',
     aliases: ['razorpay'],
     scopes: ['razorpay.com', 'rzp.io']
+  },
+  {
+    name: 'Axis Bank',
+    aliases: ['axisbank'],
+    scopes: ['axis.bank.in', 'axisbank.com', 'axisbank.co.in']
+  },
+  {
+    name: 'Bank of Baroda',
+    aliases: ['bankofbaroda', 'bobworld', 'bobibanking'],
+    scopes: ['bankofbaroda.bank.in', 'bankofbaroda.in', 'bobibanking.com']
+  },
+  {
+    name: 'BHIM',
+    aliases: ['bhimupi', 'bhim'],
+    scopes: ['bhimupi.org.in', 'npci.org.in']
+  },
+  {
+    name: 'PhonePe',
+    aliases: ['phonepe'],
+    scopes: ['phonepe.com']
   }
 ];

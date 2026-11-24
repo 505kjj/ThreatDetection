@@ -127,6 +127,8 @@ The token and snapshot are kept in trusted extension memory for the browser sess
 
 Financial impersonation checks use only the hostname and run locally, including when reputation is unavailable. See the [verified domain registry, decision policy, and evaluation](docs/financial-impersonation.md).
 
+On an unverified financial lookalike, a bounded local check can add credential-form and redirect evidence to the amber advisory. See the [financial login protection rules and evaluation](docs/financial-login-protection.md).
+
 Confirmed host and authorized exact-path indicators can stop navigations before they reach the destination. See the [blocking policy and verification](docs/browser-protection.md).
 
 Open `/monitor` on the backend to sign into the threat dashboard as an administrator. In extension **Settings**, opt in to **Share threat detections with this backend** to send event categories, actions and protection status without sending any site address. See [setup, API, fixture isolation, and retention](docs/threat-dashboard.md).

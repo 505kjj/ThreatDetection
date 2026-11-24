@@ -134,7 +134,7 @@ async function worker(response, feed = () => json(snapshot())) {
 const json = (value, status = 200) => new Response(JSON.stringify(value), { status });
 
 async function waitFor(predicate) {
-  for (let attempt = 0; attempt < 80; attempt++) {
+  for (let attempt = 0; attempt < 180; attempt++) {
     if (await predicate()) return;
     await new Promise(resolve => setTimeout(resolve, 10));
   }
@@ -193,6 +193,31 @@ test('a dashboard failure leaves financial advisory decisions intact and opt-out
   state.handlers.history({ frameId: 0, tabId: 1, documentId: 'current-1' });
   assert.ok((await state.status()).impersonation.length);
   assert.equal(state.calls.length, before);
+});
+
+test('structural evidence and telemetry stay bound to an eligible top document', async t => {
+  const state = await worker(() => new Response(null, { status: 204 }));
+  t.after(state.restore);
+  await state.save(defaultOrigin, token);
+  await state.message({ type: 'SET_THREAT_REPORTING', enabled: true }, state.options);
+  state.frames[1].url = 'https://sbi.bank.in.example.org/private';
+  const page = await state.message({ type: 'PAGE_CONFIGURATION' });
+  assert.ok(page.scan);
+  const message = { type: 'LOGIN_STRUCTURE', id: page.scan,
+    forms: [{ kind: 'password', destination: 'https://forms.example.net' }] };
+  assert.deepEqual(await state.message(message, { ...state.sender(), frameId: 3 }), { inspected: false });
+  assert.deepEqual(await state.message(message, state.sender(2)), { inspected: false });
+  const inspected = await state.message(message);
+  assert.ok(inspected.evidence.some(item => item.kind === 'financial_external_form'));
+  const events = () => state.calls.filter(call => call.url.endsWith('/monitoring/events'));
+  await waitFor(() => events().length === 1);
+  assert.equal(events()[0].body.signal, 'FINANCIAL_EXTERNAL_FORM');
+  assert.doesNotMatch(JSON.stringify(events()[0].body), /forms\.example\.net|private/);
+  assert.ok((await state.status()).impersonation.some(item => item.kind === 'financial_password_form'));
+  state.handlers.history({ frameId: 0, tabId: 1, documentId: 'current-1' });
+  assert.deepEqual(await state.message(message), { inspected: false });
+  assert.equal((await state.status()).impersonation.some(item => item.kind.startsWith('financial_')), false);
+  assert.equal(events().length, 1);
 });
 
 test('the connection check is private to Settings and distinguishes authentication from a missing snapshot', async t => {
