@@ -152,6 +152,26 @@ def profile(score, rows, uses_dom):
             for name, values in stages.items()}
 
 
+def control_support(rows, scores, cutoffs):
+    controls = {"password-field": "inputs_password", "payment-field-metadata": "inputs_payment",
+                "cross-origin-form": "actions_external", "external-frame": "iframe_external"}
+    operating_points = {"fixed": 0.5, **{key: result["threshold"] for key, result in cutoffs.items()}}
+    summary = {}
+    for name, field in controls.items():
+        indices = [i for i, row in enumerate(rows) if row["label"] == 0 and row["dom"][field] > 0]
+        domains = {rows[i]["identity"]["group"] for i in indices}
+        alerts = {}
+        for key, threshold in operating_points.items():
+            if threshold is None:
+                alerts[key] = None
+                continue
+            flagged = [i for i in indices if scores[i] >= threshold]
+            flagged_domains = {rows[i]["identity"]["group"] for i in flagged}
+            alerts[key] = {"urls": len(flagged), "domains": len(flagged_domains)}
+        summary[name] = {"urls": len(indices), "domains": len(domains), "alerts": alerts}
+    return summary
+
+
 def run(cohort, output, projections, size):
     pools, audit = load_matched(cohort, projections)
     train = balanced(pools["train"], size)
@@ -159,6 +179,10 @@ def run(cohort, output, projections, size):
         raise ValueError("Tuning, calibration and validation require both labels")
     tuning, cal, evaluation = (pools[name] for name in VIEWS[1:])
     output.mkdir(mode=0o700)
+    membership = output / "membership.json"
+    views = {"train": train, "tuning": tuning, "calibration": cal, "validation": evaluation}
+    with membership.open("x", encoding="utf-8") as stream:
+        json.dump({part: [row["id"] for row in rows] for part, rows in views.items()}, stream, indent=2)
     models = {}
     functions = {}
     with threadpool_limits(limits=2):
@@ -173,13 +197,23 @@ def run(cohort, output, projections, size):
                 score, fit = fit_dom(label, train, destination)
             functions[label] = score
             models[label] = {"fit": fit}
-        fusion_start = perf_counter()
-        first, second = functions["url-ngram"], functions["url-xgboost"]
-        scale_a, scale_b = platt(labels(tuning), first(tuning)), platt(labels(tuning), second(tuning))
-        functions["url-fusion"] = lambda rows: blend(probability(scale_a, first(rows)),
-                                                     probability(scale_b, second(rows)), 0.75)
-        models["url-fusion"] = {"fit": {"fitSeconds": perf_counter() - fusion_start, "referenceWeight": 0.75,
-            "componentModelBytes": sum(models[key]["fit"]["modelBytes"] for key in ("url-ngram", "url-xgboost"))}}
+        first = functions["url-ngram"]
+        start = perf_counter()
+        scale_a = platt(labels(tuning), first(tuning))
+        reference_seconds = perf_counter() - start
+        for label, partner in (("url-fusion", "url-xgboost"), ("url-dom-fusion", "dom-xgboost")):
+            start = perf_counter()
+            second = functions[partner]
+            scale_b = platt(labels(tuning), second(tuning))
+            functions[label] = lambda rows, second=second, scale_b=scale_b: blend(
+                probability(scale_a, first(rows)), probability(scale_b, second(rows)), 0.75)
+            models[label] = {"fit": {"fitSeconds": reference_seconds + perf_counter() - start,
+                "referenceWeight": 0.75, "componentModelBytes": sum(
+                    models[key]["fit"]["modelBytes"] for key in ("url-ngram", partner)),
+                "componentScales": {
+                    name: {"coefficient": float(scale.coef_[0, 0]), "intercept": float(scale.intercept_[0])}
+                    for name, scale in (("url-ngram", scale_a), (partner, scale_b))
+                }}}
 
         cal_scores = {name: np.asarray(score(cal), dtype=np.float64) for name, score in functions.items()}
         eval_scores = {name: np.asarray(score(evaluation), dtype=np.float64) for name, score in functions.items()}
@@ -192,7 +226,7 @@ def run(cohort, output, projections, size):
     comparisons = {}
     y = labels(evaluation)
     for reference in ("url-ngram", "url-xgboost", "url-fusion"):
-        for candidate in ("dom-xgboost", "url-dom-xgboost"):
+        for candidate in ("dom-xgboost", "url-dom-xgboost", "url-dom-fusion"):
             name = f"{reference}+{candidate}"
             points = {"fixed": (0.5, 0.5)}
             points.update({target: (models[reference]["thresholds"][target]["threshold"],
@@ -203,11 +237,17 @@ def run(cohort, output, projections, size):
                 "pairedRecall": paired_recall(evaluation, eval_scores[candidate], second_cut,
                                               eval_scores[reference], first_cut)
             } for target, (first_cut, second_cut) in points.items()}
+    signature = lambda row: tuple(row["dom"][feature] for feature in FEATURES)
+    training_signatures = {signature(row) for row in train}
     report = {"schema": SCHEMA["version"], "schemaSha256": sha256((HERE / "feature-schema.json").read_bytes()
               .replace(b"\r\n", b"\n")).hexdigest(), "audit": audit, "rows": size,
-              "identities": {part: ids_sha256(train if part == "train" else pools[part]) for part in VIEWS},
+              "identities": {part: ids_sha256(rows) for part, rows in views.items()},
+              "membershipSha256": hash_file(membership),
               "usable": {part: {"rows": len(rows), "positive": int(labels(rows).sum())} for part, rows in pools.items()},
-              "models": models, "incrementalDetection": comparisons}
+              "models": models, "incrementalDetection": comparisons,
+              "validationRowsWithMatchingTrainingDomVector": sum(signature(row) in training_signatures for row in evaluation),
+              "observedBenignStructures": {name: control_support(evaluation, eval_scores[name], models[name]["thresholds"])
+                                           for name in ("url-fusion", "dom-xgboost", "url-dom-xgboost", "url-dom-fusion")}}
     (output / "results.json").write_text(json.dumps(report, indent=2, allow_nan=False) + "\n", encoding="utf-8")
 
 

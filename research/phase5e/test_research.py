@@ -5,6 +5,8 @@ import numpy as np
 from acquire import ContentRanges, Remaining
 from compare import FEATURES, model_input
 from freeze_url import apply_fusion
+from sensitivity import vector
+from shared import SEED
 
 
 class OfflineResearchTests(unittest.TestCase):
@@ -28,3 +30,7 @@ class OfflineResearchTests(unittest.TestCase):
         fusion = {"components": {"ngram": 0.75, "xgboost": 0.25},
                   "probabilityScales": {name: {"coefficient": 1, "intercept": 0} for name in scores}}
         np.testing.assert_allclose(apply_fusion(scores, fusion), [0.35, 0.65])
+
+    def test_sensitivity_vector_preserves_schema_order_without_neural_imports(self):
+        self.assertEqual(SEED, 143)
+        self.assertEqual(vector({"dom": dict.fromkeys(FEATURES, 2)}), (2,) * len(FEATURES))

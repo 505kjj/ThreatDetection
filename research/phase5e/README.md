@@ -30,6 +30,7 @@ as the requested balanced training capacity has been reached.
 ```powershell
 & $py $g --metrics "$d/projection-20k-resources.json" -- $py research/phase5e/acquire.py $old "$d/html-20k" --target-train 20000 --reuse "$d/html-pilot" --budget-bytes 14000000000
 & $py $g --metrics "$d/model-20k-resources.json" -- $py research/phase5e/compare.py "$old/cohort" "$d/model-20k" 20000 --projections "$d/html-pilot" "$d/html-20k"
+& $py $g --metrics "$d/sensitivity-resources.json" -- $py research/phase5e/sensitivity.py "$old/cohort" "$d/model-20k" "$d/sensitivity.json" --projections "$d/html-pilot" "$d/html-20k"
 ```
 
 Use the resulting per-shard receipts, domain support, transfer rate
@@ -38,6 +39,8 @@ feasible. The scaler accepts both previous projection directories with
 `--reuse` and stops when capacity or its transfer ceiling is reached.
 Derived features and checkpoints remain private. The parser consumes an
 in-memory stream of bounded documents and writes numeric records only.
+Each new matched comparison records the ordered stable IDs for training,
+tuning, calibration and validation in its private membership receipt.
 
 For independent validation, the freeze receipt provides hashes for the
 five saved models, the fusion coefficients and each model's original

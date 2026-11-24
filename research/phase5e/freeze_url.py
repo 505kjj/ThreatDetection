@@ -81,6 +81,10 @@ def apply_fusion(scores, manifest):
 
 
 def restore_candidate(experiments, manifest, name):
+    if (manifest["revision"] != D_REVISION
+            or manifest["sourceReportSha256"] != repository_hash(str(REPORT.relative_to(ROOT)))
+            or manifest["preprocessingSha256"] != {key: repository_hash(key) for key in PREPROCESSING}):
+        raise ValueError("Frozen URL preprocessing or source report differs")
     item = manifest["models"][name]
     if name == "fusion":
         parts = {key: restore_candidate(experiments, manifest, key) for key in item["components"]}
