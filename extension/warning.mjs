@@ -5,6 +5,7 @@ let latest;
 function render(record) {
   latest = record;
   const active = record?.active === true && record.until > Date.now();
+  document.body.classList.toggle('confirmed', active);
   byId('headline').textContent = active
     ? record.phase === 'before_request' ? 'Known threat blocked' : 'Known threat detected'
     : 'Protection unavailable';
@@ -18,7 +19,8 @@ function render(record) {
       : 'This tab was moved away after navigation began. The destination may have already loaded.'
     : 'The extension could not verify a current threat match for this warning.';
   const reasons = active ? [record.kind === 'HOST' ? 'The hostname matched current threat intelligence.'
-    : 'The exact URL path matched current threat intelligence.',
+    : record.kind === 'URL_SHA256' ? 'The address matched a fingerprint in the active reputation snapshot.'
+      : 'The exact URL path matched current threat intelligence.',
   record.threat === 'PHISHING' ? 'Reported threat: phishing.' : 'Reported threat: malware.',
   ...record.impersonation.map(item => item.reason)] : [];
   byId('evidence').hidden = reasons.length === 0;

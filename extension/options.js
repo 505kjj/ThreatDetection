@@ -149,13 +149,11 @@ function openEditor(site) {
   byId('editDomain').value = site.domain;
   byId('editPaths').value = site.sensitivePaths.join('\n');
   byId('editFields').value = site.sensitiveFields.join(', ');
-  byId('editModal').style.display = 'flex';
-  byId('editPaths').focus();
+  byId('editModal').showModal();
 }
 
 function closeEditor() {
-  editingDomain = null;
-  byId('editModal').style.display = 'none';
+  byId('editModal').close();
 }
 
 byId('saveConnection').addEventListener('click', async () => {
@@ -238,6 +236,7 @@ byId('newDomain').addEventListener('keydown', event => {
 
 byId('modalClose').addEventListener('click', closeEditor);
 byId('modalCancel').addEventListener('click', closeEditor);
+byId('editModal').addEventListener('close', () => { editingDomain = null; });
 byId('modalSave').addEventListener('click', async () => {
   if (!editingDomain) return;
   const split = (value, separator) => value.split(separator).map(item => item.trim()).filter(Boolean);
@@ -269,6 +268,12 @@ byId('resetDefaults').addEventListener('click', async () => {
   byId('browserToken').value = '';
   await Promise.all([loadConnection(), renderSites(), renderMonitoring(), renderReporting()]);
   announce('Settings reset.');
+});
+
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area !== 'local' || !changes.monitoringEnabled) return;
+  byId('reputationStatus').textContent = changes.monitoringEnabled.newValue === false ? 'Browser protection is paused.' : '';
+  void Promise.all([renderMonitoring(), renderReporting()]).catch(() => announce('Could not refresh protection status.'));
 });
 
 Promise.all([loadConnection(), renderSites(), renderMonitoring(), renderReporting()])

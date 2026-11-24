@@ -46,8 +46,10 @@ public class ApiSecurityConfig {
                 .authorizeHttpRequests(routes -> routes
                         .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/health", "/api/threat/health").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/monitor", "/monitor.css", "/monitor.js").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/threat/monitoring/dashboard").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/monitor", "/monitor.css", "/monitor.js",
+                                "/monitor/theme.css", "/monitor/icons/mark.svg", "/monitor/fonts/inter-latin.woff2").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/threat/monitoring/dashboard",
+                                "/api/threat/monitoring/research-summary").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/threat/monitoring/heartbeat",
                                 "/api/threat/monitoring/events").hasRole("BROWSER")
                         .requestMatchers(HttpMethod.GET, "/api/threat/reputation/snapshot").hasRole("BROWSER")

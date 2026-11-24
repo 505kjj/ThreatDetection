@@ -3,85 +3,247 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Threat monitoring | ThreatDetection</title>
+  <title>ThreatDetection | Security console</title>
+  <link rel="icon" href="/monitor/icons/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/monitor/theme.css">
   <link rel="stylesheet" href="/monitor.css">
   <script type="module" src="/monitor.js"></script>
 </head>
 <body>
+  <svg class="symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s7-3 7-9V5l-7-3-7 3v8c0 6 7 9 7 9Z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6 8a7 7 0 0 1 12-2l2 6M4 12l2 6a7 7 0 0 0 12-2"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1 1m12 12 1 1m0-14-1 1M6 18l-1 1"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-radar" viewBox="0 0 24 24"><path d="M12 12 19 5m-2 7a5 5 0 1 1-5-5m9 5a9 9 0 1 1-9-9"/><circle cx="12" cy="12" r="1"/></symbol>
+    <symbol id="i-browser" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18m-14-2h1"/></symbol>
+    <symbol id="i-pulse" viewBox="0 0 24 24"><path d="M2 12h5l3-7 4 14 3-7h5"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 4v3"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 6h6m4 0h6M4 12h11m4 0h1M4 18h2m4 0h10"/><circle cx="12" cy="6" r="2"/><circle cx="17" cy="12" r="2"/><circle cx="8" cy="18" r="2"/></symbol>
+    <symbol id="i-bank" viewBox="0 0 24 24"><path d="M3 9h18L12 3 3 9Zm2 12h14M7 12v5m5-5v5m5-5v5"/></symbol>
+    <symbol id="i-lab" viewBox="0 0 24 24"><path d="M9 3h6m-5 0v7l-5 8a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-8V3m-7 13h10"/></symbol>
+    <symbol id="i-data" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 4 16 4 16 0V5M4 12c0 4 16 4 16 0"/></symbol>
+    <symbol id="i-sidebar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16m7-11-3 3 3 3"/></symbol>
+  </svg>
+  <a href="#sign-in-title" id="skip-content" class="skip">Skip to content</a>
   <header class="masthead">
-    <div class="shell masthead-inner">
-      <span class="product"><span class="mark" aria-hidden="true"></span>ThreatDetection</span>
-      <span id="backend-state" class="badge" role="status">Signed out</span>
+    <div class="masthead-inner">
+      <div class="wordmark"><span class="mark"><svg aria-hidden="true"><use href="#i-shield"/></svg></span>ThreatDetection</div>
+      <div class="header-actions">
+        <span id="backend-state" class="status" role="status">Signed out</span>
+        <button id="theme" class="icon-button" type="button" aria-label="Use light appearance" title="Switch appearance" aria-pressed="false"><svg aria-hidden="true"><use href="#i-sun"/></svg></button>
+      </div>
     </div>
   </header>
-  <main class="shell">
-    <div class="intro">
-      <h1>Threat monitoring</h1>
-      <p>Review detections shared by browsers that opted in.</p>
-    </div>
-    <section id="sign-in" class="panel sign-in" aria-labelledby="sign-in-title">
-      <h2 id="sign-in-title">Administrator access</h2>
-      <p>Use the admin token issued for this backend. The token is cleared when you sign out or reload.</p>
-      <form id="token-form" autocomplete="off">
-        <label for="token">Admin token</label>
-        <input id="token" type="password" spellcheck="false" autocomplete="off" maxlength="43" required>
-        <button type="submit" id="sign-in-button">Sign in</button>
-      </form>
-      <p id="sign-in-error" class="error" role="alert" hidden></p>
-    </section>
-    <section id="dashboard" aria-label="Threat dashboard" hidden>
-      <div class="toolbar">
-        <div class="scopes" role="group" aria-label="Event source">
-          <button id="real" type="button" aria-pressed="true">Live reports</button>
-          <button id="synthetic" type="button" aria-pressed="false">Synthetic fixtures</button>
-        </div>
-        <div class="controls">
-          <button id="refresh" class="quiet" type="button">Refresh</button>
-          <button id="sign-out" class="quiet" type="button">Sign out</button>
-        </div>
+  <main id="main" tabindex="-1">
+    <section id="sign-in" class="login-layout" aria-labelledby="sign-in-title">
+      <div class="login-intro">
+        <span class="eyebrow"><span class="signal-dot"></span> Security operations</span>
+        <p class="tagline"><span>Detect.</span> <span>Defend.</span> <span>Protect.</span></p>
+        <p class="muted">Review reported threats, browser protection availability and security events from one console.</p>
       </div>
-      <p id="scope-notice" class="fixture-notice" hidden><strong>Synthetic test data.</strong> These detections came from a configured test browser.</p>
-      <p id="load-state" class="panel state" role="status" hidden></p>
-      <div id="snapshot" hidden>
-        <div class="status-strip">
-          <div>
-            <h2>Extension connection</h2>
-            <p id="extension-state"></p>
+      <div class="panel sign-in">
+        <span class="mark login-mark"><svg aria-hidden="true"><use href="#i-shield"/></svg></span>
+        <h1 id="sign-in-title" tabindex="-1">Administrator access</h1>
+        <p class="muted">Sign in with the administrator token issued for this backend.</p>
+        <form id="token-form" autocomplete="off">
+          <label for="token">Administrator token</label>
+          <div class="token-field">
+            <input id="token" type="password" spellcheck="false" autocapitalize="none" autocomplete="off" maxlength="43" required aria-describedby="token-help">
+            <button id="show-token" class="icon-button" type="button" aria-label="Show token" aria-pressed="false"><svg aria-hidden="true"><use href="#i-eye"/></svg></button>
           </div>
-          <div>
-            <h2>Reputation protection</h2>
-            <p id="reputation-state"></p>
-          </div>
-          <div>
-            <h2>Last successful heartbeat</h2>
-            <p id="last-contact"></p>
+          <button class="primary" type="submit" id="sign-in-button">Sign in <svg aria-hidden="true"><use href="#i-arrow"/></svg></button>
+        </form>
+        <p id="sign-in-error" class="error" role="alert" hidden></p>
+        <p id="token-help" class="muted token-help">Your token stays in memory for this session.</p>
+      </div>
+    </section>
+    <section id="dashboard" class="workspace" aria-label="Threat dashboard" hidden>
+      <nav class="rail" aria-label="Workspace">
+        <button id="rail-density" class="rail-toggle" type="button" aria-pressed="false"><svg aria-hidden="true"><use href="#i-sidebar"/></svg><span>Compact navigation</span></button>
+        <button id="nav-overview" type="button" aria-current="page" title="Overview"><svg aria-hidden="true"><use href="#i-grid"/></svg><span>Overview</span></button>
+        <button id="nav-threats" type="button" title="Threat Centre"><svg aria-hidden="true"><use href="#i-target"/></svg><span>Threat Centre</span></button>
+        <button id="nav-intelligence" type="button" title="Threat Intelligence"><svg aria-hidden="true"><use href="#i-radar"/></svg><span>Threat Intelligence</span></button>
+        <button id="nav-financial" type="button" title="Financial Protection"><svg aria-hidden="true"><use href="#i-bank"/></svg><span>Financial Protection</span></button>
+        <button id="nav-ml" type="button" title="ML Laboratory"><svg aria-hidden="true"><use href="#i-lab"/></svg><span>ML Laboratory</span></button>
+        <button id="nav-visual" type="button" title="Visual Intelligence"><svg aria-hidden="true"><use href="#i-eye"/></svg><span>Visual Intelligence</span></button>
+        <button id="nav-datasets" type="button" title="Dataset Laboratory"><svg aria-hidden="true"><use href="#i-data"/></svg><span>Dataset Laboratory</span></button>
+        <button id="nav-browsers" type="button" title="Connected Browsers"><svg aria-hidden="true"><use href="#i-browser"/></svg><span>Connected Browsers</span></button>
+        <button id="nav-health" type="button" title="System Health"><svg aria-hidden="true"><use href="#i-pulse"/></svg><span>System Health</span></button>
+        <button id="nav-privacy" type="button" title="Privacy Centre"><svg aria-hidden="true"><use href="#i-lock"/></svg><span>Privacy Centre</span></button>
+        <button id="nav-settings" type="button" title="Settings"><svg aria-hidden="true"><use href="#i-settings"/></svg><span>Settings</span></button>
+      </nav>
+      <div class="page" id="workspace-page">
+        <div class="page-heading">
+          <div><p class="eyebrow">Monitoring console</p><h1 id="page-title" tabindex="-1">Security overview</h1><p id="page-description" class="muted">Reports from browsers that opted in to monitoring.</p></div>
+          <div class="controls">
+            <button id="refresh" type="button" class="quiet"><svg aria-hidden="true"><use href="#i-refresh"/></svg> Refresh</button>
+            <button id="sign-out" type="button" class="quiet">Sign out</button>
           </div>
         </div>
-        <div class="metrics">
-          <div class="panel metric"><span>Total detections</span><strong id="total">0</strong></div>
-          <div class="panel metric blocked"><span>Blocked</span><strong id="blocked">0</strong></div>
-          <div class="panel metric warned"><span>Warned</span><strong id="warned">0</strong></div>
-          <div class="panel metric"><span>Bypassed</span><strong id="bypassed">0</strong></div>
+        <div class="toolbar" id="report-toolbar">
+          <div class="scopes" role="group" aria-label="Reporting scope">
+            <button id="real" type="button" aria-pressed="true">Live reports</button>
+            <button id="synthetic" type="button" aria-pressed="false">Synthetic fixtures</button>
+          </div>
+          <span id="retention" class="muted"></span>
         </div>
-        <div class="details">
-          <section class="panel breakdown" aria-labelledby="categories-title">
-            <h2 id="categories-title">Threat categories</h2>
-            <dl id="categories"></dl>
-            <p id="retention" class="muted"></p>
+        <p id="scope-notice" class="fixture-notice" hidden><strong>Synthetic test data.</strong> These detections came from a configured test browser.</p>
+        <p id="load-state" class="panel state" role="status" hidden></p>
+        <div id="report-placeholder" class="report-placeholder" aria-hidden="true" hidden>
+          <div class="metrics"><div class="panel skeleton"></div><div class="panel skeleton"></div><div class="panel skeleton"></div><div class="panel skeleton"></div></div>
+          <div class="details analytics"><div class="panel skeleton skeleton-chart"></div><div class="panel skeleton skeleton-chart"></div></div>
+        </div>
+        <div id="snapshot" hidden>
+          <p id="report-arrival" class="sr-only" role="status"></p>
+          <section id="overview" aria-labelledby="page-title">
+            <div class="metrics">
+              <div class="panel metric"><span class="metric-label"><svg aria-hidden="true"><use href="#i-pulse"/></svg>Total detections</span><strong id="total" class="sr-only"></strong><div class="metric-value" aria-hidden="true"><strong id="total-visual"></strong></div><small>Reported blocks and advisories</small></div>
+              <div class="panel metric blocked"><span class="metric-label"><svg aria-hidden="true"><use href="#i-shield"/></svg>Confirmed blocks</span><strong id="blocked" class="sr-only"></strong><div class="metric-value" aria-hidden="true"><strong id="blocked-visual"></strong></div><small>Reported interrupted navigations</small></div>
+              <div class="panel metric warned"><span class="metric-label"><svg aria-hidden="true"><use href="#i-target"/></svg>Suspicious advisories</span><strong id="warned" class="sr-only"></strong><div class="metric-value" aria-hidden="true"><strong id="warned-visual"></strong></div><small>Reported warning events</small></div>
+              <div class="panel metric"><span class="metric-label"><svg aria-hidden="true"><use href="#i-arrow"/></svg>Recorded bypasses</span><strong id="bypassed" class="sr-only"></strong><div class="metric-value" aria-hidden="true"><strong id="bypassed-visual"></strong></div><small>Counted separately from detections</small></div>
+            </div>
+            <div class="details analytics">
+              <section class="panel" aria-labelledby="activity-title">
+                <div class="section-heading"><h2 id="activity-title">Detection activity</h2><span class="chart-tag">Recent sample</span></div>
+                <p class="muted chart-note">UTC days in the latest 20 reported events, excluding bypasses.</p>
+                <div class="chart-frame">
+                  <div id="activity-chart" class="activity-chart"></div>
+                  <p id="activity-tooltip" class="chart-tooltip" aria-hidden="true" hidden></p>
+                </div>
+              </section>
+              <section class="panel breakdown" aria-labelledby="categories-title">
+                <div class="section-heading"><h2 id="categories-title">Threat categories</h2><span class="chart-tag">Retention window</span></div>
+                <div class="chart-frame">
+                  <div class="category-layout"><div id="category-chart"></div><dl id="categories"></dl></div>
+                  <p id="category-tooltip" class="chart-tooltip" aria-hidden="true" hidden></p>
+                </div>
+              </section>
+            </div>
+            <div class="details secondary">
+              <section class="panel" aria-labelledby="source-title">
+                <div class="section-heading"><h2 id="source-title">Detection sources</h2><span class="chart-tag">Recent sample</span></div>
+                <div id="source-chart" class="source-chart"></div>
+              </section>
+              <section class="panel status-panel" aria-labelledby="protection-title">
+                <h2 id="protection-title">Protection availability</h2>
+                <dl class="status-list">
+                  <div><dt>Extension connection</dt><dd id="extension-state"></dd></div>
+                  <div><dt>Reputation protection</dt><dd id="reputation-state"></dd></div>
+                  <div><dt>Last successful heartbeat</dt><dd id="last-contact"></dd></div>
+                </dl>
+              </section>
+            </div>
           </section>
-          <section class="panel history" aria-labelledby="history-title">
-            <h2 id="history-title">Recent detections</h2>
-            <p id="empty-history" class="muted" hidden>No events reported for this view.</p>
-            <div class="table-shell" id="history-table">
+          <section id="threats" class="panel history" aria-labelledby="history-title">
+            <div class="section-heading"><h2 id="history-title">Recent detections</h2><span class="muted">Up to 20 latest reported events</span></div>
+            <form id="event-filters" class="filters" role="search" aria-label="Recent event filters" hidden>
+              <label class="filter-search">Search events<input id="event-search" type="search" maxlength="120" placeholder="Category, source or evidence"></label>
+              <label>Category<select id="filter-category" aria-label="Category"><option value="">All categories</option></select></label>
+              <label>Severity<select id="filter-severity" aria-label="Severity"><option value="">All severities</option></select></label>
+              <label>Action<select id="filter-action" aria-label="Action"><option value="">All actions</option></select></label>
+              <label>Source<select id="filter-source" aria-label="Source"><option value="">All sources</option></select></label>
+              <label>Date (UTC)<input id="filter-day" type="date"></label>
+              <button id="clear-filters" type="button">Clear filters</button>
+              <p id="filter-count" class="muted" aria-live="polite"></p>
+            </form>
+            <p id="empty-history" class="muted" hidden>No events reported for this view. Reporting is optional.</p>
+            <div class="table-shell" id="history-table" tabindex="0" role="region" aria-label="Reported events">
               <table>
-                <thead><tr><th scope="col">Detection</th><th scope="col">Action</th><th scope="col">Evidence</th></tr></thead>
+                <thead><tr><th scope="col" aria-sort="descending"><button class="sort" type="button" data-sort="detectedAt">Detection</button></th><th scope="col"><button class="sort" type="button" data-sort="action">Action</button></th><th scope="col" class="event-evidence"><button class="sort" type="button" data-sort="source">Evidence</button></th><th scope="col">Inspect</th></tr></thead>
                 <tbody id="history"></tbody>
               </table>
             </div>
           </section>
         </div>
+        <section class="details service-view" id="intelligence" aria-labelledby="page-title" hidden>
+          <div class="panel"><h2>Managed reputation</h2><p class="muted" id="feed-message" role="status"></p><dl id="feed-details" class="status-list"></dl></div>
+          <div class="panel"><h2>How protection is applied</h2><p>A reputation match can confirm phishing or malware. The browser reports whether reputation protection is available in its latest heartbeat.</p><p class="muted">Financial lookalikes and suspicious activity generate advisories. Machine learning and visual recognition are research features and are disabled in browser protection.</p></div>
+        </section>
+        <section class="details service-view" id="browsers" aria-labelledby="page-title" hidden>
+          <div class="panel"><h2>Recent reporting activity</h2><dl id="browser-report" class="status-list"></dl></div>
+          <div class="panel"><h2>Reporting coverage</h2><p class="muted">Opted-in browser credentials are counted in aggregate while their heartbeat is fresh. An expired heartbeat can indicate a browser that closed, opted out or lost its connection. Device identities are unavailable.</p></div>
+        </section>
+        <p id="research-state" class="panel state" role="status" hidden></p>
+        <section class="research-view" id="financial" aria-labelledby="page-title" hidden>
+          <div class="details service-view">
+            <div class="panel"><h2>Address signals</h2><p>Name lookalikes, typosquatting, Unicode and punycode, and misleading subdomains can trigger a local advisory.</p></div>
+            <div class="panel"><h2>Additional context</h2><p>Visible credential or payment fields, cross-origin form actions and redirects can strengthen an advisory. Visual recognition remains disabled.</p></div>
+          </div>
+          <section id="brand-cards" class="brand-cards" aria-label="Verified financial registry"></section>
+        </section>
+        <section class="research-view" id="ml" aria-labelledby="page-title" hidden>
+          <div class="panel"><h2>Fixed URL and DOM fusion</h2><p id="ml-lead" class="muted"></p>
+            <dl id="ml-metrics" class="status-list"></dl>
+          </div>
+          <div class="panel">
+            <div class="section-heading"><h2>Architecture explorer</h2><div class="preference"><label for="architecture-model">Model</label><select id="architecture-model"><option value="fusion">Fixed URL and DOM fusion</option><option value="cnn">Character CNN</option><option value="transformer">Lightweight Transformer</option></select></div></div>
+            <p class="muted">Illustration of the offline research pipeline.</p>
+            <ol id="architecture-steps" class="research-flow"></ol>
+            <p id="architecture-detail" class="diagram-detail" role="status"></p>
+          </div>
+          <div class="panel">
+            <h2>Experiment comparisons</h2>
+            <fieldset class="experiment-controls" id="ml-controls" aria-label="Comparison controls" disabled>
+              <div><label for="ml-experiment">Cohort</label><select id="ml-experiment"></select></div>
+              <div><label for="ml-cutoff">Operating point</label><select id="ml-cutoff"></select></div>
+              <div><label for="ml-metric">Metric</label><select id="ml-metric"></select></div>
+            </fieldset>
+            <p id="ml-cohort" class="muted" role="status"></p><div id="ml-models" class="source-chart" role="list" aria-label="Model comparison"></div>
+          </div>
+          <div class="details service-view">
+            <div class="panel"><h2>Research model registry</h2><p>Phases 3–5 evaluated numerical logistic regression, random forest, XGBoost, character TF-IDF, character CNN, Transformers, URL-only ensembles, and DOM models. Fusion candidates include fixed weights, logistic stacking and adaptive routing.</p><p id="ml-resources" class="muted"></p></div>
+            <div class="panel"><h2>Phase 5G readiness</h2><p id="ml-ready"></p><p id="ml-frozen" class="muted"></p><p>Independent evaluation needs dated, rights-cleared URL and paired captures under separate custody. Browser ML warnings, blocking and shadow testing are disabled.</p></div>
+          </div>
+        </section>
+        <section class="research-view" id="datasets" aria-labelledby="page-title" hidden>
+          <div class="details service-view">
+            <div class="panel"><h2>UCI PhiUSIIL</h2><p>CC BY 4.0. The published research release contains 235,795 author-labeled URLs. Per-URL observation dates and campaign identifiers were unavailable.</p></div>
+            <div class="panel"><h2>PhreshPhish v1.0.1</h2><p>CC BY 4.0. Pinned publisher training captures supplied paired development data. Publisher test labels were previously accessed, so independent custody is unverified.</p></div>
+            <div class="panel"><h2>PhishVN</h2><p id="phishvn-summary"></p></div>
+            <div class="panel"><h2>Other audited sources</h2><p>PhiShark requires an approved data-use agreement. PhishTrap has unresolved upstream rights and proxy negatives. CompPhish overlaps the PhreshPhish collection period.</p></div>
+          </div>
+          <div class="panel"><h2>PhreshPhish development partitions</h2>
+            <ol id="dataset-steps" class="research-flow"></ol>
+            <p id="dataset-detail" class="diagram-detail" role="status"></p>
+            <dl id="dataset-splits" class="status-list"></dl><p id="dataset-caveat" class="muted"></p>
+            <p>Phase 5D separately tested temporal generalization. Phase 5G forward testing still requires an eligible independent cohort and confirmed financial evidence.</p>
+          </div>
+        </section>
+        <section class="research-view" id="visual" aria-labelledby="page-title" hidden>
+          <div class="panel"><h2>Phase 6A controlled crop benchmark</h2><p id="visual-scope" class="muted"></p>
+            <ol id="visual-steps" class="research-flow"></ol>
+            <p id="visual-detail" class="diagram-detail" role="status"></p>
+            <div id="visual-methods" class="source-chart"></div>
+          </div>
+          <div class="details service-view">
+            <div class="panel"><h2>Similarity methods</h2><p>pHash compares coarse image fingerprints. ORB matches local keypoints. MobileNetV3 compares image embeddings. Sparse or closely competing evidence can produce unavailable or ambiguous outcomes.</p></div>
+            <div class="panel"><h2>Browser readiness</h2><p id="visual-ready"></p><p>Automatic logo location is unimplemented. Production visual protection is disabled.</p></div>
+          </div>
+        </section>
+        <section class="details service-view" id="health" aria-labelledby="page-title" hidden>
+          <div class="panel"><h2>Administrative API checks</h2><dl class="status-list"><div><dt>Spring Boot backend</dt><dd id="health-backend"></dd></div><div><dt>Monitoring storage</dt><dd id="health-storage"></dd></div><div><dt>Administrator access</dt><dd id="health-auth"></dd></div><div><dt>Managed reputation</dt><dd id="health-feed"></dd></div></dl></div>
+          <div class="panel"><h2>Reporting checks</h2><dl id="health-report" class="status-list"></dl><p class="muted">Checks describe this console's API responses and the selected reporting scope.</p></div>
+        </section>
+        <section class="details service-view" id="privacy" aria-labelledby="page-title" hidden>
+          <div class="panel"><h2>Optional browser reporting</h2><p>When enabled in extension settings, the browser sends its reporting credential, event identifier, detection time, signal and action. Heartbeats include reputation availability.</p><p class="muted">Monitoring excludes site addresses, visited pages, page content, passwords and form values.</p></div>
+          <div class="panel"><h2>Retention and access</h2><p id="privacy-retention" class="muted"></p><p>Live and synthetic reports are queried separately. The administrator credential is issued by local setup and held in memory for this session. Manage browser reporting and its separate credential in the extension settings.</p></div>
+          <div class="panel"><h2>Browser protection</h2><p>Reputation matching and financial address checks run in the browser. If you enable activity analysis for a site, it uses a separate endpoint for the configured hostname and activity counts. The research models do not process browsing sessions.</p></div>
+        </section>
+        <section class="details service-view" id="settings" aria-labelledby="page-title" hidden>
+          <div class="panel"><h2>Console display</h2><div class="preference"><label for="appearance">Appearance</label><select id="appearance"><option value="dark">Dark</option><option value="light">Light</option></select></div><div class="preference"><label for="reduce-motion">Reduce motion</label><input id="reduce-motion" type="checkbox" aria-describedby="motion-note"></div><p id="motion-note" class="muted">Your system's reduced-motion setting also applies.</p></div>
+          <div class="panel"><h2>Local protection and setup</h2><p>Open Chrome's Extensions page and choose ThreatDetection → Details → Extension options to manage consent and browser credentials.</p><p class="muted">For startup, credential rotation and retention configuration, see <code>docs/windows-local-setup.md</code> in the repository.</p></div>
+        </section>
       </div>
     </section>
   </main>
+  <dialog id="event-drawer" class="panel drawer" aria-labelledby="drawer-title">
+    <div class="section-heading"><h2 id="drawer-title">Event details</h2><button id="close-drawer" type="button">Close</button></div>
+    <dl id="drawer-fields" class="status-list"></dl>
+    <div class="drawer-evidence"><h3>Observed evidence</h3><p id="drawer-reason"></p><p id="drawer-outcome" class="muted"></p></div>
+  </dialog>
 </body>
 </html>

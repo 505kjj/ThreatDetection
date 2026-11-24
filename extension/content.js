@@ -149,11 +149,11 @@
     }
     const reasons = verdict.impersonation?.map(item => item.reason) ?? [];
     const warning = confirmed
-      ? 'Threat Monitor found a known phishing or malware match. Leave this page without entering information.'
+      ? 'ThreatDetection found a known phishing or malware match. Leave this page without entering information.'
       : reasons.length
         ? 'Possible financial website impersonation. Verify the address before entering information.' +
           (verdict.state === 'unavailable' ? ' The protection service is unavailable.' : '')
-        : 'Threat Monitor observed unusual activity. The site has not been confirmed malicious.';
+        : 'ThreatDetection observed unusual activity. The site has not been confirmed malicious.';
     const presentation = JSON.stringify([warning, reasons]);
     if (bannerState !== presentation) clearWarning();
     clearTimeout(warningExpiry);
@@ -165,12 +165,14 @@
     const style = document.createElement('style');
     style.textContent = `
       :host{all:initial;position:fixed;top:12px;left:50%;transform:translateX(-50%);
-        z-index:2147483647;width:min(540px,calc(100vw - 24px));color:#fef3c7;font:14px system-ui,sans-serif}
-      div{display:flex;align-items:center;gap:12px;background:#422006;border:1px solid #f59e0b;
-        border-radius:10px;padding:12px;box-shadow:0 4px 18px #0005}
-      span{flex:1}
-      button{background:#fef3c7;color:#422006;border:0;border-radius:5px;padding:6px 10px;cursor:pointer}
-      div.confirmed{background:#450a0a;border-color:#ef4444;color:#fef2f2}
+        z-index:2147483647;width:min(580px,calc(100vw - 24px));color:#f5f5f5;font:14px/1.5 "Segoe UI",system-ui,sans-serif}
+      div{display:flex;align-items:flex-start;gap:12px;background:#211a11;border:1px solid #ab7014;
+        border-radius:14px;padding:14px;box-shadow:0 12px 32px #0009}
+      span{flex:1;min-width:0;overflow-wrap:anywhere}
+      button{background:#ffb020;color:#221507;border:0;border-radius:8px;padding:6px 10px;min-height:36px;font:inherit;font-weight:650;cursor:pointer}
+      button:focus-visible{outline:2px solid #f5f5f5;outline-offset:3px}
+      div.confirmed{background:#2a1218;border-color:#f04465}
+      div.confirmed button{background:#ff93a9;color:#310c15}
     `;
     const alert = document.createElement('div');
     alert.setAttribute('role', confirmed ? 'alert' : 'status');

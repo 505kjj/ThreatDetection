@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Generic Threat Detection Monitor",
+  "name": "ThreatDetection",
   "version": "1.4.0",
   "minimum_chrome_version": "120",
   "description": "Blocks known threats with local rules and warns about possible financial impersonation.",
