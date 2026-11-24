@@ -13,7 +13,7 @@ const splitNames = ['development', 'calibration', 'test'];
 const phase3e = new URL('../../docs/experiments/phase3e/summary.json', import.meta.url);
 const phase3f = new URL('../../docs/experiments/phase3f/summary.json', import.meta.url);
 const validLabel = label => label === 'phishing' || label === 'legitimate';
-const knownId = value => typeof value === 'string' && identifier.test(value);
+export const knownId = value => typeof value === 'string' && identifier.test(value);
 const object = value => value && typeof value === 'object' && !Array.isArray(value);
 
 async function read(path) {
@@ -30,7 +30,7 @@ export function observation(value) {
   return Number.isFinite(time) ? { time, precision: value === match[1] ? 'day' : 'timestamp' } : null;
 }
 
-function reference(value) {
+export function reference(value) {
   if (typeof value !== 'string' || value.length > 8192) return false;
   if (value.startsWith('sha256:')) return digest.test(value.slice(7));
   try {
@@ -88,7 +88,7 @@ export function policy(manifest) {
   return { reviewed: reviewed.time, kind: manifest.kind, issues, sources, targets };
 }
 
-function urlIdentity(url, kind) {
+export function urlIdentity(url, kind) {
   const parsed = extractUrl(url, kind);
   if (!parsed) return null;
   const original = new URL(url);
@@ -232,7 +232,7 @@ async function addHistory(index, input, published, expected) {
   for (const group of domains) index.domains.add(group);
 }
 
-async function historical(paths) {
+export async function historical(paths) {
   if (!paths.length) return null;
   const [uci, c, d, e, f] = paths.map(privatePath);
   const index = await priorIndex(uci, c, d);

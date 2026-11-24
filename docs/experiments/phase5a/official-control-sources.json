@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "dataset": "phase5a-indian-bank-control-inventory",
+  "kind": "official-control-metadata",
+  "observationDay": "2026-11-24",
+  "freezeAsOf": "2026-11-24T12:00:00Z",
+  "authority": "https://www.rbi.org.in/Scripts/ComplaintBank.aspx",
+  "institutionEvidence": "https://www.rbi.org.in/commonman/English/Scripts/Content.aspx?id=2139",
+  "rights": "Project-authored annotations of public URL facts for internal quality review and aggregate reporting. Website content and training are outside this inventory.",
+  "candidateControls": [
+    {
+      "id": "csb",
+      "name": "CSB Bank",
+      "url": "https://csb.bank.in/complaints-redressal"
+    },
+    {
+      "id": "dcb",
+      "name": "DCB Bank",
+      "url": "https://www.dcb.bank.in/customer-care/complaint-redressal-form"
+    },
+    {
+      "id": "dhanlaxmi",
+      "name": "Dhanlaxmi Bank",
+      "url": "https://www.dhan.bank.in/grievance-redressal/"
+    },
+    {
+      "id": "bandhan",
+      "name": "Bandhan Bank",
+      "url": "https://bandhan.bank.in/grievance-redressal"
+    },
+    {
+      "id": "city-union",
+      "name": "City Union Bank",
+      "url": "https://ccm.cub.bank.in/portal/en/home"
+    },
+    {
+      "id": "jammu-kashmir",
+      "name": "Jammu and Kashmir Bank",
+      "url": "https://jkb.bank.in/grievance-redressal"
+    }
+  ]
+}
