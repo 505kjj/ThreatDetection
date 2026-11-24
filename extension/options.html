@@ -2,13 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Threat Detection — Settings</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ThreatDetection | Settings</title>
+    <link rel="stylesheet" href="theme.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="options-container">
+    <main class="options-container">
         <div class="options-header">
-            <h1>🛡️ Threat Detection Settings</h1>
+            <div class="options-brand"><span class="product-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 22s7-3 7-9V5l-7-3-7 3v8c0 6 7 9 7 9Z"/><path d="m9 12 2 2 4-4"/></svg></span> ThreatDetection</div>
+            <h1>Protection settings</h1>
             <p>Connect to the secured backend for local phishing and malware reputation checks.</p>
         </div>
 
@@ -41,7 +44,7 @@
                 the configured backend. This reporting never sends site addresses, page data or form values.
                 Turning it off does not stop local protection.
             </p>
-            <label><input type="checkbox" id="threatReporting"> Share threat detections with this backend</label>
+            <label class="check-row"><input type="checkbox" id="threatReporting"> Share threat detections with this backend</label>
             <p id="reportingStatus" class="section-desc" role="status"></p>
         </div>
 
@@ -84,14 +87,14 @@
         </div>
 
         <p id="message" class="section-desc" role="status"></p>
-    </div>
+    </main>
 
     <!-- Modal for editing site config -->
     <div class="modal-overlay" id="editModal" style="display:none;">
         <div class="modal-card">
             <div class="modal-header">
                 <h3>Edit Site Configuration</h3>
-                <button class="modal-close" id="modalClose">✕</button>
+                <button class="modal-close" id="modalClose" aria-label="Close site settings">✕</button>
             </div>
             <div class="modal-body">
                 <div class="form-group">

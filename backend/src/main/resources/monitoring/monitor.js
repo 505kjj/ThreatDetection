@@ -259,7 +259,10 @@ function renderActivity(events) {
     svg.append(vector('line', {x1: 32, x2: 517, y1: y, y2: y, class: 'chart-grid'}));
     if (ratio !== .5) svg.append(vector('text', {x: 24, y: y + 4, 'text-anchor': 'end', class: 'chart-label'}, Math.round(ratio * maximum)));
   }
-  const points = items.map(([, value], i) => [items.length === 1 ? 270 : 40 + 465 * i / (items.length - 1), 132 - 108 * value / maximum]);
+  const firstDay = Date.parse(items[0][0]);
+  const elapsed = Date.parse(items.at(-1)[0]) - firstDay;
+  const points = items.map(([day, value]) => [elapsed ? 40 + 465 * (Date.parse(day) - firstDay) / elapsed : 270,
+    132 - 108 * value / maximum]);
   if (points.length > 1) {
     const line = points.map(([x, y]) => x + ',' + y).join(' ');
     svg.append(vector('polygon', {points: points[0][0] + ',132 ' + line + ' ' + points.at(-1)[0] + ',132', class: 'activity-area'}));
@@ -368,8 +371,8 @@ function renderHistory() {
   byId('history-table').hidden = rows.length === 0;
 }
 
-function render(result, animate) {
-  for (const metric of metricNames) metricValue(metric, result[metric], animate);
+function render(result) {
+  for (const metric of metricNames) metricValue(metric, result[metric], true);
   const nextChartData = JSON.stringify([result.categories, result.recent]);
   if (byId('snapshot').hidden || nextChartData !== chartData) {
     renderCategories(result);
@@ -607,7 +610,7 @@ async function refresh(initial = false, preserve = false) {
     const result = await response.json();
     if (request.signal.aborted) return;
     if (result.synthetic !== (requestedScope === 'SYNTHETIC')) throw new Error('Unexpected data scope');
-    render(result, initial || preserve);
+    render(result);
     byId('sign-in').hidden = true;
     byId('dashboard').hidden = false;
     status('Backend connected', 'ok');

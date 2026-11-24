@@ -66,6 +66,11 @@ async function reportingConnection() {
   return credential && await chrome.permissions.contains(backendPermission(credential.origin)) ? credential : null;
 }
 
+async function reportingStatus(config) {
+  return { optedIn: config.reporting, status: !config.enabled ? 'paused'
+    : await reportingConnection() ? reporting.status() : 'disconnected' };
+}
+
 async function synchronizeRules(revision = connectionRevision) {
   const config = await settings();
   const credential = config.enabled ? await credentialFor(config.origin) : null;
@@ -358,9 +363,7 @@ async function handleMessage(message, sender) {
       return { status, reputation: !latest.enabled ? 'paused' : rules.snapshot() ? 'current' : 'unavailable' };
     }
     if (message.type === 'GET_THREAT_REPORTING') {
-      const config = await settings();
-      return { optedIn: config.reporting, status: !config.enabled ? 'paused'
-        : await reportingConnection() ? reporting.status() : 'disconnected' };
+      return reportingStatus(await settings());
     }
     if (message.type === 'SET_THREAT_REPORTING' && typeof message.enabled === 'boolean') {
       const { origin } = await settings();
@@ -375,8 +378,18 @@ async function handleMessage(message, sender) {
       return { saved: true };
     }
   }
-  if (sender.url === chrome.runtime.getURL('popup.html') && message.type === 'GET_TAB_STATUS') {
-    return tabStatus(message.tabId);
+  if (sender.url === chrome.runtime.getURL('popup.html')) {
+    if (message.type === 'GET_TAB_STATUS') return tabStatus(message.tabId);
+    if (message.type === 'GET_POPUP_CONTEXT') {
+      const config = await settings();
+      return {
+        enabled: config.enabled,
+        origin: config.origin,
+        hasToken: !!await credentialFor(config.origin),
+        reputation: !config.enabled ? 'paused' : rules.snapshot() ? 'current' : 'unavailable',
+        reporting: await reportingStatus(config)
+      };
+    }
   }
   if (['GET_NETWORK_WARNING', 'PROCEED_ONCE', 'LEAVE_NETWORK_WARNING'].includes(message.type)) {
     if (!rules.snapshot()) void synchronizeRules().catch(() => {});

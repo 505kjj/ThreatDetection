@@ -271,6 +271,12 @@ byId('resetDefaults').addEventListener('click', async () => {
   announce('Settings reset.');
 });
 
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area !== 'local' || !changes.monitoringEnabled) return;
+  byId('reputationStatus').textContent = changes.monitoringEnabled.newValue === false ? 'Browser protection is paused.' : '';
+  void Promise.all([renderMonitoring(), renderReporting()]).catch(() => announce('Could not refresh protection status.'));
+});
+
 Promise.all([loadConnection(), renderSites(), renderMonitoring(), renderReporting()])
   .catch(() => announce('Could not load settings.'));
 setInterval(() => void renderReporting().catch(() => {}), 10000);

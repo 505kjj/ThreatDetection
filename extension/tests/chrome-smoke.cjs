@@ -131,6 +131,11 @@ async function inPageWarning(page, phrase) {
   }
 }
 
+async function captureEvidence(page, name, fullPage = true) {
+  const directory = process.env.THREAT_MONITOR_CAPTURE_DIR;
+  if (directory) await page.screenshot({ path: path.join(directory, name + '.png'), fullPage, animations: 'disabled' });
+}
+
 async function main() {
   const useWindowsSetup = process.env.THREAT_SMOKE_LOCAL_SETUP === '1';
   if (useWindowsSetup && process.platform !== 'win32') throw new Error('Windows is required for the local setup smoke');
@@ -256,6 +261,7 @@ async function main() {
     await refreshCredential();
     await options.locator('#tokenStatus').getByText('Browser token set for this session.').waitFor();
     assert.equal(await options.locator('#threatReporting').isChecked(), false);
+    await captureEvidence(options, 'extension-settings');
     const monitoring = origin + '/api/threat/monitoring';
     const reportingCalls = () => apiCalls.filter(call => call.url().startsWith(monitoring + '/'));
     const eventCalls = () => reportingCalls().filter(call => call.url() === monitoring + '/events');
@@ -355,6 +361,7 @@ async function main() {
     await blocked(phish, phishingFixture);
     await phish.getByText(/subdomain uses the HDFC Bank name/).waitFor();
     assert.equal(hits(phishingHost).length, 0);
+    await captureEvidence(phish, 'warning-confirmed');
     await assertStatus(phish, 'Known malicious website');
     assert.equal(await worker.evaluate(async markers => {
       const state = JSON.stringify(await chrome.storage.session.get(null));
@@ -391,6 +398,15 @@ async function main() {
     await eventually(() => inPageWarning(caution, 'A visible password field was found'),
       value => value === true, 'password form explanation');
     await popup.locator('#impersonationReasons').getByText(/credential form points to an unrelated origin/).waitFor();
+    await popup.locator('#popupReputation').getByText('Current snapshot').waitFor();
+    await popup.locator('#popupReporting').getByText('Connected', { exact: true }).waitFor();
+    assert.equal(await popup.getByRole('link', { name: 'Dashboard', exact: true }).getAttribute('href'), origin + '/monitor');
+    if (process.env.THREAT_MONITOR_CAPTURE_DIR) {
+      await popup.locator('.popup-container').screenshot({
+        path: path.join(process.env.THREAT_MONITOR_CAPTURE_DIR, 'extension-popup.png'), animations: 'disabled'
+      });
+    }
+    await captureEvidence(caution, 'warning-advisory', false);
     assert.equal(await badge(worker, caution.url()), '!');
     await phish.getByRole('heading', { name: 'Known threat blocked' }).waitFor();
     assert.equal(await badge(worker, site.url()), '');
@@ -474,12 +490,7 @@ async function main() {
     await dashboard.setViewportSize({ width: 1440, height: 900 });
     await dashboard.goto(origin + '/monitor');
     assert.equal(await dashboard.locator('#dashboard').isVisible(), false);
-    const capture = async name => {
-      if (process.env.THREAT_MONITOR_CAPTURE_DIR) {
-        await dashboard.screenshot({ path: require('node:path').join(process.env.THREAT_MONITOR_CAPTURE_DIR, name + '.png'),
-          fullPage: true, animations: 'disabled' });
-      }
-    };
+    const capture = name => captureEvidence(dashboard, name);
     await capture('login');
     await dashboard.getByRole('button', { name: 'Show token' }).click();
     assert.equal(await dashboard.locator('#token').getAttribute('type'), 'text');
@@ -504,6 +515,19 @@ async function main() {
     assert.equal(await dashboard.evaluate(() => localStorage.length + sessionStorage.length), 0);
     assert.equal(await dashboard.locator('#category-chart svg').count(), 1);
     assert.equal(await dashboard.locator('#activity-chart svg').count(), 1);
+    if (process.env.THREAT_MONITOR_CAPTURE_DIR) {
+      const metrics = await dashboard.evaluate(() => {
+        const navigation = performance.getEntriesByType('navigation')[0];
+        const assets = performance.getEntriesByType('resource').filter(entry => /\/monitor\.(css|js)$/.test(entry.name));
+        return {
+          navigationMs: Math.round(navigation.duration),
+          domContentLoadedMs: Math.round(navigation.domContentLoadedEventEnd),
+          decodedShellBytes: navigation.decodedBodySize + assets.reduce((sum, entry) => sum + entry.decodedBodySize, 0),
+          dashboardUsedJsHeapBytes: performance.memory?.usedJSHeapSize ?? null
+        };
+      });
+      writeFileSync(path.join(process.env.THREAT_MONITOR_CAPTURE_DIR, 'performance.json'), JSON.stringify(metrics, null, 2));
+    }
     await capture('overview');
     await dashboard.getByRole('button', { name: 'Threat Centre' }).click();
     await dashboard.getByRole('heading', { name: 'Threat Centre' }).waitFor();
@@ -687,7 +711,8 @@ async function main() {
     assert.ok(recovered.sessionId);
     console.log('Chrome: network failure reported unavailable and a backend restart renewed the session');
 
-    await options.locator('#disableMonitoring').click();
+    await popup.getByRole('button', { name: 'Pause protection' }).click();
+    await popup.getByRole('button', { name: 'Resume protection' }).waitFor();
     await options.locator('#monitoringStatus').getByText('Monitoring paused.').waitFor();
     await assertStatus(caution, 'Monitoring paused');
     await popup.locator('#impersonationSection').waitFor({ state: 'hidden' });
@@ -702,7 +727,8 @@ async function main() {
 
     // The direct smoke tests provider polling at a subsecond interval; the local profile uses the normal cadence.
     if (useWindowsSetup) return;
-    await options.locator('#enableMonitoring').click();
+    await popup.getByRole('button', { name: 'Resume protection' }).click();
+    await popup.getByRole('button', { name: 'Pause protection' }).waitFor();
     await site.close();
     await writeFixture(snapshotPath, { invalid: 'synthetic-provider-error' });
     const headers = { Authorization: 'Bearer ' + token };
