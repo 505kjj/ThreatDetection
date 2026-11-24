@@ -1,7 +1,6 @@
 package com.example.threatdetection.monitoring;
 
 import com.example.threatdetection.config.ApiSecurityProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,7 +21,6 @@ import static com.example.threatdetection.monitoring.MonitoringSignal.Action;
 import static com.example.threatdetection.monitoring.MonitoringSignal.Category;
 
 @Service
-@EnableConfigurationProperties(MonitoringProperties.class)
 class MonitoringService {
     private static final Duration STATUS_LIFETIME = Duration.ofMinutes(3);
     private static final Duration MAX_EVENT_AGE = Duration.ofMinutes(5);
@@ -76,7 +74,7 @@ class MonitoringService {
             return;
         }
         try {
-            repository.saveAndFlush(new MonitoringEvent(client, id, now, detected,
+            repository.save(new MonitoringEvent(client, id, now, detected,
                     properties.syntheticClients().contains(client), signal, action));
         } catch (DataIntegrityViolationException ex) {
             // The unique constraint arbitrates requests reaching separate backend processes.
@@ -98,24 +96,23 @@ class MonitoringService {
         long warned = 0;
         long bypassed = 0;
         for (var row : repository.countActions(synthetic, cutoff)) {
-            switch (row.getAction()) {
-                case BLOCKED -> blocked += row.getTotal();
-                case WARNED -> warned += row.getTotal();
-                case BYPASSED -> bypassed += row.getTotal();
+            switch (row.action()) {
+                case BLOCKED -> blocked += row.total();
+                case WARNED -> warned += row.total();
+                case BYPASSED -> bypassed += row.total();
             }
-            if (row.getAction() != Action.BYPASSED) categories.merge(row.getSignal().category, row.getTotal(), Long::sum);
+            if (row.action() != Action.BYPASSED) categories.merge(row.signal().category, row.total(), Long::sum);
         }
         var status = new EnumMap<Protection, Integer>(Protection.class);
         for (Protection protection : Protection.values()) status.put(protection, 0);
         Instant lastContact = null;
         for (var entry : activeClients.entrySet()) {
             var state = entry.getValue();
-            if (properties.syntheticClients().contains(entry.getKey()) != synthetic || !state.fresh(now)) continue;
-            status.merge(state.protection, 1, Integer::sum);
+            if (properties.syntheticClients().contains(entry.getKey()) != synthetic || state.contact == null) continue;
+            if (state.fresh(now)) status.merge(state.protection, 1, Integer::sum);
             if (lastContact == null || state.contact.isAfter(lastContact)) lastContact = state.contact;
         }
-        var history = repository.findTop20BySyntheticAndReceivedAtGreaterThanEqualOrderByReceivedAtDescIdDesc(
-                synthetic, cutoff).stream().map(MonitoringEvent::entry).toList();
+        var history = repository.recent(synthetic, cutoff).stream().map(MonitoringEvent::entry).toList();
         return new Dashboard(synthetic, properties.retentionDays(), blocked + warned, blocked, warned, bypassed,
                 categories, status, lastContact, history);
     }

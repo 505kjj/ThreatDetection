@@ -2,8 +2,45 @@ import { DEFAULT_ORIGIN, backendOrigin, backendPermission, newSite, readSites, s
 import { validToken } from './backend-api.mjs';
 
 const byId = id => document.getElementById(id);
+byId('extensionId').textContent = chrome.runtime.id;
 let editingDomain = null;
 let connectionBusy = false;
+let checkRevision = 0;
+
+const connectionMessages = {
+  connected: 'Backend connected. Browser credential accepted.',
+  unauthorized: 'Browser credential rejected. Copy the current Browser token for this backend.',
+  forbidden: 'Connection denied. Check the allowed extension ID and make sure you used the Browser token.',
+  'no-reputation': 'Backend reached. Reputation data is unavailable on the server.',
+  offline: 'Backend unavailable. Check that it is running and that the origin is correct.',
+  unexpected: 'The server did not return a ThreatDetection reputation response. Check the backend origin.',
+  'missing-token': 'Set a Browser token to check the connection.',
+  permission: 'Backend access is missing. Save the connection and approve the host permission.',
+  changed: 'Connection settings changed. Check the connection again.'
+};
+
+async function checkConnection() {
+  const revision = ++checkRevision;
+  byId('checkConnection').disabled = true;
+  byId('backendStatus').textContent = 'Checking saved backend…';
+  byId('reputationStatus').textContent = '';
+  try {
+    const result = await chrome.runtime.sendMessage({ type: 'CHECK_CONNECTION' });
+    if (revision !== checkRevision) return;
+    byId('backendStatus').textContent = connectionMessages[result?.status] ?? 'Could not check the saved backend.';
+    byId('reputationStatus').textContent = {
+      current: 'Current reputation data is loaded in this browser.',
+      unavailable: 'Reputation protection is unavailable in this browser.',
+      paused: 'Browser protection is paused.'
+    }[result?.reputation] ?? '';
+  } catch {
+    if (revision === checkRevision) byId('backendStatus').textContent = 'Could not check the saved backend.';
+  } finally {
+    if (revision === checkRevision) byId('checkConnection').disabled = false;
+  }
+}
+
+byId('checkConnection').addEventListener('click', () => void checkConnection());
 
 function announce(text) {
   byId('message').textContent = text;
@@ -15,6 +52,7 @@ async function loadConnection() {
   byId('backendOrigin').value = result.origin;
   byId('tokenStatus').textContent = result.hasToken ? 'Browser token set for this session.' : 'Browser token required.';
   byId('clearToken').disabled = !result.hasToken;
+  void checkConnection();
 }
 
 async function getSites() {
@@ -138,6 +176,19 @@ byId('saveConnection').addEventListener('click', async () => {
       announce('Allow access to the backend host to save this connection.');
       return;
     }
+    if (token) {
+      byId('browserToken').value = '';
+      byId('backendStatus').textContent = 'Verifying browser token…';
+      const result = await chrome.runtime.sendMessage({ type: 'CHECK_CANDIDATE', origin, token });
+      if (!['connected', 'no-reputation'].includes(result?.status)) {
+        ++checkRevision;
+        byId('checkConnection').disabled = false;
+        byId('backendStatus').textContent = connectionMessages[result?.status] ?? 'Could not verify the browser token.';
+        byId('reputationStatus').textContent = '';
+        announce('The saved connection was kept.');
+        return;
+      }
+    }
     const result = await chrome.runtime.sendMessage({ type: 'SAVE_CONNECTION', origin, token });
     if (!result?.saved) throw new Error('Connection rejected');
     byId('browserToken').value = '';
@@ -207,6 +258,7 @@ for (const [id, enabled] of [['enableMonitoring', true], ['disableMonitoring', f
     await chrome.storage.local.set({ monitoringEnabled: enabled });
     await renderMonitoring();
     await renderReporting();
+    void checkConnection();
   });
 }
 

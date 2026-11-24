@@ -23,11 +23,15 @@
                 <input type="password" id="browserToken" autocomplete="off" spellcheck="false">
                 <p id="tokenStatus" class="section-desc">Checking connection settings…</p>
                 <p class="section-desc">Use a browser token issued for this backend. Re-enter it after restarting Chrome.</p>
+                <p class="section-desc">Local setup extension ID <code id="extensionId"></code></p>
             </div>
             <div class="btn-row">
                 <button class="btn-primary" id="saveConnection">Save connection</button>
+                <button class="btn-secondary" id="checkConnection" type="button">Check connection</button>
                 <button class="btn-secondary" id="clearToken">Clear token</button>
             </div>
+            <p id="backendStatus" class="section-desc" role="status"></p>
+            <p id="reputationStatus" class="section-desc" role="status"></p>
         </div>
 
         <div class="options-section">

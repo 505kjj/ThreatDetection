@@ -27,6 +27,7 @@ function clearData() {
   byId('history').replaceChildren();
   byId('categories').replaceChildren();
   byId('extension-state').textContent = '';
+  byId('reputation-state').textContent = '';
   byId('last-contact').textContent = '';
   byId('retention').textContent = '';
   for (const metric of ['total', 'blocked', 'warned', 'bypassed']) byId(metric).textContent = '';
@@ -61,11 +62,13 @@ function render(result) {
   const unavailable = result.clientStatus.REPUTATION_UNAVAILABLE;
   const count = available + unavailable;
   byId('extension-state').textContent = count
-    ? count + (count === 1 ? ' browser reporting. ' : ' browsers reporting. ') +
-      (available ? available + ' with current reputation data. ' : '') +
-      (unavailable ? unavailable + ' reporting protection unavailable.' : '')
-    : 'No recent browser contact. Protection status is unknown.';
-  byId('last-contact').textContent = result.lastContact ? date.format(new Date(result.lastContact)) : 'No recent heartbeat';
+    ? count + (count === 1 ? ' browser reporting' : ' browsers reporting')
+    : 'No recent contact from reporting browsers';
+  byId('reputation-state').textContent = count
+    ? [available && available + ' with current reputation data', unavailable && unavailable + ' reporting protection unavailable']
+      .filter(Boolean).join(' · ')
+    : 'Unknown until a browser reports';
+  byId('last-contact').textContent = result.lastContact ? date.format(new Date(result.lastContact)) : 'No heartbeat received';
   const rows = result.recent.map(entry => {
     const row = document.createElement('tr');
     const detection = plain('td', categories[entry.category]);
@@ -75,6 +78,11 @@ function render(result) {
     const action = document.createElement('td');
     action.append(plain('span', actions[entry.action], 'badge action-' + entry.action.toLowerCase()));
     const evidence = plain('td', entry.reason);
+    const outcome = entry.action === 'BLOCKED' ? 'Navigation interrupted before reaching the destination.'
+      : entry.action === 'BYPASSED' ? 'A one-time exception was used in that tab.'
+        : entry.source === 'REPUTATION' ? 'The browser opened a warning after navigation.'
+          : 'An advisory was shown without blocking.';
+    evidence.append(plain('p', outcome));
     evidence.append(plain('small', sources[entry.source] + ' · ' + severities[entry.severity]));
     row.append(detection, action, evidence);
     return row;
@@ -108,6 +116,15 @@ async function refresh(initial = false, preserve = false) {
     if (request.signal.aborted) return;
     if (response.status === 401 || response.status === 403) {
       signOut('Access denied. Enter a valid admin token for this backend.');
+      return;
+    }
+    if (response.status === 503 && response.headers.get('X-Threat-Monitoring-Status') === 'storage-unavailable') {
+      clearData();
+      byId('sign-in').hidden = true;
+      byId('dashboard').hidden = false;
+      byId('backend-state').textContent = 'Backend reachable';
+      byId('load-state').textContent = 'Monitoring storage unavailable. Try refreshing after the database recovers.';
+      byId('load-state').hidden = false;
       return;
     }
     if (!response.ok) throw new Error('Dashboard request failed');

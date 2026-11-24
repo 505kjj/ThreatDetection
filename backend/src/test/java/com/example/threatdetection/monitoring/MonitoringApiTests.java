@@ -10,7 +10,6 @@ import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.MockMvcPrint;
 import org.springframework.http.MediaType;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -48,7 +47,7 @@ class MonitoringApiTests {
 
     @Autowired MockMvc mvc;
     @Autowired JsonMapper json;
-    @Autowired JdbcTemplate jdbc;
+    @Autowired MonitoringEventRepository events;
     @Autowired MonitoringService service;
 
     @DynamicPropertySource
@@ -63,7 +62,7 @@ class MonitoringApiTests {
 
     @BeforeEach
     void clearEvents() {
-        jdbc.update("delete from monitoring_event");
+        events.purge(Instant.now().plus(1, ChronoUnit.DAYS));
     }
 
     @Test
@@ -132,7 +131,7 @@ class MonitoringApiTests {
         mvc.perform(write("events", INVALID_BROWSER,
                 event("PHISHING", "BLOCKED", Instant.now().minusSeconds(600))))
                 .andExpect(status().isBadRequest());
-        assertThat(jdbc.queryForObject("select count(*) from monitoring_event", Integer.class)).isZero();
+        assertThat(events.countActions(false, Instant.EPOCH)).isEmpty();
         assertThat(logs.getAll()).doesNotContain("private-fixture-marker", INVALID_BROWSER);
     }
 
@@ -148,19 +147,19 @@ class MonitoringApiTests {
         mvc.perform(write("events", LIMITED_BROWSER, conflicting)).andExpect(status().isConflict());
         mvc.perform(write("events", LIMITED_BROWSER, event("PHISHING", "BLOCKED")))
                 .andExpect(status().isTooManyRequests());
-        assertThat(jdbc.queryForObject("select count(*) from monitoring_event", Integer.class)).isEqualTo(1);
+        assertThat(events.countActions(false, Instant.EPOCH)).extracting(MonitoringEventRepository.Count::total).containsExactly(1L);
     }
 
     @Test
     void expiredEventsAreHiddenThenPurged() throws Exception {
-        heartbeat(TEST_BROWSER, "REPUTATION_AVAILABLE");
-        mvc.perform(write("events", TEST_BROWSER, event("MALWARE", "BLOCKED"))).andExpect(status().isNoContent());
-        jdbc.update("update monitoring_event set received_at = ?", java.sql.Timestamp.from(Instant.now().minus(8, ChronoUnit.DAYS)));
+        Instant expired = Instant.now().minus(8, ChronoUnit.DAYS);
+        events.save(new MonitoringEvent("fixture", UUID.randomUUID(), expired, expired, true,
+                MonitoringSignal.MALWARE, MonitoringSignal.Action.BLOCKED));
         mvc.perform(auth(get(API + "/dashboard").param("scope", "SYNTHETIC"), ADMIN))
                 .andExpect(jsonPath("$.total").value(0))
                 .andExpect(jsonPath("$.recent").isEmpty());
         service.purgeExpired();
-        assertThat(jdbc.queryForObject("select count(*) from monitoring_event", Integer.class)).isZero();
+        assertThat(events.countActions(true, Instant.EPOCH)).isEmpty();
     }
 
     private void heartbeat(String credential, String protection) throws Exception {

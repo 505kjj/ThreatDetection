@@ -195,6 +195,33 @@ test('a dashboard failure leaves financial advisory decisions intact and opt-out
   assert.equal(state.calls.length, before);
 });
 
+test('the connection check is private to Settings and distinguishes authentication from a missing snapshot', async t => {
+  let probe = 200;
+  const state = await worker(() => new Response(null, { status: 204 }), () => {
+    if (probe === 0) throw new TypeError('offline fixture');
+    return new Response(JSON.stringify(snapshot()), { status: probe, headers: { 'content-type': 'application/json' } });
+  });
+  t.after(state.restore);
+  const check = () => state.message({ type: 'CHECK_CONNECTION' }, state.options);
+  assert.deepEqual(await state.message({ type: 'CHECK_CONNECTION' }), { state: 'inactive' });
+  const candidate = { type: 'CHECK_CANDIDATE', origin: defaultOrigin, token };
+  assert.deepEqual(await state.message(candidate), { state: 'inactive' });
+  assert.deepEqual(await check(), { status: 'missing-token' });
+  assert.deepEqual(await state.message(candidate, state.options), { status: 'connected' });
+  assert.deepEqual(await check(), { status: 'missing-token' });
+  await state.save(defaultOrigin, token);
+  assert.equal((await check()).status, 'connected');
+  for (const [code, status] of [[401, 'unauthorized'], [403, 'forbidden'], [503, 'no-reputation'], [0, 'offline']]) {
+    probe = code;
+    assert.equal((await check()).status, status);
+  }
+  assert.equal(state.calls.length, 0, 'connection checks must not post telemetry');
+  const request = state.downloads.at(-1);
+  assert.equal(request.url, defaultOrigin + '/api/threat/reputation/snapshot');
+  assert.equal(request.options.credentials, 'omit');
+  assert.equal(request.options.referrerPolicy, 'no-referrer');
+});
+
 test('origin validation and telemetry allowlisting match the secured contract', () => {
   assert.equal(backendOrigin('https://api.example.test:8443/'), 'https://api.example.test:8443');
   assert.equal(backendOrigin(defaultOrigin), defaultOrigin);

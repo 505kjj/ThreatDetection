@@ -7,12 +7,13 @@ const { mkdtempSync, renameSync, rmSync, rmdirSync, writeFileSync } = require('n
 const { tmpdir } = require('node:os');
 const path = require('node:path');
 const { chromium } = require('playwright');
+const { createRuntime } = require('./windows-local-runtime.cjs');
 
 const extension = path.resolve(__dirname, '..');
 const jar = path.resolve(extension, '../backend/target/threat-detection-0.0.1-SNAPSHOT.jar');
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
-const token = randomBytes(32).toString('base64url');
-const adminToken = randomBytes(32).toString('base64url');
+let token = randomBytes(32).toString('base64url');
+let adminToken = randomBytes(32).toString('base64url');
 const privateMarkers = ['private-path', 'private-query', 'private-fragment', 'private-form-value',
   'private-otp-value', 'private-card-value', 'private-cookie-value'];
 
@@ -68,7 +69,7 @@ async function startBackend(java, extensionOrigin, snapshotPath, port = 0) {
       if (match) {
         const health = await fetch('http://127.0.0.1:' + match[1] + '/api/health',
           { signal: AbortSignal.timeout(2000) }).catch(() => null);
-        if (health?.ok) return { process, port: Number(match[1]), logs: () => logs };
+        if (health?.ok) return { stop: () => stop(process), port: Number(match[1]), logs: () => logs };
       }
       if (process.exitCode !== null) break;
       await wait(500);
@@ -131,6 +132,8 @@ async function inPageWarning(page, phrase) {
 }
 
 async function main() {
+  const useWindowsSetup = process.env.THREAT_SMOKE_LOCAL_SETUP === '1';
+  if (useWindowsSetup && process.platform !== 'win32') throw new Error('Windows is required for the local setup smoke');
   const java = javaExecutable();
   const requests = [];
   let holdCleanRoot = false;
@@ -176,8 +179,9 @@ async function main() {
   }
   let browser;
   let backend;
+  let runtime;
   try {
-    await publish(300000);
+    await publish(useWindowsSetup ? 600000 : 300000);
     browser = await chromium.launchPersistentContext('', {
       channel: 'chromium',
       args: ['--disable-extensions-except=' + extension, '--load-extension=' + extension,
@@ -188,7 +192,14 @@ async function main() {
     const extensionOrigin = new URL(worker.url()).origin === 'null'
       ? 'chrome-extension://' + new URL(worker.url()).hostname
       : new URL(worker.url()).origin;
-    backend = await startBackend(java, extensionOrigin, snapshotPath);
+    if (useWindowsSetup) {
+      runtime = await createRuntime(new URL(worker.url()).hostname, snapshotPath);
+      [token, adminToken] = await runtime.tokens();
+      backend = await runtime.start('powershell.exe');
+      console.log('Windows setup: malformed extension ID rejected, separate DPAPI credentials created and backend started with PowerShell 5.1');
+    } else {
+      backend = await startBackend(java, extensionOrigin, snapshotPath);
+    }
     const origin = 'http://127.0.0.1:' + backend.port;
     const apiCalls = [];
     const snapshotCalls = [];
@@ -205,10 +216,18 @@ async function main() {
     await options.goto(extensionOrigin + '/options.html');
     await options.locator('#tokenStatus').getByText('Browser token required.').waitFor();
     await options.locator('#backendOrigin').fill(origin);
-    async function refreshCredential() {
-      await options.locator('#browserToken').fill(token);
+    async function refreshCredential(credential = token) {
+      await options.locator('#browserToken').fill(credential);
       await options.locator('#saveConnection').click();
       await eventually(() => options.locator('#browserToken').inputValue(), value => value === '', 'saved token');
+    }
+    if (useWindowsSetup) {
+      await refreshCredential(randomBytes(32).toString('base64url'));
+      await options.locator('#backendStatus').getByText(/Browser credential rejected/).waitFor();
+      await refreshCredential(adminToken);
+      await options.locator('#backendStatus').getByText(/Connection denied/).waitFor();
+      await options.locator('#tokenStatus').getByText('Browser token required.').waitFor();
+      snapshotCalls.length = 0;
     }
     await refreshCredential();
     await options.locator('#tokenStatus').getByText('Browser token set for this session.').waitFor();
@@ -216,14 +235,22 @@ async function main() {
     const monitoring = origin + '/api/threat/monitoring';
     const reportingCalls = () => apiCalls.filter(call => call.url().startsWith(monitoring + '/'));
     const eventCalls = () => reportingCalls().filter(call => call.url() === monitoring + '/events');
-    const adminHeaders = { Authorization: 'Bearer ' + adminToken };
     const adminReports = async (scope = 'SYNTHETIC') => {
-      const response = await fetch(monitoring + '/dashboard?scope=' + scope, { headers: adminHeaders });
+      const response = await fetch(monitoring + '/dashboard?scope=' + scope,
+        { headers: { Authorization: 'Bearer ' + adminToken } });
       assert.equal(response.status, 200);
       return response.json();
     };
     assert.equal((await fetch(monitoring + '/dashboard')).status, 401);
     assert.equal((await fetch(monitoring + '/dashboard', { headers: { Authorization: 'Bearer ' + token } })).status, 403);
+    if (useWindowsSetup) {
+      await options.locator('#backendStatus').getByText(/Browser credential accepted/).waitFor();
+      const wrong = extensionOrigin === 'chrome-extension://' + 'a'.repeat(32) ? 'b' : 'a';
+      const deniedOrigin = await fetch(origin + '/api/threat/reputation/snapshot', {
+        headers: { Origin: 'chrome-extension://' + wrong.repeat(32), Authorization: 'Bearer ' + token }
+      });
+      assert.equal(deniedOrigin.status, 403);
+    }
     await options.locator('#newDomain').fill('127.0.0.1');
     await options.locator('#addDomain').click();
     await options.locator('#siteList').getByText('127.0.0.1', { exact: true }).waitFor();
@@ -432,7 +459,7 @@ async function main() {
     await dashboard.locator('#history').getByText(/A verified financial address/).first().waitFor();
     await dashboard.locator('#history').getByText('Bypassed', { exact: true }).first().waitFor();
     assert.equal(Number(await dashboard.locator('#total').textContent()), report.total);
-    assert.match(await dashboard.locator('#extension-state').textContent(), /1 with current reputation data/);
+    assert.match(await dashboard.locator('#reputation-state').textContent(), /1 with current reputation data/);
     assert.equal(await dashboard.locator('#token').inputValue(), '');
     assert.equal(await dashboard.evaluate(() => localStorage.length + sessionStorage.length), 0);
     if (globalThis.process.env.THREAT_MONITOR_SCREENSHOT) {
@@ -459,7 +486,9 @@ async function main() {
     await options.locator('#reportingStatus').getByText('Reporting connected.').waitFor({ timeout: 18000 });
     console.log('Chrome: opted-in alerts reached the admin dashboard, fixture counts were isolated, and opt-out stopped reports');
 
-    await stop(backend.process);
+    const beforeRestart = await adminReports();
+    const duplicate = eventCalls().find(call => call.postDataJSON()?.action === 'BLOCKED').postDataJSON();
+    await backend.stop();
     await dashboard.getByRole('button', { name: 'Refresh' }).click();
     await dashboard.locator('#load-state').getByText(/Backend unavailable/).waitFor();
     assert.equal(await dashboard.locator('#snapshot').isVisible(), false);
@@ -475,7 +504,51 @@ async function main() {
     await eventually(() => tabRecord(worker), result =>
       result?.verdict.state === 'unavailable' && result.checkedAt > checked.checkedAt, 'offline status', 230);
     await assertStatus(site, 'Protection unavailable');
-    backend = await startBackend(java, extensionOrigin, snapshotPath, backend.port);
+    if (useWindowsSetup) {
+      await options.locator('#checkConnection').click();
+      await options.locator('#backendStatus').getByText(/Backend unavailable/).waitFor();
+      const oldAdmin = adminToken;
+      await runtime.checkStartupFailure();
+      await runtime.rotateAdmin();
+      const [sameBrowser, rotatedAdmin] = await runtime.tokens();
+      assert.ok(sameBrowser === token, 'admin rotation changed the browser credential');
+      assert.ok(rotatedAdmin !== oldAdmin, 'admin rotation did not replace the old credential');
+      adminToken = rotatedAdmin;
+      backend = await runtime.start('pwsh.exe');
+      const rejected = await fetch(monitoring + '/dashboard', { headers: { Authorization: 'Bearer ' + oldAdmin } });
+      assert.equal(rejected.status, 401);
+      assert.equal((await adminReports('REAL')).total, 0);
+      const persisted = await adminReports();
+      assert.equal(persisted.total, beforeRestart.total);
+      assert.deepEqual(persisted.recent, beforeRestart.recent);
+      const send = (route, body) => fetch(monitoring + '/' + route, {
+        method: 'POST', headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      assert.equal((await send('heartbeat', { protection: 'REPUTATION_AVAILABLE' })).status, 204);
+      assert.equal((await send('events', duplicate)).status, 204);
+      assert.equal((await adminReports()).total, persisted.total);
+      // The dashboard's automatic poll may already have rejected the rotated token.
+      await dashboard.evaluate(() => {
+        if (!document.getElementById('dashboard').hidden) document.getElementById('refresh').click();
+      });
+      await dashboard.getByText(/Access denied/).waitFor();
+      await login(adminToken);
+      await dashboard.locator('#backend-state').getByText('Backend connected').waitFor();
+      await dashboard.getByRole('button', { name: 'Synthetic fixtures' }).click();
+      await dashboard.locator('#history').getByText('Blocked', { exact: true }).first().waitFor();
+      assert.equal(Number(await dashboard.locator('#total').textContent()), persisted.total);
+      await options.locator('#threatReporting').uncheck();
+      await options.locator('#reportingStatus').getByText('Reporting is off.').waitFor();
+      const noReport = await browser.newPage();
+      await blocked(noReport, localSite + '/download-fixture');
+      await noReport.close();
+      assert.equal((await adminReports()).total, persisted.total);
+      await options.locator('#threatReporting').check();
+      console.log('Windows setup: corrupt store failed closed; PowerShell 7 restart preserved reports and deduplication, revoked the old admin token and preserved opt-out');
+    } else {
+      backend = await startBackend(java, extensionOrigin, snapshotPath, backend.port);
+    }
     await focusPassword(site);
     const recovered = await eventually(() => tabRecord(worker), result => result?.verdict.state === 'safe' &&
       result.sessionId !== first.sessionId, 'new session after restart', 230);
@@ -495,6 +568,8 @@ async function main() {
     assert.equal(apiCalls.length, before);
     console.log('Chrome: pausing monitoring stopped requests from the open document');
 
+    // The direct smoke tests provider polling at a subsecond interval; the local profile uses the normal cadence.
+    if (useWindowsSetup) return;
     await options.locator('#enableMonitoring').click();
     await site.close();
     await writeFixture(snapshotPath, { invalid: 'synthetic-provider-error' });
@@ -527,7 +602,8 @@ async function main() {
     console.log('Chrome: invalid and expired snapshots report unavailable and stop blocking');
   } finally {
     if (browser) await browser.close();
-    await stop(backend?.process);
+    if (runtime) await runtime.dispose();
+    else await backend?.stop();
     fixture.closeAllConnections();
     await new Promise(resolve => fixture.close(resolve));
     rmSync(snapshotPath, { force: true });

@@ -13,7 +13,8 @@ import java.util.Set;
 record MonitoringProperties(
         @DefaultValue("14") @Min(1) @Max(90) int retentionDays,
         @DefaultValue("60") @Min(1) @Max(120) int eventsPerMinute,
-        Set<String> syntheticClients) {
+        Set<String> syntheticClients,
+        String storePath) {
     MonitoringProperties {
         syntheticClients = syntheticClients == null ? Set.of() : Set.copyOf(syntheticClients);
     }

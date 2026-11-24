@@ -1,4 +1,5 @@
-import { analysisFields, analyze, downloadSnapshot, requestFailure, startSession, validToken } from './backend-api.mjs';
+import { analysisFields, analyze, downloadSnapshot, probeReputationConnection,
+  requestFailure, startSession, validToken } from './backend-api.mjs';
 import { createBlockRules } from './block-rules.mjs';
 import { BYPASS_ALARM, createBrowserProtection } from './browser-protection.mjs';
 import { detectImpersonation } from './impersonation.mjs';
@@ -281,6 +282,22 @@ async function handleMessage(message, sender) {
     if (message.type === 'GET_CONNECTION') {
       const { origin } = await settings();
       return { origin: origin ?? DEFAULT_ORIGIN, hasToken: !!await credentialFor(origin) };
+    }
+    if (message.type === 'CHECK_CANDIDATE') {
+      const origin = backendOrigin(message.origin);
+      if (!origin || !validToken(message.token)) return { status: 'unexpected' };
+      if (!await chrome.permissions.contains(backendPermission(origin))) return { status: 'permission' };
+      return { status: await probeReputationConnection({ origin, token: message.token }) };
+    }
+    if (message.type === 'CHECK_CONNECTION') {
+      const config = await settings();
+      const credential = await credentialFor(config.origin);
+      if (!credential) return { status: 'missing-token' };
+      if (!await chrome.permissions.contains(backendPermission(credential.origin))) return { status: 'permission' };
+      const status = await probeReputationConnection(credential);
+      const latest = await settings();
+      if ((await credentialFor(latest.origin))?.id !== credential.id) return { status: 'changed' };
+      return { status, reputation: !latest.enabled ? 'paused' : rules.snapshot() ? 'current' : 'unavailable' };
     }
     if (message.type === 'GET_THREAT_REPORTING') {
       const config = await settings();

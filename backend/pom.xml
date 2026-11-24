@@ -55,6 +55,12 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- Versioned migrations for the isolated monitoring store -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+
         <!-- Stateless bearer authentication and API authorization -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
