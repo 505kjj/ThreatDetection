@@ -8,6 +8,7 @@ Product base is Phase 4C `b9b4add`. The inspected remote main includes Phase 5E 
 - Kept the original same-origin API, administrator bearer token, scope checks, request cancellation and storage/outage handling. Added a token visibility control, sign-in feedback and keyboard focus transitions. Secrets remain in memory.
 - Wired Overview and Threat Centre to the existing reports. Added count transitions, an activity plot, category donut, source bars, scoped loading and empty states, latest-event filters, sortable columns and an accessible details dialog.
 - Added Threat Intelligence using the administrator feed-status endpoint, Connected Browsers using scoped heartbeat aggregates, and System Health using dashboard and feed outcomes. Added Privacy Centre, working appearance and reduced-motion preferences, and updated Windows startup documentation.
+- Added Financial Protection with eight product registry entries, an interactive Phase 5F comparison, Phase 5G readiness, PhreshPhish partition and source summaries, and a Phase 6A controlled-crop benchmark. The admin-only research summary contains whitelisted aggregates and verified brand scopes. It loads only on entry to a financial or research view.
 - Counts and the category chart cover the configured retention window. Activity and source charts use only the detections in the API's latest 20-event window. The UI does not send new telemetry or query historical raw records.
 - The working frontend is served by Spring Boot without a separate build or dependency install.
 
@@ -15,7 +16,8 @@ Product base is Phase 4C `b9b4add`. The inspected remote main includes Phase 5E 
 
 - Maven `verify` passed all 62 tests after the operational views. The dashboard and Threat Centre stage passed all 29 extension unit tests.
 - The secure Windows Chromium smoke passed against Spring Boot. It verified authenticated reporting, fixture isolation, dashboard and Threat Centre interactions, feed status, preferences, responsive widths from 390 to 1920 px, and recovery after a backend restart.
-- Private synthetic screenshots are in `C:/Users/kj/threat-detection-experiments/ui-1-evidence` for login, Overview, Threat Centre, event details, Threat Intelligence, Connected Browsers, System Health, Privacy Centre, Settings, light theme, and mobile. Browser loading and memory measurements remain open.
+- Maven `verify` and the direct Chromium smoke passed for financial and research views, including admin-only summary access, the model metric selector, and mobile navigation.
+- Private synthetic screenshots for all implemented console views are in `C:/Users/kj/threat-detection-experiments/ui-1-evidence`. Browser loading and memory measurements remain open.
 
 ## Verification commands
 
@@ -25,9 +27,8 @@ Product base is Phase 4C `b9b4add`. The inspected remote main includes Phase 5E 
 
 ## Continue here
 
-1. Add Financial Protection using the verified product scopes in `extension/financial-domains.mjs`. Extend the `views` map in `backend/src/main/resources/monitoring/monitor.js` and add the matching navigation and view in `index.html`.
-2. Build ML, Dataset and Visual Intelligence screens from whitelisted aggregates. Source Phase 5F JSON at `a09394b:docs/experiments/phase5f/results.json`, the Phase 5G registry and preflight at `ebe0f4f`, and Phase 6A results at `9908b49:docs/experiments/phase6a/results.json`. Record the source revisions, cohort and operating points. Copy only the fields needed by the UI. Do not merge the research branches into this product branch.
-3. Style `extension/popup.html`, `options.html`, `styles.css`, `warning.html`, `warning.css`, and the closed-shadow advisory in `content.js` using the shared design tokens. Keep the existing IDs, scripts, permission model and blocking, advisory, consent and bypass controls. Re-run both Chromium smoke modes and capture the remaining views.
-4. Obtain the missing dashboard reference image for image-to-image visual sign-off. Complete the full screenshot list, animation recordings, browser performance and accessibility review. Current responsive checks cover the implemented console views only.
+1. Style `extension/popup.html`, `options.html`, `styles.css`, `warning.html`, `warning.css`, and the closed-shadow advisory in `content.js` using the shared design tokens. Keep the existing IDs, scripts, permission model and blocking, advisory, consent and bypass controls. Re-run both Chromium smoke modes and capture the remaining views.
+2. Extend the ML comparison across additional Phase 3–5D cohorts. For each added cohort, project only approved fields in `scripts/project-monitor-research.mjs` and run `node scripts/project-monitor-research.mjs` to refresh `backend/src/main/resources/monitoring/research.json`. Add cohort-specific controls and keep thresholds and test populations distinct. The Maven build uses the committed projection and does not need access to research branches.
+3. Obtain the missing dashboard reference image for image-to-image visual sign-off. Complete animation recordings, browser performance and accessibility review.
 
 The console uses system typography pending local font review. Do not import research binaries, add production model functionality, or introduce unsupported live statistics.

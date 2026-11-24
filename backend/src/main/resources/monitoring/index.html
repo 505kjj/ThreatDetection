@@ -21,6 +21,9 @@
     <symbol id="i-pulse" viewBox="0 0 24 24"><path d="M2 12h5l3-7 4 14 3-7h5"/></symbol>
     <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 4v3"/></symbol>
     <symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 6h6m4 0h6M4 12h11m4 0h1M4 18h2m4 0h10"/><circle cx="12" cy="6" r="2"/><circle cx="17" cy="12" r="2"/><circle cx="8" cy="18" r="2"/></symbol>
+    <symbol id="i-bank" viewBox="0 0 24 24"><path d="M3 9h18L12 3 3 9Zm2 12h14M7 12v5m5-5v5m5-5v5"/></symbol>
+    <symbol id="i-lab" viewBox="0 0 24 24"><path d="M9 3h6m-5 0v7l-5 8a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-8V3m-7 13h10"/></symbol>
+    <symbol id="i-data" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 4 16 4 16 0V5M4 12c0 4 16 4 16 0"/></symbol>
   </svg>
   <a href="#main" class="skip">Skip to content</a>
   <header class="masthead">
@@ -60,6 +63,10 @@
         <button id="nav-overview" type="button" aria-current="page" title="Overview"><svg aria-hidden="true"><use href="#i-grid"/></svg><span>Overview</span></button>
         <button id="nav-threats" type="button" title="Threat Centre"><svg aria-hidden="true"><use href="#i-target"/></svg><span>Threat Centre</span></button>
         <button id="nav-intelligence" type="button" title="Threat Intelligence"><svg aria-hidden="true"><use href="#i-radar"/></svg><span>Threat Intelligence</span></button>
+        <button id="nav-financial" type="button" title="Financial Protection"><svg aria-hidden="true"><use href="#i-bank"/></svg><span>Financial Protection</span></button>
+        <button id="nav-ml" type="button" title="ML Laboratory"><svg aria-hidden="true"><use href="#i-lab"/></svg><span>ML Laboratory</span></button>
+        <button id="nav-visual" type="button" title="Visual Intelligence"><svg aria-hidden="true"><use href="#i-eye"/></svg><span>Visual Intelligence</span></button>
+        <button id="nav-datasets" type="button" title="Dataset Laboratory"><svg aria-hidden="true"><use href="#i-data"/></svg><span>Dataset Laboratory</span></button>
         <button id="nav-browsers" type="button" title="Connected Browsers"><svg aria-hidden="true"><use href="#i-browser"/></svg><span>Connected Browsers</span></button>
         <button id="nav-health" type="button" title="System Health"><svg aria-hidden="true"><use href="#i-pulse"/></svg><span>System Health</span></button>
         <button id="nav-privacy" type="button" title="Privacy Centre"><svg aria-hidden="true"><use href="#i-lock"/></svg><span>Privacy Centre</span></button>
@@ -144,6 +151,50 @@
         <section class="details service-view" id="browsers" aria-labelledby="page-title" hidden>
           <div class="panel"><h2>Recent reporting activity</h2><dl id="browser-report" class="status-list"></dl></div>
           <div class="panel"><h2>Reporting coverage</h2><p class="muted">Opted-in browser credentials are counted in aggregate while their heartbeat is fresh. An expired heartbeat can indicate a browser that closed, opted out or lost its connection. Device identities are unavailable.</p></div>
+        </section>
+        <p id="research-state" class="panel state" role="status" hidden></p>
+        <section class="research-view" id="financial" aria-labelledby="page-title" hidden>
+          <div class="details service-view">
+            <div class="panel"><h2>Address signals</h2><p>Name lookalikes, typosquatting, Unicode and punycode, and misleading subdomains can trigger a local advisory.</p></div>
+            <div class="panel"><h2>Additional context</h2><p>Visible credential or payment fields, cross-origin form actions and redirects can strengthen an advisory. Visual recognition remains disabled.</p></div>
+          </div>
+          <div id="brand-cards" class="brand-cards" aria-label="Verified financial registry"></div>
+        </section>
+        <section class="research-view" id="ml" aria-labelledby="page-title" hidden>
+          <div class="panel"><h2>Fixed URL and DOM fusion</h2><p id="ml-lead" class="muted"></p>
+            <ol class="research-flow"><li>URL text → Character TF-IDF</li><li>DOM structure → Weighted classifier</li><li>75:25 calibrated fusion</li><li>Experimental phishing score</li></ol>
+            <dl id="ml-metrics" class="status-list"></dl>
+          </div>
+          <div class="panel"><div class="section-heading"><h2>Grouped validation comparisons</h2><div class="preference"><label for="ml-metric">Metric</label><select id="ml-metric"></select></div></div>
+            <p id="ml-cohort" class="muted"></p><div id="ml-models" class="source-chart"></div>
+          </div>
+          <div class="details service-view">
+            <div class="panel"><h2>Research model registry</h2><p>Phases 3–5 evaluated numerical logistic regression, random forest, XGBoost, character TF-IDF, character CNN, Transformers, URL-only ensembles, and DOM models. Fusion candidates include fixed weights, logistic stacking and adaptive routing.</p><p id="ml-resources" class="muted"></p></div>
+            <div class="panel"><h2>Phase 5G readiness</h2><p id="ml-ready"></p><p id="ml-frozen" class="muted"></p><p>Independent evaluation needs dated, rights-cleared URL and paired captures under separate custody. Browser ML warnings, blocking and shadow testing are disabled.</p></div>
+          </div>
+        </section>
+        <section class="research-view" id="datasets" aria-labelledby="page-title" hidden>
+          <div class="details service-view">
+            <div class="panel"><h2>UCI PhiUSIIL</h2><p>CC BY 4.0. The published research release contains 235,795 author-labeled URLs. Per-URL observation dates and campaign identifiers were unavailable.</p></div>
+            <div class="panel"><h2>PhreshPhish v1.0.1</h2><p>CC BY 4.0. Pinned publisher training captures supplied paired development data. Publisher test labels were previously accessed, so independent custody is unverified.</p></div>
+            <div class="panel"><h2>PhishVN</h2><p id="phishvn-summary"></p></div>
+            <div class="panel"><h2>Other audited sources</h2><p>PhiShark requires an approved data-use agreement. PhishTrap has unresolved upstream rights and proxy negatives. CompPhish overlaps the PhreshPhish collection period.</p></div>
+          </div>
+          <div class="panel"><h2>PhreshPhish development partitions</h2>
+            <ol class="research-flow"><li>Retain matched URL and DOM</li><li>Group by domain</li><li>Quarantine structural overlap</li><li>Separate fit, calibration and evaluation</li></ol>
+            <dl id="dataset-splits" class="status-list"></dl><p id="dataset-caveat" class="muted"></p>
+            <p>Phase 5D separately tested temporal generalization. Phase 5G forward testing still requires an eligible independent cohort and confirmed financial evidence.</p>
+          </div>
+        </section>
+        <section class="research-view" id="visual" aria-labelledby="page-title" hidden>
+          <div class="panel"><h2>Phase 6A controlled crop benchmark</h2><p id="visual-scope" class="muted"></p>
+            <ol class="research-flow"><li>Approved reference crops</li><li>Normalize readable pixels</li><li>Compare pHash, ORB and embeddings</li><li>Interpret with verified domain context</li></ol>
+            <div id="visual-methods" class="source-chart"></div>
+          </div>
+          <div class="details service-view">
+            <div class="panel"><h2>Similarity methods</h2><p>pHash compares coarse image fingerprints. ORB matches local keypoints. MobileNetV3 compares image embeddings. Sparse or closely competing evidence can produce unavailable or ambiguous outcomes.</p></div>
+            <div class="panel"><h2>Browser readiness</h2><p id="visual-ready"></p><p>Automatic logo location is unimplemented. Production visual protection is disabled.</p></div>
+          </div>
         </section>
         <section class="details service-view" id="health" aria-labelledby="page-title" hidden>
           <div class="panel"><h2>Administrative API checks</h2><dl class="status-list"><div><dt>Spring Boot backend</dt><dd id="health-backend"></dd></div><div><dt>Monitoring storage</dt><dd id="health-storage"></dd></div><div><dt>Administrator access</dt><dd id="health-auth"></dd></div><div><dt>Managed reputation</dt><dd id="health-feed"></dd></div></dl></div>

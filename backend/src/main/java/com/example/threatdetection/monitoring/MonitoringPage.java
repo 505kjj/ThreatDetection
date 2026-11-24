@@ -18,6 +18,9 @@ class MonitoringPage {
     @GetMapping("/monitor.js")
     ResponseEntity<Resource> script() { return asset("monitor.js", "text/javascript"); }
 
+    @GetMapping("/api/threat/monitoring/research-summary")
+    ResponseEntity<Resource> research() { return asset("research.json", "application/json"); }
+
     private ResponseEntity<Resource> asset(String filename, String contentType) {
         return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
                 .header("Content-Security-Policy",

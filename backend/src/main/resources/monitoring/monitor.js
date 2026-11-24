@@ -15,6 +15,10 @@ const views = {
   overview: ['Security overview', 'Reports from browsers that opted in to monitoring.'],
   threats: ['Threat Centre', 'Review the latest reported event evidence.'],
   intelligence: ['Threat Intelligence', 'Check the reputation provider and its current snapshot.'],
+  financial: ['Financial Protection', 'Verified financial domains and local advisory coverage.'],
+  ml: ['ML Laboratory', 'Compare frozen offline phishing research.'],
+  visual: ['Visual Intelligence', 'Review controlled financial-brand similarity experiments.'],
+  datasets: ['Dataset Laboratory', 'Review provenance, cohort construction and evaluation eligibility.'],
   browsers: ['Connected Browsers', 'Heartbeat and reputation availability in the selected scope.'],
   health: ['System Health', 'Check the APIs used by this console.'],
   privacy: ['Privacy Centre', 'Review the data used by optional browser reporting.'],
@@ -22,10 +26,36 @@ const views = {
 };
 const reportViews = new Set(['overview', 'threats', 'browsers', 'health']);
 const feedViews = new Set(['intelligence', 'health']);
+const researchViews = new Set(['financial', 'ml', 'visual', 'datasets']);
+const modelNames = {
+  'url-ngram': 'Character TF-IDF', 'url-xgboost': 'Lexical XGBoost', 'url-blend': 'URL-only blend',
+  'dom-full': 'DOM full', 'dom-reduced': 'DOM reduced', 'dom-regularized': 'DOM regularized',
+  'dom-context': 'DOM context', 'dom-weighted': 'DOM weighted', fixed: 'Fixed 75:25 fusion',
+  stack: 'Logistic stacking', adaptive: 'Adaptive fusion', selective: 'Selective content routing',
+  ngram: 'Character TF-IDF', cnn: 'Character CNN', xgboost: 'Lexical XGBoost',
+  mixed: 'Source-balanced TF-IDF', fusion: 'Frozen URL-only blend'
+};
+const percent = new Intl.NumberFormat(undefined, { style: 'percent', maximumFractionDigits: 2, minimumFractionDigits: 2 });
+const fixed = new Intl.NumberFormat(undefined, { maximumFractionDigits: 4, minimumFractionDigits: 4 });
+const milli = value => value.toFixed(2) + ' ms';
+const metricOptions = {
+  recall: ['Recall', value => percent.format(value)],
+  precision: ['Precision', value => percent.format(value)],
+  f1: ['F1-score', value => percent.format(value)],
+  prAuc: ['PR-AUC', value => fixed.format(value)],
+  rocAuc: ['ROC-AUC', value => fixed.format(value)],
+  urlFpr: ['URL false-positive rate', value => percent.format(value)],
+  domainFpr: ['Domain false-positive rate', value => percent.format(value)],
+  computeMs: ['Median inference', milli],
+  projectionMs: ['Median including projection', milli],
+  bytes: ['Checkpoint size', value => number.format(value) + ' B']
+};
 let token = '';
 let scope = 'REAL';
 let pending;
 let feedPending;
+let researchPending;
+let research;
 let activeView = 'overview';
 let recentEvents = [];
 let chartData = '';
@@ -74,6 +104,8 @@ function navigate(view, focus = true) {
   if (feedViews.has(view)) {
     if (!feedPending || feedPending.signal.aborted) void refreshFeed();
   } else feedPending?.abort();
+  byId('research-state').hidden = !researchViews.has(view) || Boolean(research);
+  if (researchViews.has(view) && !research) void loadResearch();
   if (focus) byId('page-title').focus();
 }
 
@@ -117,6 +149,9 @@ function signOut(message = '') {
   feedPending?.abort();
   feedPending = undefined;
   setFeedStatus('Unavailable');
+  researchPending?.abort();
+  researchPending = undefined;
+  research = undefined;
   token = '';
   clearData();
   resetFilters();
@@ -400,6 +435,107 @@ function setFeedStatus(label, fields = []) {
   statusRows('feed-details', fields);
 }
 
+function comparisonRow(label, detail, value, maximum) {
+  const row = plain('div', '', 'source-row comparison-row');
+  const head = plain('div', '', 'section-heading');
+  head.append(plain('span', label), plain('strong', detail));
+  const bar = document.createElement('progress');
+  bar.max = maximum;
+  bar.value = value;
+  bar.setAttribute('aria-hidden', 'true');
+  row.append(head, bar);
+  return row;
+}
+
+function compareModels() {
+  if (!research) return;
+  const metric = byId('ml-metric').value;
+  const [, format] = metricOptions[metric];
+  const models = research.ml.models;
+  const max = ['computeMs', 'projectionMs', 'bytes'].includes(metric)
+    ? Math.max(...models.map(model => model[metric])) : 1;
+  byId('ml-models').replaceChildren(...models.map(model => {
+    const row = comparisonRow(modelNames[model.id], format(model[metric]), model[metric], max);
+    row.append(plain('small', 'Calibrated score cutoff ' + fixed.format(model.threshold), 'muted'));
+    return row;
+  }));
+}
+
+function renderResearch(data) {
+  byId('brand-cards').replaceChildren(...data.financial.map(brand => {
+    const card = plain('article', '', 'panel brand-card');
+    const heading = plain('h2', brand.name);
+    const scopes = document.createElement('ul');
+    scopes.append(...brand.scopes.map(scope => plain('li', scope)));
+    card.append(heading, scopes);
+    if (brand.sharedHosts) card.append(plain('p', 'Verified shared host ' + brand.sharedHosts.join(', '), 'muted'));
+    return card;
+  }));
+  const { ml, datasets, visual, revisions } = data;
+  const lead = ml.models.find(model => model.id === 'fixed');
+  byId('ml-lead').textContent = 'Retrospective Phase 5F PhreshPhish v1.0.1 development results. Calibrated score cutoff ' + fixed.format(lead.threshold) + '.';
+  statusRows('ml-metrics', ['recall', 'precision', 'f1', 'domainFpr', 'prAuc'].map(key => {
+    const [label, format] = metricOptions[key];
+    return [label, format(lead[key])];
+  }));
+  byId('ml-cohort').textContent = `Phase 5F (${revisions.phase5f}). Same ${number.format(ml.validationRows)} domain- and template-grouped validation rows for every candidate. Cutoffs target 1% domain FPR on ${number.format(ml.calibrationDomains)} separate calibration domains. PR-AUC and ROC-AUC are threshold-free. Timings cover 200 development rows.`;
+  byId('ml-ready').textContent = `Phase 5G (${revisions.phase5g}) froze ${ml.frozen.length} candidates. Independent URL rows scored ${ml.fresh}. Independent paired rows scored ${ml.paired}. Verified financial positives ${ml.financialIndia} in India and ${ml.financialOther} elsewhere.`;
+  byId('ml-frozen').textContent = ml.frozen.map(id => modelNames[id]).join(' · ');
+  const { seconds, peakBytes, logicalCpus } = ml.trainingResources;
+  byId('ml-resources').textContent = `Phase 5F guarded run used ${logicalCpus} logical CPUs, ${seconds.toFixed(2)} s wall time and ${(peakBytes / 2 ** 30).toFixed(2)} GiB peak committed memory.`;
+  compareModels();
+
+  const phish = datasets.phishvn;
+  byId('phishvn-summary').textContent = `Version ${phish.release}, ${phish.license}. Latest eligible source observation ${phish.lastObservation}, before the registered forward window starting ${phish.forwardStart}. Rows scored ${phish.scored}.`;
+  statusRows('dataset-splits', Object.entries(datasets.splits).map(([key, count]) => {
+    const [negative, positive] = datasets.classCounts[key].kept;
+    const removed = datasets.classCounts[key].removed.reduce((sum, value) => sum + value, 0);
+    const label = key[0].toUpperCase() + key.slice(1);
+    return [label, `${number.format(count)} used · ${number.format(removed)} grouped exclusions · ${number.format(negative)} benign and ${number.format(positive)} phishing eligible before balancing`];
+  }));
+  byId('dataset-caveat').textContent = `Phase 5E matched ${number.format(datasets.matchedRows)} publisher records and retained ${number.format(datasets.usableRows)} usable rows across partitions. Phase 5F audited ${number.format(datasets.exactCollisionRows)} validation records with an identical training DOM vector. The structural proxy produced ${number.format(datasets.components)} components. Its largest grouped ${number.format(datasets.largestComponent)} rows and can span unrelated pages.`;
+
+  const methodNames = { phash: 'Perceptual hashing', orb: 'ORB matching', mobilenet: 'MobileNetV3 embeddings' };
+  byId('visual-scope').textContent = `Three original crops (${visual.references.join(', ')}) with ${visual.transformed} same-family transforms and ${visual.unrelated} unrelated invented crops. Phase 6A (${revisions.phase6a}).`;
+  byId('visual-methods').replaceChildren(...visual.methods.map(method => {
+    const row = comparisonRow(methodNames[method.id], `${method.correct}/${visual.transformed} correct`, method.correct, visual.transformed);
+    row.append(plain('small', `${method.falseMatches}/${visual.unrelated} false matches · ${milli(method.medianMs)} median · ${milli(method.p95Ms)} p95 · ${number.format(method.referenceBytes)} B reference data`, 'muted'));
+    return row;
+  }));
+  byId('visual-ready').textContent = `Independent evaluation scored ${visual.independentRows} visual and ${visual.paired} paired cases. Native-canvas preprocessing ${visual.canvasParity ? 'passed' : 'failed'} the 0.97 parity gate with a minimum cosine of ${visual.canvasMinimum.toFixed(5)}.`;
+}
+
+async function loadResearch() {
+  if (!token || research || researchPending) return;
+  const request = new AbortController();
+  const state = byId('research-state');
+  researchPending = request;
+  state.textContent = 'Loading versioned research summary…';
+  state.hidden = false;
+  try {
+    const response = await authenticatedGet('/api/threat/monitoring/research-summary', request);
+    if (request.signal.aborted) return;
+    if (response.status === 401 || response.status === 403) {
+      signOut('Access denied. Enter a valid admin token for this backend.');
+      return;
+    }
+    if (!response.ok) throw new Error('Research summary unavailable');
+    const summary = await response.json();
+    if (request.signal.aborted) return;
+    research = summary;
+    renderResearch(summary);
+    state.hidden = true;
+  } catch {
+    if (!request.signal.aborted) {
+      research = undefined;
+      state.textContent = 'Research summary unavailable. Use Refresh to retry.';
+      state.hidden = !researchViews.has(activeView);
+    }
+  } finally {
+    if (researchPending === request) researchPending = undefined;
+  }
+}
+
 async function refreshFeed() {
   if (!token || !feedViews.has(activeView)) return;
   feedPending?.abort();
@@ -528,6 +664,12 @@ function setTheme(light) {
 }
 byId('theme').addEventListener('click', () => setTheme(document.documentElement.dataset.theme !== 'light'));
 byId('appearance').addEventListener('change', event => setTheme(event.target.value === 'light'));
+for (const [id, [label]] of Object.entries(metricOptions)) {
+  const option = plain('option', label);
+  option.value = id;
+  byId('ml-metric').append(option);
+}
+byId('ml-metric').addEventListener('change', compareModels);
 for (const id of Object.keys(views)) byId('nav-' + id).addEventListener('click', () => navigate(id));
 for (const [id, value] of [['real', 'REAL'], ['synthetic', 'SYNTHETIC']]) {
   byId(id).addEventListener('click', () => {
@@ -540,6 +682,7 @@ for (const [id, value] of [['real', 'REAL'], ['synthetic', 'SYNTHETIC']]) {
 function refreshConsole() {
   void refresh(false, true);
   if (feedViews.has(activeView)) void refreshFeed();
+  if (researchViews.has(activeView)) void loadResearch();
 }
 byId('refresh').addEventListener('click', refreshConsole);
 byId('event-filters').addEventListener('submit', event => event.preventDefault());

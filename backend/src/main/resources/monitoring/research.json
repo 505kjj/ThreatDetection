@@ -1,0 +1,364 @@
+{
+  "revisions": {
+    "phase5e": "a09394b",
+    "phase5f": "a09394b",
+    "phase5g": "ebe0f4f",
+    "phase6a": "9908b49"
+  },
+  "financial": [
+    {
+      "name": "State Bank of India",
+      "scopes": [
+        "sbi.bank.in",
+        "bank.sbi",
+        "onlinesbi.sbi"
+      ]
+    },
+    {
+      "name": "HDFC Bank",
+      "scopes": [
+        "hdfc.bank.in",
+        "hdfcbank.com"
+      ],
+      "sharedHosts": [
+        "hdfcbank-collectnow-docs.razorpay.com"
+      ]
+    },
+    {
+      "name": "NPCI",
+      "scopes": [
+        "npci.org.in"
+      ]
+    },
+    {
+      "name": "Razorpay",
+      "scopes": [
+        "razorpay.com",
+        "rzp.io"
+      ]
+    },
+    {
+      "name": "Axis Bank",
+      "scopes": [
+        "axis.bank.in",
+        "axisbank.com",
+        "axisbank.co.in"
+      ]
+    },
+    {
+      "name": "Bank of Baroda",
+      "scopes": [
+        "bankofbaroda.bank.in",
+        "bankofbaroda.in",
+        "bobibanking.com"
+      ]
+    },
+    {
+      "name": "BHIM",
+      "scopes": [
+        "bhimupi.org.in",
+        "npci.org.in"
+      ]
+    },
+    {
+      "name": "PhonePe",
+      "scopes": [
+        "phonepe.com"
+      ]
+    }
+  ],
+  "ml": {
+    "models": [
+      {
+        "id": "url-ngram",
+        "threshold": 0.7730325410435989,
+        "recall": 0.7655266757865937,
+        "precision": 0.995729537366548,
+        "f1": 0.8655839133797371,
+        "urlFpr": 0.008849557522123894,
+        "domainFpr": 0.009607686148919135,
+        "prAuc": 0.9931388973194308,
+        "rocAuc": 0.9815158045107322,
+        "computeMs": 1.2658000050578266,
+        "projectionMs": 1.2658000050578266,
+        "bytes": 1531828
+      },
+      {
+        "id": "url-xgboost",
+        "threshold": 0.9615553617477418,
+        "recall": 0.4002735978112175,
+        "precision": 0.9965940054495913,
+        "f1": 0.5711497169627172,
+        "urlFpr": 0.003687315634218289,
+        "domainFpr": 0.0040032025620496394,
+        "prAuc": 0.9780720128097891,
+        "rocAuc": 0.9431594494146701,
+        "computeMs": 0.5139999993843958,
+        "projectionMs": 0.5139999993843958,
+        "bytes": 20736
+      },
+      {
+        "id": "url-blend",
+        "threshold": 0.8462310329735782,
+        "recall": 0.6867305061559508,
+        "precision": 0.9976152623211447,
+        "f1": 0.8134824177604927,
+        "urlFpr": 0.004424778761061947,
+        "domainFpr": 0.004803843074459567,
+        "prAuc": 0.993435345825137,
+        "rocAuc": 0.9825563236202074,
+        "computeMs": 2.889050003432203,
+        "projectionMs": 2.889050003432203,
+        "bytes": 1552564
+      },
+      {
+        "id": "dom-full",
+        "threshold": 0.9284069538116456,
+        "recall": 0.32749658002735976,
+        "precision": 0.9835661462612982,
+        "f1": 0.49137931034482757,
+        "urlFpr": 0.014749262536873156,
+        "domainFpr": 0.01521216973578863,
+        "prAuc": 0.9704923256921807,
+        "rocAuc": 0.9433720123159368,
+        "computeMs": 0.5293499998515472,
+        "projectionMs": 5.25670000934042,
+        "bytes": 21422
+      },
+      {
+        "id": "dom-reduced",
+        "threshold": 0.922551453113556,
+        "recall": 0.07058823529411765,
+        "precision": 0.9772727272727273,
+        "f1": 0.1316662413881092,
+        "urlFpr": 0.004424778761061947,
+        "domainFpr": 0.004803843074459567,
+        "prAuc": 0.9566603081614026,
+        "rocAuc": 0.9174633487887849,
+        "computeMs": 0.5200000014156103,
+        "projectionMs": 5.2214000024832785,
+        "bytes": 20934
+      },
+      {
+        "id": "dom-regularized",
+        "threshold": 0.9512755870819093,
+        "recall": 0.26621067031463747,
+        "precision": 0.9858156028368794,
+        "f1": 0.4192158552348126,
+        "urlFpr": 0.01032448377581121,
+        "domainFpr": 0.010408326661329063,
+        "prAuc": 0.9751532365887052,
+        "rocAuc": 0.9539380127436855,
+        "computeMs": 0.5210999952396378,
+        "projectionMs": 5.253249990346376,
+        "bytes": 39260
+      },
+      {
+        "id": "dom-context",
+        "threshold": 0.9445338249206544,
+        "recall": 0.32585499316005473,
+        "precision": 0.9851116625310173,
+        "f1": 0.4897203947368421,
+        "urlFpr": 0.01327433628318584,
+        "domainFpr": 0.013610888710968775,
+        "prAuc": 0.9767945424701074,
+        "rocAuc": 0.9554532926568448,
+        "computeMs": 0.5573500020545907,
+        "projectionMs": 5.405149997386616,
+        "bytes": 39375
+      },
+      {
+        "id": "dom-weighted",
+        "threshold": 0.9703070521354676,
+        "recall": 0.2503419972640219,
+        "precision": 0.9902597402597403,
+        "f1": 0.39965057872898013,
+        "urlFpr": 0.00663716814159292,
+        "domainFpr": 0.007205764611689352,
+        "prAuc": 0.9799691500532881,
+        "rocAuc": 0.9602873584090973,
+        "computeMs": 0.5546999964280985,
+        "projectionMs": 5.328050006937701,
+        "bytes": 39434
+      },
+      {
+        "id": "fixed",
+        "threshold": 0.7963963524112841,
+        "recall": 0.815047879616963,
+        "precision": 0.9963210702341138,
+        "f1": 0.8966139954853273,
+        "urlFpr": 0.008112094395280236,
+        "domainFpr": 0.008807045636509208,
+        "prAuc": 0.9958859705348262,
+        "rocAuc": 0.9891858245665007,
+        "computeMs": 2.930899994680658,
+        "projectionMs": 7.7775999961886555,
+        "bytes": 1571262
+      },
+      {
+        "id": "stack",
+        "threshold": 0.9160534623105493,
+        "recall": 0.8035567715458276,
+        "precision": 0.995593220338983,
+        "f1": 0.889326267978804,
+        "urlFpr": 0.009587020648967551,
+        "domainFpr": 0.010408326661329063,
+        "prAuc": 0.9963553826941767,
+        "rocAuc": 0.9903379215444152,
+        "computeMs": 3.220949998649303,
+        "projectionMs": 8.169500004441943,
+        "bytes": 1571262
+      },
+      {
+        "id": "adaptive",
+        "threshold": 0.8460501779387779,
+        "recall": 0.7652530779753762,
+        "precision": 0.9960826210826211,
+        "f1": 0.865542317809067,
+        "urlFpr": 0.008112094395280236,
+        "domainFpr": 0.008807045636509208,
+        "prAuc": 0.994660628617065,
+        "rocAuc": 0.986563845542333,
+        "computeMs": 2.979199998662807,
+        "projectionMs": 7.794400007696822,
+        "bytes": 1571262
+      },
+      {
+        "id": "selective",
+        "threshold": 0.8460501779387779,
+        "recall": 0.7652530779753762,
+        "precision": 0.9960826210826211,
+        "f1": 0.865542317809067,
+        "urlFpr": 0.008112094395280236,
+        "domainFpr": 0.008807045636509208,
+        "prAuc": 0.9930473346966084,
+        "rocAuc": 0.9817072826249248,
+        "computeMs": 2.887750008085277,
+        "projectionMs": 4.354700009571388,
+        "bytes": 1571262
+      }
+    ],
+    "frozen": [
+      "ngram",
+      "cnn",
+      "xgboost",
+      "fusion",
+      "mixed",
+      "fixed",
+      "stack",
+      "adaptive"
+    ],
+    "validationRows": 5011,
+    "calibrationDomains": 1200,
+    "trainingResources": {
+      "seconds": 53.25,
+      "peakBytes": 1181913088,
+      "logicalCpus": 2
+    },
+    "fresh": 0,
+    "paired": 0,
+    "financialIndia": 0,
+    "financialOther": 0
+  },
+  "datasets": {
+    "splits": {
+      "train": 9570,
+      "tuning": 2109,
+      "calibration": 2104,
+      "validation": 5011
+    },
+    "classCounts": {
+      "validation": {
+        "removed": [
+          0,
+          0
+        ],
+        "kept": [
+          1356,
+          3655
+        ]
+      },
+      "calibration": {
+        "removed": [
+          38,
+          2788
+        ],
+        "kept": [
+          1278,
+          826
+        ]
+      },
+      "tuning": {
+        "removed": [
+          45,
+          2815
+        ],
+        "kept": [
+          1335,
+          774
+        ]
+      },
+      "train": {
+        "removed": [
+          403,
+          20160
+        ],
+        "kept": [
+          9643,
+          4785
+        ]
+      }
+    },
+    "matchedRows": 50962,
+    "usableRows": 49901,
+    "components": 18022,
+    "largestComponent": 17391,
+    "exactCollisionRows": 1321,
+    "phishvn": {
+      "license": "CC BY 4.0",
+      "release": 5,
+      "lastObservation": "2025-02-18",
+      "forwardStart": "2025-12-17",
+      "scored": 0
+    }
+  },
+  "visual": {
+    "methods": [
+      {
+        "id": "phash",
+        "correct": 16,
+        "falseMatches": 0,
+        "medianMs": 2.2865000210003927,
+        "p95Ms": 5.088100006105378,
+        "referenceBytes": 24
+      },
+      {
+        "id": "orb",
+        "correct": 17,
+        "falseMatches": 0,
+        "medianMs": 7.206399997812696,
+        "p95Ms": 10.422099992865697,
+        "referenceBytes": 24576
+      },
+      {
+        "id": "mobilenet",
+        "correct": 17,
+        "falseMatches": 1,
+        "medianMs": 11.459300003480166,
+        "p95Ms": 15.338799974415451,
+        "referenceBytes": 12288
+      }
+    ],
+    "references": [
+      "State Bank of India",
+      "HDFC Bank",
+      "Axis Bank"
+    ],
+    "transformed": 18,
+    "unrelated": 3,
+    "independentRows": 0,
+    "paired": 0,
+    "canvasParity": false,
+    "canvasMinimum": 0.9681901987575199
+  }
+}

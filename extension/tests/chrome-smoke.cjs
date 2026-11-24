@@ -536,6 +536,10 @@ async function main() {
     await capture('mobile');
     for (const [label, id, expected] of [
       ['Threat Intelligence', 'intelligence', 'Managed feed disabled'],
+      ['Financial Protection', 'financial', 'State Bank of India'],
+      ['ML Laboratory', 'ml', '81.50%'],
+      ['Visual Intelligence', 'visual', '16/18 correct'],
+      ['Dataset Laboratory', 'datasets', 'PhreshPhish development partitions'],
       ['Connected Browsers', 'browsers', 'Fresh browser heartbeats'],
       ['System Health', 'health', 'Dashboard query succeeded'],
       ['Privacy Centre', 'privacy', 'The configured reporting window is'],
@@ -543,11 +547,17 @@ async function main() {
     ]) {
       await dashboard.getByRole('button', { name: label }).click();
       await dashboard.getByRole('heading', { name: label, exact: true }).waitFor();
-      await dashboard.locator('#' + id).getByText(expected, { exact: id !== 'privacy' }).waitFor();
+      const panel = dashboard.locator(id === 'ml' ? '#ml-metrics' : '#' + id);
+      await panel.getByText(expected, { exact: id !== 'privacy' }).waitFor();
       assert.equal(await dashboard.evaluate(() => document.documentElement.scrollWidth), 390, label);
       if (id === 'browsers') {
         assert.equal(await dashboard.locator('#browser-report dd').first().textContent(), '1');
         await dashboard.getByText('Synthetic test data.').waitFor();
+      }
+      if (id === 'financial') assert.equal(await dashboard.locator('#brand-cards article').count(), 8);
+      if (id === 'ml') {
+        await dashboard.getByLabel('Metric', { exact: true }).selectOption('domainFpr');
+        await dashboard.locator('#ml-models').getByText('0.88%', { exact: true }).first().waitFor();
       }
     }
     await dashboard.emulateMedia({ reducedMotion: 'no-preference' });
@@ -558,11 +568,14 @@ async function main() {
     await dashboard.getByRole('button', { name: 'Use dark appearance' }).click();
     assert.equal(await dashboard.getByLabel('Appearance', { exact: true }).inputValue(), 'dark');
     await dashboard.setViewportSize({ width: 1280, height: 820 });
-    for (const id of ['intelligence', 'browsers', 'health', 'privacy', 'settings']) {
+    for (const id of ['intelligence', 'financial', 'ml', 'visual', 'datasets', 'browsers', 'health', 'privacy', 'settings']) {
       await dashboard.locator('#nav-' + id).click();
       if (id === 'intelligence') await dashboard.locator('#feed-message').getByText('Managed feed disabled').waitFor();
       await capture(id);
     }
+    const researchApi = origin + '/api/threat/monitoring/research-summary';
+    assert.equal((await fetch(researchApi)).status, 401);
+    assert.equal((await fetch(researchApi, { headers: { Authorization: 'Bearer ' + token } })).status, 403);
     await dashboard.getByRole('button', { name: 'Sign out' }).click();
     assert.equal(await dashboard.locator('#history').textContent(), '');
     await login(adminToken);
