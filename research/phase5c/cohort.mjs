@@ -39,7 +39,7 @@ export async function* rows(path, pin, expectedRows) {
   }
 }
 
-async function index(path, pin, expectedRows) {
+export async function index(path, pin, expectedRows) {
   const keys = ['id', 'group', 'family', 'exact', 'alias'];
   const sets = Object.fromEntries(keys.map(key => [key, new Set()]));
   for await (const entry of rows(path, pin, expectedRows)) {
@@ -134,7 +134,7 @@ export function assertDisjoint(selected) {
   }
 }
 
-async function writePartition(path, members) {
+export async function writePartition(path, members) {
   const hash = createHash('sha256');
   let bytes = 0;
   let positive = 0;
