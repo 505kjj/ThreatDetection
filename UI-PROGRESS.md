@@ -9,6 +9,38 @@
 - Popup explanations use native disclosures and start open. Consent feedback is limited to the local toggle presentation. Protection permissions, reporting data, authentication and threat decisions retain their existing behavior.
 - Updated the [secure Windows setup and verification steps](docs/windows-local-setup.md). Runtime assets are served locally by Spring Boot or Chrome. The build adds no frontend framework or dependency.
 
+## Expanded UI-2 measurements
+
+On the same Windows 11 Core Ultra 7 155H machine, the first expanded pass measured six cold Chromium contexts per build with 12 synthetic records. These readings preceded the final change to animate the donut slices together and leave chart labels static during reveal. They are a separate run from the older UI-2 benchmark below.
+
+| Median unless stated | UI-1 | Expanded pass before chart tuning |
+| --- | ---: | ---: |
+| Navigation load | 321.8 ms | 401.4 ms |
+| DOMContentLoaded | 305.8 ms | 380.6 ms |
+| Decoded initial HTML, CSS, JS and font | 71,035 B | 143,699 B |
+| Used JavaScript heap | 3.60 MB | 3.92 MB |
+| Dashboard response to first chart frame | 73.9 ms | 88.6 ms |
+| Scope selection to final count | 744.7 ms | 490.1 ms |
+| Animation frame interval, p95 | 33.2 ms | 52.1 ms |
+
+One 30-second background poll took 19.5 ms to fetch 2,919 bytes and reused the existing activity chart. The popup's median document load was 169.2 ms, with 166.8 ms to DOMContentLoaded, 250.6 ms to populated reputation status and 3.83 MB of used JavaScript heap. These popup measurements use six tabs in one extension browser process, after one warm-up. Its HTML, CSS, JavaScript modules and font total 66,236 local bytes. Platform timings are loopback observations.
+
+Six final-build cold contexts in a separate run measured 677.7 ms median navigation load, 437.6 ms to DOMContentLoaded, 143,839 decoded initial bytes, 3.90 MB of used JavaScript heap, 24.8 ms for the synthetic dashboard request, 62.3 ms from its response to the first chart frame, and 492.3 ms from selecting the scope to the final count. The frame interval was 36.3 ms at p95, with 16 of 261 intervals above 33.4 ms. Startup times varied across runs. The separate final run cannot isolate the effect of the chart changes.
+
+The raw measurements, scripts and visual evidence are in `C:/Users/kj/threat-detection-experiments/ui-2-final-evidence`. Use the benchmark commands in the earlier continuation notes below with the final evidence directory. The first expanded results are in `benchmarks-before-chart-pass.json` and the final-build measurements are in `benchmarks-final-ui2.json`.
+
+## Expanded UI-2 visual and accessibility checks
+
+- Reviewed the 19 refreshed Chromium screenshots against the written design brief and the prior captures. The final evidence folder contains their `contact-sheet.jpg` and the synthetic `console-motion.webm` walkthrough.
+- The secure Chromium layout matrix checked sign-in, all 11 console views and the event drawer at 1920 × 1080, 1440 × 900, 1366 × 768, 1024 × 768, 768 × 900 and 390 × 844 in both themes. The overview test also checked 320 px. The popup uses a 360 px layout.
+- axe-core found zero violations across 19 views and dialog states. Its remaining contrast review flags concern the gradients and SVG surfaces covered by the manual checks below. Keyboard checks cover compact navigation, chart inspection and dismissal, research controls, extension disclosures, drawer focus, theme and reduced motion.
+
+## Expanded UI-2 regression results
+
+- Clean Maven verification passed 62 tests. The extension unit suite passed all 29 tests.
+- Both direct and secure Windows Chromium modes passed on the final application build. The tests covered authenticated synthetic reporting and its separate scope, content and network warnings, controlled bypass, settings and consent, backend outage, database failure and restoration, report persistence, deduplication, administrator rotation, and invalid or expired snapshots.
+- The secure run used real Chromium clicks on a loopback fixture and checked the exact dashboard response used to render the counter. The visual evidence and browser tests used disposable synthetic data.
+
 ## Final acceptance gates
 
 - The expanded brief arrived as a text attachment. Final visual comparison still requires the dashboard reference image. Review `overview.png`, `mobile.png`, and `light.png` in the final evidence folder against that image before marking PR #27 ready.

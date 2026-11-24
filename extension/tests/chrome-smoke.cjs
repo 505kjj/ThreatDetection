@@ -94,6 +94,21 @@ async function focusPassword(site) {
   await site.locator('#password').focus();
 }
 
+async function clickFixtureBurst(page) {
+  const cdp = await page.context().newCDPSession(page);
+  try {
+    const click = {x:300, y:150, button:'left', clickCount:1};
+    for (let index = 0; index < 36; index++) {
+      await cdp.send('Input.dispatchMouseEvent', {type:'mousePressed', ...click});
+      await cdp.send('Input.dispatchMouseEvent', {type:'mouseReleased', ...click});
+      // Keep timestamps distinct while avoiding Playwright's pointer-motion round trips.
+      await wait(25);
+    }
+  } finally {
+    await cdp.detach();
+  }
+}
+
 async function badge(worker, url) {
   return worker.evaluate(async url => {
     for (const tab of await chrome.tabs.query({})) {
@@ -508,10 +523,7 @@ async function main() {
     console.log('Chrome: private interstitial is bound to its tab; a clean one-time exception is consumed after navigation');
     await site.bringToFront();
     await wait(650);
-    for (let i = 0; i < 28; i++) {
-      await site.mouse.click(300, 150);
-      if (i % 7 === 6) await wait(550);
-    }
+    await clickFixtureBurst(site);
     await assertStatus(site, 'Suspicious activity, unconfirmed');
     assert.equal(await badge(worker, site.url()), '');
     console.log('Chrome: behavior-only signals stay unconfirmed and never set the malicious badge');
@@ -739,6 +751,7 @@ async function main() {
     if (process.env.THREAT_UI_MATRIX === '1') {
       await checkResponsiveConsole(dashboard);
       await dashboard.getByRole('button', { name: 'Use dark appearance' }).click();
+      await dashboard.getByRole('button', { name: 'Settings', exact: true }).click();
     }
     await dashboard.emulateMedia({ reducedMotion: 'no-preference' });
     await dashboard.getByLabel('Reduce motion').check();
