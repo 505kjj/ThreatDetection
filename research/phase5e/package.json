@@ -1,0 +1,7 @@
+{
+  "name": "threatdetection-phase5e-offline",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24" },
+  "dependencies": { "parse5": "7.3.0" }
+}

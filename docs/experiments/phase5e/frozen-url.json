@@ -1,0 +1,108 @@
+{
+  "revision": "3e08561efb7150c414ceb231f3313c49b27a0c81",
+  "sourceReportSha256": "7d0b9fe9418d4a148f2cc375dda9d2489e3e62ea8fe5894455aa0049c88f7ce9",
+  "preprocessingSha256": {
+    "evaluation/features.mjs": "f05528f4641b37d08cc5b6ea6b118f1c4272e386efd0e95087aef337e3b90e10",
+    "extension/reputation.mjs": "87bb2cc831fb5dcb7a7f8307ade00038efdcf9f393ef16df68b4199df6b8cfe0",
+    "research/phase5c/sequence.py": "f3e61f0f4e7aa9e56018438b9f4e22d8dd598a291f86c332d0a62474760a51ba",
+    "research/phase5c/train.py": "f72a78e2a808cf97c96ccfa215d929ec19d309acdde23b03aa3fc4921c55c2e5",
+    "research/phase5d/evaluate.py": "51f21f8a2b232d19efbb6221def508539f09e24222fa1aa7e3a415a4f8f2c5c2",
+    "research/phase5d/transformer.py": "0eb47a08783b0e6c034865153bf9ab0beb51b018320285b83af9c1745cf456ff"
+  },
+  "featureVersion": "url-lexical-v1",
+  "models": {
+    "ngram": {
+      "artifact": "phase-5c-v1/scale-20000/ngram/model.joblib",
+      "kind": "ngram",
+      "sha256": "4a19ef62e06700ea09dc04ecf98b8e1a539b422891f7a0ec07448a3bf56ee843",
+      "bytes": 1611706,
+      "trainingRows": 20000,
+      "calibration": "PhreshPhish development",
+      "operatingPoints": {
+        "fixed": 0.5,
+        "0.01": 0.7444548803360985,
+        "0.001": 0.9748486034939972,
+        "0.0001": null
+      }
+    },
+    "cnn": {
+      "artifact": "phase-5c-v1/scale-20000/cnn/model.pt",
+      "kind": "cnn",
+      "sha256": "e11473f6c2d6cda82188712c9eb6be2863017942e0f9db45741375bd738516c7",
+      "bytes": 24994,
+      "trainingRows": 20000,
+      "calibration": "PhreshPhish development",
+      "operatingPoints": {
+        "fixed": 0.5,
+        "0.01": 0.8981561660766603,
+        "0.001": 0.9906134605407716,
+        "0.0001": null
+      }
+    },
+    "xgboost": {
+      "artifact": "phase-5c-v1/scale-20000/xgboost/model.joblib",
+      "kind": "xgboost",
+      "sha256": "c79bdc07757aa8393228ecea834d02961c271492e0105d4e897406ca291c20e9",
+      "bytes": 20794,
+      "trainingRows": 20000,
+      "calibration": "PhreshPhish development",
+      "operatingPoints": {
+        "fixed": 0.5,
+        "0.01": 0.9266397356987001,
+        "0.001": 0.9976153373718263,
+        "0.0001": null
+      }
+    },
+    "transformer": {
+      "artifact": "phase-5d-v1/transformer-20000/model.pt",
+      "kind": "transformer",
+      "sha256": "aaec2f7190e7a70826886e4b077ecca1611080ecd84af00fa60b0e152ba6c1fd",
+      "bytes": 65085,
+      "trainingRows": 20000,
+      "calibration": "PhreshPhish development",
+      "operatingPoints": {
+        "fixed": 0.5,
+        "0.01": 0.978699564933777,
+        "0.001": 0.9949518442153932,
+        "0.0001": null
+      }
+    },
+    "mixed": {
+      "artifact": "phase-5d-v1/mixed/model.joblib",
+      "kind": "ngram",
+      "sha256": "e650a74fac5c2274174cfac08254dbc8e03d03f757b70b1913d34693e10706c3",
+      "bytes": 1593356,
+      "trainingRows": 20000,
+      "calibration": "UCI development",
+      "operatingPoints": {
+        "fixed": 0.5,
+        "0.01": 0.16884007981805166,
+        "0.001": 0.292800217499405,
+        "0.0001": null
+      }
+    },
+    "fusion": {
+      "components": {
+        "ngram": 0.75,
+        "xgboost": 0.25
+      },
+      "probabilityScales": {
+        "ngram": {
+          "coefficient": 1.6281506093633609,
+          "intercept": 0.3148307383580449
+        },
+        "xgboost": {
+          "coefficient": 1.1958770224530932,
+          "intercept": -0.13114079734325718
+        }
+      },
+      "calibration": "PhreshPhish development",
+      "operatingPoints": {
+        "fixed": 0.5,
+        "0.01": 0.7611078574383651,
+        "0.001": 0.9654823799825953,
+        "0.0001": null
+      }
+    }
+  }
+}

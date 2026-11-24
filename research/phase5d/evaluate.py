@@ -8,14 +8,12 @@ from time import perf_counter
 
 import joblib
 import numpy as np
-import torch
 from threadpoolctl import threadpool_limits
 
 from fusion import blend, pairwise, probability, select
 from metrics import CONFIG, cutoffs, evaluate, group_labels, paired_recall
-from shared import (PHASE5C, CharacterCNN, build_input, ids_sha256, labels,
-                    load_partition, predict_cnn, private, protocol_bytes)
-from transformer import inputs, predict, restore
+from shared import (PHASE5C, build_input, ids_sha256, labels, load_partition,
+                    private, protocol_bytes)
 
 
 def read(path):
@@ -36,9 +34,12 @@ def scorer(name, folder, receipt):
     if hash_file(path) != receipt["modelSha256"]:
         raise ValueError("Frozen checkpoint checksum changed")
     if name == "transformer":
+        from transformer import inputs, predict, restore
         model = restore(path)
         return lambda rows: predict(model, inputs(rows)).astype(np.float64)
     if name == "cnn":
+        import torch
+        from shared import CharacterCNN, predict_cnn
         model = CharacterCNN()
         model.load_state_dict(torch.load(path, weights_only=True, map_location="cpu"))
         return lambda rows: predict_cnn(model, build_input(name, rows)).astype(np.float64)
@@ -245,6 +246,7 @@ def temporal(root, directory, manifest):
 
 
 def run(previous, root, prepared=None):
+    import torch
     prep = prepared or root / "prepared"
     temporal_dir, aux_dir = prep / "temporal", prep / "auxiliary"
     temporal_m, aux_m = read(temporal_dir / "manifest.json"), read(aux_dir / "manifest.json")

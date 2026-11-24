@@ -1,0 +1,9 @@
+{
+  "version": "phase5e-static-dom-v1",
+  "groups": {
+    "structure": ["elements", "depth", "hidden", "templates"],
+    "credential": ["forms", "forms_post", "actions_local", "actions_external", "actions_other", "actions_http", "inputs", "inputs_password", "inputs_email", "inputs_hidden", "inputs_payment", "inputs_otp", "password_forms", "payment_forms", "unassociated_password"],
+    "resources": ["iframe", "iframe_external", "iframe_sandbox", "iframe_srcdoc", "links", "links_external_ratio", "links_other", "scripts", "scripts_inline", "scripts_external", "scripts_other", "refresh", "refresh_external"],
+    "title": ["title_length", "title_brand", "title_login", "title_payment"]
+  }
+}
