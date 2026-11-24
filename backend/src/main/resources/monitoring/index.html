@@ -75,15 +75,26 @@
         <div id="snapshot" hidden>
           <section id="overview" aria-labelledby="page-title">
             <div class="metrics">
-              <div class="panel metric"><span>Total detections</span><strong id="total"></strong><small>Reported blocks and advisories</small></div>
-              <div class="panel metric blocked"><span>Confirmed blocks</span><strong id="blocked"></strong><small>Reported interrupted navigations</small></div>
-              <div class="panel metric warned"><span>Suspicious advisories</span><strong id="warned"></strong><small>Reported warning events</small></div>
-              <div class="panel metric"><span>Recorded bypasses</span><strong id="bypassed"></strong><small>Counted separately from detections</small></div>
+              <div class="panel metric"><span>Total detections</span><strong id="total" class="sr-only"></strong><strong id="total-visual" aria-hidden="true"></strong><small>Reported blocks and advisories</small></div>
+              <div class="panel metric blocked"><span>Confirmed blocks</span><strong id="blocked" class="sr-only"></strong><strong id="blocked-visual" aria-hidden="true"></strong><small>Reported interrupted navigations</small></div>
+              <div class="panel metric warned"><span>Suspicious advisories</span><strong id="warned" class="sr-only"></strong><strong id="warned-visual" aria-hidden="true"></strong><small>Reported warning events</small></div>
+              <div class="panel metric"><span>Recorded bypasses</span><strong id="bypassed" class="sr-only"></strong><strong id="bypassed-visual" aria-hidden="true"></strong><small>Counted separately from detections</small></div>
             </div>
-            <div class="details">
+            <div class="details analytics">
+              <section class="panel" aria-labelledby="activity-title">
+                <div class="section-heading"><h2 id="activity-title">Detection activity</h2><span class="chart-tag">Recent sample</span></div>
+                <p class="muted chart-note">UTC days in the latest 20 reported events, excluding bypasses.</p>
+                <div id="activity-chart" class="activity-chart"></div>
+              </section>
               <section class="panel breakdown" aria-labelledby="categories-title">
-                <h2 id="categories-title">Threat categories</h2>
-                <dl id="categories"></dl>
+                <div class="section-heading"><h2 id="categories-title">Threat categories</h2><span class="chart-tag">Retention window</span></div>
+                <div class="category-layout"><div id="category-chart"></div><dl id="categories"></dl></div>
+              </section>
+            </div>
+            <div class="details secondary">
+              <section class="panel" aria-labelledby="source-title">
+                <div class="section-heading"><h2 id="source-title">Detection sources</h2><span class="chart-tag">Recent sample</span></div>
+                <div id="source-chart" class="source-chart"></div>
               </section>
               <section class="panel status-panel" aria-labelledby="protection-title">
                 <h2 id="protection-title">Protection availability</h2>
@@ -97,10 +108,20 @@
           </section>
           <section id="threats" class="panel history" aria-labelledby="history-title">
             <div class="section-heading"><h2 id="history-title">Recent detections</h2><span class="muted">Up to 20 latest reported events</span></div>
+            <form id="event-filters" class="filters" role="search" aria-label="Recent event filters" hidden>
+              <label class="filter-search">Search events<input id="event-search" type="search" maxlength="120" placeholder="Category, source or evidence"></label>
+              <label>Category<select id="filter-category" aria-label="Category"><option value="">All categories</option></select></label>
+              <label>Severity<select id="filter-severity" aria-label="Severity"><option value="">All severities</option></select></label>
+              <label>Action<select id="filter-action" aria-label="Action"><option value="">All actions</option></select></label>
+              <label>Source<select id="filter-source" aria-label="Source"><option value="">All sources</option></select></label>
+              <label>Date (UTC)<input id="filter-day" type="date"></label>
+              <button id="clear-filters" type="button">Clear filters</button>
+              <p id="filter-count" class="muted" aria-live="polite"></p>
+            </form>
             <p id="empty-history" class="muted" hidden>No events reported for this view. Reporting is optional.</p>
             <div class="table-shell" id="history-table" tabindex="0" role="region" aria-label="Reported events">
               <table>
-                <thead><tr><th scope="col">Detection</th><th scope="col">Action</th><th scope="col">Evidence</th></tr></thead>
+                <thead><tr><th scope="col" aria-sort="descending"><button class="sort" type="button" data-sort="detectedAt">Detection</button></th><th scope="col"><button class="sort" type="button" data-sort="action">Action</button></th><th scope="col"><button class="sort" type="button" data-sort="source">Evidence</button></th><th scope="col" aria-label="Inspect"></th></tr></thead>
                 <tbody id="history"></tbody>
               </table>
             </div>
@@ -109,5 +130,10 @@
       </div>
     </section>
   </main>
+  <dialog id="event-drawer" class="panel drawer" aria-labelledby="drawer-title">
+    <div class="section-heading"><h2 id="drawer-title">Event details</h2><button id="close-drawer" type="button">Close</button></div>
+    <dl id="drawer-fields" class="status-list"></dl>
+    <div class="drawer-evidence"><h3>Observed evidence</h3><p id="drawer-reason"></p><p id="drawer-outcome" class="muted"></p></div>
+  </dialog>
 </body>
 </html>

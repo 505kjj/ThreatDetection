@@ -471,9 +471,20 @@ async function main() {
     }
 
     const dashboard = await browser.newPage();
-    await dashboard.setViewportSize({ width: 1280, height: 1060 });
+    await dashboard.setViewportSize({ width: 1440, height: 900 });
     await dashboard.goto(origin + '/monitor');
     assert.equal(await dashboard.locator('#dashboard').isVisible(), false);
+    const capture = async name => {
+      if (process.env.THREAT_MONITOR_CAPTURE_DIR) {
+        await dashboard.screenshot({ path: require('node:path').join(process.env.THREAT_MONITOR_CAPTURE_DIR, name + '.png'),
+          fullPage: true, animations: 'disabled' });
+      }
+    };
+    await capture('login');
+    await dashboard.getByRole('button', { name: 'Show token' }).click();
+    assert.equal(await dashboard.locator('#token').getAttribute('type'), 'text');
+    await dashboard.getByRole('button', { name: 'Hide token' }).click();
+    assert.equal(await dashboard.locator('#token').getAttribute('type'), 'password');
     async function login(credential) {
       await dashboard.locator('#token').fill(credential);
       await dashboard.getByRole('button', { name: 'Sign in', exact: true }).click();
@@ -491,11 +502,38 @@ async function main() {
     assert.match(await dashboard.locator('#reputation-state').textContent(), /1 with current reputation data/);
     assert.equal(await dashboard.locator('#token').inputValue(), '');
     assert.equal(await dashboard.evaluate(() => localStorage.length + sessionStorage.length), 0);
+    assert.equal(await dashboard.locator('#category-chart svg').count(), 1);
+    assert.equal(await dashboard.locator('#activity-chart svg').count(), 1);
+    await capture('overview');
+    await dashboard.getByRole('button', { name: 'Threat Centre' }).click();
+    await dashboard.getByRole('heading', { name: 'Threat Centre' }).waitFor();
+    await dashboard.getByLabel('Action', { exact: true }).selectOption('BYPASSED');
+    assert.equal(await dashboard.locator('#history tr').count(), report.recent.filter(entry => entry.action === 'BYPASSED').length);
+    await dashboard.locator('#event-search').fill('no-such-event');
+    await dashboard.getByText('No recent events match your filters.').waitFor();
+    await dashboard.getByRole('button', { name: 'Clear filters' }).click();
+    await dashboard.locator('#history').getByText('Bypassed', { exact: true }).first().waitFor();
+    await dashboard.getByRole('button', { name: /^Details for/ }).first().click();
+    await dashboard.getByRole('dialog', { name: 'Event details' }).waitFor();
+    await capture('event-details');
+    await dashboard.keyboard.press('Escape');
+    assert.equal(await dashboard.getByRole('dialog').count(), 0);
+    await capture('threat-centre');
+    await dashboard.getByRole('button', { name: 'Overview' }).click();
+    await dashboard.getByRole('button', { name: 'Use light appearance' }).click();
+    assert.equal(await dashboard.locator('html').getAttribute('data-theme'), 'light');
+    await capture('light');
+    await dashboard.getByRole('button', { name: 'Use dark appearance' }).click();
+    await dashboard.emulateMedia({ reducedMotion: 'reduce' });
+    assert.equal(await dashboard.locator('#total-visual').textContent(), await dashboard.locator('#total').textContent());
     if (globalThis.process.env.THREAT_MONITOR_SCREENSHOT) {
       await dashboard.screenshot({ path: globalThis.process.env.THREAT_MONITOR_SCREENSHOT, fullPage: true });
     }
-    await dashboard.setViewportSize({ width: 390, height: 844 });
-    assert.equal(await dashboard.evaluate(() => document.documentElement.scrollWidth), 390);
+    for (const [width, height] of [[1920, 1080], [1440, 900], [1366, 768], [1024, 768], [768, 900], [390, 844]]) {
+      await dashboard.setViewportSize({ width, height });
+      assert.equal(await dashboard.evaluate(() => document.documentElement.scrollWidth), width);
+    }
+    await capture('mobile');
     await dashboard.setViewportSize({ width: 1280, height: 820 });
     await dashboard.getByRole('button', { name: 'Sign out' }).click();
     assert.equal(await dashboard.locator('#history').textContent(), '');
