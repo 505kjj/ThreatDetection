@@ -1,0 +1,20 @@
+{
+  "version": "phase5d-temporal-v1",
+  "phase5cManifestSha256": "b05c458d47a7840a484419bb2f20953728e9171cb7557eb3158b6a43ccee86ac",
+  "phase5cRevision": "c7beefc8b8421dfd42b18e48cbd47fbc4c0831be",
+  "temporalCutoffsUtc": ["2024-09-01", "2024-09-15", "2024-10-01", "2024-11-01"],
+  "temporalPartitions": ["train", "tuning", "calibration", "near", "far"],
+  "temporalCrossWindow": "keep-latest-window-only",
+  "temporalBalancedRows": 20000,
+  "targetCalibrationFraction": 0.3,
+  "adaptationBalancedRows": 20000,
+  "matchedFusionTrainingRows": 20000,
+  "fusionFitMaximumRows": 10000,
+  "fusionReference": "ngram",
+  "fusionPartners": ["cnn", "xgboost", "transformer"],
+  "fusionPartnerMinExclusiveRecall": 0.01,
+  "fusionCandidateWeightsOnReference": [0.25, 0.5, 0.75],
+  "fusionSelectionDomainFpr": 0.01,
+  "domainFprTargets": [0.01, 0.001, 0.0001],
+  "calibrationRisk": 0.05
+}
