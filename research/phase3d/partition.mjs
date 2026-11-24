@@ -11,7 +11,7 @@ import { detectImpersonation } from '../../extension/impersonation.mjs';
 const groupFor = group => sha256('phase3b-group\0' + group);
 const oldReport = new URL('../../docs/experiments/phase3c/research.json', import.meta.url);
 
-async function verifiedGroups(path, spec) {
+export async function verifiedGroups(path, spec, families = null) {
   const source = createReadStream(path);
   const digest = createHash('sha256');
   const groups = new Set();
@@ -22,6 +22,11 @@ async function verifiedGroups(path, spec) {
     const group = row.slice(2, 66);
     if (!/^[0-9a-f]{64}$/.test(group) || row[66] !== '\t') throw new Error('Bad group index');
     groups.add(group);
+    if (families) {
+      const family = row.slice(67, row.indexOf('\t', 67));
+      if (family && !/^[0-9a-f]{64}$/.test(family)) throw new Error('Bad family index');
+      if (family) families.add(family);
+    }
     rows++;
   }
   if (digest.digest('hex') !== spec.sha256 || rows !== spec.phishing + spec.legitimate || groups.size !== spec.groups) {
@@ -42,6 +47,10 @@ export function partition(records) {
   const firstTest = test.reduce((day, r) => r.date < day ? r.date : day, test[0].date);
   const testGroups = new Set(test.map(r => r.group));
   const testFamilies = new Set(test.map(r => r.family).filter(Boolean));
+  return { ...developmentPartitions(records, firstTest, testGroups, testFamilies), test };
+}
+
+export function developmentPartitions(records, firstTest, testGroups, testFamilies) {
   const development = records.filter(r => r.side === 'train' && r.date < firstTest &&
     !testGroups.has(r.group) && (!r.family || !testFamilies.has(r.family)));
   const days = [...new Set(development.map(r => r.date))].sort();
@@ -52,7 +61,7 @@ export function partition(records) {
   const validationFamilies = new Set(validation.map(r => r.family).filter(Boolean));
   const train = development.filter(r => r.date < cutoff && !validationGroups.has(r.group) &&
     (!r.family || !validationFamilies.has(r.family)));
-  return { train, validation, test };
+  return { train, validation };
 }
 
 async function writePartition(folder, name, rows) {

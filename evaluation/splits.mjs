@@ -10,6 +10,11 @@ export function timestamp(value) {
   return time;
 }
 
+export function domainPartition(group, seed) {
+  const fraction = Number.parseInt(sha256(seed + '\0' + group).slice(0, 8), 16) / 2 ** 32;
+  return fraction < 0.7 ? 'train' : fraction < 0.85 ? 'validation' : 'test';
+}
+
 export function splitRecords(rows, plan) {
   const chronological = { train: [], validation: [], test: [] };
   const domainDisjoint = { train: [], validation: [], test: [] };
@@ -22,10 +27,7 @@ export function splitRecords(rows, plan) {
   }
   const buckets = new Map();
   for (const row of rows) {
-    if (!buckets.has(row.group)) {
-      const fraction = Number.parseInt(sha256(seed + '\0' + row.group).slice(0, 8), 16) / 2 ** 32;
-      buckets.set(row.group, fraction < 0.7 ? 'train' : fraction < 0.85 ? 'validation' : 'test');
-    }
+    if (!buckets.has(row.group)) buckets.set(row.group, domainPartition(row.group, seed));
     domainDisjoint[buckets.get(row.group)].push(row);
     if (row.observedAt === null) {
       withheld.undated++;
