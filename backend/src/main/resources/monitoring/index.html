@@ -3,76 +3,102 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Threat monitoring | ThreatDetection</title>
+  <title>ThreatDetection | Security console</title>
   <link rel="stylesheet" href="/monitor.css">
   <script type="module" src="/monitor.js"></script>
 </head>
 <body>
+  <svg class="symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s7-3 7-9V5l-7-3-7 3v8c0 6 7 9 7 9Z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6 8a7 7 0 0 1 12-2l2 6M4 12l2 6a7 7 0 0 0 12-2"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1 1m12 12 1 1m0-14-1 1M6 18l-1 1"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+  </svg>
+  <a href="#main" class="skip">Skip to content</a>
   <header class="masthead">
-    <div class="shell masthead-inner">
-      <span class="product"><span class="mark" aria-hidden="true"></span>ThreatDetection</span>
-      <span id="backend-state" class="badge" role="status">Signed out</span>
+    <div class="masthead-inner">
+      <div class="wordmark"><span class="mark"><svg aria-hidden="true"><use href="#i-shield"/></svg></span>ThreatDetection</div>
+      <div class="header-actions">
+        <span id="backend-state" class="status" role="status">Signed out</span>
+        <button id="theme" class="icon-button" type="button" aria-label="Use light appearance" title="Switch appearance" aria-pressed="false"><svg aria-hidden="true"><use href="#i-sun"/></svg></button>
+      </div>
     </div>
   </header>
-  <main class="shell">
-    <div class="intro">
-      <h1>Threat monitoring</h1>
-      <p>Review detections shared by browsers that opted in.</p>
-    </div>
-    <section id="sign-in" class="panel sign-in" aria-labelledby="sign-in-title">
-      <h2 id="sign-in-title">Administrator access</h2>
-      <p>Use the admin token issued for this backend. The token is cleared when you sign out or reload.</p>
-      <form id="token-form" autocomplete="off">
-        <label for="token">Admin token</label>
-        <input id="token" type="password" spellcheck="false" autocomplete="off" maxlength="43" required>
-        <button type="submit" id="sign-in-button">Sign in</button>
-      </form>
-      <p id="sign-in-error" class="error" role="alert" hidden></p>
-    </section>
-    <section id="dashboard" aria-label="Threat dashboard" hidden>
-      <div class="toolbar">
-        <div class="scopes" role="group" aria-label="Event source">
-          <button id="real" type="button" aria-pressed="true">Live reports</button>
-          <button id="synthetic" type="button" aria-pressed="false">Synthetic fixtures</button>
-        </div>
-        <div class="controls">
-          <button id="refresh" class="quiet" type="button">Refresh</button>
-          <button id="sign-out" class="quiet" type="button">Sign out</button>
-        </div>
+  <main id="main" tabindex="-1">
+    <section id="sign-in" class="login-layout" aria-labelledby="sign-in-title">
+      <div class="login-intro">
+        <span class="eyebrow"><span class="signal-dot"></span> Security operations</span>
+        <p class="tagline" aria-label="Detect. Defend. Protect."><span>Detect.</span> <span>Defend.</span> <span>Protect.</span></p>
+        <p class="muted">Review reported threats, browser protection availability and security events from one console.</p>
       </div>
-      <p id="scope-notice" class="fixture-notice" hidden><strong>Synthetic test data.</strong> These detections came from a configured test browser.</p>
-      <p id="load-state" class="panel state" role="status" hidden></p>
-      <div id="snapshot" hidden>
-        <div class="status-strip">
-          <div>
-            <h2>Extension connection</h2>
-            <p id="extension-state"></p>
+      <div class="panel sign-in">
+        <span class="mark login-mark"><svg aria-hidden="true"><use href="#i-shield"/></svg></span>
+        <h1 id="sign-in-title">Administrator access</h1>
+        <p class="muted">Sign in with the administrator token issued for this backend.</p>
+        <form id="token-form" autocomplete="off">
+          <label for="token">Administrator token</label>
+          <div class="token-field">
+            <input id="token" type="password" spellcheck="false" autocapitalize="none" autocomplete="off" maxlength="43" required aria-describedby="token-help">
+            <button id="show-token" class="icon-button" type="button" aria-label="Show token" aria-pressed="false"><svg aria-hidden="true"><use href="#i-eye"/></svg></button>
           </div>
-          <div>
-            <h2>Reputation protection</h2>
-            <p id="reputation-state"></p>
-          </div>
-          <div>
-            <h2>Last successful heartbeat</h2>
-            <p id="last-contact"></p>
+          <button class="primary" type="submit" id="sign-in-button">Sign in <svg aria-hidden="true"><use href="#i-arrow"/></svg></button>
+        </form>
+        <p id="sign-in-error" class="error" role="alert" hidden></p>
+        <p id="token-help" class="muted token-help">Your token stays in memory for this session.</p>
+      </div>
+    </section>
+    <section id="dashboard" class="workspace" aria-label="Threat dashboard" hidden>
+      <nav class="rail" aria-label="Workspace">
+        <button id="nav-overview" type="button" aria-current="page" title="Overview"><svg aria-hidden="true"><use href="#i-grid"/></svg><span>Overview</span></button>
+        <button id="nav-threats" type="button" title="Threat Centre"><svg aria-hidden="true"><use href="#i-target"/></svg><span>Threat Centre</span></button>
+      </nav>
+      <div class="page">
+        <div class="page-heading">
+          <div><p class="eyebrow">Monitoring console</p><h1 id="page-title" tabindex="-1">Security overview</h1><p id="page-description" class="muted">Reports from browsers that opted in to monitoring.</p></div>
+          <div class="controls">
+            <button id="refresh" type="button" class="quiet"><svg aria-hidden="true"><use href="#i-refresh"/></svg> Refresh</button>
+            <button id="sign-out" type="button" class="quiet">Sign out</button>
           </div>
         </div>
-        <div class="metrics">
-          <div class="panel metric"><span>Total detections</span><strong id="total">0</strong></div>
-          <div class="panel metric blocked"><span>Blocked</span><strong id="blocked">0</strong></div>
-          <div class="panel metric warned"><span>Warned</span><strong id="warned">0</strong></div>
-          <div class="panel metric"><span>Bypassed</span><strong id="bypassed">0</strong></div>
+        <div class="toolbar">
+          <div class="scopes" role="group" aria-label="Reporting scope">
+            <button id="real" type="button" aria-pressed="true">Live reports</button>
+            <button id="synthetic" type="button" aria-pressed="false">Synthetic fixtures</button>
+          </div>
+          <span id="retention" class="muted"></span>
         </div>
-        <div class="details">
-          <section class="panel breakdown" aria-labelledby="categories-title">
-            <h2 id="categories-title">Threat categories</h2>
-            <dl id="categories"></dl>
-            <p id="retention" class="muted"></p>
+        <p id="scope-notice" class="fixture-notice" hidden><strong>Synthetic test data.</strong> These detections came from a configured test browser.</p>
+        <p id="load-state" class="panel state" role="status" hidden></p>
+        <div id="snapshot" hidden>
+          <section id="overview" aria-labelledby="page-title">
+            <div class="metrics">
+              <div class="panel metric"><span>Total detections</span><strong id="total"></strong><small>Reported blocks and advisories</small></div>
+              <div class="panel metric blocked"><span>Confirmed blocks</span><strong id="blocked"></strong><small>Reported interrupted navigations</small></div>
+              <div class="panel metric warned"><span>Suspicious advisories</span><strong id="warned"></strong><small>Reported warning events</small></div>
+              <div class="panel metric"><span>Recorded bypasses</span><strong id="bypassed"></strong><small>Counted separately from detections</small></div>
+            </div>
+            <div class="details">
+              <section class="panel breakdown" aria-labelledby="categories-title">
+                <h2 id="categories-title">Threat categories</h2>
+                <dl id="categories"></dl>
+              </section>
+              <section class="panel status-panel" aria-labelledby="protection-title">
+                <h2 id="protection-title">Protection availability</h2>
+                <dl class="status-list">
+                  <div><dt>Extension connection</dt><dd id="extension-state"></dd></div>
+                  <div><dt>Reputation protection</dt><dd id="reputation-state"></dd></div>
+                  <div><dt>Last successful heartbeat</dt><dd id="last-contact"></dd></div>
+                </dl>
+              </section>
+            </div>
           </section>
-          <section class="panel history" aria-labelledby="history-title">
-            <h2 id="history-title">Recent detections</h2>
-            <p id="empty-history" class="muted" hidden>No events reported for this view.</p>
-            <div class="table-shell" id="history-table">
+          <section id="threats" class="panel history" aria-labelledby="history-title">
+            <div class="section-heading"><h2 id="history-title">Recent detections</h2><span class="muted">Up to 20 latest reported events</span></div>
+            <p id="empty-history" class="muted" hidden>No events reported for this view. Reporting is optional.</p>
+            <div class="table-shell" id="history-table" tabindex="0" role="region" aria-label="Reported events">
               <table>
                 <thead><tr><th scope="col">Detection</th><th scope="col">Action</th><th scope="col">Evidence</th></tr></thead>
                 <tbody id="history"></tbody>

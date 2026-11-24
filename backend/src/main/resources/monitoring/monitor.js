@@ -15,6 +15,27 @@ let token = '';
 let scope = 'REAL';
 let pending;
 
+function status(text, state = '') {
+  byId('backend-state').textContent = text;
+  byId('backend-state').dataset.state = state;
+}
+
+function showToken(visible) {
+  byId('token').type = visible ? 'text' : 'password';
+  byId('show-token').setAttribute('aria-pressed', String(visible));
+  byId('show-token').setAttribute('aria-label', visible ? 'Hide token' : 'Show token');
+}
+
+function navigate(threats, focus = true) {
+  byId('overview').hidden = threats;
+  byId('page-title').textContent = threats ? 'Threat Centre' : 'Security overview';
+  byId('page-description').textContent = threats ? 'Review the latest reported event evidence.' : 'Reports from browsers that opted in to monitoring.';
+  byId('history-title').textContent = threats ? 'Reported events' : 'Recent detections';
+  byId(threats ? 'nav-threats' : 'nav-overview').setAttribute('aria-current', 'page');
+  byId(threats ? 'nav-overview' : 'nav-threats').removeAttribute('aria-current');
+  if (focus) byId('page-title').focus();
+}
+
 function plain(tag, content, className) {
   const node = document.createElement(tag);
   node.textContent = content;
@@ -39,12 +60,13 @@ function signOut(message = '') {
   token = '';
   clearData();
   byId('token').value = '';
+  showToken(false);
   byId('sign-in-button').disabled = false;
   byId('sign-in-error').textContent = message;
   byId('sign-in-error').hidden = !message;
   byId('sign-in').hidden = false;
   byId('dashboard').hidden = true;
-  byId('backend-state').textContent = 'Signed out';
+  status('Signed out');
 }
 
 function render(result) {
@@ -104,7 +126,7 @@ async function refresh(initial = false, preserve = false) {
     clearData();
     byId('load-state').textContent = 'Loading reports…';
     byId('load-state').hidden = false;
-    byId('backend-state').textContent = 'Connecting…';
+    status('Connecting…');
   }
   byId('scope-notice').hidden = requestedScope !== 'SYNTHETIC';
   try {
@@ -122,7 +144,7 @@ async function refresh(initial = false, preserve = false) {
       clearData();
       byId('sign-in').hidden = true;
       byId('dashboard').hidden = false;
-      byId('backend-state').textContent = 'Backend reachable';
+      status('Backend reachable', 'error');
       byId('load-state').textContent = 'Monitoring storage unavailable. Try refreshing after the database recovers.';
       byId('load-state').hidden = false;
       return;
@@ -134,7 +156,8 @@ async function refresh(initial = false, preserve = false) {
     render(result);
     byId('sign-in').hidden = true;
     byId('dashboard').hidden = false;
-    byId('backend-state').textContent = 'Backend connected';
+    status('Backend connected', 'ok');
+    if (initial) byId('page-title').focus();
   } catch {
     if (request.signal.aborted) return;
     const message = 'Backend unavailable. Reports and browser protection status could not be refreshed.';
@@ -142,7 +165,7 @@ async function refresh(initial = false, preserve = false) {
       signOut(message);
     } else {
       clearData();
-      byId('backend-state').textContent = 'Backend unavailable';
+      status('Backend unavailable', 'error');
       byId('load-state').textContent = message;
       byId('load-state').hidden = false;
     }
@@ -164,16 +187,27 @@ byId('token-form').addEventListener('submit', event => {
   event.preventDefault();
   const supplied = byId('token').value.trim();
   byId('token').value = '';
+  showToken(false);
   if (!/^[A-Za-z0-9_-]{43}$/.test(supplied)) {
     signOut('Enter the 43-character admin token issued for this backend.');
     return;
   }
   token = supplied;
   selectScope('REAL');
+  navigate(false, false);
   byId('sign-in-error').hidden = true;
   byId('sign-in-button').disabled = true;
   void refresh(true);
 });
+byId('show-token').addEventListener('click', () => showToken(byId('token').type === 'password'));
+byId('theme').addEventListener('click', () => {
+  const light = document.documentElement.dataset.theme !== 'light';
+  document.documentElement.dataset.theme = light ? 'light' : 'dark';
+  byId('theme').setAttribute('aria-pressed', String(light));
+  byId('theme').setAttribute('aria-label', light ? 'Use dark appearance' : 'Use light appearance');
+});
+byId('nav-overview').addEventListener('click', () => navigate(false));
+byId('nav-threats').addEventListener('click', () => navigate(true));
 for (const [id, value] of [['real', 'REAL'], ['synthetic', 'SYNTHETIC']]) {
   byId(id).addEventListener('click', () => {
     selectScope(value);
