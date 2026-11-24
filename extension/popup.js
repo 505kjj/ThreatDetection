@@ -40,8 +40,9 @@ function render(status, protection) {
   current = status;
   const evidence = status.impersonation ?? [];
   const caution = evidence.length > 0 && (status.state === 'no_match' || status.state === 'warning');
-  byId('statusText').textContent = caution ? 'Possible financial website impersonation'
+  const label = caution ? 'Possible financial website impersonation'
     : title[status.state] ?? title.unavailable;
+  if (byId('statusText').textContent !== label) byId('statusText').textContent = label;
   const signal = status.state === 'confirmed' ? 'offline'
     : caution || status.state === 'warning' ? 'caution' : status.state === 'no_match' ? 'online' : 'idle';
   byId('statusDot').className = 'status-dot ' + signal;

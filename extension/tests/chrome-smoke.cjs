@@ -136,6 +136,18 @@ async function captureEvidence(page, name, fullPage = true) {
   if (directory) await page.screenshot({ path: path.join(directory, name + '.png'), fullPage, animations: 'disabled' });
 }
 
+const auditFindings = [];
+async function auditAccessibility(page, surface) {
+  const source = process.env.THREAT_AXE_SOURCE;
+  if (!source) return;
+  await page.evaluate(require('node:fs').readFileSync(source, 'utf8'));
+  const result = await page.evaluate(() => axe.run(document, {runOnly: {
+    type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']
+  }}));
+  const summarize = checks => checks.map(({id, nodes}) => ({id, targets: nodes.map(node => node.target)}));
+  auditFindings.push({surface, violations: summarize(result.violations), incomplete: summarize(result.incomplete)});
+}
+
 async function main() {
   const useWindowsSetup = process.env.THREAT_SMOKE_LOCAL_SETUP === '1';
   if (useWindowsSetup && process.platform !== 'win32') throw new Error('Windows is required for the local setup smoke');
@@ -262,6 +274,7 @@ async function main() {
     await options.locator('#tokenStatus').getByText('Browser token set for this session.').waitFor();
     assert.equal(await options.locator('#threatReporting').isChecked(), false);
     await captureEvidence(options, 'extension-settings');
+    await auditAccessibility(options, 'extension settings');
     const monitoring = origin + '/api/threat/monitoring';
     const reportingCalls = () => apiCalls.filter(call => call.url().startsWith(monitoring + '/'));
     const eventCalls = () => reportingCalls().filter(call => call.url() === monitoring + '/events');
@@ -284,6 +297,14 @@ async function main() {
     await options.locator('#newDomain').fill('127.0.0.1');
     await options.locator('#addDomain').click();
     await options.locator('#siteList').getByText('127.0.0.1', { exact: true }).waitFor();
+    const editSite = options.getByRole('button', {name: 'Edit', exact: true});
+    await editSite.focus();
+    await options.keyboard.press('Enter');
+    await options.getByRole('dialog', {name: 'Edit Site Configuration'}).waitFor();
+    assert.equal(await options.evaluate(() => document.activeElement.id), 'editPaths');
+    await auditAccessibility(options, 'extension site editor');
+    await options.keyboard.press('Escape');
+    assert.equal(await editSite.evaluate(element => document.activeElement === element), true);
 
     const site = await browser.newPage();
     await site.goto(localSite + '/login/private-path?fixture=private-query#private-fragment');
@@ -362,6 +383,7 @@ async function main() {
     await phish.getByText(/subdomain uses the HDFC Bank name/).waitFor();
     assert.equal(hits(phishingHost).length, 0);
     await captureEvidence(phish, 'warning-confirmed');
+    await auditAccessibility(phish, 'confirmed warning');
     await assertStatus(phish, 'Known malicious website');
     assert.equal(await worker.evaluate(async markers => {
       const state = JSON.stringify(await chrome.storage.session.get(null));
@@ -407,6 +429,7 @@ async function main() {
       });
     }
     await captureEvidence(caution, 'warning-advisory', false);
+    await auditAccessibility(popup, 'extension popup');
     assert.equal(await badge(worker, caution.url()), '!');
     await phish.getByRole('heading', { name: 'Known threat blocked' }).waitFor();
     assert.equal(await badge(worker, site.url()), '');
@@ -492,6 +515,7 @@ async function main() {
     assert.equal(await dashboard.locator('#dashboard').isVisible(), false);
     const capture = name => captureEvidence(dashboard, name);
     await capture('login');
+    await auditAccessibility(dashboard, 'login');
     await dashboard.getByRole('button', { name: 'Show token' }).click();
     assert.equal(await dashboard.locator('#token').getAttribute('type'), 'text');
     await dashboard.getByRole('button', { name: 'Hide token' }).click();
@@ -515,6 +539,8 @@ async function main() {
     assert.equal(await dashboard.evaluate(() => localStorage.length + sessionStorage.length), 0);
     assert.equal(await dashboard.locator('#category-chart svg').count(), 1);
     assert.equal(await dashboard.locator('#activity-chart svg').count(), 1);
+    await dashboard.waitForFunction(() => ['total','blocked','warned','bypassed'].every(id =>
+      document.getElementById(id).textContent === document.getElementById(id + '-visual').textContent));
     if (process.env.THREAT_MONITOR_CAPTURE_DIR) {
       const metrics = await dashboard.evaluate(() => {
         const navigation = performance.getEntriesByType('navigation')[0];
@@ -529,6 +555,7 @@ async function main() {
       writeFileSync(path.join(process.env.THREAT_MONITOR_CAPTURE_DIR, 'performance.json'), JSON.stringify(metrics, null, 2));
     }
     await capture('overview');
+    await auditAccessibility(dashboard, 'dark overview');
     await dashboard.getByRole('button', { name: 'Threat Centre' }).click();
     await dashboard.getByRole('heading', { name: 'Threat Centre' }).waitFor();
     await dashboard.getByLabel('Action', { exact: true }).selectOption('BYPASSED');
@@ -537,26 +564,34 @@ async function main() {
     await dashboard.getByText('No recent events match your filters.').waitFor();
     await dashboard.getByRole('button', { name: 'Clear filters' }).click();
     await dashboard.locator('#history').getByText('Bypassed', { exact: true }).first().waitFor();
-    await dashboard.getByRole('button', { name: /^Details for/ }).first().click();
+    const detailTrigger = dashboard.getByRole('button', { name: /^Details for/ }).first();
+    await detailTrigger.focus();
+    await dashboard.keyboard.press('Enter');
     await dashboard.getByRole('dialog', { name: 'Event details' }).waitFor();
+    assert.equal(await dashboard.evaluate(() => document.activeElement.id), 'close-drawer');
     await capture('event-details');
+    await auditAccessibility(dashboard, 'event dialog');
     await dashboard.keyboard.press('Escape');
     assert.equal(await dashboard.getByRole('dialog').count(), 0);
+    assert.equal(await detailTrigger.evaluate(element => document.activeElement === element), true);
     await capture('threat-centre');
+    await auditAccessibility(dashboard, 'threat centre');
     await dashboard.getByRole('button', { name: 'Overview' }).click();
     await dashboard.getByRole('button', { name: 'Use light appearance' }).click();
     assert.equal(await dashboard.locator('html').getAttribute('data-theme'), 'light');
     await capture('light');
+    await auditAccessibility(dashboard, 'light overview');
     await dashboard.getByRole('button', { name: 'Use dark appearance' }).click();
     await dashboard.emulateMedia({ reducedMotion: 'reduce' });
     assert.equal(await dashboard.locator('#total-visual').textContent(), await dashboard.locator('#total').textContent());
     if (globalThis.process.env.THREAT_MONITOR_SCREENSHOT) {
       await dashboard.screenshot({ path: globalThis.process.env.THREAT_MONITOR_SCREENSHOT, fullPage: true });
     }
-    for (const [width, height] of [[1920, 1080], [1440, 900], [1366, 768], [1024, 768], [768, 900], [390, 844]]) {
+    for (const [width, height] of [[1920, 1080], [1440, 900], [1366, 768], [1024, 768], [768, 900], [320, 800], [390, 844]]) {
       await dashboard.setViewportSize({ width, height });
       assert.equal(await dashboard.evaluate(() => document.documentElement.scrollWidth), width);
     }
+    assert.equal(await dashboard.locator('#history-table').evaluate(element => element.scrollWidth <= element.clientWidth), true);
     await capture('mobile');
     for (const [label, id, expected] of [
       ['Threat Intelligence', 'intelligence', 'Managed feed disabled'],
@@ -582,6 +617,22 @@ async function main() {
       if (id === 'ml') {
         await dashboard.getByLabel('Metric', { exact: true }).selectOption('domainFpr');
         await dashboard.locator('#ml-models').getByText('0.88%', { exact: true }).first().waitFor();
+        const experiment = dashboard.getByLabel('Cohort', { exact: true });
+        const cutoff = dashboard.getByLabel('Operating point', { exact: true });
+        await experiment.selectOption('phresh-transfer');
+        await cutoff.selectOption('0.001');
+        await dashboard.locator('#ml-cohort').getByText(/19,570 rows.*original UCI cutoffs/i).waitFor();
+        await dashboard.locator('#ml-models').getByText('Random Forest', { exact: true }).waitFor();
+        await experiment.selectOption('temporal-far');
+        await dashboard.getByLabel('Metric', { exact: true }).selectOption('prAuc');
+        await dashboard.locator('#ml-cohort').getByText(/46,562 rows.*threshold-free/).waitFor();
+        assert.equal(await dashboard.locator('#ml-models').getByText(/Score cutoff/).count(), 0);
+        await experiment.selectOption('phase3f-general-transfer');
+        assert.equal(await dashboard.locator('#ml-metric option[value="domainFpr"]').isDisabled(), true);
+        await experiment.selectOption('phase3e-india-control');
+        assert.equal(await dashboard.locator('#ml-metric option[value="recall"]').isDisabled(), true);
+        await experiment.selectOption('grouped-5f');
+        await dashboard.getByLabel('Metric', { exact: true }).selectOption('recall');
       }
     }
     await dashboard.emulateMedia({ reducedMotion: 'no-preference' });
@@ -596,10 +647,24 @@ async function main() {
       await dashboard.locator('#nav-' + id).click();
       if (id === 'intelligence') await dashboard.locator('#feed-message').getByText('Managed feed disabled').waitFor();
       await capture(id);
+      await auditAccessibility(dashboard, id);
     }
     const researchApi = origin + '/api/threat/monitoring/research-summary';
+    const fontResponse = await fetch(origin + '/monitor/fonts/inter-latin.woff2');
+    assert.equal(fontResponse.status, 200);
+    assert.equal(fontResponse.headers.get('content-type'), 'font/woff2');
+    assert.equal(await dashboard.evaluate(async () => {
+      await document.fonts.ready;
+      return [...document.fonts].some(font => font.family === 'Inter' && font.status === 'loaded');
+    }), true);
     assert.equal((await fetch(researchApi)).status, 401);
     assert.equal((await fetch(researchApi, { headers: { Authorization: 'Bearer ' + token } })).status, 403);
+    if (process.env.THREAT_AXE_SOURCE) {
+      const target = process.env.THREAT_MONITOR_CAPTURE_DIR;
+      if (target) writeFileSync(path.join(target, 'accessibility.json'), JSON.stringify(auditFindings, null, 2));
+      console.log('Accessibility: ' + auditFindings.length + ' surfaces checked');
+      assert.deepEqual(auditFindings.filter(entry => entry.violations.length), []);
+    }
     await dashboard.getByRole('button', { name: 'Sign out' }).click();
     assert.equal(await dashboard.locator('#history').textContent(), '');
     await login(adminToken);

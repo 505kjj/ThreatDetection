@@ -33,23 +33,45 @@ const modelNames = {
   'dom-context': 'DOM context', 'dom-weighted': 'DOM weighted', fixed: 'Fixed 75:25 fusion',
   stack: 'Logistic stacking', adaptive: 'Adaptive fusion', selective: 'Selective content routing',
   ngram: 'Character TF-IDF', cnn: 'Character CNN', xgboost: 'Lexical XGBoost',
-  mixed: 'Source-balanced TF-IDF', fusion: 'Frozen URL-only blend'
+  mixed: 'Source-balanced TF-IDF', fusion: 'Frozen URL-only blend',
+  transformer: 'Lightweight Transformer', logistic: 'Numerical Logistic Regression', logistic_regression: 'Numerical Logistic Regression',
+  forest: 'Random Forest', random_forest: 'Random Forest', mlp: 'Small MLP',
+  'url-weighted-75': 'TF-IDF and XGBoost 75:25',
+  'dom-logistic': 'DOM Logistic Regression', 'dom-forest': 'DOM Random Forest', 'dom-xgboost': 'DOM XGBoost',
+  'url-dom-xgboost': 'URL and DOM XGBoost', 'url-fusion': 'URL-only ensemble', 'url-dom-fusion': 'URL and DOM fusion',
+  'phresh-20000-path-forest': 'Hostname and path Random Forest',
+  'fusion-mixed-20000-two': 'Two-model weighted fusion',
+  'fusion-mixed-20000-four': 'Four-model weighted fusion',
+  'fusion-mixed-20000-stack': 'Stacked fusion'
 };
 const percent = new Intl.NumberFormat(undefined, { style: 'percent', maximumFractionDigits: 2, minimumFractionDigits: 2 });
 const fixed = new Intl.NumberFormat(undefined, { maximumFractionDigits: 4, minimumFractionDigits: 4 });
+const cutoffNumber = new Intl.NumberFormat(undefined, { maximumSignificantDigits: 10 });
 const milli = value => value.toFixed(2) + ' ms';
+const batchTime = value => value.toFixed(4) + ' ms';
 const metricOptions = {
   recall: ['Recall', value => percent.format(value)],
   precision: ['Precision', value => percent.format(value)],
   f1: ['F1-score', value => percent.format(value)],
-  prAuc: ['PR-AUC', value => fixed.format(value)],
+  prAuc: ['PR-AUC (average precision)', value => fixed.format(value)],
   rocAuc: ['ROC-AUC', value => fixed.format(value)],
   urlFpr: ['URL false-positive rate', value => percent.format(value)],
   domainFpr: ['Domain false-positive rate', value => percent.format(value)],
+  domainFprUpper: ['Domain FPR 95% upper bound', value => percent.format(value)],
   computeMs: ['Median inference', milli],
+  batchMs: ['Batch inference per URL', batchTime],
   projectionMs: ['Median including projection', milli],
-  bytes: ['Checkpoint size', value => number.format(value) + ' B']
+  bytes: ['Checkpoint size', value => number.format(value) + ' B'],
+  fitSeconds: ['Reported fitting time', value => value.toFixed(2) + ' s']
 };
+const thresholdMetrics = new Set(['recall', 'precision', 'f1', 'urlFpr', 'domainFpr', 'domainFprUpper']);
+const cutoffNames = {
+  '0.01': '1% domain FPR calibration target',
+  '0.001': '0.1% domain FPR calibration target',
+  '0.0001': '0.01% domain FPR calibration target',
+  '0.5': 'Fixed score cutoff 0.5'
+};
+let comparisons = [];
 let token = '';
 let scope = 'REAL';
 let pending;
@@ -57,6 +79,8 @@ let feedPending;
 let researchPending;
 let research;
 let activeView = 'overview';
+let viewMotion;
+let entranceShown = false;
 let recentEvents = [];
 let chartData = '';
 let sortKey = 'detectedAt';
@@ -67,8 +91,9 @@ const metricNames = ['total', 'blocked', 'warned', 'bypassed'];
 const chartColors = ['violet', 'red', 'lilac', 'amber'];
 
 function status(text, state = '') {
-  byId('backend-state').textContent = text;
-  byId('backend-state').dataset.state = state;
+  const element = byId('backend-state');
+  if (element.textContent !== text) element.textContent = text;
+  element.dataset.state = state;
 }
 
 function health(backend, storage, auth) {
@@ -85,6 +110,7 @@ function showToken(visible) {
 
 function navigate(view, focus = true) {
   const threats = view === 'threats';
+  const changed = view !== activeView;
   activeView = view;
   byId('event-filters').hidden = !threats;
   byId('report-toolbar').hidden = !reportViews.has(view);
@@ -107,6 +133,11 @@ function navigate(view, focus = true) {
   byId('research-state').hidden = !researchViews.has(view) || Boolean(research);
   if (researchViews.has(view) && !research) void loadResearch();
   if (focus) byId('page-title').focus();
+  if (changed && !reducedMotion()) {
+    viewMotion?.cancel();
+    viewMotion = byId(view).animate([{opacity: .78, transform: 'translateY(4px)'}, {opacity: 1, transform: 'none'}],
+      {duration: 185, easing: 'ease-out'});
+  }
 }
 
 function plain(tag, content, className) {
@@ -136,7 +167,10 @@ function clearData() {
   for (const id of ['activity-chart', 'category-chart', 'source-chart']) byId(id).replaceChildren();
   for (const metric of metricNames) {
     const state = counts.get(metric);
-    if (state) cancelAnimationFrame(state.frame);
+    if (state) {
+      cancelAnimationFrame(state.frame);
+      state.roll?.cancel();
+    }
     byId(metric).textContent = '';
     byId(metric + '-visual').textContent = '';
   }
@@ -152,6 +186,10 @@ function signOut(message = '') {
   researchPending?.abort();
   researchPending = undefined;
   research = undefined;
+  comparisons = [];
+  byId('ml-controls').disabled = true;
+  viewMotion?.cancel();
+  entranceShown = false;
   token = '';
   clearData();
   resetFilters();
@@ -162,6 +200,8 @@ function signOut(message = '') {
   byId('sign-in-error').hidden = !message;
   byId('sign-in').hidden = false;
   byId('dashboard').hidden = true;
+  byId('skip-content').href = '#sign-in-title';
+  if (message) byId('token').focus();
   status('Signed out');
 }
 
@@ -174,17 +214,26 @@ function metricValue(metric, value, animate) {
   const visual = byId(metric + '-visual');
   const previous = counts.get(metric);
   if (previous?.target === value && (animate || previous.value === value)) return;
-  if (previous) cancelAnimationFrame(previous.frame);
+  if (previous) {
+    cancelAnimationFrame(previous.frame);
+    previous.roll?.cancel();
+  }
   const start = animate && !reducedMotion() ? (previous?.value ?? 0) : value;
   const state = { value: start, target: value, frame: 0 };
   counts.set(metric, state);
   visual.textContent = number.format(start);
   if (start === value) return;
+  const rise = start < value ? '24%' : '-24%';
+  state.roll = visual.animate([{transform: 'translateY(' + rise + ')'}, {transform: 'none'}],
+    {duration: 270, easing: 'cubic-bezier(.22,.76,.24,1)'});
   const begun = performance.now();
   const tick = now => {
-    const progress = Math.min(1, (now - begun) / 700);
-    state.value = Math.round(start + (value - start) * (1 - (1 - progress) ** 3));
-    visual.textContent = number.format(state.value);
+    const progress = Math.min(1, (now - begun) / 610);
+    const next = Math.round(start + (value - start) * (1 - (1 - progress) ** 2.4));
+    if (next !== state.value) {
+      state.value = next;
+      visual.textContent = number.format(next);
+    }
     if (progress < 1) state.frame = requestAnimationFrame(tick);
   };
   state.frame = requestAnimationFrame(tick);
@@ -254,23 +303,26 @@ function renderActivity(events) {
   defs.append(gradient);
   svg.append(defs);
   const maximum = Math.max(...items.map(([, count]) => count));
-  for (const ratio of [0, .5, 1]) {
-    const y = 132 - 108 * ratio;
+  for (const count of [...new Set([0, Math.ceil(maximum / 2), maximum])]) {
+    const y = 132 - 101 * count / maximum;
     svg.append(vector('line', {x1: 32, x2: 517, y1: y, y2: y, class: 'chart-grid'}));
-    if (ratio !== .5) svg.append(vector('text', {x: 24, y: y + 4, 'text-anchor': 'end', class: 'chart-label'}, Math.round(ratio * maximum)));
+    svg.append(vector('text', {x: 24, y: y + 4, 'text-anchor': 'end', class: 'chart-label'}, count));
   }
   const firstDay = Date.parse(items[0][0]);
   const elapsed = Date.parse(items.at(-1)[0]) - firstDay;
   const points = items.map(([day, value]) => [elapsed ? 40 + 465 * (Date.parse(day) - firstDay) / elapsed : 270,
-    132 - 108 * value / maximum]);
+    132 - 101 * value / maximum]);
   if (points.length > 1) {
     const line = points.map(([x, y]) => x + ',' + y).join(' ');
     svg.append(vector('polygon', {points: points[0][0] + ',132 ' + line + ' ' + points.at(-1)[0] + ',132', class: 'activity-area'}));
-    svg.append(vector('polyline', {points: line, class: 'activity-line'}));
+    svg.append(vector('polyline', {points: line, pathLength: 1, class: 'activity-line'}));
   }
   points.forEach(([x, y], i) => {
     const [day, count] = items[i];
-    if (points.length === 1) svg.append(vector('line', {x1: x, x2: x, y1: 132, y2: y, class: 'chart-grid'}));
+    if (points.length === 1) {
+      svg.append(vector('rect', {x: x - 17, y, width: 34, height: 132 - y, rx: 5, class: 'activity-stem'}));
+      svg.append(vector('text', {x, y: y - 12, 'text-anchor': 'middle', class: 'activity-value'}, count));
+    }
     const point = vector('circle', {cx: x, cy: y, r: 5, class: 'activity-point'});
     point.append(vector('title', {}, day + ': ' + count + ' reported'));
     svg.append(point);
@@ -335,6 +387,7 @@ function inspect(entry) {
   byId('drawer-reason').textContent = entry.reason;
   byId('drawer-outcome').textContent = eventOutcome(entry);
   byId('event-drawer').showModal();
+  byId('close-drawer').focus();
 }
 
 function renderHistory() {
@@ -353,8 +406,9 @@ function renderHistory() {
     detection.append(timestamp);
     const action = document.createElement('td');
     action.append(plain('span', actions[entry.action], 'badge action-' + entry.action.toLowerCase()));
-    const evidence = plain('td', entry.reason);
-    evidence.append(plain('small', sources[entry.source] + ' · ' + severities[entry.severity]));
+    const evidence = plain('td', '', 'event-evidence');
+    evidence.append(plain('span', entry.reason, 'event-reason'),
+      plain('small', sources[entry.source] + ' · ' + severities[entry.severity]));
     const detailCell = document.createElement('td');
     const button = plain('button', 'Details', 'quiet');
     button.type = 'button';
@@ -365,7 +419,8 @@ function renderHistory() {
     return row;
   });
   byId('history').replaceChildren(...rows);
-  byId('filter-count').textContent = entries.length + ' of ' + recentEvents.length + ' recent events';
+  const countLabel = entries.length + ' of ' + recentEvents.length + ' recent events';
+  if (byId('filter-count').textContent !== countLabel) byId('filter-count').textContent = countLabel;
   byId('empty-history').textContent = recentEvents.length ? 'No recent events match your filters.' : 'No events reported for this view. Reporting is optional.';
   byId('empty-history').hidden = rows.length > 0;
   byId('history-table').hidden = rows.length === 0;
@@ -399,6 +454,13 @@ function render(result) {
   renderReporting(result);
   byId('snapshot').hidden = false;
   byId('load-state').hidden = true;
+  if (!entranceShown && !reducedMotion()) {
+    document.querySelectorAll('.metric').forEach((card, index) => {
+      card.animate([{opacity: .62, transform: 'translateY(6px)'}, {opacity: 1, transform: 'none'}],
+        {duration: 265, delay: index * 32, easing: 'ease-out', fill: 'backwards'});
+    });
+  }
+  entranceShown = true;
 }
 
 function statusRows(id, fields) {
@@ -442,24 +504,53 @@ function comparisonRow(label, detail, value, maximum) {
   const row = plain('div', '', 'source-row comparison-row');
   const head = plain('div', '', 'section-heading');
   head.append(plain('span', label), plain('strong', detail));
-  const bar = document.createElement('progress');
-  bar.max = maximum;
-  bar.value = value;
-  bar.setAttribute('aria-hidden', 'true');
-  row.append(head, bar);
+  row.append(head);
+  if (Number.isFinite(value)) {
+    const bar = document.createElement('progress');
+    bar.max = maximum;
+    bar.value = value;
+    bar.setAttribute('aria-hidden', 'true');
+    row.append(bar);
+  }
   return row;
 }
 
+function phaseName(phase) {
+  return phase.replace(/^phase(\d)(\w)$/, (_, year, step) => 'Phase ' + year + step.toUpperCase());
+}
+
+function selectExperiment() {
+  const cohort = comparisons.find(entry => entry.id === byId('ml-experiment').value);
+  if (!cohort) return;
+  const cutoffs = Object.entries(cutoffNames).filter(([id]) => cohort.models.some(model => model.points[id]));
+  byId('ml-cutoff').replaceChildren(...cutoffs.map(([id, label]) => new Option(label, id)));
+  compareModels();
+}
+
 function compareModels() {
-  if (!research) return;
-  const metric = byId('ml-metric').value;
+  const cohort = comparisons.find(entry => entry.id === byId('ml-experiment').value);
+  if (!cohort) return;
+  const cutoff = byId('ml-cutoff').value;
+  const values = key => cohort.models.map(model => (thresholdMetrics.has(key) ? model.points[cutoff] : model)?.[key]);
+  for (const option of byId('ml-metric').options) option.disabled = !values(option.value).some(Number.isFinite);
+  const select = byId('ml-metric');
+  if (select.selectedOptions[0]?.disabled) select.value = [...select.options].find(option => !option.disabled).value;
+  const metric = select.value;
   const [, format] = metricOptions[metric];
-  const models = research.ml.models;
-  const max = ['computeMs', 'projectionMs', 'bytes'].includes(metric)
-    ? Math.max(...models.map(model => model[metric])) : 1;
-  byId('ml-models').replaceChildren(...models.map(model => {
-    const row = comparisonRow(modelNames[model.id], format(model[metric]), model[metric], max);
-    row.append(plain('small', 'Calibrated score cutoff ' + fixed.format(model.threshold), 'muted'));
+  const observed = values(metric);
+  const max = ['computeMs', 'batchMs', 'projectionMs', 'bytes', 'fitSeconds'].includes(metric)
+    ? Math.max(0, ...observed.filter(Number.isFinite)) || 1 : 1;
+  const context = thresholdMetrics.has(metric) && cutoff !== '0.5' ? ' Cutoffs use ' + cohort.calibration + '.'
+    : ['prAuc', 'rocAuc'].includes(metric) ? ' Ranking metrics are threshold-free.' : '';
+  byId('ml-cohort').textContent = `${phaseName(cohort.phase)} (${cohort.revision.slice(0, 7)}) · ${cohort.dataset} · ${number.format(cohort.rows)} rows (${number.format(cohort.positive)} phishing). ${cohort.description}${context}`;
+  byId('ml-models').replaceChildren(...cohort.models.map((model, index) => {
+    const numeric = Number.isFinite(observed[index]);
+    const row = comparisonRow(modelNames[model.id] ?? model.id, numeric ? format(observed[index]) : 'Unavailable', observed[index], max);
+    row.setAttribute('role', 'listitem');
+    const details = model.training ? ['Training source ' + model.training] : [];
+    const point = model.points[cutoff];
+    if (thresholdMetrics.has(metric) && point) details.push('Score cutoff ' + cutoffNumber.format(point.threshold));
+    if (details.length) row.append(plain('small', details.join(' · '), 'muted'));
     return row;
   }));
 }
@@ -476,17 +567,26 @@ function renderResearch(data) {
   }));
   const { ml, datasets, visual, revisions } = data;
   const lead = ml.models.find(model => model.id === 'fixed');
-  byId('ml-lead').textContent = 'Retrospective Phase 5F PhreshPhish v1.0.1 development results. Calibrated score cutoff ' + fixed.format(lead.threshold) + '.';
+  byId('ml-lead').textContent = 'Retrospective Phase 5F PhreshPhish v1.0.1 development results. Calibrated score cutoff ' + cutoffNumber.format(lead.threshold) + '.';
   statusRows('ml-metrics', ['recall', 'precision', 'f1', 'domainFpr', 'prAuc'].map(key => {
     const [label, format] = metricOptions[key];
     return [label, format(lead[key])];
   }));
-  byId('ml-cohort').textContent = `Phase 5F (${revisions.phase5f}). Same ${number.format(ml.validationRows)} domain- and template-grouped validation rows for every candidate. Cutoffs target 1% domain FPR on ${number.format(ml.calibrationDomains)} separate calibration domains. PR-AUC and ROC-AUC are threshold-free. Timings cover 200 development rows.`;
   byId('ml-ready').textContent = `Phase 5G (${revisions.phase5g}) froze ${ml.frozen.length} candidates. Independent URL rows scored ${ml.fresh}. Independent paired rows scored ${ml.paired}. Verified financial positives ${ml.financialIndia} in India and ${ml.financialOther} elsewhere.`;
   byId('ml-frozen').textContent = ml.frozen.map(id => modelNames[id]).join(' · ');
   const { seconds, peakBytes, logicalCpus } = ml.trainingResources;
   byId('ml-resources').textContent = `Phase 5F guarded run used ${logicalCpus} logical CPUs, ${seconds.toFixed(2)} s wall time and ${(peakBytes / 2 ** 30).toFixed(2)} GiB peak committed memory.`;
-  compareModels();
+  comparisons = [{
+    id: 'grouped-5f', phase: 'phase5f', revision: revisions.phase5f, dataset: 'PhreshPhish v1.0.1',
+    name: 'Domain- and template-grouped fusion', rows: ml.validationRows, positive: ml.validationPositive,
+    description: 'Retrospective grouped PhreshPhish validation on identical rows. Timings cover 200 development rows.',
+    calibration: `a separate set of ${number.format(ml.calibrationDomains)} PhreshPhish calibration domains`,
+    models: ml.models.map(model => ({...model, points: {'0.01': model}}))
+  }, ...ml.cohorts];
+  byId('ml-experiment').replaceChildren(...comparisons.map(cohort =>
+    new Option(phaseName(cohort.phase) + ' · ' + cohort.name, cohort.id)));
+  byId('ml-controls').disabled = false;
+  selectExperiment();
 
   const phish = datasets.phishvn;
   byId('phishvn-summary').textContent = `Version ${phish.release}, ${phish.license}. Latest eligible source observation ${phish.lastObservation}, before the registered forward window starting ${phish.forwardStart}. Rows scored ${phish.scored}.`;
@@ -600,10 +700,12 @@ async function refresh(initial = false, preserve = false) {
       clearData();
       byId('sign-in').hidden = true;
       byId('dashboard').hidden = false;
+      byId('skip-content').href = '#page-title';
       status('Backend reachable', 'error');
       health('Reachable', 'Unavailable', 'Verified');
       byId('load-state').textContent = 'Monitoring storage unavailable. Try refreshing after the database recovers.';
       byId('load-state').hidden = false;
+      if (initial) byId('page-title').focus();
       return;
     }
     if (!response.ok) throw new Error('Dashboard request failed');
@@ -613,6 +715,7 @@ async function refresh(initial = false, preserve = false) {
     render(result);
     byId('sign-in').hidden = true;
     byId('dashboard').hidden = false;
+    byId('skip-content').href = '#page-title';
     status('Backend connected', 'ok');
     health('Reachable', 'Dashboard query succeeded', 'Verified');
     if (initial) byId('page-title').focus();
@@ -673,6 +776,8 @@ for (const [id, [label]] of Object.entries(metricOptions)) {
   byId('ml-metric').append(option);
 }
 byId('ml-metric').addEventListener('change', compareModels);
+byId('ml-cutoff').addEventListener('change', compareModels);
+byId('ml-experiment').addEventListener('change', selectExperiment);
 for (const id of Object.keys(views)) byId('nav-' + id).addEventListener('click', () => navigate(id));
 for (const [id, value] of [['real', 'REAL'], ['synthetic', 'SYNTHETIC']]) {
   byId(id).addEventListener('click', () => {
@@ -704,7 +809,12 @@ for (const button of document.querySelectorAll('[data-sort]')) button.addEventLi
 function applyMotionPreference() {
   document.documentElement.toggleAttribute('data-reduced-motion', reducedMotion());
   if (!reducedMotion()) return;
-  for (const [name, state] of counts) metricValue(name, state.target, false);
+  viewMotion?.cancel();
+  for (const [name, state] of counts) {
+    state.roll?.cancel();
+    metricValue(name, state.target, false);
+  }
+  document.querySelectorAll('.metric').forEach(card => card.getAnimations().forEach(animation => animation.cancel()));
 }
 motion.addEventListener('change', applyMotionPreference);
 byId('reduce-motion').addEventListener('change', applyMotionPreference);

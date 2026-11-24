@@ -5,9 +5,10 @@
 .status-bar,.risk-section,.site-summary,.popup-status { padding:11px 12px; border:1px solid var(--line); border-radius:12px; background:var(--card) }
 .status-bar { display:flex; align-items:center; gap:8px; color:var(--text); font-weight:650 }
 .status-dot { flex:none; width:8px; height:8px; border-radius:50%; background:var(--muted); transition:background 180ms var(--ease) }
-.status-dot.online { background:var(--green) }
-.status-dot.offline { background:var(--red) }
-.status-dot.caution { background:var(--amber) }
+.status-dot.online { background:var(--green); animation:status-ack 350ms var(--ease) }
+.status-dot.offline { background:var(--red); transition:none }
+.status-dot.caution { background:var(--amber); transition:none }
+@keyframes status-ack { from { transform:scale(.72) } to { transform:scale(1) } }
 .domain-display { color:var(--violet); font:600 .87rem/1.5 ui-monospace,monospace; overflow-wrap:anywhere }
 .section-desc { color:var(--muted); font-size:.88rem }
 .section-desc:empty { display:none }
@@ -49,10 +50,11 @@ button:disabled { opacity:.55; cursor:default }
 .site-card-domain { color:var(--violet); font-weight:650; margin-bottom:6px }
 .empty-state,.monitoring-status-text { color:var(--muted); font-size:.86rem }
 .add-domain-area { margin-top:14px }
-.modal-overlay { position:fixed; inset:0; z-index:1; align-items:center; justify-content:center; padding:16px; background:#000b }
-.modal-card { width:min(100%,520px); max-height:100%; overflow:auto }
+.modal-overlay { position:fixed; inset:0; padding:0; border:0; background:transparent; color:var(--text) }
+.modal-overlay::backdrop { background:#000b }
+.modal-card { width:min(calc(100vw - 32px),520px); max-height:calc(100dvh - 32px); overflow:auto }
 .modal-header,.modal-footer { display:flex; align-items:center; justify-content:space-between; gap:10px }
 .modal-body { margin-top:14px }
 .modal-footer { justify-content:flex-end }
-.modal-close { min-width:34px; min-height:34px; background:var(--raised); border:1px solid var(--line); border-radius:8px; cursor:pointer }
+.modal-close { min-width:34px; min-height:34px; padding-inline:9px; background:var(--raised); border:1px solid var(--line); border-radius:8px; cursor:pointer }
 @media (max-width:675px) { .options-container { grid-template-columns:minmax(0,1fr) } }
