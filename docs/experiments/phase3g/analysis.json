@@ -1,0 +1,4314 @@
+{
+  "input": {
+    "phase3fSummarySha256": "6431f6aba637b81674c1d695b6dfeb75eefbdda8a271b2f4ca5aaaa8221b28c0",
+    "frozenManifestSha256": "aa3fb93fbcdc4fbd20c7dafa44e16271758b3ba435fecaa88ef8e060ca8b85e2",
+    "numericSha256": "87b902f727ee57917175ca683253db596b296b6016a48c7f8f1de09c1183d1bd",
+    "archiveRows": 2000,
+    "distinctDomains": 2000,
+    "calibrationPhishingRows": 20973,
+    "calibrationLegitimateRows": 30086
+  },
+  "baselineReproduced": true,
+  "featureVectorsReprojected": 2000,
+  "calibrationDecisionsReproduced": true,
+  "candidates": {
+    "phresh-20000-path-forest": {
+      "modelArtifactSha256": "87db72f7b3f76fac491bc687e430f7230717277115388159befb7044754646a6",
+      "usedFeatures": [
+        "ip_host",
+        "idn_labels",
+        "hostname_length",
+        "host_labels",
+        "host_digits",
+        "host_hyphens",
+        "registrant_length",
+        "subdomain_labels",
+        "path_length",
+        "path_depth",
+        "path_digits",
+        "path_percent_escapes"
+      ],
+      "fittedPreprocessors": [],
+      "scoreReconstructionMaxAbsError": 0.0,
+      "scoreDistribution": {
+        "archive": {
+          "count": 2000,
+          "p10": 0.046681,
+          "p50": 0.18437,
+          "p90": 0.587495,
+          "p99": 0.896036,
+          "fractionZero": 0.0
+        },
+        "calibrationPhishing": {
+          "count": 20973,
+          "p10": 0.251539,
+          "p50": 0.569408,
+          "p90": 0.965235,
+          "p99": 0.997939,
+          "fractionZero": 0.0
+        },
+        "calibrationLegitimate": {
+          "count": 30086,
+          "p10": 0.03705,
+          "p50": 0.107302,
+          "p90": 0.488851,
+          "p99": 0.746347,
+          "fractionZero": 0.0
+        }
+      },
+      "operatingPoints": {
+        "0.001": {
+          "count": 2000,
+          "detected": 9,
+          "missed": 1991,
+          "recall": 0.0045,
+          "exact95": [
+            0.0020596885284903574,
+            0.008525141240995088
+          ],
+          "savedCutoff": 0.9610560908349034,
+          "within005BelowCutoff": 8,
+          "calibrationPositive": {
+            "count": 20973,
+            "detected": 2211,
+            "missed": 18762,
+            "recall": 0.10542125590044343,
+            "exact95": [
+              0.1012961587048168,
+              0.10965607700321785
+            ]
+          },
+          "featureGroups": {
+            "canonicalUrlLength": {
+              "40-79": {
+                "count": 1644,
+                "detected": 1,
+                "missed": 1643,
+                "recall": 0.0006082725060827251,
+                "exact95": [
+                  1.5400007929785675e-05,
+                  0.0033843690602480426
+                ]
+              },
+              "under-40": {
+                "count": 356,
+                "detected": 8,
+                "missed": 348,
+                "recall": 0.02247191011235955,
+                "exact95": [
+                  0.009750544071963041,
+                  0.043796853062554604
+                ]
+              }
+            },
+            "hostnameLength": {
+              "16-24": {
+                "count": 909,
+                "detected": 1,
+                "missed": 908,
+                "recall": 0.0011001100110011,
+                "exact95": [
+                  2.7851986146352672e-05,
+                  0.00611402948700689
+                ]
+              },
+              "25-39": {
+                "count": 297,
+                "detected": 1,
+                "missed": 296,
+                "recall": 0.003367003367003367,
+                "exact95": [
+                  8.524151146413898e-05,
+                  0.018615995107736313
+                ]
+              },
+              "40-plus": {
+                "count": 74,
+                "detected": 0,
+                "missed": 74,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.04862761623798953
+                ]
+              },
+              "under-16": {
+                "count": 720,
+                "detected": 7,
+                "missed": 713,
+                "recall": 0.009722222222222222,
+                "exact95": [
+                  0.0039175196035879335,
+                  0.019928364374323635
+                ]
+              }
+            },
+            "subdomains": {
+              "none": {
+                "count": 988,
+                "detected": 9,
+                "missed": 979,
+                "recall": 0.009109311740890687,
+                "exact95": [
+                  0.004173576377826367,
+                  0.017221604548462322
+                ]
+              },
+              "one": {
+                "count": 848,
+                "detected": 0,
+                "missed": 848,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.004340645743099045
+                ]
+              },
+              "two-plus": {
+                "count": 164,
+                "detected": 0,
+                "missed": 164,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.022242082203801514
+                ]
+              }
+            },
+            "digits": {
+              "host-and-path": {
+                "count": 103,
+                "detected": 1,
+                "missed": 102,
+                "recall": 0.009708737864077669,
+                "exact95": [
+                  0.00024577375369397525,
+                  0.05290828674020346
+                ]
+              },
+              "host-only": {
+                "count": 197,
+                "detected": 8,
+                "missed": 189,
+                "recall": 0.04060913705583756,
+                "exact95": [
+                  0.01769260868047538,
+                  0.0784455291363183
+                ]
+              },
+              "none": {
+                "count": 1167,
+                "detected": 0,
+                "missed": 1167,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.00315600285377175
+                ]
+              },
+              "path-only": {
+                "count": 533,
+                "detected": 0,
+                "missed": 533,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.0068970797978240165
+                ]
+              }
+            },
+            "pathLength": {
+              "1-39": {
+                "count": 1274,
+                "detected": 1,
+                "missed": 1273,
+                "recall": 0.0007849293563579278,
+                "exact95": [
+                  1.987249326489195e-05,
+                  0.004365507829533057
+                ]
+              },
+              "40-79": {
+                "count": 655,
+                "detected": 0,
+                "missed": 655,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.0056160477398905125
+                ]
+              },
+              "root": {
+                "count": 71,
+                "detected": 8,
+                "missed": 63,
+                "recall": 0.11267605633802817,
+                "exact95": [
+                  0.04991967023274114,
+                  0.21000049366540496
+                ]
+              }
+            },
+            "pathPunctuation": {
+              "any": {
+                "count": 1701,
+                "detected": 1,
+                "missed": 1700,
+                "recall": 0.0005878894767783657,
+                "exact95": [
+                  1.4883962121795977e-05,
+                  0.0032711122412466213
+                ]
+              },
+              "none": {
+                "count": 299,
+                "detected": 8,
+                "missed": 291,
+                "recall": 0.026755852842809364,
+                "exact95": [
+                  0.011620535505368767,
+                  0.052037006185334814
+                ]
+              }
+            },
+            "hostnameHyphen": {
+              "any": {
+                "count": 292,
+                "detected": 0,
+                "missed": 292,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.012553685566626767
+                ]
+              },
+              "none": {
+                "count": 1708,
+                "detected": 9,
+                "missed": 1699,
+                "recall": 0.005269320843091335,
+                "exact95": [
+                  0.0024122148931724325,
+                  0.009979146917026522
+                ]
+              }
+            },
+            "pathPercentEscape": {
+              "any": {
+                "count": 137,
+                "detected": 0,
+                "missed": 137,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.026566851096283282
+                ]
+              },
+              "none": {
+                "count": 1863,
+                "detected": 9,
+                "missed": 1854,
+                "recall": 0.004830917874396135,
+                "exact95": [
+                  0.0022113108288460428,
+                  0.009150694984678645
+                ]
+              }
+            },
+            "topLevelDomain": {
+              "br": {
+                "count": 99,
+                "detected": 0,
+                "missed": 99,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.03657574498347894
+                ]
+              },
+              "com": {
+                "count": 894,
+                "detected": 0,
+                "missed": 894,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.004117762043712009
+                ]
+              },
+              "ip-address": {
+                "count": 97,
+                "detected": 7,
+                "missed": 90,
+                "recall": 0.07216494845360824,
+                "exact95": [
+                  0.02950516545735962,
+                  0.143048455768069
+                ]
+              },
+              "net": {
+                "count": 115,
+                "detected": 0,
+                "missed": 115,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.03156819598824707
+                ]
+              },
+              "org": {
+                "count": 87,
+                "detected": 2,
+                "missed": 85,
+                "recall": 0.022988505747126436,
+                "exact95": [
+                  0.0027962410384932235,
+                  0.08058586583676962
+                ]
+              },
+              "other": {
+                "count": 657,
+                "detected": 0,
+                "missed": 657,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.005598999654212753
+                ]
+              },
+              "uk": {
+                "count": 51,
+                "detected": 0,
+                "missed": 51,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.06977703074953864
+                ]
+              }
+            }
+          }
+        },
+        "0.01": {
+          "count": 2000,
+          "detected": 58,
+          "missed": 1942,
+          "recall": 0.029,
+          "exact95": [
+            0.022092952440984793,
+            0.03732942847232326
+          ],
+          "savedCutoff": 0.757831940665843,
+          "within005BelowCutoff": 41,
+          "calibrationPositive": {
+            "count": 20973,
+            "detected": 6818,
+            "missed": 14155,
+            "recall": 0.3250846326228961,
+            "exact95": [
+              0.31874610033866013,
+              0.331471679239883
+            ]
+          },
+          "featureGroups": {
+            "canonicalUrlLength": {
+              "40-79": {
+                "count": 1644,
+                "detected": 32,
+                "missed": 1612,
+                "recall": 0.019464720194647202,
+                "exact95": [
+                  0.013351008272051431,
+                  0.02736805854601709
+                ]
+              },
+              "under-40": {
+                "count": 356,
+                "detected": 26,
+                "missed": 330,
+                "recall": 0.07303370786516854,
+                "exact95": [
+                  0.04825996759215113,
+                  0.1051818753861503
+                ]
+              }
+            },
+            "hostnameLength": {
+              "16-24": {
+                "count": 909,
+                "detected": 12,
+                "missed": 897,
+                "recall": 0.013201320132013201,
+                "exact95": [
+                  0.006839417059591843,
+                  0.02294640344080588
+                ]
+              },
+              "25-39": {
+                "count": 297,
+                "detected": 11,
+                "missed": 286,
+                "recall": 0.037037037037037035,
+                "exact95": [
+                  0.018631204156902458,
+                  0.06530196943194888
+                ]
+              },
+              "40-plus": {
+                "count": 74,
+                "detected": 20,
+                "missed": 54,
+                "recall": 0.2702702702702703,
+                "exact95": [
+                  0.17354946892641215,
+                  0.3860984422042463
+                ]
+              },
+              "under-16": {
+                "count": 720,
+                "detected": 15,
+                "missed": 705,
+                "recall": 0.020833333333333332,
+                "exact95": [
+                  0.011706009966377993,
+                  0.034128907917936754
+                ]
+              }
+            },
+            "subdomains": {
+              "none": {
+                "count": 988,
+                "detected": 36,
+                "missed": 952,
+                "recall": 0.03643724696356275,
+                "exact95": [
+                  0.025648231270262344,
+                  0.05008976570261506
+                ]
+              },
+              "one": {
+                "count": 848,
+                "detected": 7,
+                "missed": 841,
+                "recall": 0.008254716981132075,
+                "exact95": [
+                  0.0033250794113144294,
+                  0.016933512710946598
+                ]
+              },
+              "two-plus": {
+                "count": 164,
+                "detected": 15,
+                "missed": 149,
+                "recall": 0.09146341463414634,
+                "exact95": [
+                  0.052098517350461115,
+                  0.14636634101280638
+                ]
+              }
+            },
+            "digits": {
+              "host-and-path": {
+                "count": 103,
+                "detected": 10,
+                "missed": 93,
+                "recall": 0.0970873786407767,
+                "exact95": [
+                  0.04754641843921187,
+                  0.17130628035434808
+                ]
+              },
+              "host-only": {
+                "count": 197,
+                "detected": 29,
+                "missed": 168,
+                "recall": 0.14720812182741116,
+                "exact95": [
+                  0.1008569454211312,
+                  0.20452593169403707
+                ]
+              },
+              "none": {
+                "count": 1167,
+                "detected": 15,
+                "missed": 1152,
+                "recall": 0.012853470437017995,
+                "exact95": [
+                  0.007211350904334102,
+                  0.02111135437438764
+                ]
+              },
+              "path-only": {
+                "count": 533,
+                "detected": 4,
+                "missed": 529,
+                "recall": 0.0075046904315197,
+                "exact95": [
+                  0.0020484509090237944,
+                  0.019102731535200226
+                ]
+              }
+            },
+            "pathLength": {
+              "1-39": {
+                "count": 1274,
+                "detected": 44,
+                "missed": 1230,
+                "recall": 0.03453689167974882,
+                "exact95": [
+                  0.02520449405609601,
+                  0.046088777171042025
+                ]
+              },
+              "40-79": {
+                "count": 655,
+                "detected": 0,
+                "missed": 655,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.0056160477398905125
+                ]
+              },
+              "root": {
+                "count": 71,
+                "detected": 14,
+                "missed": 57,
+                "recall": 0.19718309859154928,
+                "exact95": [
+                  0.1122078208455618,
+                  0.3086499571564833
+                ]
+              }
+            },
+            "pathPunctuation": {
+              "any": {
+                "count": 1701,
+                "detected": 34,
+                "missed": 1667,
+                "recall": 0.019988242210464434,
+                "exact95": [
+                  0.013881180163345786,
+                  0.027820393861413162
+                ]
+              },
+              "none": {
+                "count": 299,
+                "detected": 24,
+                "missed": 275,
+                "recall": 0.0802675585284281,
+                "exact95": [
+                  0.05210463586299874,
+                  0.11707830651915435
+                ]
+              }
+            },
+            "hostnameHyphen": {
+              "any": {
+                "count": 292,
+                "detected": 27,
+                "missed": 265,
+                "recall": 0.09246575342465753,
+                "exact95": [
+                  0.06182191975692592,
+                  0.1316792418396299
+                ]
+              },
+              "none": {
+                "count": 1708,
+                "detected": 31,
+                "missed": 1677,
+                "recall": 0.018149882903981264,
+                "exact95": [
+                  0.012364438472230023,
+                  0.025664077614607046
+                ]
+              }
+            },
+            "pathPercentEscape": {
+              "any": {
+                "count": 137,
+                "detected": 1,
+                "missed": 136,
+                "recall": 0.0072992700729927005,
+                "exact95": [
+                  0.00018478444338477988,
+                  0.03999682067355465
+                ]
+              },
+              "none": {
+                "count": 1863,
+                "detected": 57,
+                "missed": 1806,
+                "recall": 0.030595813204508857,
+                "exact95": [
+                  0.02325358240650639,
+                  0.03946036833437661
+                ]
+              }
+            },
+            "topLevelDomain": {
+              "br": {
+                "count": 99,
+                "detected": 2,
+                "missed": 97,
+                "recall": 0.020202020202020204,
+                "exact95": [
+                  0.0024559907935277274,
+                  0.07107612246187751
+                ]
+              },
+              "com": {
+                "count": 894,
+                "detected": 13,
+                "missed": 881,
+                "recall": 0.0145413870246085,
+                "exact95": [
+                  0.007764791993014319,
+                  0.02473785238248626
+                ]
+              },
+              "ip-address": {
+                "count": 97,
+                "detected": 14,
+                "missed": 83,
+                "recall": 0.14432989690721648,
+                "exact95": [
+                  0.08121294077713782,
+                  0.23029008877743407
+                ]
+              },
+              "net": {
+                "count": 115,
+                "detected": 5,
+                "missed": 110,
+                "recall": 0.043478260869565216,
+                "exact95": [
+                  0.014265830875120622,
+                  0.0985497239926501
+                ]
+              },
+              "org": {
+                "count": 87,
+                "detected": 7,
+                "missed": 80,
+                "recall": 0.08045977011494253,
+                "exact95": [
+                  0.03296169227289038,
+                  0.15877503481913557
+                ]
+              },
+              "other": {
+                "count": 657,
+                "detected": 17,
+                "missed": 640,
+                "recall": 0.0258751902587519,
+                "exact95": [
+                  0.015143888933605779,
+                  0.04110621551798943
+                ]
+              },
+              "uk": {
+                "count": 51,
+                "detected": 0,
+                "missed": 51,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.06977703074953864
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "fusion-mixed-20000-two": {
+      "modelArtifactSha256": "a60293eeca5770f89184a30fc24a958489c406c638c33c0b49b8a61eaa5b52c0",
+      "usedFeatures": [
+        "ip_host",
+        "idn_labels",
+        "hostname_length",
+        "host_labels",
+        "host_digits",
+        "host_hyphens",
+        "registrant_length",
+        "subdomain_labels"
+      ],
+      "fittedPreprocessors": [],
+      "scoreReconstructionMaxAbsError": 1.1102230246251565e-16,
+      "scoreDistribution": {
+        "archive": {
+          "count": 2000,
+          "p10": 0.191632,
+          "p50": 0.453769,
+          "p90": 0.951376,
+          "p99": 0.966152,
+          "fractionZero": 0.0
+        },
+        "calibrationPhishing": {
+          "count": 20973,
+          "p10": 0.309091,
+          "p50": 0.764155,
+          "p90": 0.966732,
+          "p99": 0.968981,
+          "fractionZero": 0.0
+        },
+        "calibrationLegitimate": {
+          "count": 30086,
+          "p10": 0.161144,
+          "p50": 0.232259,
+          "p90": 0.614647,
+          "p99": 0.933768,
+          "fractionZero": 0.0
+        }
+      },
+      "operatingPoints": {
+        "0.001": {
+          "count": 2000,
+          "detected": 16,
+          "missed": 1984,
+          "recall": 0.008,
+          "exact95": [
+            0.004579404661398549,
+            0.012959068588471734
+          ],
+          "savedCutoff": 0.9666654318351997,
+          "within005BelowCutoff": 263,
+          "calibrationPositive": {
+            "count": 20973,
+            "detected": 2122,
+            "missed": 18851,
+            "recall": 0.10117770466790636,
+            "exact95": [
+              0.09712805498233824,
+              0.10533827357133149
+            ]
+          },
+          "featureGroups": {
+            "canonicalUrlLength": {
+              "40-79": {
+                "count": 1644,
+                "detected": 16,
+                "missed": 1628,
+                "recall": 0.009732360097323601,
+                "exact95": [
+                  0.005572827099118555,
+                  0.015756744756446547
+                ]
+              },
+              "under-40": {
+                "count": 356,
+                "detected": 0,
+                "missed": 356,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.01030852015110821
+                ]
+              }
+            },
+            "hostnameLength": {
+              "16-24": {
+                "count": 909,
+                "detected": 0,
+                "missed": 909,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.004049949959479821
+                ]
+              },
+              "25-39": {
+                "count": 297,
+                "detected": 8,
+                "missed": 289,
+                "recall": 0.026936026936026935,
+                "exact95": [
+                  0.01169926303505389,
+                  0.052382807048654834
+                ]
+              },
+              "40-plus": {
+                "count": 74,
+                "detected": 8,
+                "missed": 66,
+                "recall": 0.10810810810810811,
+                "exact95": [
+                  0.04784399039492812,
+                  0.20195013623184596
+                ]
+              },
+              "under-16": {
+                "count": 720,
+                "detected": 0,
+                "missed": 720,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.0051103412347741186
+                ]
+              }
+            },
+            "subdomains": {
+              "none": {
+                "count": 988,
+                "detected": 3,
+                "missed": 985,
+                "recall": 0.003036437246963563,
+                "exact95": [
+                  0.0006266246295930171,
+                  0.008847891650636208
+                ]
+              },
+              "one": {
+                "count": 848,
+                "detected": 1,
+                "missed": 847,
+                "recall": 0.0011792452830188679,
+                "exact95": [
+                  2.9855459958735858e-05,
+                  0.0065526508953569615
+                ]
+              },
+              "two-plus": {
+                "count": 164,
+                "detected": 12,
+                "missed": 152,
+                "recall": 0.07317073170731707,
+                "exact95": [
+                  0.03837821522241623,
+                  0.12432588061386476
+                ]
+              }
+            },
+            "digits": {
+              "host-and-path": {
+                "count": 103,
+                "detected": 6,
+                "missed": 97,
+                "recall": 0.05825242718446602,
+                "exact95": [
+                  0.021675197891915614,
+                  0.12248703892795712
+                ]
+              },
+              "host-only": {
+                "count": 197,
+                "detected": 10,
+                "missed": 187,
+                "recall": 0.050761421319796954,
+                "exact95": [
+                  0.024607274084357887,
+                  0.09136883299104763
+                ]
+              },
+              "none": {
+                "count": 1167,
+                "detected": 0,
+                "missed": 1167,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.00315600285377175
+                ]
+              },
+              "path-only": {
+                "count": 533,
+                "detected": 0,
+                "missed": 533,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.0068970797978240165
+                ]
+              }
+            },
+            "pathLength": {
+              "1-39": {
+                "count": 1274,
+                "detected": 15,
+                "missed": 1259,
+                "recall": 0.011773940345368918,
+                "exact95": [
+                  0.006604346232713789,
+                  0.01934507504978422
+                ]
+              },
+              "40-79": {
+                "count": 655,
+                "detected": 0,
+                "missed": 655,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.0056160477398905125
+                ]
+              },
+              "root": {
+                "count": 71,
+                "detected": 1,
+                "missed": 70,
+                "recall": 0.014084507042253521,
+                "exact95": [
+                  0.00035652527460338913,
+                  0.07599341612110348
+                ]
+              }
+            },
+            "pathPunctuation": {
+              "any": {
+                "count": 1701,
+                "detected": 13,
+                "missed": 1688,
+                "recall": 0.007642563198118754,
+                "exact95": [
+                  0.004075435432369701,
+                  0.013033557800812884
+                ]
+              },
+              "none": {
+                "count": 299,
+                "detected": 3,
+                "missed": 296,
+                "recall": 0.010033444816053512,
+                "exact95": [
+                  0.0020739363632890652,
+                  0.02904038089312678
+                ]
+              }
+            },
+            "hostnameHyphen": {
+              "any": {
+                "count": 292,
+                "detected": 7,
+                "missed": 285,
+                "recall": 0.023972602739726026,
+                "exact95": [
+                  0.009691329143058971,
+                  0.04876681447175911
+                ]
+              },
+              "none": {
+                "count": 1708,
+                "detected": 9,
+                "missed": 1699,
+                "recall": 0.005269320843091335,
+                "exact95": [
+                  0.0024122148931724325,
+                  0.009979146917026522
+                ]
+              }
+            },
+            "pathPercentEscape": {
+              "any": {
+                "count": 137,
+                "detected": 0,
+                "missed": 137,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.026566851096283282
+                ]
+              },
+              "none": {
+                "count": 1863,
+                "detected": 16,
+                "missed": 1847,
+                "recall": 0.008588298443370907,
+                "exact95": [
+                  0.004916693486326978,
+                  0.01390948279182348
+                ]
+              }
+            },
+            "topLevelDomain": {
+              "br": {
+                "count": 99,
+                "detected": 0,
+                "missed": 99,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.03657574498347894
+                ]
+              },
+              "com": {
+                "count": 894,
+                "detected": 7,
+                "missed": 887,
+                "recall": 0.007829977628635347,
+                "exact95": [
+                  0.00315368403894829,
+                  0.016065839061881755
+                ]
+              },
+              "ip-address": {
+                "count": 97,
+                "detected": 0,
+                "missed": 97,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.037315636908736065
+                ]
+              },
+              "net": {
+                "count": 115,
+                "detected": 2,
+                "missed": 113,
+                "recall": 0.017391304347826087,
+                "exact95": [
+                  0.0021131508222615373,
+                  0.06141233255872283
+                ]
+              },
+              "org": {
+                "count": 87,
+                "detected": 3,
+                "missed": 84,
+                "recall": 0.034482758620689655,
+                "exact95": [
+                  0.00716841972994136,
+                  0.09748083422426233
+                ]
+              },
+              "other": {
+                "count": 657,
+                "detected": 4,
+                "missed": 653,
+                "recall": 0.0060882800608828,
+                "exact95": [
+                  0.0016612689126941863,
+                  0.015514502560923587
+                ]
+              },
+              "uk": {
+                "count": 51,
+                "detected": 0,
+                "missed": 51,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.06977703074953864
+                ]
+              }
+            }
+          }
+        },
+        "0.01": {
+          "count": 2000,
+          "detected": 230,
+          "missed": 1770,
+          "recall": 0.115,
+          "exact95": [
+            0.10134055320568167,
+            0.12979910141145495
+          ],
+          "savedCutoff": 0.9390406044771592,
+          "within005BelowCutoff": 115,
+          "calibrationPositive": {
+            "count": 20973,
+            "detected": 6075,
+            "missed": 14898,
+            "recall": 0.28965813188385064,
+            "exact95": [
+              0.2835248291846597,
+              0.29584978418601154
+            ]
+          },
+          "featureGroups": {
+            "canonicalUrlLength": {
+              "40-79": {
+                "count": 1644,
+                "detected": 203,
+                "missed": 1441,
+                "recall": 0.12347931873479319,
+                "exact95": [
+                  0.107955262422369,
+                  0.140361206435514
+                ]
+              },
+              "under-40": {
+                "count": 356,
+                "detected": 27,
+                "missed": 329,
+                "recall": 0.07584269662921349,
+                "exact95": [
+                  0.0505733693648128,
+                  0.10843041006228187
+                ]
+              }
+            },
+            "hostnameLength": {
+              "16-24": {
+                "count": 909,
+                "detected": 18,
+                "missed": 891,
+                "recall": 0.019801980198019802,
+                "exact95": [
+                  0.01177709375030262,
+                  0.031115665986334643
+                ]
+              },
+              "25-39": {
+                "count": 297,
+                "detected": 66,
+                "missed": 231,
+                "recall": 0.2222222222222222,
+                "exact95": [
+                  0.17623825435384335,
+                  0.27384272674195026
+                ]
+              },
+              "40-plus": {
+                "count": 74,
+                "detected": 49,
+                "missed": 25,
+                "recall": 0.6621621621621622,
+                "exact95": [
+                  0.5428240463578772,
+                  0.7680728194568114
+                ]
+              },
+              "under-16": {
+                "count": 720,
+                "detected": 97,
+                "missed": 623,
+                "recall": 0.13472222222222222,
+                "exact95": [
+                  0.11062646947742193,
+                  0.16185530155297212
+                ]
+              }
+            },
+            "subdomains": {
+              "none": {
+                "count": 988,
+                "detected": 127,
+                "missed": 861,
+                "recall": 0.12854251012145748,
+                "exact95": [
+                  0.10829797600968022,
+                  0.15102912829122844
+                ]
+              },
+              "one": {
+                "count": 848,
+                "detected": 25,
+                "missed": 823,
+                "recall": 0.0294811320754717,
+                "exact95": [
+                  0.019167578642603607,
+                  0.04321376857655886
+                ]
+              },
+              "two-plus": {
+                "count": 164,
+                "detected": 78,
+                "missed": 86,
+                "recall": 0.47560975609756095,
+                "exact95": [
+                  0.3971909986655745,
+                  0.5549258531526521
+                ]
+              }
+            },
+            "digits": {
+              "host-and-path": {
+                "count": 103,
+                "detected": 66,
+                "missed": 37,
+                "recall": 0.6407766990291263,
+                "exact95": [
+                  0.5402718226953289,
+                  0.7329574262621943
+                ]
+              },
+              "host-only": {
+                "count": 197,
+                "detected": 107,
+                "missed": 90,
+                "recall": 0.5431472081218274,
+                "exact95": [
+                  0.4708506980653785,
+                  0.6141256249190296
+                ]
+              },
+              "none": {
+                "count": 1167,
+                "detected": 34,
+                "missed": 1133,
+                "recall": 0.02913453299057412,
+                "exact95": [
+                  0.020259089313721463,
+                  0.040476166535613395
+                ]
+              },
+              "path-only": {
+                "count": 533,
+                "detected": 23,
+                "missed": 510,
+                "recall": 0.043151969981238276,
+                "exact95": [
+                  0.027548146103813072,
+                  0.06404778707729947
+                ]
+              }
+            },
+            "pathLength": {
+              "1-39": {
+                "count": 1274,
+                "detected": 160,
+                "missed": 1114,
+                "recall": 0.12558869701726844,
+                "exact95": [
+                  0.1078793758385524,
+                  0.14504530651353373
+                ]
+              },
+              "40-79": {
+                "count": 655,
+                "detected": 55,
+                "missed": 600,
+                "recall": 0.08396946564885496,
+                "exact95": [
+                  0.06388192900751713,
+                  0.10789660465025458
+                ]
+              },
+              "root": {
+                "count": 71,
+                "detected": 15,
+                "missed": 56,
+                "recall": 0.2112676056338028,
+                "exact95": [
+                  0.12334059087264869,
+                  0.3244026609056528
+                ]
+              }
+            },
+            "pathPunctuation": {
+              "any": {
+                "count": 1701,
+                "detected": 202,
+                "missed": 1499,
+                "recall": 0.11875367430922987,
+                "exact95": [
+                  0.10375411214269503,
+                  0.13508207008594406
+                ]
+              },
+              "none": {
+                "count": 299,
+                "detected": 28,
+                "missed": 271,
+                "recall": 0.09364548494983277,
+                "exact95": [
+                  0.06313120937569837,
+                  0.13249693526390927
+                ]
+              }
+            },
+            "hostnameHyphen": {
+              "any": {
+                "count": 292,
+                "detected": 49,
+                "missed": 243,
+                "recall": 0.1678082191780822,
+                "exact95": [
+                  0.1267987938773152,
+                  0.2157089462028714
+                ]
+              },
+              "none": {
+                "count": 1708,
+                "detected": 181,
+                "missed": 1527,
+                "recall": 0.10597189695550352,
+                "exact95": [
+                  0.09176822037323679,
+                  0.12154494750253018
+                ]
+              }
+            },
+            "pathPercentEscape": {
+              "any": {
+                "count": 137,
+                "detected": 21,
+                "missed": 116,
+                "recall": 0.15328467153284672,
+                "exact95": [
+                  0.09746036064132327,
+                  0.22471858612525533
+                ]
+              },
+              "none": {
+                "count": 1863,
+                "detected": 209,
+                "missed": 1654,
+                "recall": 0.11218464841653247,
+                "exact95": [
+                  0.09820451851195175,
+                  0.1273984446158047
+                ]
+              }
+            },
+            "topLevelDomain": {
+              "br": {
+                "count": 99,
+                "detected": 6,
+                "missed": 93,
+                "recall": 0.06060606060606061,
+                "exact95": [
+                  0.022563798499144562,
+                  0.1272568408301968
+                ]
+              },
+              "com": {
+                "count": 894,
+                "detected": 57,
+                "missed": 837,
+                "recall": 0.06375838926174497,
+                "exact95": [
+                  0.04864407387934888,
+                  0.0818206120892213
+                ]
+              },
+              "ip-address": {
+                "count": 97,
+                "detected": 97,
+                "missed": 0,
+                "recall": 1.0,
+                "exact95": [
+                  0.9626843630912639,
+                  1.0
+                ]
+              },
+              "net": {
+                "count": 115,
+                "detected": 8,
+                "missed": 107,
+                "recall": 0.06956521739130435,
+                "exact95": [
+                  0.0305100096339694,
+                  0.13247400840547802
+                ]
+              },
+              "org": {
+                "count": 87,
+                "detected": 15,
+                "missed": 72,
+                "recall": 0.1724137931034483,
+                "exact95": [
+                  0.09983452459943039,
+                  0.2683779077093829
+                ]
+              },
+              "other": {
+                "count": 657,
+                "detected": 42,
+                "missed": 615,
+                "recall": 0.0639269406392694,
+                "exact95": [
+                  0.04645771291533592,
+                  0.08543138219920812
+                ]
+              },
+              "uk": {
+                "count": 51,
+                "detected": 5,
+                "missed": 46,
+                "recall": 0.09803921568627451,
+                "exact95": [
+                  0.03260648955189094,
+                  0.2141449825456809
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "fusion-mixed-20000-four": {
+      "modelArtifactSha256": "960a4d885aa62ab592a39ddebdc1ee5d3e7569898bc656b1415b3c6cb7cb4225",
+      "usedFeatures": [
+        "ip_host",
+        "idn_labels",
+        "hostname_length",
+        "host_labels",
+        "host_digits",
+        "host_hyphens",
+        "registrant_length",
+        "subdomain_labels"
+      ],
+      "fittedPreprocessors": [
+        "standardscaler",
+        "logisticregression",
+        "standardscaler",
+        "mlpclassifier"
+      ],
+      "scoreReconstructionMaxAbsError": 1.1102230246251565e-16,
+      "scoreDistribution": {
+        "archive": {
+          "count": 2000,
+          "p10": 0.195691,
+          "p50": 0.45206,
+          "p90": 0.934875,
+          "p99": 0.962095,
+          "fractionZero": 0.0
+        },
+        "calibrationPhishing": {
+          "count": 20973,
+          "p10": 0.355423,
+          "p50": 0.751985,
+          "p90": 0.962095,
+          "p99": 0.96354,
+          "fractionZero": 0.0
+        },
+        "calibrationLegitimate": {
+          "count": 30086,
+          "p10": 0.178624,
+          "p50": 0.22812,
+          "p90": 0.651643,
+          "p99": 0.926316,
+          "fractionZero": 0.0
+        }
+      },
+      "operatingPoints": {
+        "0.001": {
+          "count": 2000,
+          "detected": 87,
+          "missed": 1913,
+          "recall": 0.0435,
+          "exact95": [
+            0.03498586284676858,
+            0.05338259889337252
+          ],
+          "savedCutoff": 0.9619970593281276,
+          "within005BelowCutoff": 144,
+          "calibrationPositive": {
+            "count": 20973,
+            "detected": 2247,
+            "missed": 18726,
+            "recall": 0.10713774853382921,
+            "exact95": [
+              0.10298273736756555,
+              0.11140200047287788
+            ]
+          },
+          "featureGroups": {
+            "canonicalUrlLength": {
+              "40-79": {
+                "count": 1644,
+                "detected": 73,
+                "missed": 1571,
+                "recall": 0.04440389294403893,
+                "exact95": [
+                  0.03496432758078774,
+                  0.055509971956816034
+                ]
+              },
+              "under-40": {
+                "count": 356,
+                "detected": 14,
+                "missed": 342,
+                "recall": 0.03932584269662921,
+                "exact95": [
+                  0.021663753635262507,
+                  0.06510236578777047
+                ]
+              }
+            },
+            "hostnameLength": {
+              "16-24": {
+                "count": 909,
+                "detected": 0,
+                "missed": 909,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.004049949959479821
+                ]
+              },
+              "25-39": {
+                "count": 297,
+                "detected": 4,
+                "missed": 293,
+                "recall": 0.013468013468013467,
+                "exact95": [
+                  0.0036814466450955556,
+                  0.034122563051764844
+                ]
+              },
+              "40-plus": {
+                "count": 74,
+                "detected": 8,
+                "missed": 66,
+                "recall": 0.10810810810810811,
+                "exact95": [
+                  0.04784399039492812,
+                  0.20195013623184596
+                ]
+              },
+              "under-16": {
+                "count": 720,
+                "detected": 75,
+                "missed": 645,
+                "recall": 0.10416666666666667,
+                "exact95": [
+                  0.08281809758180109,
+                  0.12881990855266573
+                ]
+              }
+            },
+            "subdomains": {
+              "none": {
+                "count": 988,
+                "detected": 77,
+                "missed": 911,
+                "recall": 0.07793522267206478,
+                "exact95": [
+                  0.06199185098758503,
+                  0.09644518655334676
+                ]
+              },
+              "one": {
+                "count": 848,
+                "detected": 3,
+                "missed": 845,
+                "recall": 0.003537735849056604,
+                "exact95": [
+                  0.0007301612302199287,
+                  0.010303660421968485
+                ]
+              },
+              "two-plus": {
+                "count": 164,
+                "detected": 7,
+                "missed": 157,
+                "recall": 0.042682926829268296,
+                "exact95": [
+                  0.017330410012353532,
+                  0.08596347518419752
+                ]
+              }
+            },
+            "digits": {
+              "host-and-path": {
+                "count": 103,
+                "detected": 41,
+                "missed": 62,
+                "recall": 0.39805825242718446,
+                "exact95": [
+                  0.30289348518284137,
+                  0.4992436756515697
+                ]
+              },
+              "host-only": {
+                "count": 197,
+                "detected": 46,
+                "missed": 151,
+                "recall": 0.233502538071066,
+                "exact95": [
+                  0.17631214756932273,
+                  0.29889708131353404
+                ]
+              },
+              "none": {
+                "count": 1167,
+                "detected": 0,
+                "missed": 1167,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.00315600285377175
+                ]
+              },
+              "path-only": {
+                "count": 533,
+                "detected": 0,
+                "missed": 533,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.0068970797978240165
+                ]
+              }
+            },
+            "pathLength": {
+              "1-39": {
+                "count": 1274,
+                "detected": 41,
+                "missed": 1233,
+                "recall": 0.03218210361067504,
+                "exact95": [
+                  0.023191390064535477,
+                  0.043407146908786595
+                ]
+              },
+              "40-79": {
+                "count": 655,
+                "detected": 39,
+                "missed": 616,
+                "recall": 0.059541984732824425,
+                "exact95": [
+                  0.04267909306912433,
+                  0.08050006154469125
+                ]
+              },
+              "root": {
+                "count": 71,
+                "detected": 7,
+                "missed": 64,
+                "recall": 0.09859154929577464,
+                "exact95": [
+                  0.04056616008779512,
+                  0.19264386775608308
+                ]
+              }
+            },
+            "pathPunctuation": {
+              "any": {
+                "count": 1701,
+                "detected": 74,
+                "missed": 1627,
+                "recall": 0.04350382128159906,
+                "exact95": [
+                  0.03431157094257889,
+                  0.05430953276970411
+                ]
+              },
+              "none": {
+                "count": 299,
+                "detected": 13,
+                "missed": 286,
+                "recall": 0.043478260869565216,
+                "exact95": [
+                  0.023350351582002812,
+                  0.07320165752047532
+                ]
+              }
+            },
+            "hostnameHyphen": {
+              "any": {
+                "count": 292,
+                "detected": 6,
+                "missed": 286,
+                "recall": 0.02054794520547945,
+                "exact95": [
+                  0.007577173705828605,
+                  0.044185421446916916
+                ]
+              },
+              "none": {
+                "count": 1708,
+                "detected": 81,
+                "missed": 1627,
+                "recall": 0.04742388758782201,
+                "exact95": [
+                  0.03783692543347611,
+                  0.05860140303664298
+                ]
+              }
+            },
+            "pathPercentEscape": {
+              "any": {
+                "count": 137,
+                "detected": 14,
+                "missed": 123,
+                "recall": 0.10218978102189781,
+                "exact95": [
+                  0.05700389359420554,
+                  0.16551143896955547
+                ]
+              },
+              "none": {
+                "count": 1863,
+                "detected": 73,
+                "missed": 1790,
+                "recall": 0.039184111647879764,
+                "exact95": [
+                  0.03083750408749791,
+                  0.04901818140479287
+                ]
+              }
+            },
+            "topLevelDomain": {
+              "br": {
+                "count": 99,
+                "detected": 0,
+                "missed": 99,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.03657574498347894
+                ]
+              },
+              "com": {
+                "count": 894,
+                "detected": 3,
+                "missed": 891,
+                "recall": 0.003355704697986577,
+                "exact95": [
+                  0.0006925623316394291,
+                  0.009775205394461731
+                ]
+              },
+              "ip-address": {
+                "count": 97,
+                "detected": 75,
+                "missed": 22,
+                "recall": 0.7731958762886598,
+                "exact95": [
+                  0.6769959300036353,
+                  0.8520739903565842
+                ]
+              },
+              "net": {
+                "count": 115,
+                "detected": 2,
+                "missed": 113,
+                "recall": 0.017391304347826087,
+                "exact95": [
+                  0.0021131508222615373,
+                  0.06141233255872283
+                ]
+              },
+              "org": {
+                "count": 87,
+                "detected": 2,
+                "missed": 85,
+                "recall": 0.022988505747126436,
+                "exact95": [
+                  0.0027962410384932235,
+                  0.08058586583676962
+                ]
+              },
+              "other": {
+                "count": 657,
+                "detected": 4,
+                "missed": 653,
+                "recall": 0.0060882800608828,
+                "exact95": [
+                  0.0016612689126941863,
+                  0.015514502560923587
+                ]
+              },
+              "uk": {
+                "count": 51,
+                "detected": 1,
+                "missed": 50,
+                "recall": 0.0196078431372549,
+                "exact95": [
+                  0.000496304407737771,
+                  0.10447489639551716
+                ]
+              }
+            }
+          }
+        },
+        "0.01": {
+          "count": 2000,
+          "detected": 208,
+          "missed": 1792,
+          "recall": 0.104,
+          "exact95": [
+            0.09095948012945157,
+            0.11821393368039429
+          ],
+          "savedCutoff": 0.9321015608646374,
+          "within005BelowCutoff": 62,
+          "calibrationPositive": {
+            "count": 20973,
+            "detected": 6158,
+            "missed": 14815,
+            "recall": 0.29361560101082346,
+            "exact95": [
+              0.28745719849570245,
+              0.2998312541480771
+            ]
+          },
+          "featureGroups": {
+            "canonicalUrlLength": {
+              "40-79": {
+                "count": 1644,
+                "detected": 177,
+                "missed": 1467,
+                "recall": 0.10766423357664233,
+                "exact95": [
+                  0.0930877402607762,
+                  0.12365768968248386
+                ]
+              },
+              "under-40": {
+                "count": 356,
+                "detected": 31,
+                "missed": 325,
+                "recall": 0.08707865168539326,
+                "exact95": [
+                  0.059932491059936414,
+                  0.12132369658015826
+                ]
+              }
+            },
+            "hostnameLength": {
+              "16-24": {
+                "count": 909,
+                "detected": 19,
+                "missed": 890,
+                "recall": 0.020902090209020903,
+                "exact95": [
+                  0.012630198994046918,
+                  0.03244941978315976
+                ]
+              },
+              "25-39": {
+                "count": 297,
+                "detected": 47,
+                "missed": 250,
+                "recall": 0.15824915824915825,
+                "exact95": [
+                  0.11865180011864304,
+                  0.20482239865240312
+                ]
+              },
+              "40-plus": {
+                "count": 74,
+                "detected": 43,
+                "missed": 31,
+                "recall": 0.581081081081081,
+                "exact95": [
+                  0.4606164895488799,
+                  0.6948512039183579
+                ]
+              },
+              "under-16": {
+                "count": 720,
+                "detected": 99,
+                "missed": 621,
+                "recall": 0.1375,
+                "exact95": [
+                  0.11317790258181483,
+                  0.16483543988257074
+                ]
+              }
+            },
+            "subdomains": {
+              "none": {
+                "count": 988,
+                "detected": 121,
+                "missed": 867,
+                "recall": 0.12246963562753037,
+                "exact95": [
+                  0.10267080206542678,
+                  0.14454865028307118
+                ]
+              },
+              "one": {
+                "count": 848,
+                "detected": 37,
+                "missed": 811,
+                "recall": 0.04363207547169811,
+                "exact95": [
+                  0.030904023479379934,
+                  0.05964213856267927
+                ]
+              },
+              "two-plus": {
+                "count": 164,
+                "detected": 50,
+                "missed": 114,
+                "recall": 0.3048780487804878,
+                "exact95": [
+                  0.23549819962320373,
+                  0.3814654111192349
+                ]
+              }
+            },
+            "digits": {
+              "host-and-path": {
+                "count": 103,
+                "detected": 65,
+                "missed": 38,
+                "recall": 0.6310679611650486,
+                "exact95": [
+                  0.5303347281198059,
+                  0.7240537621996148
+                ]
+              },
+              "host-only": {
+                "count": 197,
+                "detected": 106,
+                "missed": 91,
+                "recall": 0.5380710659898477,
+                "exact95": [
+                  0.46579508029892197,
+                  0.6091840705279898
+                ]
+              },
+              "none": {
+                "count": 1167,
+                "detected": 23,
+                "missed": 1144,
+                "recall": 0.01970865467009426,
+                "exact95": [
+                  0.0125336057561837,
+                  0.029426605409551793
+                ]
+              },
+              "path-only": {
+                "count": 533,
+                "detected": 14,
+                "missed": 519,
+                "recall": 0.02626641651031895,
+                "exact95": [
+                  0.014432856220673432,
+                  0.04367818209540368
+                ]
+              }
+            },
+            "pathLength": {
+              "1-39": {
+                "count": 1274,
+                "detected": 138,
+                "missed": 1136,
+                "recall": 0.10832025117739404,
+                "exact95": [
+                  0.0917810402746397,
+                  0.1266906157705678
+                ]
+              },
+              "40-79": {
+                "count": 655,
+                "detected": 53,
+                "missed": 602,
+                "recall": 0.08091603053435115,
+                "exact95": [
+                  0.0611968771033998,
+                  0.10450581446685228
+                ]
+              },
+              "root": {
+                "count": 71,
+                "detected": 17,
+                "missed": 54,
+                "recall": 0.23943661971830985,
+                "exact95": [
+                  0.14609548134287323,
+                  0.35544848785005845
+                ]
+              }
+            },
+            "pathPunctuation": {
+              "any": {
+                "count": 1701,
+                "detected": 179,
+                "missed": 1522,
+                "recall": 0.10523221634332745,
+                "exact95": [
+                  0.0910465531740389,
+                  0.12079564474685073
+                ]
+              },
+              "none": {
+                "count": 299,
+                "detected": 29,
+                "missed": 270,
+                "recall": 0.09698996655518395,
+                "exact95": [
+                  0.06592164168171974,
+                  0.1363193257218828
+                ]
+              }
+            },
+            "hostnameHyphen": {
+              "any": {
+                "count": 292,
+                "detected": 48,
+                "missed": 244,
+                "recall": 0.1643835616438356,
+                "exact95": [
+                  0.12375982550917647,
+                  0.211972388187963
+                ]
+              },
+              "none": {
+                "count": 1708,
+                "detected": 160,
+                "missed": 1548,
+                "recall": 0.0936768149882904,
+                "exact95": [
+                  0.08027269779405917,
+                  0.10849504629127016
+                ]
+              }
+            },
+            "pathPercentEscape": {
+              "any": {
+                "count": 137,
+                "detected": 19,
+                "missed": 118,
+                "recall": 0.1386861313868613,
+                "exact95": [
+                  0.08560994564534806,
+                  0.20807550854382142
+                ]
+              },
+              "none": {
+                "count": 1863,
+                "detected": 189,
+                "missed": 1674,
+                "recall": 0.10144927536231885,
+                "exact95": [
+                  0.08810649166042342,
+                  0.11606123479020523
+                ]
+              }
+            },
+            "topLevelDomain": {
+              "br": {
+                "count": 99,
+                "detected": 5,
+                "missed": 94,
+                "recall": 0.050505050505050504,
+                "exact95": [
+                  0.016599911329843488,
+                  0.11393581779148962
+                ]
+              },
+              "com": {
+                "count": 894,
+                "detected": 49,
+                "missed": 845,
+                "recall": 0.05480984340044743,
+                "exact95": [
+                  0.0408201732237206,
+                  0.07181720057455143
+                ]
+              },
+              "ip-address": {
+                "count": 97,
+                "detected": 97,
+                "missed": 0,
+                "recall": 1.0,
+                "exact95": [
+                  0.9626843630912639,
+                  1.0
+                ]
+              },
+              "net": {
+                "count": 115,
+                "detected": 7,
+                "missed": 108,
+                "recall": 0.06086956521739131,
+                "exact95": [
+                  0.024820438870186378,
+                  0.12139731387928812
+                ]
+              },
+              "org": {
+                "count": 87,
+                "detected": 15,
+                "missed": 72,
+                "recall": 0.1724137931034483,
+                "exact95": [
+                  0.09983452459943039,
+                  0.2683779077093829
+                ]
+              },
+              "other": {
+                "count": 657,
+                "detected": 32,
+                "missed": 625,
+                "recall": 0.0487062404870624,
+                "exact95": [
+                  0.0335501542566241,
+                  0.06806581065005085
+                ]
+              },
+              "uk": {
+                "count": 51,
+                "detected": 3,
+                "missed": 48,
+                "recall": 0.058823529411764705,
+                "exact95": [
+                  0.012299088255240053,
+                  0.1624222180720505
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "fusion-mixed-20000-stack": {
+      "modelArtifactSha256": "78c3a186c807fdb557225227e0d270dab7d1a6357c5ef4528f0adbf6c9b85b66",
+      "usedFeatures": [
+        "ip_host",
+        "idn_labels",
+        "hostname_length",
+        "host_labels",
+        "host_digits",
+        "host_hyphens",
+        "registrant_length",
+        "subdomain_labels"
+      ],
+      "fittedPreprocessors": [
+        "standardscaler",
+        "logisticregression",
+        "standardscaler",
+        "mlpclassifier"
+      ],
+      "scoreReconstructionMaxAbsError": 0.0,
+      "scoreDistribution": {
+        "archive": {
+          "count": 2000,
+          "p10": 0.183675,
+          "p50": 0.455397,
+          "p90": 0.949722,
+          "p99": 0.970601,
+          "fractionZero": 0.0
+        },
+        "calibrationPhishing": {
+          "count": 20973,
+          "p10": 0.322063,
+          "p50": 0.784286,
+          "p90": 0.970715,
+          "p99": 0.972669,
+          "fractionZero": 0.0
+        },
+        "calibrationLegitimate": {
+          "count": 30086,
+          "p10": 0.162447,
+          "p50": 0.218817,
+          "p90": 0.654949,
+          "p99": 0.938969,
+          "fractionZero": 0.0
+        }
+      },
+      "operatingPoints": {
+        "0.001": {
+          "count": 2000,
+          "detected": 15,
+          "missed": 1985,
+          "recall": 0.0075,
+          "exact95": [
+            0.004203591756889188,
+            0.01233998373578595
+          ],
+          "savedCutoff": 0.9707320772239589,
+          "within005BelowCutoff": 242,
+          "calibrationPositive": {
+            "count": 20973,
+            "detected": 2095,
+            "missed": 18878,
+            "recall": 0.09989033519286702,
+            "exact95": [
+              0.09586400778661186,
+              0.10402794470630408
+            ]
+          },
+          "featureGroups": {
+            "canonicalUrlLength": {
+              "40-79": {
+                "count": 1644,
+                "detected": 15,
+                "missed": 1629,
+                "recall": 0.009124087591240875,
+                "exact95": [
+                  0.0051154180165245925,
+                  0.015004208191061581
+                ]
+              },
+              "under-40": {
+                "count": 356,
+                "detected": 0,
+                "missed": 356,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.01030852015110821
+                ]
+              }
+            },
+            "hostnameLength": {
+              "16-24": {
+                "count": 909,
+                "detected": 0,
+                "missed": 909,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.004049949959479821
+                ]
+              },
+              "25-39": {
+                "count": 297,
+                "detected": 7,
+                "missed": 290,
+                "recall": 0.02356902356902357,
+                "exact95": [
+                  0.00952728793299631,
+                  0.04795615393544749
+                ]
+              },
+              "40-plus": {
+                "count": 74,
+                "detected": 8,
+                "missed": 66,
+                "recall": 0.10810810810810811,
+                "exact95": [
+                  0.04784399039492812,
+                  0.20195013623184596
+                ]
+              },
+              "under-16": {
+                "count": 720,
+                "detected": 0,
+                "missed": 720,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.0051103412347741186
+                ]
+              }
+            },
+            "subdomains": {
+              "none": {
+                "count": 988,
+                "detected": 3,
+                "missed": 985,
+                "recall": 0.003036437246963563,
+                "exact95": [
+                  0.0006266246295930171,
+                  0.008847891650636208
+                ]
+              },
+              "one": {
+                "count": 848,
+                "detected": 2,
+                "missed": 846,
+                "recall": 0.0023584905660377358,
+                "exact95": [
+                  0.0002857518779546343,
+                  0.008493473534235116
+                ]
+              },
+              "two-plus": {
+                "count": 164,
+                "detected": 10,
+                "missed": 154,
+                "recall": 0.06097560975609756,
+                "exact95": [
+                  0.02962446812825293,
+                  0.10927594024707916
+                ]
+              }
+            },
+            "digits": {
+              "host-and-path": {
+                "count": 103,
+                "detected": 7,
+                "missed": 96,
+                "recall": 0.06796116504854369,
+                "exact95": [
+                  0.027758689442317217,
+                  0.1350223789085251
+                ]
+              },
+              "host-only": {
+                "count": 197,
+                "detected": 8,
+                "missed": 189,
+                "recall": 0.04060913705583756,
+                "exact95": [
+                  0.01769260868047538,
+                  0.0784455291363183
+                ]
+              },
+              "none": {
+                "count": 1167,
+                "detected": 0,
+                "missed": 1167,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.00315600285377175
+                ]
+              },
+              "path-only": {
+                "count": 533,
+                "detected": 0,
+                "missed": 533,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.0068970797978240165
+                ]
+              }
+            },
+            "pathLength": {
+              "1-39": {
+                "count": 1274,
+                "detected": 14,
+                "missed": 1260,
+                "recall": 0.01098901098901099,
+                "exact95": [
+                  0.006020453890419251,
+                  0.018369019583740716
+                ]
+              },
+              "40-79": {
+                "count": 655,
+                "detected": 0,
+                "missed": 655,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.0056160477398905125
+                ]
+              },
+              "root": {
+                "count": 71,
+                "detected": 1,
+                "missed": 70,
+                "recall": 0.014084507042253521,
+                "exact95": [
+                  0.00035652527460338913,
+                  0.07599341612110348
+                ]
+              }
+            },
+            "pathPunctuation": {
+              "any": {
+                "count": 1701,
+                "detected": 12,
+                "missed": 1689,
+                "recall": 0.007054673721340388,
+                "exact95": [
+                  0.003650409812770059,
+                  0.01229063756710153
+                ]
+              },
+              "none": {
+                "count": 299,
+                "detected": 3,
+                "missed": 296,
+                "recall": 0.010033444816053512,
+                "exact95": [
+                  0.0020739363632890652,
+                  0.02904038089312678
+                ]
+              }
+            },
+            "hostnameHyphen": {
+              "any": {
+                "count": 292,
+                "detected": 8,
+                "missed": 284,
+                "recall": 0.0273972602739726,
+                "exact95": [
+                  0.011900829389348794,
+                  0.05326775285338948
+                ]
+              },
+              "none": {
+                "count": 1708,
+                "detected": 7,
+                "missed": 1701,
+                "recall": 0.004098360655737705,
+                "exact95": [
+                  0.0016492927706589248,
+                  0.00842585027360991
+                ]
+              }
+            },
+            "pathPercentEscape": {
+              "any": {
+                "count": 137,
+                "detected": 0,
+                "missed": 137,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.026566851096283282
+                ]
+              },
+              "none": {
+                "count": 1863,
+                "detected": 15,
+                "missed": 1848,
+                "recall": 0.008051529790660225,
+                "exact95": [
+                  0.004513179693675719,
+                  0.013245054282963466
+                ]
+              }
+            },
+            "topLevelDomain": {
+              "br": {
+                "count": 99,
+                "detected": 0,
+                "missed": 99,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.03657574498347894
+                ]
+              },
+              "com": {
+                "count": 894,
+                "detected": 5,
+                "missed": 889,
+                "recall": 0.005592841163310962,
+                "exact95": [
+                  0.0018183996177271568,
+                  0.01300320857110652
+                ]
+              },
+              "ip-address": {
+                "count": 97,
+                "detected": 0,
+                "missed": 97,
+                "recall": 0.0,
+                "exact95": [
+                  0.0,
+                  0.037315636908736065
+                ]
+              },
+              "net": {
+                "count": 115,
+                "detected": 2,
+                "missed": 113,
+                "recall": 0.017391304347826087,
+                "exact95": [
+                  0.0021131508222615373,
+                  0.06141233255872283
+                ]
+              },
+              "org": {
+                "count": 87,
+                "detected": 3,
+                "missed": 84,
+                "recall": 0.034482758620689655,
+                "exact95": [
+                  0.00716841972994136,
+                  0.09748083422426233
+                ]
+              },
+              "other": {
+                "count": 657,
+                "detected": 4,
+                "missed": 653,
+                "recall": 0.0060882800608828,
+                "exact95": [
+                  0.0016612689126941863,
+                  0.015514502560923587
+                ]
+              },
+              "uk": {
+                "count": 51,
+                "detected": 1,
+                "missed": 50,
+                "recall": 0.0196078431372549,
+                "exact95": [
+                  0.000496304407737771,
+                  0.10447489639551716
+                ]
+              }
+            }
+          }
+        },
+        "0.01": {
+          "count": 2000,
+          "detected": 212,
+          "missed": 1788,
+          "recall": 0.106,
+          "exact95": [
+            0.09284366035053933,
+            0.12032359597818831
+          ],
+          "savedCutoff": 0.9446575079500802,
+          "within005BelowCutoff": 93,
+          "calibrationPositive": {
+            "count": 20973,
+            "detected": 6133,
+            "missed": 14840,
+            "recall": 0.29242359223763886,
+            "exact95": [
+              0.28627269056660615,
+              0.2986320755406218
+            ]
+          },
+          "featureGroups": {
+            "canonicalUrlLength": {
+              "40-79": {
+                "count": 1644,
+                "detected": 182,
+                "missed": 1462,
+                "recall": 0.11070559610705596,
+                "exact95": [
+                  0.09593955068184518,
+                  0.12687718324318256
+                ]
+              },
+              "under-40": {
+                "count": 356,
+                "detected": 30,
+                "missed": 326,
+                "recall": 0.08426966292134831,
+                "exact95": [
+                  0.05757787947165227,
+                  0.11811458227874633
+                ]
+              }
+            },
+            "hostnameLength": {
+              "16-24": {
+                "count": 909,
+                "detected": 18,
+                "missed": 891,
+                "recall": 0.019801980198019802,
+                "exact95": [
+                  0.01177709375030262,
+                  0.031115665986334643
+                ]
+              },
+              "25-39": {
+                "count": 297,
+                "detected": 51,
+                "missed": 246,
+                "recall": 0.1717171717171717,
+                "exact95": [
+                  0.13060824705240714,
+                  0.2195166412966246
+                ]
+              },
+              "40-plus": {
+                "count": 74,
+                "detected": 44,
+                "missed": 30,
+                "recall": 0.5945945945945946,
+                "exact95": [
+                  0.47410196045513436,
+                  0.7072744508168057
+                ]
+              },
+              "under-16": {
+                "count": 720,
+                "detected": 99,
+                "missed": 621,
+                "recall": 0.1375,
+                "exact95": [
+                  0.11317790258181483,
+                  0.16483543988257074
+                ]
+              }
+            },
+            "subdomains": {
+              "none": {
+                "count": 988,
+                "detected": 122,
+                "missed": 866,
+                "recall": 0.12348178137651822,
+                "exact95": [
+                  0.10360755860591082,
+                  0.1456298246584798
+                ]
+              },
+              "one": {
+                "count": 848,
+                "detected": 32,
+                "missed": 816,
+                "recall": 0.03773584905660377,
+                "exact95": [
+                  0.025951861948782406,
+                  0.05285634163655842
+                ]
+              },
+              "two-plus": {
+                "count": 164,
+                "detected": 58,
+                "missed": 106,
+                "recall": 0.35365853658536583,
+                "exact95": [
+                  0.2806987522075289,
+                  0.4320137183511441
+                ]
+              }
+            },
+            "digits": {
+              "host-and-path": {
+                "count": 103,
+                "detected": 66,
+                "missed": 37,
+                "recall": 0.6407766990291263,
+                "exact95": [
+                  0.5402718226953289,
+                  0.7329574262621943
+                ]
+              },
+              "host-only": {
+                "count": 197,
+                "detected": 107,
+                "missed": 90,
+                "recall": 0.5431472081218274,
+                "exact95": [
+                  0.4708506980653785,
+                  0.6141256249190296
+                ]
+              },
+              "none": {
+                "count": 1167,
+                "detected": 25,
+                "missed": 1142,
+                "recall": 0.021422450728363324,
+                "exact95": [
+                  0.013910304709111327,
+                  0.03146218947688427
+                ]
+              },
+              "path-only": {
+                "count": 533,
+                "detected": 14,
+                "missed": 519,
+                "recall": 0.02626641651031895,
+                "exact95": [
+                  0.014432856220673432,
+                  0.04367818209540368
+                ]
+              }
+            },
+            "pathLength": {
+              "1-39": {
+                "count": 1274,
+                "detected": 142,
+                "missed": 1132,
+                "recall": 0.11145996860282574,
+                "exact95": [
+                  0.09469862860839479,
+                  0.13003713335184625
+                ]
+              },
+              "40-79": {
+                "count": 655,
+                "detected": 54,
+                "missed": 601,
+                "recall": 0.08244274809160305,
+                "exact95": [
+                  0.06253832917177753,
+                  0.10620225809703537
+                ]
+              },
+              "root": {
+                "count": 71,
+                "detected": 16,
+                "missed": 55,
+                "recall": 0.22535211267605634,
+                "exact95": [
+                  0.13464028224874297,
+                  0.33999888046431453
+                ]
+              }
+            },
+            "pathPunctuation": {
+              "any": {
+                "count": 1701,
+                "detected": 184,
+                "missed": 1517,
+                "recall": 0.10817166372721929,
+                "exact95": [
+                  0.09380307783789633,
+                  0.12390733701221904
+                ]
+              },
+              "none": {
+                "count": 299,
+                "detected": 28,
+                "missed": 271,
+                "recall": 0.09364548494983277,
+                "exact95": [
+                  0.06313120937569837,
+                  0.13249693526390927
+                ]
+              }
+            },
+            "hostnameHyphen": {
+              "any": {
+                "count": 292,
+                "detected": 47,
+                "missed": 245,
+                "recall": 0.16095890410958905,
+                "exact95": [
+                  0.12072744890152502,
+                  0.2082293923438315
+                ]
+              },
+              "none": {
+                "count": 1708,
+                "detected": 165,
+                "missed": 1543,
+                "recall": 0.09660421545667447,
+                "exact95": [
+                  0.08300359523136695,
+                  0.11160825035094436
+                ]
+              }
+            },
+            "pathPercentEscape": {
+              "any": {
+                "count": 137,
+                "detected": 19,
+                "missed": 118,
+                "recall": 0.1386861313868613,
+                "exact95": [
+                  0.08560994564534806,
+                  0.20807550854382142
+                ]
+              },
+              "none": {
+                "count": 1863,
+                "detected": 193,
+                "missed": 1670,
+                "recall": 0.10359634997316157,
+                "exact95": [
+                  0.09012249408152684,
+                  0.11833225621947299
+                ]
+              }
+            },
+            "topLevelDomain": {
+              "br": {
+                "count": 99,
+                "detected": 5,
+                "missed": 94,
+                "recall": 0.050505050505050504,
+                "exact95": [
+                  0.016599911329843488,
+                  0.11393581779148962
+                ]
+              },
+              "com": {
+                "count": 894,
+                "detected": 55,
+                "missed": 839,
+                "recall": 0.06152125279642058,
+                "exact95": [
+                  0.04667888489014113,
+                  0.07932874764543658
+                ]
+              },
+              "ip-address": {
+                "count": 97,
+                "detected": 97,
+                "missed": 0,
+                "recall": 1.0,
+                "exact95": [
+                  0.9626843630912639,
+                  1.0
+                ]
+              },
+              "net": {
+                "count": 115,
+                "detected": 7,
+                "missed": 108,
+                "recall": 0.06086956521739131,
+                "exact95": [
+                  0.024820438870186378,
+                  0.12139731387928812
+                ]
+              },
+              "org": {
+                "count": 87,
+                "detected": 15,
+                "missed": 72,
+                "recall": 0.1724137931034483,
+                "exact95": [
+                  0.09983452459943039,
+                  0.2683779077093829
+                ]
+              },
+              "other": {
+                "count": 657,
+                "detected": 30,
+                "missed": 627,
+                "recall": 0.045662100456621,
+                "exact95": [
+                  0.031016826768842525,
+                  0.06454632861021298
+                ]
+              },
+              "uk": {
+                "count": 51,
+                "detected": 3,
+                "missed": 48,
+                "recall": 0.058823529411764705,
+                "exact95": [
+                  0.012299088255240053,
+                  0.1624222180720505
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "overlap": {
+    "0.001": {
+      "modelOrder": [
+        "phresh-20000-path-forest",
+        "fusion-mixed-20000-two",
+        "fusion-mixed-20000-four",
+        "fusion-mixed-20000-stack"
+      ],
+      "decisionPatterns": {
+        "0000": 1904,
+        "0001": 1,
+        "0010": 70,
+        "0011": 1,
+        "0100": 3,
+        "0101": 3,
+        "0111": 9,
+        "1000": 2,
+        "1010": 6,
+        "1111": 1
+      },
+      "pairs": {
+        "phresh-20000-path-forest/fusion-mixed-20000-two": {
+          "bothDetected": 1,
+          "bothMissed": 1976,
+          "leftOnly": 8,
+          "rightOnly": 15,
+          "errorCorrelation": 0.07781982716425755,
+          "rightMinusLeftRecall95": [
+            -0.0015,
+            0.008
+          ]
+        },
+        "phresh-20000-path-forest/fusion-mixed-20000-four": {
+          "bothDetected": 7,
+          "bothMissed": 1911,
+          "leftOnly": 2,
+          "rightOnly": 80,
+          "errorCorrelation": 0.24202425610975953,
+          "rightMinusLeftRecall95": [
+            0.0302375,
+            0.046
+          ]
+        },
+        "phresh-20000-path-forest/fusion-mixed-20000-stack": {
+          "bothDetected": 1,
+          "bothMissed": 1977,
+          "leftOnly": 8,
+          "rightOnly": 14,
+          "errorCorrelation": 0.08074136111212621,
+          "rightMinusLeftRecall95": [
+            -0.0017624999999999993,
+            0.0075
+          ]
+        },
+        "fusion-mixed-20000-two/fusion-mixed-20000-four": {
+          "bothDetected": 10,
+          "bothMissed": 1907,
+          "leftOnly": 6,
+          "rightOnly": 77,
+          "errorCorrelation": 0.2560069530982768,
+          "rightMinusLeftRecall95": [
+            0.0265,
+            0.0425
+          ]
+        },
+        "fusion-mixed-20000-two/fusion-mixed-20000-stack": {
+          "bothDetected": 13,
+          "bothMissed": 1982,
+          "leftOnly": 3,
+          "rightOnly": 2,
+          "errorCorrelation": 0.8378941308889499,
+          "rightMinusLeftRecall95": [
+            -0.0025,
+            0.0015
+          ]
+        },
+        "fusion-mixed-20000-four/fusion-mixed-20000-stack": {
+          "bothDetected": 11,
+          "bothMissed": 1909,
+          "leftOnly": 76,
+          "rightOnly": 4,
+          "errorCorrelation": 0.2939831468351945,
+          "rightMinusLeftRecall95": [
+            -0.0425,
+            -0.028237500000000013
+          ]
+        }
+      }
+    },
+    "0.01": {
+      "modelOrder": [
+        "phresh-20000-path-forest",
+        "fusion-mixed-20000-two",
+        "fusion-mixed-20000-four",
+        "fusion-mixed-20000-stack"
+      ],
+      "decisionPatterns": {
+        "0000": 1741,
+        "0010": 5,
+        "0011": 12,
+        "0100": 30,
+        "0101": 10,
+        "0111": 144,
+        "1000": 10,
+        "1010": 1,
+        "1011": 1,
+        "1100": 1,
+        "1111": 45
+      },
+      "pairs": {
+        "phresh-20000-path-forest/fusion-mixed-20000-two": {
+          "bothDetected": 46,
+          "bothMissed": 1758,
+          "leftOnly": 12,
+          "rightOnly": 184,
+          "errorCorrelation": 0.36733709006275816,
+          "rightMinusLeftRecall95": [
+            0.0722375,
+            0.09826249999999999
+          ]
+        },
+        "phresh-20000-path-forest/fusion-mixed-20000-four": {
+          "bothDetected": 47,
+          "bothMissed": 1781,
+          "leftOnly": 11,
+          "rightOnly": 161,
+          "errorCorrelation": 0.3998853361417092,
+          "rightMinusLeftRecall95": [
+            0.0617375,
+            0.08576249999999999
+          ]
+        },
+        "phresh-20000-path-forest/fusion-mixed-20000-stack": {
+          "bothDetected": 46,
+          "bothMissed": 1776,
+          "leftOnly": 12,
+          "rightOnly": 166,
+          "errorCorrelation": 0.38573568684283177,
+          "rightMinusLeftRecall95": [
+            0.063,
+            0.088
+          ]
+        },
+        "fusion-mixed-20000-two/fusion-mixed-20000-four": {
+          "bothDetected": 189,
+          "bothMissed": 1751,
+          "leftOnly": 41,
+          "rightOnly": 19,
+          "errorCorrelation": 0.8475654297716493,
+          "rightMinusLeftRecall95": [
+            -0.019,
+            -0.0037375000000000116
+          ]
+        },
+        "fusion-mixed-20000-two/fusion-mixed-20000-stack": {
+          "bothDetected": 199,
+          "bothMissed": 1757,
+          "leftOnly": 31,
+          "rightOnly": 13,
+          "errorCorrelation": 0.8890408993366227,
+          "rightMinusLeftRecall95": [
+            -0.016,
+            -0.003
+          ]
+        },
+        "fusion-mixed-20000-four/fusion-mixed-20000-stack": {
+          "bothDetected": 202,
+          "bothMissed": 1782,
+          "leftOnly": 6,
+          "rightOnly": 10,
+          "errorCorrelation": 0.9574901515027155,
+          "rightMinusLeftRecall95": [
+            -0.0025,
+            0.006
+          ]
+        }
+      }
+    }
+  },
+  "archiveFeatureDistributions": {
+    "https": {
+      "count": 2000,
+      "p10": 0.0,
+      "p50": 0.0,
+      "p90": 0.0,
+      "fractionZero": 0.998
+    },
+    "nondefault_port": {
+      "count": 2000,
+      "p10": 0.0,
+      "p50": 0.0,
+      "p90": 0.0,
+      "fractionZero": 0.9965
+    },
+    "ip_host": {
+      "count": 2000,
+      "p10": 0.0,
+      "p50": 0.0,
+      "p90": 0.0,
+      "fractionZero": 0.9515
+    },
+    "idn_labels": {
+      "count": 2000,
+      "p10": 0.0,
+      "p50": 0.0,
+      "p90": 0.0,
+      "fractionZero": 0.999
+    },
+    "hostname_length": {
+      "count": 2000,
+      "p10": 12.0,
+      "p50": 18.0,
+      "p90": 29.0,
+      "fractionZero": 0.0
+    },
+    "host_labels": {
+      "count": 2000,
+      "p10": 2.0,
+      "p50": 3.0,
+      "p90": 4.0,
+      "fractionZero": 0.0
+    },
+    "host_digits": {
+      "count": 2000,
+      "p10": 0.0,
+      "p50": 0.0,
+      "p90": 2.0,
+      "fractionZero": 0.85
+    },
+    "host_hyphens": {
+      "count": 2000,
+      "p10": 0.0,
+      "p50": 0.0,
+      "p90": 1.0,
+      "fractionZero": 0.854
+    },
+    "registrant_length": {
+      "count": 2000,
+      "p10": 4.0,
+      "p50": 10.0,
+      "p90": 18.0,
+      "fractionZero": 0.0485
+    },
+    "subdomain_labels": {
+      "count": 2000,
+      "p10": 0.0,
+      "p50": 1.0,
+      "p90": 1.0,
+      "fractionZero": 0.494
+    },
+    "path_length": {
+      "count": 2000,
+      "p10": 9.0,
+      "p50": 31.0,
+      "p90": 50.0,
+      "fractionZero": 0.0355
+    },
+    "path_depth": {
+      "count": 2000,
+      "p10": 1.0,
+      "p50": 3.0,
+      "p90": 5.0,
+      "fractionZero": 0.0355
+    },
+    "path_digits": {
+      "count": 2000,
+      "p10": 0.0,
+      "p50": 0.0,
+      "p90": 13.0,
+      "fractionZero": 0.682
+    },
+    "path_percent_escapes": {
+      "count": 2000,
+      "p10": 0.0,
+      "p50": 0.0,
+      "p90": 0.0,
+      "fractionZero": 0.9315
+    },
+    "canonicalUrlLength": {
+      "count": 2000,
+      "p10": 34.0,
+      "p50": 59.0,
+      "p90": 73.0,
+      "fractionZero": 0.0
+    },
+    "pathPunctuation": {
+      "count": 2000,
+      "p10": 0.0,
+      "p50": 3.0,
+      "p90": 6.0,
+      "fractionZero": 0.1495
+    }
+  },
+  "primaryDetectedMissedDistributions": {
+    "phresh-20000-path-forest": {
+      "detected": {
+        "https": {
+          "count": 9,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 1.0
+        },
+        "nondefault_port": {
+          "count": 9,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 1.0
+        },
+        "ip_host": {
+          "count": 9,
+          "p10": 0.0,
+          "p50": 1.0,
+          "p90": 1.0,
+          "fractionZero": 0.222222
+        },
+        "idn_labels": {
+          "count": 9,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 1.0
+        },
+        "hostname_length": {
+          "count": 9,
+          "p10": 12.8,
+          "p50": 14.0,
+          "p90": 26.6,
+          "fractionZero": 0.0
+        },
+        "host_labels": {
+          "count": 9,
+          "p10": 3.0,
+          "p50": 4.0,
+          "p90": 4.0,
+          "fractionZero": 0.0
+        },
+        "host_digits": {
+          "count": 9,
+          "p10": 7.8,
+          "p50": 11.0,
+          "p90": 12.0,
+          "fractionZero": 0.0
+        },
+        "host_hyphens": {
+          "count": 9,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 1.0
+        },
+        "registrant_length": {
+          "count": 9,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 11.6,
+          "fractionZero": 0.777778
+        },
+        "subdomain_labels": {
+          "count": 9,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 1.0
+        },
+        "path_length": {
+          "count": 9,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 1.2,
+          "fractionZero": 0.888889
+        },
+        "path_depth": {
+          "count": 9,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.2,
+          "fractionZero": 0.888889
+        },
+        "path_digits": {
+          "count": 9,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.2,
+          "fractionZero": 0.888889
+        },
+        "path_percent_escapes": {
+          "count": 9,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 1.0
+        }
+      },
+      "missed": {
+        "https": {
+          "count": 1991,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 0.997991
+        },
+        "nondefault_port": {
+          "count": 1991,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 0.996484
+        },
+        "ip_host": {
+          "count": 1991,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 0.954797
+        },
+        "idn_labels": {
+          "count": 1991,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 0.998995
+        },
+        "hostname_length": {
+          "count": 1991,
+          "p10": 12.0,
+          "p50": 18.0,
+          "p90": 29.0,
+          "fractionZero": 0.0
+        },
+        "host_labels": {
+          "count": 1991,
+          "p10": 2.0,
+          "p50": 3.0,
+          "p90": 4.0,
+          "fractionZero": 0.0
+        },
+        "host_digits": {
+          "count": 1991,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 2.0,
+          "fractionZero": 0.853842
+        },
+        "host_hyphens": {
+          "count": 1991,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 1.0,
+          "fractionZero": 0.85334
+        },
+        "registrant_length": {
+          "count": 1991,
+          "p10": 4.0,
+          "p50": 10.0,
+          "p90": 18.0,
+          "fractionZero": 0.045203
+        },
+        "subdomain_labels": {
+          "count": 1991,
+          "p10": 0.0,
+          "p50": 1.0,
+          "p90": 1.0,
+          "fractionZero": 0.491713
+        },
+        "path_length": {
+          "count": 1991,
+          "p10": 9.0,
+          "p50": 31.0,
+          "p90": 50.0,
+          "fractionZero": 0.031642
+        },
+        "path_depth": {
+          "count": 1991,
+          "p10": 1.0,
+          "p50": 3.0,
+          "p90": 5.0,
+          "fractionZero": 0.031642
+        },
+        "path_digits": {
+          "count": 1991,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 13.0,
+          "fractionZero": 0.681065
+        },
+        "path_percent_escapes": {
+          "count": 1991,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 0.93119
+        }
+      }
+    },
+    "fusion-mixed-20000-two": {
+      "detected": {
+        "https": {
+          "count": 16,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 1.0
+        },
+        "nondefault_port": {
+          "count": 16,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 1.0
+        },
+        "ip_host": {
+          "count": 16,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 1.0
+        },
+        "idn_labels": {
+          "count": 16,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 1.0
+        },
+        "hostname_length": {
+          "count": 16,
+          "p10": 34.0,
+          "p50": 39.0,
+          "p90": 57.5,
+          "fractionZero": 0.0
+        },
+        "host_labels": {
+          "count": 16,
+          "p10": 3.0,
+          "p50": 5.0,
+          "p90": 8.0,
+          "fractionZero": 0.0
+        },
+        "host_digits": {
+          "count": 16,
+          "p10": 4.0,
+          "p50": 7.0,
+          "p90": 14.0,
+          "fractionZero": 0.0
+        },
+        "host_hyphens": {
+          "count": 16,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 4.0,
+          "fractionZero": 0.5625
+        },
+        "registrant_length": {
+          "count": 16,
+          "p10": 5.0,
+          "p50": 9.5,
+          "p90": 19.5,
+          "fractionZero": 0.0
+        },
+        "subdomain_labels": {
+          "count": 16,
+          "p10": 0.0,
+          "p50": 3.0,
+          "p90": 6.0,
+          "fractionZero": 0.1875
+        },
+        "path_length": {
+          "count": 16,
+          "p10": 4.0,
+          "p50": 9.5,
+          "p90": 28.0,
+          "fractionZero": 0.0625
+        },
+        "path_depth": {
+          "count": 16,
+          "p10": 1.0,
+          "p50": 1.0,
+          "p90": 3.0,
+          "fractionZero": 0.0625
+        },
+        "path_digits": {
+          "count": 16,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 4.0,
+          "fractionZero": 0.625
+        },
+        "path_percent_escapes": {
+          "count": 16,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 1.0
+        }
+      },
+      "missed": {
+        "https": {
+          "count": 1984,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 0.997984
+        },
+        "nondefault_port": {
+          "count": 1984,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 0.996472
+        },
+        "ip_host": {
+          "count": 1984,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 0.951109
+        },
+        "idn_labels": {
+          "count": 1984,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 0.998992
+        },
+        "hostname_length": {
+          "count": 1984,
+          "p10": 11.3,
+          "p50": 18.0,
+          "p90": 28.0,
+          "fractionZero": 0.0
+        },
+        "host_labels": {
+          "count": 1984,
+          "p10": 2.0,
+          "p50": 3.0,
+          "p90": 4.0,
+          "fractionZero": 0.0
+        },
+        "host_digits": {
+          "count": 1984,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 2.0,
+          "fractionZero": 0.856855
+        },
+        "host_hyphens": {
+          "count": 1984,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 1.0,
+          "fractionZero": 0.856351
+        },
+        "registrant_length": {
+          "count": 1984,
+          "p10": 4.0,
+          "p50": 10.0,
+          "p90": 18.0,
+          "fractionZero": 0.048891
+        },
+        "subdomain_labels": {
+          "count": 1984,
+          "p10": 0.0,
+          "p50": 1.0,
+          "p90": 1.0,
+          "fractionZero": 0.496472
+        },
+        "path_length": {
+          "count": 1984,
+          "p10": 9.0,
+          "p50": 31.0,
+          "p90": 50.0,
+          "fractionZero": 0.035282
+        },
+        "path_depth": {
+          "count": 1984,
+          "p10": 1.0,
+          "p50": 3.0,
+          "p90": 5.0,
+          "fractionZero": 0.035282
+        },
+        "path_digits": {
+          "count": 1984,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 13.0,
+          "fractionZero": 0.68246
+        },
+        "path_percent_escapes": {
+          "count": 1984,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 0.930948
+        }
+      }
+    },
+    "fusion-mixed-20000-four": {
+      "detected": {
+        "https": {
+          "count": 87,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 1.0
+        },
+        "nondefault_port": {
+          "count": 87,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 0.977011
+        },
+        "ip_host": {
+          "count": 87,
+          "p10": 0.0,
+          "p50": 1.0,
+          "p90": 1.0,
+          "fractionZero": 0.137931
+        },
+        "idn_labels": {
+          "count": 87,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 1.0
+        },
+        "hostname_length": {
+          "count": 87,
+          "p10": 13.0,
+          "p50": 14.0,
+          "p90": 37.0,
+          "fractionZero": 0.0
+        },
+        "host_labels": {
+          "count": 87,
+          "p10": 4.0,
+          "p50": 4.0,
+          "p90": 4.0,
+          "fractionZero": 0.0
+        },
+        "host_digits": {
+          "count": 87,
+          "p10": 10.0,
+          "p50": 11.0,
+          "p90": 12.0,
+          "fractionZero": 0.0
+        },
+        "host_hyphens": {
+          "count": 87,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 0.931034
+        },
+        "registrant_length": {
+          "count": 87,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 7.0,
+          "fractionZero": 0.862069
+        },
+        "subdomain_labels": {
+          "count": 87,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 1.0,
+          "fractionZero": 0.885057
+        },
+        "path_length": {
+          "count": 87,
+          "p10": 5.6,
+          "p50": 36.0,
+          "p90": 52.0,
+          "fractionZero": 0.08046
+        },
+        "path_depth": {
+          "count": 87,
+          "p10": 1.0,
+          "p50": 2.0,
+          "p90": 5.0,
+          "fractionZero": 0.08046
+        },
+        "path_digits": {
+          "count": 87,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 20.0,
+          "fractionZero": 0.528736
+        },
+        "path_percent_escapes": {
+          "count": 87,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 1.0,
+          "fractionZero": 0.83908
+        }
+      },
+      "missed": {
+        "https": {
+          "count": 1913,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 0.997909
+        },
+        "nondefault_port": {
+          "count": 1913,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 0.997386
+        },
+        "ip_host": {
+          "count": 1913,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 0.9885
+        },
+        "idn_labels": {
+          "count": 1913,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 0.998955
+        },
+        "hostname_length": {
+          "count": 1913,
+          "p10": 11.0,
+          "p50": 18.0,
+          "p90": 29.0,
+          "fractionZero": 0.0
+        },
+        "host_labels": {
+          "count": 1913,
+          "p10": 2.0,
+          "p50": 3.0,
+          "p90": 4.0,
+          "fractionZero": 0.0
+        },
+        "host_digits": {
+          "count": 1913,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 1.0,
+          "fractionZero": 0.888657
+        },
+        "host_hyphens": {
+          "count": 1913,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 1.0,
+          "fractionZero": 0.850497
+        },
+        "registrant_length": {
+          "count": 1913,
+          "p10": 5.0,
+          "p50": 10.0,
+          "p90": 18.0,
+          "fractionZero": 0.0115
+        },
+        "subdomain_labels": {
+          "count": 1913,
+          "p10": 0.0,
+          "p50": 1.0,
+          "p90": 1.0,
+          "fractionZero": 0.476215
+        },
+        "path_length": {
+          "count": 1913,
+          "p10": 9.0,
+          "p50": 31.0,
+          "p90": 49.0,
+          "fractionZero": 0.033455
+        },
+        "path_depth": {
+          "count": 1913,
+          "p10": 1.0,
+          "p50": 3.0,
+          "p90": 5.0,
+          "fractionZero": 0.033455
+        },
+        "path_digits": {
+          "count": 1913,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 12.0,
+          "fractionZero": 0.68897
+        },
+        "path_percent_escapes": {
+          "count": 1913,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 0.935703
+        }
+      }
+    },
+    "fusion-mixed-20000-stack": {
+      "detected": {
+        "https": {
+          "count": 15,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 1.0
+        },
+        "nondefault_port": {
+          "count": 15,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 1.0
+        },
+        "ip_host": {
+          "count": 15,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 1.0
+        },
+        "idn_labels": {
+          "count": 15,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 1.0
+        },
+        "hostname_length": {
+          "count": 15,
+          "p10": 35.2,
+          "p50": 40.0,
+          "p90": 57.6,
+          "fractionZero": 0.0
+        },
+        "host_labels": {
+          "count": 15,
+          "p10": 3.0,
+          "p50": 5.0,
+          "p90": 6.0,
+          "fractionZero": 0.0
+        },
+        "host_digits": {
+          "count": 15,
+          "p10": 4.0,
+          "p50": 9.0,
+          "p90": 14.4,
+          "fractionZero": 0.0
+        },
+        "host_hyphens": {
+          "count": 15,
+          "p10": 0.0,
+          "p50": 1.0,
+          "p90": 4.0,
+          "fractionZero": 0.466667
+        },
+        "registrant_length": {
+          "count": 15,
+          "p10": 5.0,
+          "p50": 9.0,
+          "p90": 20.0,
+          "fractionZero": 0.0
+        },
+        "subdomain_labels": {
+          "count": 15,
+          "p10": 0.0,
+          "p50": 3.0,
+          "p90": 4.0,
+          "fractionZero": 0.2
+        },
+        "path_length": {
+          "count": 15,
+          "p10": 4.0,
+          "p50": 9.0,
+          "p90": 20.0,
+          "fractionZero": 0.066667
+        },
+        "path_depth": {
+          "count": 15,
+          "p10": 1.0,
+          "p50": 1.0,
+          "p90": 2.0,
+          "fractionZero": 0.066667
+        },
+        "path_digits": {
+          "count": 15,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 4.0,
+          "fractionZero": 0.533333
+        },
+        "path_percent_escapes": {
+          "count": 15,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 1.0
+        }
+      },
+      "missed": {
+        "https": {
+          "count": 1985,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 0.997985
+        },
+        "nondefault_port": {
+          "count": 1985,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 0.996474
+        },
+        "ip_host": {
+          "count": 1985,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 0.951134
+        },
+        "idn_labels": {
+          "count": 1985,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 0.998992
+        },
+        "hostname_length": {
+          "count": 1985,
+          "p10": 11.4,
+          "p50": 18.0,
+          "p90": 28.0,
+          "fractionZero": 0.0
+        },
+        "host_labels": {
+          "count": 1985,
+          "p10": 2.0,
+          "p50": 3.0,
+          "p90": 4.0,
+          "fractionZero": 0.0
+        },
+        "host_digits": {
+          "count": 1985,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 2.0,
+          "fractionZero": 0.856423
+        },
+        "host_hyphens": {
+          "count": 1985,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 1.0,
+          "fractionZero": 0.856927
+        },
+        "registrant_length": {
+          "count": 1985,
+          "p10": 4.0,
+          "p50": 10.0,
+          "p90": 18.0,
+          "fractionZero": 0.048866
+        },
+        "subdomain_labels": {
+          "count": 1985,
+          "p10": 0.0,
+          "p50": 1.0,
+          "p90": 1.0,
+          "fractionZero": 0.496222
+        },
+        "path_length": {
+          "count": 1985,
+          "p10": 9.0,
+          "p50": 31.0,
+          "p90": 50.0,
+          "fractionZero": 0.035264
+        },
+        "path_depth": {
+          "count": 1985,
+          "p10": 1.0,
+          "p50": 3.0,
+          "p90": 5.0,
+          "fractionZero": 0.035264
+        },
+        "path_digits": {
+          "count": 1985,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 13.0,
+          "fractionZero": 0.683123
+        },
+        "path_percent_escapes": {
+          "count": 1985,
+          "p10": 0.0,
+          "p50": 0.0,
+          "p90": 0.0,
+          "fractionZero": 0.930982
+        }
+      }
+    }
+  },
+  "developmentPositiveDistributions": {
+    "forestTrainingPositive": {
+      "https": {
+        "count": 10000,
+        "p10": 0.0,
+        "p50": 1.0,
+        "p90": 1.0,
+        "fractionZero": 0.1436
+      },
+      "nondefault_port": {
+        "count": 10000,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 0.0,
+        "fractionZero": 0.9995
+      },
+      "ip_host": {
+        "count": 10000,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 0.0,
+        "fractionZero": 0.9961
+      },
+      "idn_labels": {
+        "count": 10000,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 0.0,
+        "fractionZero": 0.9995
+      },
+      "hostname_length": {
+        "count": 10000,
+        "p10": 15.0,
+        "p50": 25.0,
+        "p90": 43.0,
+        "fractionZero": 0.0
+      },
+      "host_labels": {
+        "count": 10000,
+        "p10": 2.0,
+        "p50": 3.0,
+        "p90": 3.0,
+        "fractionZero": 0.0
+      },
+      "host_digits": {
+        "count": 10000,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 6.0,
+        "fractionZero": 0.7617
+      },
+      "host_hyphens": {
+        "count": 10000,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 3.0,
+        "fractionZero": 0.5315
+      },
+      "registrant_length": {
+        "count": 10000,
+        "p10": 8.0,
+        "p50": 15.0,
+        "p90": 30.0,
+        "fractionZero": 0.0039
+      },
+      "subdomain_labels": {
+        "count": 10000,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 1.0,
+        "fractionZero": 0.8142
+      },
+      "path_length": {
+        "count": 10000,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 20.0,
+        "fractionZero": 0.5061
+      },
+      "path_depth": {
+        "count": 10000,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 1.0,
+        "fractionZero": 0.5061
+      },
+      "path_digits": {
+        "count": 10000,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 0.0,
+        "fractionZero": 0.915
+      },
+      "path_percent_escapes": {
+        "count": 10000,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 0.0,
+        "fractionZero": 0.9867
+      }
+    },
+    "fusionTrainingPositive": {
+      "https": {
+        "count": 10000,
+        "p10": 0.0,
+        "p50": 1.0,
+        "p90": 1.0,
+        "fractionZero": 0.354
+      },
+      "nondefault_port": {
+        "count": 10000,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 0.0,
+        "fractionZero": 1.0
+      },
+      "ip_host": {
+        "count": 10000,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 0.0,
+        "fractionZero": 0.997
+      },
+      "idn_labels": {
+        "count": 10000,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 0.0,
+        "fractionZero": 0.9982
+      },
+      "hostname_length": {
+        "count": 10000,
+        "p10": 14.0,
+        "p50": 24.0,
+        "p90": 41.0,
+        "fractionZero": 0.0
+      },
+      "host_labels": {
+        "count": 10000,
+        "p10": 2.0,
+        "p50": 3.0,
+        "p90": 4.0,
+        "fractionZero": 0.0
+      },
+      "host_digits": {
+        "count": 10000,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 6.0,
+        "fractionZero": 0.7153
+      },
+      "host_hyphens": {
+        "count": 10000,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 2.0,
+        "fractionZero": 0.6209
+      },
+      "registrant_length": {
+        "count": 10000,
+        "p10": 6.0,
+        "p50": 13.0,
+        "p90": 26.0,
+        "fractionZero": 0.003
+      },
+      "subdomain_labels": {
+        "count": 10000,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 1.0,
+        "fractionZero": 0.6003
+      },
+      "path_length": {
+        "count": 10000,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 19.0,
+        "fractionZero": 0.6449
+      },
+      "path_depth": {
+        "count": 10000,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 2.0,
+        "fractionZero": 0.645
+      },
+      "path_digits": {
+        "count": 10000,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 0.0,
+        "fractionZero": 0.9206
+      },
+      "path_percent_escapes": {
+        "count": 10000,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 0.0,
+        "fractionZero": 0.9902
+      }
+    },
+    "calibrationPositive": {
+      "https": {
+        "count": 20973,
+        "p10": 0.0,
+        "p50": 1.0,
+        "p90": 1.0,
+        "fractionZero": 0.28756
+      },
+      "nondefault_port": {
+        "count": 20973,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 0.0,
+        "fractionZero": 0.998474
+      },
+      "ip_host": {
+        "count": 20973,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 0.0,
+        "fractionZero": 0.993897
+      },
+      "idn_labels": {
+        "count": 20973,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 0.0,
+        "fractionZero": 0.998808
+      },
+      "hostname_length": {
+        "count": 20973,
+        "p10": 12.0,
+        "p50": 20.0,
+        "p90": 41.0,
+        "fractionZero": 0.0
+      },
+      "host_labels": {
+        "count": 20973,
+        "p10": 2.0,
+        "p50": 3.0,
+        "p90": 3.0,
+        "fractionZero": 0.0
+      },
+      "host_digits": {
+        "count": 20973,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 6.0,
+        "fractionZero": 0.748629
+      },
+      "host_hyphens": {
+        "count": 20973,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 3.0,
+        "fractionZero": 0.661899
+      },
+      "registrant_length": {
+        "count": 20973,
+        "p10": 6.0,
+        "p50": 11.0,
+        "p90": 23.0,
+        "fractionZero": 0.006103
+      },
+      "subdomain_labels": {
+        "count": 20973,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 1.0,
+        "fractionZero": 0.726792
+      },
+      "path_length": {
+        "count": 20973,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 28.0,
+        "fractionZero": 0.61932
+      },
+      "path_depth": {
+        "count": 20973,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 2.0,
+        "fractionZero": 0.619702
+      },
+      "path_digits": {
+        "count": 20973,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 2.0,
+        "fractionZero": 0.859677
+      },
+      "path_percent_escapes": {
+        "count": 20973,
+        "p10": 0.0,
+        "p50": 0.0,
+        "p90": 0.0,
+        "fractionZero": 0.98808
+      }
+    }
+  },
+  "featureKsDistancesFromArchive": {
+    "forestTrainingPositive": {
+      "https": 0.8544,
+      "nondefault_port": 0.003,
+      "ip_host": 0.0446,
+      "idn_labels": 0.0005,
+      "hostname_length": 0.4116,
+      "host_labels": 0.1816,
+      "host_digits": 0.0898,
+      "host_hyphens": 0.3225,
+      "registrant_length": 0.3159,
+      "subdomain_labels": 0.3202,
+      "path_length": 0.6839,
+      "path_depth": 0.7161,
+      "path_digits": 0.233,
+      "path_percent_escapes": 0.0552
+    },
+    "fusionTrainingPositive": {
+      "https": 0.644,
+      "nondefault_port": 0.0035,
+      "ip_host": 0.0455,
+      "idn_labels": 0.0008,
+      "hostname_length": 0.3038,
+      "host_labels": 0.2091,
+      "host_digits": 0.1347,
+      "host_hyphens": 0.2331,
+      "registrant_length": 0.1806,
+      "subdomain_labels": 0.1063,
+      "path_length": 0.7,
+      "path_depth": 0.7063,
+      "path_digits": 0.2386,
+      "path_percent_escapes": 0.0587
+    },
+    "calibrationPositive": {
+      "https": 0.71044,
+      "nondefault_port": 0.001974,
+      "ip_host": 0.042397,
+      "idn_labels": 0.000192,
+      "hostname_length": 0.132233,
+      "host_labels": 0.105562,
+      "host_digits": 0.101371,
+      "host_hyphens": 0.192101,
+      "registrant_length": 0.121491,
+      "subdomain_labels": 0.232792,
+      "path_length": 0.622913,
+      "path_depth": 0.649315,
+      "path_digits": 0.177677,
+      "path_percent_escapes": 0.05658
+    }
+  },
+  "privateCaseReportSha256": "56282e2dd02accb9441896a15845de3ff9d8cb9bc017208d1048e7a484e13d15"
+}

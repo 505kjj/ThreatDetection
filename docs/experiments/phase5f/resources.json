@@ -1,0 +1,15 @@
+{
+  "exitCode": 0,
+  "stopReason": null,
+  "resourceViolations": [],
+  "wallSeconds": 53.25,
+  "jobCpuSeconds": 53.21875,
+  "peakJobCommitBytes": 1181913088,
+  "hostCpuMaxPercent": 13.741545033819868,
+  "hostCpuMeanPercent": 9.378267524300528,
+  "cpuSamples": 26,
+  "samplesAbove30Percent": 0,
+  "logicalCpuAffinityCount": 2,
+  "jobCommitLimitBytes": 8000000000,
+  "memoryTargetBytes": 6000000000
+}
