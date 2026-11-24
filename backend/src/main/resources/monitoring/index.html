@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Threat monitoring | ThreatDetection</title>
+  <link rel="stylesheet" href="/monitor.css">
+  <script type="module" src="/monitor.js"></script>
+</head>
+<body>
+  <header class="masthead">
+    <div class="shell masthead-inner">
+      <span class="product"><span class="mark" aria-hidden="true"></span>ThreatDetection</span>
+      <span id="backend-state" class="badge" role="status">Signed out</span>
+    </div>
+  </header>
+  <main class="shell">
+    <div class="intro">
+      <h1>Threat monitoring</h1>
+      <p>Review detections shared by browsers that opted in.</p>
+    </div>
+    <section id="sign-in" class="panel sign-in" aria-labelledby="sign-in-title">
+      <h2 id="sign-in-title">Administrator access</h2>
+      <p>Use the admin token issued for this backend. The token is cleared when you sign out or reload.</p>
+      <form id="token-form" autocomplete="off">
+        <label for="token">Admin token</label>
+        <input id="token" type="password" spellcheck="false" autocomplete="off" maxlength="43" required>
+        <button type="submit" id="sign-in-button">Sign in</button>
+      </form>
+      <p id="sign-in-error" class="error" role="alert" hidden></p>
+    </section>
+    <section id="dashboard" aria-label="Threat dashboard" hidden>
+      <div class="toolbar">
+        <div class="scopes" role="group" aria-label="Event source">
+          <button id="real" type="button" aria-pressed="true">Live reports</button>
+          <button id="synthetic" type="button" aria-pressed="false">Synthetic fixtures</button>
+        </div>
+        <div class="controls">
+          <button id="refresh" class="quiet" type="button">Refresh</button>
+          <button id="sign-out" class="quiet" type="button">Sign out</button>
+        </div>
+      </div>
+      <p id="scope-notice" class="fixture-notice" hidden><strong>Synthetic test data.</strong> These detections came from a configured test browser.</p>
+      <p id="load-state" class="panel state" role="status" hidden></p>
+      <div id="snapshot" hidden>
+        <div class="status-strip">
+          <div>
+            <h2>Extension and protection</h2>
+            <p id="extension-state"></p>
+          </div>
+          <div>
+            <h2>Last browser contact</h2>
+            <p id="last-contact"></p>
+          </div>
+        </div>
+        <div class="metrics">
+          <div class="panel metric"><span>Total detections</span><strong id="total">0</strong></div>
+          <div class="panel metric blocked"><span>Blocked</span><strong id="blocked">0</strong></div>
+          <div class="panel metric warned"><span>Warned</span><strong id="warned">0</strong></div>
+          <div class="panel metric"><span>Bypassed</span><strong id="bypassed">0</strong></div>
+        </div>
+        <div class="details">
+          <section class="panel breakdown" aria-labelledby="categories-title">
+            <h2 id="categories-title">Threat categories</h2>
+            <dl id="categories"></dl>
+            <p id="retention" class="muted"></p>
+          </section>
+          <section class="panel history" aria-labelledby="history-title">
+            <h2 id="history-title">Recent detections</h2>
+            <p id="empty-history" class="muted" hidden>No events reported for this view.</p>
+            <div class="table-shell" id="history-table">
+              <table>
+                <thead><tr><th scope="col">Detection</th><th scope="col">Action</th><th scope="col">Evidence</th></tr></thead>
+                <tbody id="history"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

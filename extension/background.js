@@ -4,6 +4,7 @@ import { BYPASS_ALARM, createBrowserProtection } from './browser-protection.mjs'
 import { detectImpersonation } from './impersonation.mjs';
 import { checkDestination, createSnapshotCache, destinationFor } from './reputation.mjs';
 import { DEFAULT_ORIGIN, backendOrigin, backendPermission, matchingSite, pageHostname, readSites } from './settings.mjs';
+import { createThreatReporting, REPORTING_ALARM } from './threat-reporting.mjs';
 
 const CREDENTIAL = 'backendCredential';
 const statusKey = tabId => 'tab-status:' + tabId;
@@ -14,7 +15,8 @@ const local = chrome.storage.local;
 const session = chrome.storage.session;
 const reputation = createSnapshotCache(session, downloadSnapshot);
 const rules = createBlockRules(chrome.declarativeNetRequest, chrome.runtime.id);
-const protection = createBrowserProtection(chrome, rules);
+const reporting = createThreatReporting(chrome, reportingConnection, () => !!rules.snapshot());
+const protection = createBrowserProtection(chrome, rules, Date.now, reporting.report);
 const REPUTATION_REFRESH = 'reputation-refresh';
 let connectionRevision = 0;
 
@@ -38,17 +40,27 @@ function optionsSender(sender) {
 }
 
 async function settings() {
-  const data = await local.get(['backendOrigin', 'monitoringEnabled', 'monitoredSites']);
+  const data = await local.get(['backendOrigin', 'monitoringEnabled', 'monitoredSites', 'threatReportingOrigin']);
+  const origin = backendOrigin(data.backendOrigin);
   return {
-    origin: backendOrigin(data.backendOrigin),
+    origin,
     enabled: data.monitoringEnabled !== false,
-    sites: readSites(data.monitoredSites)
+    sites: readSites(data.monitoredSites),
+    reporting: !!origin && data.threatReportingOrigin === origin
   };
 }
 
 async function credentialFor(origin) {
   const { [CREDENTIAL]: credential } = await session.get(CREDENTIAL);
   return origin && credential?.origin === origin && validToken(credential.token) ? credential : null;
+}
+
+async function reportingConnection() {
+  await setup;
+  const config = await settings();
+  if (!config.reporting || !config.enabled) return null;
+  const credential = await credentialFor(config.origin);
+  return credential && await chrome.permissions.contains(backendPermission(credential.origin)) ? credential : null;
 }
 
 async function synchronizeRules(revision = connectionRevision) {
@@ -143,6 +155,9 @@ async function reputationFor(page, config) {
   } else {
     await clearBadge(page.tabId);
   }
+  if (config.reporting && impersonation.length && ['no_match', 'unavailable'].includes(result.state)) {
+    reporting.report(impersonation[0].kind.toUpperCase(), 'WARNED', page.documentId);
+  }
   return withImpersonation(result, impersonation);
 }
 
@@ -151,6 +166,7 @@ async function saveConnection(message) {
   const { token } = message;
   if (!origin || (token !== '' && !validToken(token))) return { saved: false };
   if (!await chrome.permissions.contains(backendPermission(origin))) return { saved: false };
+  if ((await settings()).origin !== origin) await local.remove('threatReportingOrigin');
   // The credential includes its origin so it cannot be reused after an endpoint change.
   if (token) await session.set({ [CREDENTIAL]: { id: crypto.randomUUID(), origin, token } });
   else if (!await credentialFor(origin)) await session.remove(CREDENTIAL);
@@ -250,6 +266,9 @@ async function submitTelemetry(page, message) {
       [key]: { documentId, navigation: page.navigation ?? null, credentialId: credential.id,
         sessionId: id, verdict, checkedAt: Date.now() }
     });
+    if (config.reporting && verdict.state === 'warning') {
+      reporting.report('SUSPICIOUS_BEHAVIOR', 'WARNED', documentId);
+    }
     return withImpersonation(verdict, localVerdict.impersonation);
   } finally {
     if (requests.get(tabId) === task) requests.delete(tabId);
@@ -262,6 +281,18 @@ async function handleMessage(message, sender) {
     if (message.type === 'GET_CONNECTION') {
       const { origin } = await settings();
       return { origin: origin ?? DEFAULT_ORIGIN, hasToken: !!await credentialFor(origin) };
+    }
+    if (message.type === 'GET_THREAT_REPORTING') {
+      const config = await settings();
+      return { optedIn: config.reporting, status: !config.enabled ? 'paused'
+        : await reportingConnection() ? reporting.status() : 'disconnected' };
+    }
+    if (message.type === 'SET_THREAT_REPORTING' && typeof message.enabled === 'boolean') {
+      const { origin } = await settings();
+      if (message.enabled && !origin) return { saved: false };
+      if (message.enabled) await local.set({ threatReportingOrigin: origin });
+      else await local.remove('threatReportingOrigin');
+      return { saved: true };
     }
     if (message.type === 'SAVE_CONNECTION') return saveConnection(message);
     if (message.type === 'CLEAR_CONNECTION') {
@@ -348,6 +379,10 @@ async function resetProtection(clearCache) {
 }
 
 chrome.storage.onChanged.addListener((changes, area) => {
+  if ((area === 'session' && CREDENTIAL in changes) ||
+      (area === 'local' && ['threatReportingOrigin', 'backendOrigin', 'monitoringEnabled'].some(key => key in changes))) {
+    void reporting.reset().then(() => reporting.refreshAlarm()).catch(() => {});
+  }
   if (area === 'session' && CREDENTIAL in changes) {
     void resetProtection(true).catch(() => {});
   } else if (area === 'local' && ['backendOrigin', 'monitoringEnabled'].some(key => key in changes)) {
@@ -360,13 +395,17 @@ chrome.storage.onChanged.addListener((changes, area) => {
 
 chrome.permissions.onRemoved.addListener(() => {
   void resetProtection(false).catch(() => {});
+  void reporting.reset().then(() => reporting.refreshAlarm()).catch(() => {});
 });
 
 chrome.alarms.onAlarm.addListener(alarm => {
   if (alarm.name === REPUTATION_REFRESH) {
-    void setup.then(synchronizeRules).then(refreshOpenPages).catch(() => {});
+    void setup.then(synchronizeRules).then(refreshOpenPages).then(reporting.heartbeat).catch(() => {});
+  } else if (alarm.name === REPORTING_ALARM) {
+    void initialRules.then(reporting.heartbeat).catch(() => {});
   } else if (alarm.name.startsWith(BYPASS_ALARM)) {
     void protection.expire(Number(alarm.name.slice(BYPASS_ALARM.length))).catch(() => {});
   }
 });
-void setup.then(synchronizeRules).catch(() => {});
+const initialRules = setup.then(synchronizeRules).catch(() => {});
+void initialRules.then(reporting.refreshAlarm).catch(() => {});

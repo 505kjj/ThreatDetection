@@ -31,6 +31,17 @@
         </div>
 
         <div class="options-section">
+            <h2>Threat dashboard reporting</h2>
+            <p class="section-desc">
+                Optional and off by default. Send detection types, actions, timestamps and protection status to
+                the configured backend. This reporting never sends site addresses, page data or form values.
+                Turning it off does not stop local protection.
+            </p>
+            <label><input type="checkbox" id="threatReporting"> Share threat detections with this backend</label>
+            <p id="reportingStatus" class="section-desc" role="status"></p>
+        </div>
+
+        <div class="options-section">
             <h2>Activity monitoring</h2>
             <p class="section-desc">
                 Reputation checks happen locally on all supported websites. Add a hostname only if you also want
