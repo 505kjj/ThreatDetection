@@ -137,6 +137,7 @@ async function captureEvidence(page, name, fullPage = true) {
 }
 
 const auditFindings = [];
+const consoleViewports = [[1920, 1080], [1440, 900], [1366, 768], [1024, 768], [768, 900], [390, 844]];
 async function auditAccessibility(page, surface) {
   const source = process.env.THREAT_AXE_SOURCE;
   if (!source) return;
@@ -146,6 +147,30 @@ async function auditAccessibility(page, surface) {
   }}));
   const summarize = checks => checks.map(({id, nodes}) => ({id, targets: nodes.map(node => node.target)}));
   auditFindings.push({surface, violations: summarize(result.violations), incomplete: summarize(result.incomplete)});
+}
+
+async function checkResponsiveConsole(page) {
+  for (const [width, height] of consoleViewports) {
+    await page.setViewportSize({width, height});
+    for (const theme of ['dark', 'light']) {
+      const failures = await page.evaluate(({theme, width}) => {
+        const themeButton = document.getElementById('theme');
+        if ((document.documentElement.dataset.theme || 'dark') !== theme) themeButton.click();
+        const overflow = [...document.querySelectorAll('.rail button[id^="nav-"]')].flatMap(button => {
+          button.click();
+          return document.documentElement.scrollWidth > width ? [button.textContent.trim()] : [];
+        });
+        document.getElementById('nav-threats').click();
+        document.querySelector('#history button')?.click();
+        const drawer = document.getElementById('event-drawer');
+        if (!drawer.open || drawer.getBoundingClientRect().width > width) overflow.push('Event details');
+        drawer.close();
+        return overflow;
+      }, {theme, width});
+      assert.deepEqual(failures, [], `Console overflow at ${width} × ${height} in ${theme}`);
+    }
+  }
+  console.log('Responsive console: all 11 views and the event drawer fit both themes at six viewport sizes');
 }
 
 async function main() {
@@ -420,6 +445,11 @@ async function main() {
     await eventually(() => inPageWarning(caution, 'A visible password field was found'),
       value => value === true, 'password form explanation');
     await popup.locator('#impersonationReasons').getByText(/credential form points to an unrelated origin/).waitFor();
+    const evidenceSummary = popup.locator('#impersonationSection summary');
+    await evidenceSummary.press('Enter');
+    assert.equal(await popup.locator('#impersonationReasons').isVisible(), false);
+    await evidenceSummary.press('Enter');
+    await popup.locator('#impersonationReasons').waitFor();
     await popup.locator('#popupReputation').getByText('Current snapshot').waitFor();
     await popup.locator('#popupReporting').getByText('Connected', { exact: true }).waitFor();
     assert.equal(await popup.getByRole('link', { name: 'Dashboard', exact: true }).getAttribute('href'), origin + '/monitor');
@@ -513,6 +543,21 @@ async function main() {
     await dashboard.setViewportSize({ width: 1440, height: 900 });
     await dashboard.goto(origin + '/monitor');
     assert.equal(await dashboard.locator('#dashboard').isVisible(), false);
+    if (process.env.THREAT_UI_MATRIX === '1') {
+      for (const [width, height] of consoleViewports) {
+        await dashboard.setViewportSize({width, height});
+        const widths = await dashboard.evaluate(() => {
+          const theme = document.getElementById('theme');
+          const dark = document.documentElement.scrollWidth;
+          theme.click();
+          const light = document.documentElement.scrollWidth;
+          theme.click();
+          return [dark, light];
+        });
+        assert.deepEqual(widths, [width, width], 'Dark and light sign-in');
+      }
+      await dashboard.setViewportSize({width: 1440, height: 900});
+    }
     const capture = name => captureEvidence(dashboard, name);
     await capture('login');
     await auditAccessibility(dashboard, 'login');
@@ -529,22 +574,57 @@ async function main() {
     await login(adminToken);
     await dashboard.locator('#backend-state').getByText('Backend connected').waitFor();
     await dashboard.getByText('No events reported for this view.').waitFor();
-    await dashboard.getByRole('button', { name: 'Synthetic fixtures' }).click();
+    const railToggle = dashboard.getByRole('button', { name: 'Compact navigation' });
+    await railToggle.press('Space');
+    assert.equal(await railToggle.getAttribute('aria-pressed'), 'true');
+    await dashboard.waitForFunction(() => document.querySelector('.rail').getBoundingClientRect().width <= 66);
+    await railToggle.press('Space');
+    assert.equal(await railToggle.getAttribute('aria-pressed'), 'false');
+    let allowSynthetic;
+    const waitForSkeleton = new Promise(resolve => { allowSynthetic = resolve; });
+    const syntheticDashboardUrl = origin + '/api/threat/monitoring/dashboard?scope=SYNTHETIC';
+    await dashboard.route(syntheticDashboardUrl, async route => {
+      await waitForSkeleton;
+      await route.continue();
+    }, {times: 1});
+    const scopedResponse = dashboard.waitForResponse(response => response.url() === syntheticDashboardUrl && response.ok());
+    try {
+      await dashboard.getByRole('button', { name: 'Synthetic fixtures' }).click();
+      await dashboard.locator('#report-placeholder').waitFor();
+      assert.equal(await dashboard.locator('#snapshot').isVisible(), false);
+    } finally {
+      allowSynthetic();
+    }
+    const scopedReport = await (await scopedResponse).json();
     await dashboard.getByText('Synthetic test data.').waitFor();
     await dashboard.locator('#history').getByText(/declared action on an unrelated origin/).first().waitFor();
     await dashboard.locator('#history').getByText('Bypassed', { exact: true }).first().waitFor();
-    assert.equal(Number(await dashboard.locator('#total').textContent()), report.total);
+    assert.equal(Number(await dashboard.locator('#total').textContent()), scopedReport.total);
     assert.match(await dashboard.locator('#reputation-state').textContent(), /1 with current reputation data/);
     assert.equal(await dashboard.locator('#token').inputValue(), '');
     assert.equal(await dashboard.evaluate(() => localStorage.length + sessionStorage.length), 0);
     assert.equal(await dashboard.locator('#category-chart svg').count(), 1);
     assert.equal(await dashboard.locator('#activity-chart svg').count(), 1);
+    const activityPoint = dashboard.getByRole('button', {name: /UTC · \d+ detection/}).first();
+    await activityPoint.focus();
+    await dashboard.locator('#activity-tooltip').waitFor();
+    await activityPoint.press('Escape');
+    assert.equal(await dashboard.locator('#activity-tooltip').isVisible(), false);
+    await activityPoint.press('Enter');
+    await dashboard.locator('#activity-tooltip').waitFor();
+    await activityPoint.press('Escape');
+    const phishingLegend = dashboard.getByRole('button', {name: /^Phishing ·/});
+    await phishingLegend.click();
+    assert.match(await dashboard.locator('#category-tooltip').textContent(), /Phishing · \d+ of \d+ ·/);
+    assert.equal(await dashboard.locator('#category-chart [data-chart-active]').count(), 1);
+    await phishingLegend.press('Escape');
     await dashboard.waitForFunction(() => ['total','blocked','warned','bypassed'].every(id =>
       document.getElementById(id).textContent === document.getElementById(id + '-visual').textContent));
     if (process.env.THREAT_MONITOR_CAPTURE_DIR) {
       const metrics = await dashboard.evaluate(() => {
         const navigation = performance.getEntriesByType('navigation')[0];
-        const assets = performance.getEntriesByType('resource').filter(entry => /\/monitor\.(css|js)$/.test(entry.name));
+        const assets = performance.getEntriesByType('resource').filter(entry =>
+          /\/monitor\.(css|js)$|\/monitor\/(theme\.css|fonts\/inter-latin\.woff2)$/.test(entry.name));
         return {
           navigationMs: Math.round(navigation.duration),
           domContentLoadedMs: Math.round(navigation.domContentLoadedEventEnd),
@@ -559,7 +639,7 @@ async function main() {
     await dashboard.getByRole('button', { name: 'Threat Centre' }).click();
     await dashboard.getByRole('heading', { name: 'Threat Centre' }).waitFor();
     await dashboard.getByLabel('Action', { exact: true }).selectOption('BYPASSED');
-    assert.equal(await dashboard.locator('#history tr').count(), report.recent.filter(entry => entry.action === 'BYPASSED').length);
+    assert.equal(await dashboard.locator('#history tr').count(), scopedReport.recent.filter(entry => entry.action === 'BYPASSED').length);
     await dashboard.locator('#event-search').fill('no-such-event');
     await dashboard.getByText('No recent events match your filters.').waitFor();
     await dashboard.getByRole('button', { name: 'Clear filters' }).click();
@@ -587,12 +667,13 @@ async function main() {
     if (globalThis.process.env.THREAT_MONITOR_SCREENSHOT) {
       await dashboard.screenshot({ path: globalThis.process.env.THREAT_MONITOR_SCREENSHOT, fullPage: true });
     }
-    for (const [width, height] of [[1920, 1080], [1440, 900], [1366, 768], [1024, 768], [768, 900], [320, 800], [390, 844]]) {
+    for (const [width, height] of [[320, 800], ...consoleViewports]) {
       await dashboard.setViewportSize({ width, height });
       assert.equal(await dashboard.evaluate(() => document.documentElement.scrollWidth), width);
     }
     assert.equal(await dashboard.locator('#history-table').evaluate(element => element.scrollWidth <= element.clientWidth), true);
     await capture('mobile');
+    await auditAccessibility(dashboard, 'mobile overview');
     for (const [label, id, expected] of [
       ['Threat Intelligence', 'intelligence', 'Managed feed disabled'],
       ['Financial Protection', 'financial', 'State Bank of India'],
@@ -615,6 +696,18 @@ async function main() {
       }
       if (id === 'financial') assert.equal(await dashboard.locator('#brand-cards article').count(), 8);
       if (id === 'ml') {
+        const architecture = dashboard.getByLabel('Model', { exact: true });
+        await dashboard.getByRole('button', {name: 'Calibration and fusion'}).press('Enter');
+        await dashboard.locator('#architecture-detail').getByText(/75% to URL evidence/).waitFor();
+        await architecture.selectOption('cnn');
+        assert.equal(await dashboard.locator('#architecture-steps li:nth-child(3)').evaluate(
+          element => getComputedStyle(element).animationDelay), '0s');
+        await dashboard.getByRole('button', {name: 'Parallel convolutions'}).click();
+        await dashboard.locator('#architecture-detail').getByText(/widths 3, 5 and 7/).waitFor();
+        await architecture.selectOption('transformer');
+        await dashboard.getByRole('button', {name: 'Attention encoders'}).click();
+        await dashboard.locator('#architecture-detail').getByText(/four attention heads/).waitFor();
+        await architecture.selectOption('fusion');
         await dashboard.getByLabel('Metric', { exact: true }).selectOption('domainFpr');
         await dashboard.locator('#ml-models').getByText('0.88%', { exact: true }).first().waitFor();
         const experiment = dashboard.getByLabel('Cohort', { exact: true });
@@ -634,6 +727,18 @@ async function main() {
         await experiment.selectOption('grouped-5f');
         await dashboard.getByLabel('Metric', { exact: true }).selectOption('recall');
       }
+      if (id === 'datasets') {
+        await dashboard.getByRole('button', {name: 'Deduplication', exact: true}).click();
+        await dashboard.locator('#dataset-detail').getByText(/quarantines structural overlap/).waitFor();
+      }
+      if (id === 'visual') {
+        await dashboard.getByRole('button', {name: 'Calculate similarity', exact: true}).click();
+        await dashboard.locator('#visual-detail').getByText(/MobileNetV3 compares image embeddings/).waitFor();
+      }
+    }
+    if (process.env.THREAT_UI_MATRIX === '1') {
+      await checkResponsiveConsole(dashboard);
+      await dashboard.getByRole('button', { name: 'Use dark appearance' }).click();
     }
     await dashboard.emulateMedia({ reducedMotion: 'no-preference' });
     await dashboard.getByLabel('Reduce motion').check();
@@ -653,6 +758,10 @@ async function main() {
     const fontResponse = await fetch(origin + '/monitor/fonts/inter-latin.woff2');
     assert.equal(fontResponse.status, 200);
     assert.equal(fontResponse.headers.get('content-type'), 'font/woff2');
+    const markResponse = await fetch(origin + '/monitor/icons/mark.svg');
+    assert.equal(markResponse.status, 200);
+    assert.match(markResponse.headers.get('content-type'), /^image\/svg\+xml/);
+    assert.equal((await fetch(origin + '/monitor/theme.css')).status, 200);
     assert.equal(await dashboard.evaluate(async () => {
       await document.fonts.ready;
       return [...document.fonts].some(font => font.family === 'Inter' && font.status === 'loaded');

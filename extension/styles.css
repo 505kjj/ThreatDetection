@@ -2,6 +2,8 @@
 .popup-container { padding:16px; display:grid; gap:12px }
 .popup-header,.options-brand { display:flex; align-items:center; gap:10px; font-weight:700 }
 .popup-header h1 { font-size:1.05rem; letter-spacing:-.03em }
+.popup-header { animation:popup-title 240ms var(--ease) both }
+@keyframes popup-title { from { opacity:.65; transform:translateY(3px) } to { opacity:1; transform:none } }
 .status-bar,.risk-section,.site-summary,.popup-status { padding:11px 12px; border:1px solid var(--line); border-radius:12px; background:var(--card) }
 .status-bar { display:flex; align-items:center; gap:8px; color:var(--text); font-weight:650 }
 .status-dot { flex:none; width:8px; height:8px; border-radius:50%; background:var(--muted); transition:background 180ms var(--ease) }
@@ -14,6 +16,7 @@
 .section-desc:empty { display:none }
 .site-summary .section-desc { margin-top:5px }
 .section-label { color:var(--violet); font-size:.77rem; letter-spacing:.05em; text-transform:uppercase; font-weight:680 }
+summary.section-label { cursor:pointer; border-radius:4px }
 .reasons-list { padding-left:18px; margin:6px 0 0; color:var(--muted); font-size:.88rem }
 .reasons-list li + li { margin-top:4px }
 .popup-status { display:grid; gap:6px; font-size:.82rem }
@@ -43,7 +46,8 @@ button:disabled { opacity:.55; cursor:default }
 .hint { color:var(--muted); font-weight:400 }
 .code-textarea { resize:vertical; font: .9rem/1.5 ui-monospace,monospace }
 .btn-row,.site-card-actions { display:flex; flex-wrap:wrap; gap:7px }
-.check-row { display:flex; align-items:center; gap:8px; margin-top:14px; font-weight:600 }
+.check-row { display:flex; align-items:center; gap:8px; margin-top:14px; padding:6px; border-radius:8px; font-weight:600; transition:background-color var(--fast) }
+.check-row:has(input:checked) { background:var(--accent-wash) }
 .check-row input { width:18px; height:18px; flex:none; accent-color:var(--accent) }
 .site-cards-list { display:grid; gap:8px; margin-top:12px }
 .site-card,.empty-state { padding:10px 12px; border:1px solid var(--line); border-radius:9px; background:var(--raised) }

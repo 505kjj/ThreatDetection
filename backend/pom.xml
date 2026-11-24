@@ -102,11 +102,13 @@
                 </excludes>
             </resource>
             <resource>
-                <directory>${project.basedir}/../extension/fonts</directory>
-                <targetPath>monitoring/fonts</targetPath>
+                <directory>${project.basedir}/../extension</directory>
+                <targetPath>monitoring</targetPath>
                 <includes>
-                    <include>inter-latin.woff2</include>
-                    <include>Inter-OFL.txt</include>
+                    <include>theme.css</include>
+                    <include>icons/mark.svg</include>
+                    <include>fonts/inter-latin.woff2</include>
+                    <include>fonts/Inter-OFL.txt</include>
                 </includes>
             </resource>
         </resources>

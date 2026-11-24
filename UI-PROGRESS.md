@@ -1,5 +1,19 @@
 # Frontend progress
 
+## Expanded UI-2 changes
+
+- Continued from `b02b8e6` on the Phase 4C product line. Draft PR #27 continues to track that branch.
+- The console and extension pages now load one shared local theme for typography, colors, surfaces and motion. The console favicon and Chrome toolbar icons use the existing violet shield design. The three PNGs total 11,923 bytes, down from 1,207,548 bytes.
+- The wide-screen sidebar can collapse to an icon rail. Mobile keeps pill navigation. Data-backed chart points and category segments can be inspected with focus, pointer or touch. A static skeleton distinguishes a pending scope fetch from empty reports.
+- The ML Laboratory adds inspectable diagrams for Phase 5F fixed fusion, the Phase 5C character CNN and the Phase 5D Transformer. Dataset and visual research diagrams explain their processing stages. The diagrams run entirely as illustrations. The 17 published cohort views retain their existing evidence and thresholds.
+- Popup explanations use native disclosures and start open. Consent feedback is limited to the local toggle presentation. Protection permissions, reporting data, authentication and threat decisions retain their existing behavior.
+- Updated the [secure Windows setup and verification steps](docs/windows-local-setup.md). Runtime assets are served locally by Spring Boot or Chrome. The build adds no frontend framework or dependency.
+
+## Final acceptance gates
+
+- The expanded brief arrived as a text attachment. Final visual comparison still requires the dashboard reference image. Review `overview.png`, `mobile.png`, and `light.png` in the final evidence folder against that image before marking PR #27 ready.
+- Live screen-reader speech remains unverified. Portable NVDA setup was blocked by the execution environment, and the prior Narrator run exposed no targetable speech window. Repeat the speech checks on an interactive Windows desktop using a disposable synthetic profile.
+
 ## UI-2 changes
 
 - Reviewed the 19 UI-1 Chromium captures and its motion recording. The desktop navigation now shows section names on wider screens, and the narrower rail retains the active violet indicator. Rebalanced the Overview grids, strengthened the metric hierarchy and made the recent-event columns fit narrow screens. Full evidence stays available in the event dialog.

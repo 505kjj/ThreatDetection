@@ -80,6 +80,7 @@ let researchPending;
 let research;
 let activeView = 'overview';
 let viewMotion;
+let arrivalMotion;
 let entranceShown = false;
 let recentEvents = [];
 let chartData = '';
@@ -89,6 +90,44 @@ const counts = new Map();
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
 const metricNames = ['total', 'blocked', 'warned', 'bypassed'];
 const chartColors = ['violet', 'red', 'lilac', 'amber'];
+const activeCharts = new WeakMap();
+const architecture = {
+  fusion: [
+    ['URL and DOM inputs', 'Phase 5F matched URL text with sanitized structural features from the same record. Models used the grouped training and validation partitions.'],
+    ['Character TF-IDF', 'Character sequences from the URL become weighted sparse features. The URL model scores these features without looking at page content.'],
+    ['Weighted DOM classifier', 'The content model scores structural inputs such as form, navigation and document features. Training upweights selected benign records. Diagnostic fixtures were scored after fitting.'],
+    ['Calibration and fusion', 'Tuning calibrates the component scores. The fixed blend assigns 75% to URL evidence and 25% to DOM evidence. A separate calibration partition determines the cutoff.'],
+    ['Experimental score', 'The blended score is compared with a frozen research cutoff. Phase 5G evaluated zero eligible independent paired records.']
+  ],
+  cnn: [
+    ['URL characters', 'Phase 5C encodes up to 160 URL characters as token IDs and masks padding.'],
+    ['Token embeddings', 'The model maps token IDs to 16-dimensional character embeddings.'],
+    ['Parallel convolutions', 'Convolutions with widths 3, 5 and 7 find character patterns across different local spans.'],
+    ['Masked max pooling', 'The model takes the strongest valid activation across each branch. Padded positions contribute no evidence.'],
+    ['Binary research score', 'The pooled features feed a binary score head. Cutoffs and evaluation outcomes are reported in the Phase 5C cohort.']
+  ],
+  transformer: [
+    ['URL character prefix', 'Phase 5D uses up to 80 URL characters and the Phase 5C character vocabulary.'],
+    ['Position and character embeddings', 'The encoder combines learned character and position embeddings and includes a classification token.'],
+    ['Attention encoders', 'Two encoder layers with four attention heads each relate characters across nonpadding input.'],
+    ['Classification token', 'The binary head reads the contextual representation of the classification token.'],
+    ['Temporal comparison', 'The same family was evaluated on separately dated near and far cohorts. Switch cohorts below to inspect each result.']
+  ]
+};
+const datasetSteps = [
+  ['Raw data', 'Offline development uses pinned published sources. Licenses and ingestion records establish eligible inputs.'],
+  ['Validation', 'The pipeline checks the required fields, labels and eligibility criteria before accepting records.'],
+  ['Normalization', 'Canonical URLs and structural feature extraction provide consistent inputs for the relevant experiment.'],
+  ['Deduplication', 'The experiment removes overlapping domains and repeated records. Phase 5F also quarantines structural overlap across partitions.'],
+  ['Partitioning', 'Training, tuning, calibration and validation use separate partitions. Phase 5D also separates chronological windows.'],
+  ['Model representations', 'Experiments use numerical URL features, character sequences or matched DOM structure. This view presents only aggregate receipts.']
+];
+const visualSteps = [
+  ['Reference crops', 'Phase 6A used three reference crops and controlled transformations. A production logo locator is unimplemented.'],
+  ['Normalize pixels', 'Readable crops are normalized before comparison. The tested native browser preprocessing missed the documented parity threshold.'],
+  ['Calculate similarity', 'pHash compares perceptual fingerprints, ORB compares local keypoints and MobileNetV3 compares image embeddings.'],
+  ['Review evidence', 'Visual matches need independent verification and verified brand-domain context. Low-quality, ambiguous or absent evidence remains inconclusive.']
+];
 
 function status(text, state = '') {
   const element = byId('backend-state');
@@ -115,6 +154,7 @@ function navigate(view, focus = true) {
   byId('event-filters').hidden = !threats;
   byId('report-toolbar').hidden = !reportViews.has(view);
   byId('load-state').classList.toggle('scope-independent', !reportViews.has(view));
+  byId('report-placeholder').classList.toggle('scope-independent', view !== 'overview');
   byId('scope-notice').classList.toggle('scope-independent', !reportViews.has(view));
   for (const [id, [title, description]] of Object.entries(views)) {
     const button = byId('nav-' + id);
@@ -136,7 +176,7 @@ function navigate(view, focus = true) {
   if (changed && !reducedMotion()) {
     viewMotion?.cancel();
     viewMotion = byId(view).animate([{opacity: .78, transform: 'translateY(4px)'}, {opacity: 1, transform: 'none'}],
-      {duration: 185, easing: 'ease-out'});
+      {duration: 220, easing: 'ease-out'});
   }
 }
 
@@ -147,7 +187,32 @@ function plain(tag, content, className) {
   return node;
 }
 
+function renderDiagram(stepsId, detailId, stages) {
+  const list = byId(stepsId);
+  const detail = byId(detailId);
+  const rows = stages.map(([label, explanation], index) => {
+    const row = document.createElement('li');
+    const button = plain('button', label);
+    button.type = 'button';
+    button.setAttribute('aria-pressed', String(index === 0));
+    button.setAttribute('aria-controls', detailId);
+    button.addEventListener('click', () => {
+      list.querySelector('[aria-pressed="true"]')?.setAttribute('aria-pressed', 'false');
+      button.setAttribute('aria-pressed', 'true');
+      if (detail.textContent === explanation) return;
+      detail.textContent = explanation;
+      if (!reducedMotion()) detail.animate([{opacity: .64}, {opacity: 1}], {duration: 210, easing: 'ease-out'});
+    });
+    row.append(button);
+    return row;
+  });
+  list.replaceChildren(...rows);
+  detail.textContent = stages[0][1];
+}
+
 function clearData() {
+  arrivalMotion?.cancel();
+  byId('report-arrival').textContent = '';
   byId('event-drawer').close();
   byId('drawer-fields').replaceChildren();
   byId('drawer-reason').textContent = '';
@@ -156,6 +221,9 @@ function clearData() {
   chartData = '';
   byId('filter-count').textContent = '';
   byId('snapshot').hidden = true;
+  byId('report-placeholder').hidden = true;
+  resetChartTooltip(byId('activity-tooltip'));
+  resetChartTooltip(byId('category-tooltip'));
   byId('history').replaceChildren();
   byId('categories').replaceChildren();
   byId('extension-state').textContent = '';
@@ -246,8 +314,8 @@ function vector(tag, attributes = {}, value) {
   return element;
 }
 
-function chart(id, summary, viewBox) {
-  const svg = vector('svg', { role: 'img', 'aria-label': summary, viewBox, class: 'chart' });
+function chart(id, summary, viewBox, role = 'img') {
+  const svg = vector('svg', { role, 'aria-label': summary, viewBox, class: 'chart' });
   svg.append(vector('title', {}, summary));
   byId(id).replaceChildren(svg);
   return svg;
@@ -257,38 +325,83 @@ function chartEmpty(id, message) {
   byId(id).replaceChildren(plain('p', message, 'chart-empty muted'));
 }
 
+function resetChartTooltip(tooltip) {
+  activeCharts.get(tooltip)?.forEach(element => element.removeAttribute('data-chart-active'));
+  activeCharts.delete(tooltip);
+  tooltip.hidden = true;
+}
+
+function chartTarget(target, tooltip, label, related = []) {
+  const show = () => {
+    resetChartTooltip(tooltip);
+    const highlighted = [target, ...related];
+    highlighted.forEach(element => element.setAttribute('data-chart-active', ''));
+    activeCharts.set(tooltip, highlighted);
+    tooltip.textContent = label;
+    tooltip.hidden = false;
+  };
+  const hide = () => {
+    if (activeCharts.get(tooltip)?.includes(target)) resetChartTooltip(tooltip);
+  };
+  target.addEventListener('pointerenter', show);
+  target.addEventListener('focus', show);
+  target.addEventListener('blur', hide);
+  target.addEventListener('click', show);
+  target.addEventListener('keydown', event => {
+    if (event.key === 'Escape') hide();
+    if (target instanceof SVGElement && (event.key === 'Enter' || event.key === ' ')) {
+      event.preventDefault();
+      show();
+    }
+  });
+}
+
 function renderCategories(result) {
+  const tooltip = byId('category-tooltip');
+  resetChartTooltip(tooltip);
   const items = Object.entries(categories).map(([key, label], i) => ({
     label, value: result.categories[key], color: chartColors[i]
   }));
+  const svg = result.total
+    ? chart('category-chart', items.map(({label, value}) => label + ': ' + value).join(', '), '0 0 140 140')
+    : undefined;
+  const slices = svg && vector('g', {class: 'donut-slices'});
+  if (svg) svg.append(vector('circle', {cx: 70, cy: 70, r: 53, class: 'donut-track'}), slices);
+  else chartEmpty('category-chart', 'No reported detections');
+  let offset = 0;
   byId('categories').replaceChildren(...items.map(({label, value, color}) => {
     const row = document.createElement('div');
-    const term = plain('dt', label);
-    term.prepend(plain('span', '', 'legend-dot color-' + color));
+    const term = document.createElement('dt');
+    const control = svg ? plain('button', label, 'legend-control') : plain('span', label);
+    const dot = plain('span', '', 'legend-dot color-' + color);
+    dot.setAttribute('aria-hidden', 'true');
+    control.prepend(dot);
+    term.append(control);
     row.append(term, plain('dd', number.format(value)));
+    if (!svg) return row;
+
+    control.type = 'button';
+    const share = value / result.total;
+    const description = label + ' · ' + number.format(value) + ' of ' + number.format(result.total) + ' · ' + percent.format(share);
+    control.setAttribute('aria-label', description);
+    if (value) {
+      const portion = 100 * share;
+      const segment = vector('circle', {cx: 70, cy: 70, r: 53, pathLength: 100,
+        'stroke-dasharray': portion + ' ' + (100 - portion), 'stroke-dashoffset': -offset,
+        transform: 'rotate(-90 70 70)', class: 'donut-segment color-' + color});
+      slices.append(segment);
+      chartTarget(control, tooltip, description, [segment]);
+      chartTarget(segment, tooltip, description, [control]);
+      offset += portion;
+    } else chartTarget(control, tooltip, description);
     return row;
   }));
-  if (result.total === 0) {
-    chartEmpty('category-chart', 'No reported detections');
-    return;
-  }
-  const svg = chart('category-chart', items.map(({label, value}) => label + ': ' + value).join(', '), '0 0 140 140');
-  svg.append(vector('circle', {cx: 70, cy: 70, r: 53, class: 'donut-track'}));
-  let offset = 0;
-  for (const {label, value, color} of items) {
-    if (!value) continue;
-    const portion = 100 * value / result.total;
-    const segment = vector('circle', {cx: 70, cy: 70, r: 53, pathLength: 100,
-      'stroke-dasharray': portion + ' ' + (100 - portion), 'stroke-dashoffset': -offset,
-      transform: 'rotate(-90 70 70)', class: 'donut-segment color-' + color});
-    segment.append(vector('title', {}, label + ': ' + number.format(value)));
-    svg.append(segment);
-    offset += portion;
-  }
-  svg.append(vector('text', {x: 70, y: 77, 'text-anchor': 'middle', class: 'donut-value'}, number.format(result.total)));
+  svg?.append(vector('text', {x: 70, y: 77, 'text-anchor': 'middle', class: 'donut-value'}, number.format(result.total)));
 }
 
 function renderActivity(events) {
+  const tooltip = byId('activity-tooltip');
+  resetChartTooltip(tooltip);
   const dates = {};
   for (const event of events) {
     const key = event.detectedAt.slice(0, 10);
@@ -296,7 +409,7 @@ function renderActivity(events) {
   }
   const items = Object.entries(dates).sort(([a], [b]) => a.localeCompare(b));
   if (!items.length) return chartEmpty('activity-chart', 'No detections in the recent event sample.');
-  const svg = chart('activity-chart', items.map(([day, count]) => day + ': ' + count).join(', '), '0 0 540 165');
+  const svg = chart('activity-chart', 'Detection activity by UTC day, latest report sample', '0 0 540 165', 'group');
   const defs = vector('defs');
   const gradient = vector('linearGradient', {id: 'activity-gradient', x2: '0%', y2: '100%'});
   gradient.append(vector('stop', {offset: 0, class: 'area-top'}), vector('stop', {offset: 1, class: 'area-bottom'}));
@@ -323,8 +436,11 @@ function renderActivity(events) {
       svg.append(vector('rect', {x: x - 17, y, width: 34, height: 132 - y, rx: 5, class: 'activity-stem'}));
       svg.append(vector('text', {x, y: y - 12, 'text-anchor': 'middle', class: 'activity-value'}, count));
     }
-    const point = vector('circle', {cx: x, cy: y, r: 5, class: 'activity-point'});
-    point.append(vector('title', {}, day + ': ' + count + ' reported'));
+    const description = day + ' UTC · ' + number.format(count) + (count === 1 ? ' detection' : ' detections');
+    const point = vector('g', {tabindex: 0, role: 'button', 'aria-label': description, class: 'chart-point'});
+    point.append(vector('circle', {cx: x, cy: y, r: 25, class: 'chart-point-hit'}),
+      vector('circle', {cx: x, cy: y, r: 5, class: 'activity-point'}));
+    chartTarget(point, tooltip, description);
     svg.append(point);
     if (i === 0 || i === points.length - 1) svg.append(vector('text', {x, y: 155, 'text-anchor': 'middle', class: 'chart-label'}, day.slice(5)));
   });
@@ -430,6 +546,8 @@ function render(result) {
   for (const metric of metricNames) metricValue(metric, result[metric], true);
   const nextChartData = JSON.stringify([result.categories, result.recent]);
   if (byId('snapshot').hidden || nextChartData !== chartData) {
+    const newest = result.recent[0]?.detectedAt;
+    const liveArrival = scope === 'REAL' && !byId('snapshot').hidden && newest > (recentEvents[0]?.detectedAt ?? '');
     renderCategories(result);
     const detections = result.recent.filter(entry => entry.action !== 'BYPASSED');
     renderActivity(detections);
@@ -437,6 +555,15 @@ function render(result) {
     recentEvents = result.recent;
     renderHistory();
     chartData = nextChartData;
+    if (liveArrival && (activeView === 'overview' || activeView === 'threats')) {
+      const announcement = byId('report-arrival');
+      announcement.textContent = 'New report received at ' + date.format(new Date(newest));
+      if (!reducedMotion()) {
+        arrivalMotion?.cancel();
+        arrivalMotion = byId('history').firstElementChild?.animate(
+          [{backgroundColor: 'var(--accent-wash)'}, {backgroundColor: 'transparent'}], {duration: 420, easing: 'ease-out'});
+      }
+    }
   }
   byId('retention').textContent = result.retentionDays + '-day reporting window';
   byId('privacy-retention').textContent = `The configured reporting window is ${result.retentionDays} days. Expired reports are removed by the backend.`;
@@ -454,6 +581,7 @@ function render(result) {
   renderReporting(result);
   byId('snapshot').hidden = false;
   byId('load-state').hidden = true;
+  byId('report-placeholder').hidden = true;
   if (!entranceShown && !reducedMotion()) {
     document.querySelectorAll('.metric').forEach((card, index) => {
       card.animate([{opacity: .62, transform: 'translateY(6px)'}, {opacity: 1, transform: 'none'}],
@@ -685,6 +813,7 @@ async function refresh(initial = false, preserve = false) {
     clearData();
     byId('load-state').textContent = 'Loading reports…';
     byId('load-state').hidden = false;
+    byId('report-placeholder').hidden = initial;
     status('Connecting…');
     health('Checking…', 'Checking…', initial ? 'Checking…' : 'Previously verified');
   }
@@ -770,6 +899,17 @@ function setTheme(light) {
 }
 byId('theme').addEventListener('click', () => setTheme(document.documentElement.dataset.theme !== 'light'));
 byId('appearance').addEventListener('change', event => setTheme(event.target.value === 'light'));
+byId('rail-density').addEventListener('click', event => {
+  const compact = byId('dashboard').toggleAttribute('data-compact');
+  event.currentTarget.setAttribute('aria-pressed', String(compact));
+});
+function showArchitecture() {
+  renderDiagram('architecture-steps', 'architecture-detail', architecture[byId('architecture-model').value]);
+}
+byId('architecture-model').addEventListener('change', showArchitecture);
+showArchitecture();
+renderDiagram('dataset-steps', 'dataset-detail', datasetSteps);
+renderDiagram('visual-steps', 'visual-detail', visualSteps);
 for (const [id, [label]] of Object.entries(metricOptions)) {
   const option = plain('option', label);
   option.value = id;
@@ -778,6 +918,17 @@ for (const [id, [label]] of Object.entries(metricOptions)) {
 byId('ml-metric').addEventListener('change', compareModels);
 byId('ml-cutoff').addEventListener('change', compareModels);
 byId('ml-experiment').addEventListener('change', selectExperiment);
+for (const frame of document.querySelectorAll('.chart-frame')) {
+  const tooltip = frame.querySelector('.chart-tooltip');
+  frame.addEventListener('pointerleave', () => {
+    if (!activeCharts.get(tooltip)?.includes(document.activeElement)) resetChartTooltip(tooltip);
+  });
+}
+document.addEventListener('keydown', event => {
+  if (event.key !== 'Escape') return;
+  resetChartTooltip(byId('activity-tooltip'));
+  resetChartTooltip(byId('category-tooltip'));
+});
 for (const id of Object.keys(views)) byId('nav-' + id).addEventListener('click', () => navigate(id));
 for (const [id, value] of [['real', 'REAL'], ['synthetic', 'SYNTHETIC']]) {
   byId(id).addEventListener('click', () => {
@@ -810,11 +961,13 @@ function applyMotionPreference() {
   document.documentElement.toggleAttribute('data-reduced-motion', reducedMotion());
   if (!reducedMotion()) return;
   viewMotion?.cancel();
+  arrivalMotion?.cancel();
   for (const [name, state] of counts) {
     state.roll?.cancel();
     metricValue(name, state.target, false);
   }
   document.querySelectorAll('.metric').forEach(card => card.getAnimations().forEach(animation => animation.cancel()));
+  document.querySelectorAll('.diagram-detail').forEach(detail => detail.getAnimations().forEach(animation => animation.cancel()));
 }
 motion.addEventListener('change', applyMotionPreference);
 byId('reduce-motion').addEventListener('change', applyMotionPreference);

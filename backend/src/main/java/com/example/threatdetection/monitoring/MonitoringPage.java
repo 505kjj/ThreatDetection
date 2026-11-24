@@ -21,6 +21,12 @@ class MonitoringPage {
     @GetMapping("/monitor.js")
     ResponseEntity<Resource> script() { return asset("monitor.js", "text/javascript"); }
 
+    @GetMapping("/monitor/theme.css")
+    ResponseEntity<Resource> theme() { return asset("theme.css", "text/css"); }
+
+    @GetMapping("/monitor/icons/mark.svg")
+    ResponseEntity<Resource> mark() { return asset("icons/mark.svg", "image/svg+xml"); }
+
     @GetMapping("/monitor/fonts/inter-latin.woff2")
     ResponseEntity<Resource> font() {
         return ResponseEntity.ok().contentType(MediaType.parseMediaType("font/woff2"))
@@ -34,7 +40,7 @@ class MonitoringPage {
     private ResponseEntity<Resource> asset(String filename, String contentType) {
         return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
                 .header("Content-Security-Policy",
-                        "default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; connect-src 'self'; "
+                        "default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self'; connect-src 'self'; "
                                 + "frame-ancestors 'none'; base-uri 'none'; form-action 'none'")
                 .header("Referrer-Policy", "no-referrer")
                 .body(new ClassPathResource("monitoring/" + filename));

@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ThreatDetection | Security console</title>
+  <link rel="icon" href="/monitor/icons/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/monitor/theme.css">
   <link rel="stylesheet" href="/monitor.css">
   <script type="module" src="/monitor.js"></script>
 </head>
@@ -24,6 +26,7 @@
     <symbol id="i-bank" viewBox="0 0 24 24"><path d="M3 9h18L12 3 3 9Zm2 12h14M7 12v5m5-5v5m5-5v5"/></symbol>
     <symbol id="i-lab" viewBox="0 0 24 24"><path d="M9 3h6m-5 0v7l-5 8a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-8V3m-7 13h10"/></symbol>
     <symbol id="i-data" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 4 16 4 16 0V5M4 12c0 4 16 4 16 0"/></symbol>
+    <symbol id="i-sidebar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16m7-11-3 3 3 3"/></symbol>
   </svg>
   <a href="#sign-in-title" id="skip-content" class="skip">Skip to content</a>
   <header class="masthead">
@@ -60,6 +63,7 @@
     </section>
     <section id="dashboard" class="workspace" aria-label="Threat dashboard" hidden>
       <nav class="rail" aria-label="Workspace">
+        <button id="rail-density" class="rail-toggle" type="button" aria-pressed="false"><svg aria-hidden="true"><use href="#i-sidebar"/></svg><span>Compact navigation</span></button>
         <button id="nav-overview" type="button" aria-current="page" title="Overview"><svg aria-hidden="true"><use href="#i-grid"/></svg><span>Overview</span></button>
         <button id="nav-threats" type="button" title="Threat Centre"><svg aria-hidden="true"><use href="#i-target"/></svg><span>Threat Centre</span></button>
         <button id="nav-intelligence" type="button" title="Threat Intelligence"><svg aria-hidden="true"><use href="#i-radar"/></svg><span>Threat Intelligence</span></button>
@@ -89,7 +93,12 @@
         </div>
         <p id="scope-notice" class="fixture-notice" hidden><strong>Synthetic test data.</strong> These detections came from a configured test browser.</p>
         <p id="load-state" class="panel state" role="status" hidden></p>
+        <div id="report-placeholder" class="report-placeholder" aria-hidden="true" hidden>
+          <div class="metrics"><div class="panel skeleton"></div><div class="panel skeleton"></div><div class="panel skeleton"></div><div class="panel skeleton"></div></div>
+          <div class="details analytics"><div class="panel skeleton skeleton-chart"></div><div class="panel skeleton skeleton-chart"></div></div>
+        </div>
         <div id="snapshot" hidden>
+          <p id="report-arrival" class="sr-only" role="status"></p>
           <section id="overview" aria-labelledby="page-title">
             <div class="metrics">
               <div class="panel metric"><span class="metric-label"><svg aria-hidden="true"><use href="#i-pulse"/></svg>Total detections</span><strong id="total" class="sr-only"></strong><div class="metric-value" aria-hidden="true"><strong id="total-visual"></strong></div><small>Reported blocks and advisories</small></div>
@@ -101,11 +110,17 @@
               <section class="panel" aria-labelledby="activity-title">
                 <div class="section-heading"><h2 id="activity-title">Detection activity</h2><span class="chart-tag">Recent sample</span></div>
                 <p class="muted chart-note">UTC days in the latest 20 reported events, excluding bypasses.</p>
-                <div id="activity-chart" class="activity-chart"></div>
+                <div class="chart-frame">
+                  <div id="activity-chart" class="activity-chart"></div>
+                  <p id="activity-tooltip" class="chart-tooltip" aria-hidden="true" hidden></p>
+                </div>
               </section>
               <section class="panel breakdown" aria-labelledby="categories-title">
                 <div class="section-heading"><h2 id="categories-title">Threat categories</h2><span class="chart-tag">Retention window</span></div>
-                <div class="category-layout"><div id="category-chart"></div><dl id="categories"></dl></div>
+                <div class="chart-frame">
+                  <div class="category-layout"><div id="category-chart"></div><dl id="categories"></dl></div>
+                  <p id="category-tooltip" class="chart-tooltip" aria-hidden="true" hidden></p>
+                </div>
               </section>
             </div>
             <div class="details secondary">
@@ -162,8 +177,13 @@
         </section>
         <section class="research-view" id="ml" aria-labelledby="page-title" hidden>
           <div class="panel"><h2>Fixed URL and DOM fusion</h2><p id="ml-lead" class="muted"></p>
-            <ol class="research-flow"><li>URL text → Character TF-IDF</li><li>DOM structure → Weighted classifier</li><li>75:25 calibrated fusion</li><li>Experimental phishing score</li></ol>
             <dl id="ml-metrics" class="status-list"></dl>
+          </div>
+          <div class="panel">
+            <div class="section-heading"><h2>Architecture explorer</h2><div class="preference"><label for="architecture-model">Model</label><select id="architecture-model"><option value="fusion">Fixed URL and DOM fusion</option><option value="cnn">Character CNN</option><option value="transformer">Lightweight Transformer</option></select></div></div>
+            <p class="muted">Illustration of the offline research pipeline.</p>
+            <ol id="architecture-steps" class="research-flow"></ol>
+            <p id="architecture-detail" class="diagram-detail" role="status"></p>
           </div>
           <div class="panel">
             <h2>Experiment comparisons</h2>
@@ -187,14 +207,16 @@
             <div class="panel"><h2>Other audited sources</h2><p>PhiShark requires an approved data-use agreement. PhishTrap has unresolved upstream rights and proxy negatives. CompPhish overlaps the PhreshPhish collection period.</p></div>
           </div>
           <div class="panel"><h2>PhreshPhish development partitions</h2>
-            <ol class="research-flow"><li>Retain matched URL and DOM</li><li>Group by domain</li><li>Quarantine structural overlap</li><li>Separate fit, calibration and evaluation</li></ol>
+            <ol id="dataset-steps" class="research-flow"></ol>
+            <p id="dataset-detail" class="diagram-detail" role="status"></p>
             <dl id="dataset-splits" class="status-list"></dl><p id="dataset-caveat" class="muted"></p>
             <p>Phase 5D separately tested temporal generalization. Phase 5G forward testing still requires an eligible independent cohort and confirmed financial evidence.</p>
           </div>
         </section>
         <section class="research-view" id="visual" aria-labelledby="page-title" hidden>
           <div class="panel"><h2>Phase 6A controlled crop benchmark</h2><p id="visual-scope" class="muted"></p>
-            <ol class="research-flow"><li>Approved reference crops</li><li>Normalize readable pixels</li><li>Compare pHash, ORB and embeddings</li><li>Interpret with verified domain context</li></ol>
+            <ol id="visual-steps" class="research-flow"></ol>
+            <p id="visual-detail" class="diagram-detail" role="status"></p>
             <div id="visual-methods" class="source-chart"></div>
           </div>
           <div class="details service-view">
@@ -209,6 +231,7 @@
         <section class="details service-view" id="privacy" aria-labelledby="page-title" hidden>
           <div class="panel"><h2>Optional browser reporting</h2><p>When enabled in extension settings, the browser sends its reporting credential, event identifier, detection time, signal and action. Heartbeats include reputation availability.</p><p class="muted">Monitoring excludes site addresses, visited pages, page content, passwords and form values.</p></div>
           <div class="panel"><h2>Retention and access</h2><p id="privacy-retention" class="muted"></p><p>Live and synthetic reports are queried separately. The administrator credential is issued by local setup and held in memory for this session. Manage browser reporting and its separate credential in the extension settings.</p></div>
+          <div class="panel"><h2>Browser protection</h2><p>Reputation matching and financial address checks run in the browser. If you enable activity analysis for a site, it uses a separate endpoint for the configured hostname and activity counts. The research models do not process browsing sessions.</p></div>
         </section>
         <section class="details service-view" id="settings" aria-labelledby="page-title" hidden>
           <div class="panel"><h2>Console display</h2><div class="preference"><label for="appearance">Appearance</label><select id="appearance"><option value="dark">Dark</option><option value="light">Light</option></select></div><div class="preference"><label for="reduce-motion">Reduce motion</label><input id="reduce-motion" type="checkbox" aria-describedby="motion-note"></div><p id="motion-note" class="muted">Your system's reduced-motion setting also applies.</p></div>
