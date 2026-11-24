@@ -47,7 +47,7 @@ button.quiet { border-color: var(--line); background: #fff; }
 .badge { display: inline-block; border-radius: 99px; padding: .28rem .72rem; font-size: .79rem; font-weight: 650; }
 .masthead .badge { background: #294268; color: #f4f7fe; }
 .fixture-notice { margin-bottom: 1rem; padding: .65rem .9rem; border-radius: 8px; background: #fff1d6; color: #684308; border: 1px solid #e9c885; }
-.status-strip { display: grid; grid-template-columns: 1.8fr 1fr; gap: 1rem; padding: 1rem 1.2rem; border-radius: 12px; background: #e8effc; border: 1px solid #d4e1f9; margin-bottom: 1rem; }
+.status-strip { display: grid; grid-template-columns: 1.1fr 1.4fr 1fr; gap: 1rem; padding: 1rem 1.2rem; border-radius: 12px; background: #e8effc; border: 1px solid #d4e1f9; margin-bottom: 1rem; }
 .status-strip h2 { font-size: .83rem; color: #25487b; margin-bottom: .25rem; }
 .status-strip p { font-size: .93rem; }
 .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: .85rem; margin-bottom: 1rem; }

@@ -4,6 +4,8 @@ Phase 4A adds optional reporting to the Chrome extension, a protected Spring Boo
 
 ## Run locally
 
+For Windows with persistent monitoring, use the [local profile setup](windows-local-setup.md). The steps below are for a disposable, in-memory manual verification.
+
 1. From `backend/`, run `.\mvnw.cmd verify` with Java 21. Load `extension/` as an unpacked extension and copy the ID displayed in `chrome://extensions`.
 2. In PowerShell 7, use the [README’s local token helper](../README.md#run-and-verify-locally) to define `New-LocalApiClient`. In the same shell, from `backend/`:
 
@@ -58,6 +60,6 @@ All data APIs use the existing bearer roles. Browser tokens cannot read dashboar
 
 The dashboard path sends and stores **no hostname, URL or URL hash, page content, form value, cookie, credential captured from a page, or referrer**. The configured client ID is used internally for rate limits, deduplication and fixture isolation. The existing separately enabled activity analysis still sends the hostname and bounded counts for explicitly configured sites. Dashboard reporting alone does not enable activity monitoring. The dashboard bearer authenticates the API and is never exposed as event data.
 
-Events are filtered by server receipt age and physically purged hourly. Set `threat.monitoring.retention-days` to 1–90 days (default 14). The default H2 database is in memory, so records are lost on restart. Browser heartbeat and rate-limit state also restart with the service. The browser journal is session-only and keeps up to 256 short-lived navigation/action deduplication entries without destinations. Turning reporting off clears that journal and does not delete historical server records ahead of their configured retention.
+Events are filtered by server receipt age and physically purged hourly. Set `threat.monitoring.retention-days` to 1–90 days (default 14). The Windows setup creates an isolated, versioned H2 monitoring file. Manual JAR runs without `threat.monitoring.store-path` retain only in-memory monitoring records. Browser heartbeat and rate-limit state restart with the service. The browser journal is session-only and keeps up to 256 short-lived navigation/action deduplication entries without destinations. Turning reporting off clears that journal while existing records follow the backend retention policy.
 
 The API authenticates a configured installation credential. A compromised credential or browser can still fabricate allowed codes within its quota. Issue a distinct token per installation, keep admin tokens separate, and rotate exposed secrets. Use a trusted HTTPS ingress for remote operation, exclude credential headers and request bodies from logging, and apply ingress limits for unauthenticated traffic. Shared rate limiting and heartbeat state are needed before deploying multiple backend replicas. Dashboard events indicate detections by the deployed rules and feed, with synthetic results tagged by server configuration. They do not validate real-world detection accuracy.

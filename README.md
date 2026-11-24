@@ -10,12 +10,14 @@ The [Phase 3B research preflight](research/README.md) verifies the CPU model env
 
 | Module | Location | Current behavior |
 | --- | --- | --- |
-| Spring Boot REST API, rules and JPA persistence | [`backend/`](backend/) | Secured API. Temporary H2 database is configured by default. |
+| Spring Boot REST API and rules | [`backend/`](backend/) | Secured API with temporary activity sessions and a separate monitoring store. The Windows setup persists dashboard events. |
 | Chrome extension | [`extension/`](extension/) | Downloads one authenticated threat snapshot and checks websites on the device. Optional activity monitoring uses the secured session API. |
 | Swing admin client | [`admin-swing/`](admin-swing/) | Existing client needs admin bearer authentication. The simulator also needs the new browser session contract. |
 | Static browser demos | [`backend/src/main/resources/static/`](backend/src/main/resources/static/) | Assets retained for reference. The server disables static mappings and denies the demo routes. |
 
 ## Run and verify locally
+
+For repeated local use on Windows, follow the [PowerShell 5.1 and 7 setup](docs/windows-local-setup.md). It provisions a locked-down profile with separate browser and administrator tokens, starts the loopback backend, and keeps dashboard events across restarts. The procedure below remains available for disposable manual verification.
 
 Use **Java 21** and **PowerShell 7** from the repository root. This procedure generates disposable credentials in memory and passes only SHA-256 digests to the server. The default listener is loopback on port 8081.
 

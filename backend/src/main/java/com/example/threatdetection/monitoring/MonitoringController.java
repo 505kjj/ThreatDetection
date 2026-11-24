@@ -3,9 +3,12 @@ package com.example.threatdetection.monitoring;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +38,12 @@ class MonitoringController {
     @GetMapping("/dashboard")
     MonitoringService.Dashboard dashboard(@RequestParam(defaultValue = "REAL") Scope scope) {
         return service.dashboard(scope == Scope.SYNTHETIC);
+    }
+
+    @ExceptionHandler(DataAccessException.class)
+    ResponseEntity<Void> storageUnavailable() {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .header("X-Threat-Monitoring-Status", "storage-unavailable").build();
     }
 
     enum Scope { REAL, SYNTHETIC }
