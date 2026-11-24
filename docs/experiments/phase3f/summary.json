@@ -1,0 +1,1219 @@
+{
+  "manifest": {
+    "protocolSha256": "ba580e64d42eb01c148b937d5dd7c15bbaf3aa478cea581ca722e04cc5fa81de",
+    "phase3dSummarySha256": "4b5aed4ccc40b0d8078b042ebdf0bfb6adacb74d537bf7607f112e59a53ef889",
+    "phase3eSummarySha256": "464a5f1037690a7a33cf1b1423a02fc3ad78a68b8cb46764471a170976e3a931",
+    "priorDomains": 454408,
+    "priorLexicalFamilies": 179806,
+    "phase3eDomains": 4,
+    "controlsSha256": "c342fc09ad7b85461d26f87f58c8392ab92cd1c4a681619e53e2353d7b221ad2",
+    "archiveLedgerSha256": "13341ad89a298d57bfbb1f2ba51f3054735edd0450af2359120c4a35f50959e1",
+    "numericSha256": "87b902f727ee57917175ca683253db596b296b6016a48c7f8f1de09c1183d1bd",
+    "featureVersion": "url-lexical-v1",
+    "featureColumns": [
+      "https",
+      "nondefault_port",
+      "ip_host",
+      "idn_labels",
+      "hostname_length",
+      "host_labels",
+      "host_digits",
+      "host_hyphens",
+      "registrant_length",
+      "subdomain_labels",
+      "path_length",
+      "path_depth",
+      "path_digits",
+      "path_percent_escapes"
+    ],
+    "archive": {
+      "phishtank-archive-20": {
+        "rows": 34814,
+        "retainedByEvidence": 34811,
+        "invalidReferenceOrUrl": 3,
+        "firstSubmissionDay": "2014-01-12",
+        "lastSubmissionDay": "2014-02-21",
+        "publisherBytes": 3667157,
+        "sha256": "47503f002adb4a293b0b9b54d45ac9d2ed71dbb97287aa83f89c081d8697a190",
+        "publisherMd5": "1680d9b54d1257e70c6a0b8089fc24c4"
+      }
+    },
+    "byCohort": {
+      "india-control": {
+        "input": 53,
+        "rejected": 0,
+        "priorDomain": 15,
+        "priorFamily": 9,
+        "duplicate": 0,
+        "conflicting": 0,
+        "crossCohortDomain": 0,
+        "repeatedDomain": 0,
+        "repeatedLexicalFamily": 0,
+        "beyondCap": 0,
+        "retained": 29
+      },
+      "general-transfer": {
+        "input": 34811,
+        "rejected": 3717,
+        "priorDomain": 871,
+        "priorFamily": 78,
+        "duplicate": 9671,
+        "conflicting": 0,
+        "crossCohortDomain": 0,
+        "repeatedDomain": 11567,
+        "repeatedLexicalFamily": 132,
+        "beyondCap": 6775,
+        "retained": 2000
+      }
+    }
+  },
+  "frozenCutoffs": {
+    "phresh-20000-path-forest": {
+      "0.01": 0.757831940665843,
+      "0.001": 0.9610560908349034
+    },
+    "fusion-mixed-20000-two": {
+      "0.01": 0.9390406044771592,
+      "0.001": 0.9666654318351997
+    },
+    "fusion-mixed-20000-four": {
+      "0.01": 0.9321015608646374,
+      "0.001": 0.9619970593281276
+    },
+    "fusion-mixed-20000-stack": {
+      "0.01": 0.9446575079500802,
+      "0.001": 0.9707320772239589
+    }
+  },
+  "cohorts": {
+    "general-transfer": {
+      "support": {
+        "phishing": 2000,
+        "legitimate": 0,
+        "domains": 2000,
+        "positiveDomains": 2000,
+        "negativeDomains": 0,
+        "firstDay": "2014-01-12",
+        "lastDay": "2014-02-21"
+      },
+      "brandAmber": {
+        "threshold": 0.5,
+        "tp": 0,
+        "fp": 0,
+        "tn": 0,
+        "fn": 2000,
+        "precision": null,
+        "recall": 0.0,
+        "f1": null,
+        "falsePositiveRate": null,
+        "falseAlertDomains": 0,
+        "legitimateDomains": 0,
+        "negativeDomainFalsePositiveRate": null,
+        "negativeDomainFpr95Upper": null,
+        "recallBinomial95": [
+          0.0,
+          0.0018427397934059364
+        ],
+        "urlFprBinomial95": null,
+        "precisionBinomial95": null
+      },
+      "candidates": {
+        "phresh-20000-path-forest": {
+          "ranking": null,
+          "cutoffs": {
+            "0.001": {
+              "metrics": {
+                "threshold": 0.9610560908349034,
+                "tp": 9,
+                "fp": 0,
+                "tn": 0,
+                "fn": 1991,
+                "precision": null,
+                "recall": 0.0045,
+                "f1": null,
+                "falsePositiveRate": null,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 0,
+                "negativeDomainFalsePositiveRate": null,
+                "negativeDomainFpr95Upper": null,
+                "recallBinomial95": [
+                  0.0020596885284903574,
+                  0.008525141240995088
+                ],
+                "urlFprBinomial95": null,
+                "precisionBinomial95": null
+              },
+              "comparedWithRandomForest": {
+                "extraPhish": 0,
+                "lostPhish": 0,
+                "extraFalsePositives": 0,
+                "avoidedFalsePositives": 0,
+                "disagree": 0,
+                "sharedErrors": 1991,
+                "errorCorrelation": 1.0,
+                "pairedRecallDeltaDomainBootstrap95": [
+                  0.0,
+                  0.0
+                ],
+                "recallDelta": 0.0
+              },
+              "advisoryOnlyUnionMetrics": {
+                "threshold": 0.5,
+                "tp": 9,
+                "fp": 0,
+                "tn": 0,
+                "fn": 1991,
+                "precision": null,
+                "recall": 0.0045,
+                "f1": null,
+                "falsePositiveRate": null,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 0,
+                "negativeDomainFalsePositiveRate": null,
+                "negativeDomainFpr95Upper": null,
+                "recallBinomial95": [
+                  0.0020596885284903574,
+                  0.008525141240995088
+                ],
+                "urlFprBinomial95": null,
+                "precisionBinomial95": null
+              },
+              "mlAddsToBrandAdvisoryPhish": 9,
+              "mlAddsToBrandAdvisoryFalsePositives": 0
+            },
+            "0.01": {
+              "metrics": {
+                "threshold": 0.757831940665843,
+                "tp": 58,
+                "fp": 0,
+                "tn": 0,
+                "fn": 1942,
+                "precision": null,
+                "recall": 0.029,
+                "f1": null,
+                "falsePositiveRate": null,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 0,
+                "negativeDomainFalsePositiveRate": null,
+                "negativeDomainFpr95Upper": null,
+                "recallBinomial95": [
+                  0.022092952440984793,
+                  0.03732942847232326
+                ],
+                "urlFprBinomial95": null,
+                "precisionBinomial95": null
+              },
+              "comparedWithRandomForest": {
+                "extraPhish": 0,
+                "lostPhish": 0,
+                "extraFalsePositives": 0,
+                "avoidedFalsePositives": 0,
+                "disagree": 0,
+                "sharedErrors": 1942,
+                "errorCorrelation": 1.0,
+                "pairedRecallDeltaDomainBootstrap95": [
+                  0.0,
+                  0.0
+                ],
+                "recallDelta": 0.0
+              },
+              "advisoryOnlyUnionMetrics": {
+                "threshold": 0.5,
+                "tp": 58,
+                "fp": 0,
+                "tn": 0,
+                "fn": 1942,
+                "precision": null,
+                "recall": 0.029,
+                "f1": null,
+                "falsePositiveRate": null,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 0,
+                "negativeDomainFalsePositiveRate": null,
+                "negativeDomainFpr95Upper": null,
+                "recallBinomial95": [
+                  0.022092952440984793,
+                  0.03732942847232326
+                ],
+                "urlFprBinomial95": null,
+                "precisionBinomial95": null
+              },
+              "mlAddsToBrandAdvisoryPhish": 58,
+              "mlAddsToBrandAdvisoryFalsePositives": 0
+            }
+          }
+        },
+        "fusion-mixed-20000-two": {
+          "ranking": null,
+          "cutoffs": {
+            "0.001": {
+              "metrics": {
+                "threshold": 0.9666654318351997,
+                "tp": 16,
+                "fp": 0,
+                "tn": 0,
+                "fn": 1984,
+                "precision": null,
+                "recall": 0.008,
+                "f1": null,
+                "falsePositiveRate": null,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 0,
+                "negativeDomainFalsePositiveRate": null,
+                "negativeDomainFpr95Upper": null,
+                "recallBinomial95": [
+                  0.004579404661398549,
+                  0.012959068588471734
+                ],
+                "urlFprBinomial95": null,
+                "precisionBinomial95": null
+              },
+              "comparedWithRandomForest": {
+                "extraPhish": 15,
+                "lostPhish": 8,
+                "extraFalsePositives": 0,
+                "avoidedFalsePositives": 0,
+                "disagree": 23,
+                "sharedErrors": 1976,
+                "errorCorrelation": 0.07781982716425755,
+                "pairedRecallDeltaDomainBootstrap95": [
+                  -0.0015,
+                  0.008
+                ],
+                "recallDelta": 0.0035
+              },
+              "advisoryOnlyUnionMetrics": {
+                "threshold": 0.5,
+                "tp": 16,
+                "fp": 0,
+                "tn": 0,
+                "fn": 1984,
+                "precision": null,
+                "recall": 0.008,
+                "f1": null,
+                "falsePositiveRate": null,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 0,
+                "negativeDomainFalsePositiveRate": null,
+                "negativeDomainFpr95Upper": null,
+                "recallBinomial95": [
+                  0.004579404661398549,
+                  0.012959068588471734
+                ],
+                "urlFprBinomial95": null,
+                "precisionBinomial95": null
+              },
+              "mlAddsToBrandAdvisoryPhish": 16,
+              "mlAddsToBrandAdvisoryFalsePositives": 0
+            },
+            "0.01": {
+              "metrics": {
+                "threshold": 0.9390406044771592,
+                "tp": 230,
+                "fp": 0,
+                "tn": 0,
+                "fn": 1770,
+                "precision": null,
+                "recall": 0.115,
+                "f1": null,
+                "falsePositiveRate": null,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 0,
+                "negativeDomainFalsePositiveRate": null,
+                "negativeDomainFpr95Upper": null,
+                "recallBinomial95": [
+                  0.10134055320568167,
+                  0.12979910141145495
+                ],
+                "urlFprBinomial95": null,
+                "precisionBinomial95": null
+              },
+              "comparedWithRandomForest": {
+                "extraPhish": 184,
+                "lostPhish": 12,
+                "extraFalsePositives": 0,
+                "avoidedFalsePositives": 0,
+                "disagree": 196,
+                "sharedErrors": 1758,
+                "errorCorrelation": 0.36733709006275816,
+                "pairedRecallDeltaDomainBootstrap95": [
+                  0.0722375,
+                  0.09826249999999999
+                ],
+                "recallDelta": 0.086
+              },
+              "advisoryOnlyUnionMetrics": {
+                "threshold": 0.5,
+                "tp": 230,
+                "fp": 0,
+                "tn": 0,
+                "fn": 1770,
+                "precision": null,
+                "recall": 0.115,
+                "f1": null,
+                "falsePositiveRate": null,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 0,
+                "negativeDomainFalsePositiveRate": null,
+                "negativeDomainFpr95Upper": null,
+                "recallBinomial95": [
+                  0.10134055320568167,
+                  0.12979910141145495
+                ],
+                "urlFprBinomial95": null,
+                "precisionBinomial95": null
+              },
+              "mlAddsToBrandAdvisoryPhish": 230,
+              "mlAddsToBrandAdvisoryFalsePositives": 0
+            }
+          }
+        },
+        "fusion-mixed-20000-four": {
+          "ranking": null,
+          "cutoffs": {
+            "0.001": {
+              "metrics": {
+                "threshold": 0.9619970593281276,
+                "tp": 87,
+                "fp": 0,
+                "tn": 0,
+                "fn": 1913,
+                "precision": null,
+                "recall": 0.0435,
+                "f1": null,
+                "falsePositiveRate": null,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 0,
+                "negativeDomainFalsePositiveRate": null,
+                "negativeDomainFpr95Upper": null,
+                "recallBinomial95": [
+                  0.03498586284676858,
+                  0.05338259889337252
+                ],
+                "urlFprBinomial95": null,
+                "precisionBinomial95": null
+              },
+              "comparedWithRandomForest": {
+                "extraPhish": 80,
+                "lostPhish": 2,
+                "extraFalsePositives": 0,
+                "avoidedFalsePositives": 0,
+                "disagree": 82,
+                "sharedErrors": 1911,
+                "errorCorrelation": 0.24202425610975953,
+                "pairedRecallDeltaDomainBootstrap95": [
+                  0.0302375,
+                  0.046
+                ],
+                "recallDelta": 0.039
+              },
+              "advisoryOnlyUnionMetrics": {
+                "threshold": 0.5,
+                "tp": 87,
+                "fp": 0,
+                "tn": 0,
+                "fn": 1913,
+                "precision": null,
+                "recall": 0.0435,
+                "f1": null,
+                "falsePositiveRate": null,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 0,
+                "negativeDomainFalsePositiveRate": null,
+                "negativeDomainFpr95Upper": null,
+                "recallBinomial95": [
+                  0.03498586284676858,
+                  0.05338259889337252
+                ],
+                "urlFprBinomial95": null,
+                "precisionBinomial95": null
+              },
+              "mlAddsToBrandAdvisoryPhish": 87,
+              "mlAddsToBrandAdvisoryFalsePositives": 0
+            },
+            "0.01": {
+              "metrics": {
+                "threshold": 0.9321015608646374,
+                "tp": 208,
+                "fp": 0,
+                "tn": 0,
+                "fn": 1792,
+                "precision": null,
+                "recall": 0.104,
+                "f1": null,
+                "falsePositiveRate": null,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 0,
+                "negativeDomainFalsePositiveRate": null,
+                "negativeDomainFpr95Upper": null,
+                "recallBinomial95": [
+                  0.09095948012945157,
+                  0.11821393368039429
+                ],
+                "urlFprBinomial95": null,
+                "precisionBinomial95": null
+              },
+              "comparedWithRandomForest": {
+                "extraPhish": 161,
+                "lostPhish": 11,
+                "extraFalsePositives": 0,
+                "avoidedFalsePositives": 0,
+                "disagree": 172,
+                "sharedErrors": 1781,
+                "errorCorrelation": 0.3998853361417092,
+                "pairedRecallDeltaDomainBootstrap95": [
+                  0.0617375,
+                  0.08576249999999999
+                ],
+                "recallDelta": 0.075
+              },
+              "advisoryOnlyUnionMetrics": {
+                "threshold": 0.5,
+                "tp": 208,
+                "fp": 0,
+                "tn": 0,
+                "fn": 1792,
+                "precision": null,
+                "recall": 0.104,
+                "f1": null,
+                "falsePositiveRate": null,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 0,
+                "negativeDomainFalsePositiveRate": null,
+                "negativeDomainFpr95Upper": null,
+                "recallBinomial95": [
+                  0.09095948012945157,
+                  0.11821393368039429
+                ],
+                "urlFprBinomial95": null,
+                "precisionBinomial95": null
+              },
+              "mlAddsToBrandAdvisoryPhish": 208,
+              "mlAddsToBrandAdvisoryFalsePositives": 0
+            }
+          }
+        },
+        "fusion-mixed-20000-stack": {
+          "ranking": null,
+          "cutoffs": {
+            "0.001": {
+              "metrics": {
+                "threshold": 0.9707320772239589,
+                "tp": 15,
+                "fp": 0,
+                "tn": 0,
+                "fn": 1985,
+                "precision": null,
+                "recall": 0.0075,
+                "f1": null,
+                "falsePositiveRate": null,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 0,
+                "negativeDomainFalsePositiveRate": null,
+                "negativeDomainFpr95Upper": null,
+                "recallBinomial95": [
+                  0.004203591756889188,
+                  0.01233998373578595
+                ],
+                "urlFprBinomial95": null,
+                "precisionBinomial95": null
+              },
+              "comparedWithRandomForest": {
+                "extraPhish": 14,
+                "lostPhish": 8,
+                "extraFalsePositives": 0,
+                "avoidedFalsePositives": 0,
+                "disagree": 22,
+                "sharedErrors": 1977,
+                "errorCorrelation": 0.08074136111212621,
+                "pairedRecallDeltaDomainBootstrap95": [
+                  -0.0017624999999999993,
+                  0.0075
+                ],
+                "recallDelta": 0.003
+              },
+              "advisoryOnlyUnionMetrics": {
+                "threshold": 0.5,
+                "tp": 15,
+                "fp": 0,
+                "tn": 0,
+                "fn": 1985,
+                "precision": null,
+                "recall": 0.0075,
+                "f1": null,
+                "falsePositiveRate": null,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 0,
+                "negativeDomainFalsePositiveRate": null,
+                "negativeDomainFpr95Upper": null,
+                "recallBinomial95": [
+                  0.004203591756889188,
+                  0.01233998373578595
+                ],
+                "urlFprBinomial95": null,
+                "precisionBinomial95": null
+              },
+              "mlAddsToBrandAdvisoryPhish": 15,
+              "mlAddsToBrandAdvisoryFalsePositives": 0
+            },
+            "0.01": {
+              "metrics": {
+                "threshold": 0.9446575079500802,
+                "tp": 212,
+                "fp": 0,
+                "tn": 0,
+                "fn": 1788,
+                "precision": null,
+                "recall": 0.106,
+                "f1": null,
+                "falsePositiveRate": null,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 0,
+                "negativeDomainFalsePositiveRate": null,
+                "negativeDomainFpr95Upper": null,
+                "recallBinomial95": [
+                  0.09284366035053933,
+                  0.12032359597818831
+                ],
+                "urlFprBinomial95": null,
+                "precisionBinomial95": null
+              },
+              "comparedWithRandomForest": {
+                "extraPhish": 166,
+                "lostPhish": 12,
+                "extraFalsePositives": 0,
+                "avoidedFalsePositives": 0,
+                "disagree": 178,
+                "sharedErrors": 1776,
+                "errorCorrelation": 0.38573568684283177,
+                "pairedRecallDeltaDomainBootstrap95": [
+                  0.063,
+                  0.088
+                ],
+                "recallDelta": 0.077
+              },
+              "advisoryOnlyUnionMetrics": {
+                "threshold": 0.5,
+                "tp": 212,
+                "fp": 0,
+                "tn": 0,
+                "fn": 1788,
+                "precision": null,
+                "recall": 0.106,
+                "f1": null,
+                "falsePositiveRate": null,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 0,
+                "negativeDomainFalsePositiveRate": null,
+                "negativeDomainFpr95Upper": null,
+                "recallBinomial95": [
+                  0.09284366035053933,
+                  0.12032359597818831
+                ],
+                "urlFprBinomial95": null,
+                "precisionBinomial95": null
+              },
+              "mlAddsToBrandAdvisoryPhish": 212,
+              "mlAddsToBrandAdvisoryFalsePositives": 0
+            }
+          }
+        }
+      },
+      "countsByKind": {
+        "source-verified-phish": 2000
+      },
+      "knownCampaignIds": 0,
+      "observedLexicalFamilies": 1375,
+      "jointDetections": {
+        "0.001": {
+          "missedByAll": 1904,
+          "detectedOnlyByAnyFusion": 87,
+          "detectedOnlyByRandomForest": 2
+        },
+        "0.01": {
+          "missedByAll": 1741,
+          "detectedOnlyByAnyFusion": 201,
+          "detectedOnlyByRandomForest": 10
+        }
+      }
+    },
+    "india-control": {
+      "support": {
+        "phishing": 0,
+        "legitimate": 29,
+        "domains": 10,
+        "positiveDomains": 0,
+        "negativeDomains": 10,
+        "firstDay": "2026-11-24",
+        "lastDay": "2026-11-24"
+      },
+      "brandAmber": {
+        "threshold": 0.5,
+        "tp": 0,
+        "fp": 0,
+        "tn": 29,
+        "fn": 0,
+        "precision": null,
+        "recall": null,
+        "f1": null,
+        "falsePositiveRate": 0.0,
+        "falseAlertDomains": 0,
+        "legitimateDomains": 10,
+        "negativeDomainFalsePositiveRate": 0.0,
+        "negativeDomainFpr95Upper": 0.2588655508930522,
+        "recallBinomial95": null,
+        "urlFprBinomial95": [
+          0.0,
+          0.11944486906950269
+        ],
+        "precisionBinomial95": null
+      },
+      "candidates": {
+        "phresh-20000-path-forest": {
+          "ranking": null,
+          "cutoffs": {
+            "0.001": {
+              "metrics": {
+                "threshold": 0.9610560908349034,
+                "tp": 0,
+                "fp": 0,
+                "tn": 29,
+                "fn": 0,
+                "precision": null,
+                "recall": null,
+                "f1": null,
+                "falsePositiveRate": 0.0,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 10,
+                "negativeDomainFalsePositiveRate": 0.0,
+                "negativeDomainFpr95Upper": 0.2588655508930522,
+                "recallBinomial95": null,
+                "urlFprBinomial95": [
+                  0.0,
+                  0.11944486906950269
+                ],
+                "precisionBinomial95": null
+              },
+              "comparedWithRandomForest": {
+                "extraPhish": 0,
+                "lostPhish": 0,
+                "extraFalsePositives": 0,
+                "avoidedFalsePositives": 0,
+                "disagree": 0,
+                "sharedErrors": 0,
+                "errorCorrelation": null,
+                "recallDelta": null,
+                "pairedRecallDeltaDomainBootstrap95": null
+              },
+              "advisoryOnlyUnionMetrics": {
+                "threshold": 0.5,
+                "tp": 0,
+                "fp": 0,
+                "tn": 29,
+                "fn": 0,
+                "precision": null,
+                "recall": null,
+                "f1": null,
+                "falsePositiveRate": 0.0,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 10,
+                "negativeDomainFalsePositiveRate": 0.0,
+                "negativeDomainFpr95Upper": 0.2588655508930522,
+                "recallBinomial95": null,
+                "urlFprBinomial95": [
+                  0.0,
+                  0.11944486906950269
+                ],
+                "precisionBinomial95": null
+              },
+              "mlAddsToBrandAdvisoryPhish": 0,
+              "mlAddsToBrandAdvisoryFalsePositives": 0
+            },
+            "0.01": {
+              "metrics": {
+                "threshold": 0.757831940665843,
+                "tp": 0,
+                "fp": 0,
+                "tn": 29,
+                "fn": 0,
+                "precision": null,
+                "recall": null,
+                "f1": null,
+                "falsePositiveRate": 0.0,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 10,
+                "negativeDomainFalsePositiveRate": 0.0,
+                "negativeDomainFpr95Upper": 0.2588655508930522,
+                "recallBinomial95": null,
+                "urlFprBinomial95": [
+                  0.0,
+                  0.11944486906950269
+                ],
+                "precisionBinomial95": null
+              },
+              "comparedWithRandomForest": {
+                "extraPhish": 0,
+                "lostPhish": 0,
+                "extraFalsePositives": 0,
+                "avoidedFalsePositives": 0,
+                "disagree": 0,
+                "sharedErrors": 0,
+                "errorCorrelation": null,
+                "recallDelta": null,
+                "pairedRecallDeltaDomainBootstrap95": null
+              },
+              "advisoryOnlyUnionMetrics": {
+                "threshold": 0.5,
+                "tp": 0,
+                "fp": 0,
+                "tn": 29,
+                "fn": 0,
+                "precision": null,
+                "recall": null,
+                "f1": null,
+                "falsePositiveRate": 0.0,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 10,
+                "negativeDomainFalsePositiveRate": 0.0,
+                "negativeDomainFpr95Upper": 0.2588655508930522,
+                "recallBinomial95": null,
+                "urlFprBinomial95": [
+                  0.0,
+                  0.11944486906950269
+                ],
+                "precisionBinomial95": null
+              },
+              "mlAddsToBrandAdvisoryPhish": 0,
+              "mlAddsToBrandAdvisoryFalsePositives": 0
+            }
+          }
+        },
+        "fusion-mixed-20000-two": {
+          "ranking": null,
+          "cutoffs": {
+            "0.001": {
+              "metrics": {
+                "threshold": 0.9666654318351997,
+                "tp": 0,
+                "fp": 0,
+                "tn": 29,
+                "fn": 0,
+                "precision": null,
+                "recall": null,
+                "f1": null,
+                "falsePositiveRate": 0.0,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 10,
+                "negativeDomainFalsePositiveRate": 0.0,
+                "negativeDomainFpr95Upper": 0.2588655508930522,
+                "recallBinomial95": null,
+                "urlFprBinomial95": [
+                  0.0,
+                  0.11944486906950269
+                ],
+                "precisionBinomial95": null
+              },
+              "comparedWithRandomForest": {
+                "extraPhish": 0,
+                "lostPhish": 0,
+                "extraFalsePositives": 0,
+                "avoidedFalsePositives": 0,
+                "disagree": 0,
+                "sharedErrors": 0,
+                "errorCorrelation": null,
+                "recallDelta": null,
+                "pairedRecallDeltaDomainBootstrap95": null
+              },
+              "advisoryOnlyUnionMetrics": {
+                "threshold": 0.5,
+                "tp": 0,
+                "fp": 0,
+                "tn": 29,
+                "fn": 0,
+                "precision": null,
+                "recall": null,
+                "f1": null,
+                "falsePositiveRate": 0.0,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 10,
+                "negativeDomainFalsePositiveRate": 0.0,
+                "negativeDomainFpr95Upper": 0.2588655508930522,
+                "recallBinomial95": null,
+                "urlFprBinomial95": [
+                  0.0,
+                  0.11944486906950269
+                ],
+                "precisionBinomial95": null
+              },
+              "mlAddsToBrandAdvisoryPhish": 0,
+              "mlAddsToBrandAdvisoryFalsePositives": 0
+            },
+            "0.01": {
+              "metrics": {
+                "threshold": 0.9390406044771592,
+                "tp": 0,
+                "fp": 0,
+                "tn": 29,
+                "fn": 0,
+                "precision": null,
+                "recall": null,
+                "f1": null,
+                "falsePositiveRate": 0.0,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 10,
+                "negativeDomainFalsePositiveRate": 0.0,
+                "negativeDomainFpr95Upper": 0.2588655508930522,
+                "recallBinomial95": null,
+                "urlFprBinomial95": [
+                  0.0,
+                  0.11944486906950269
+                ],
+                "precisionBinomial95": null
+              },
+              "comparedWithRandomForest": {
+                "extraPhish": 0,
+                "lostPhish": 0,
+                "extraFalsePositives": 0,
+                "avoidedFalsePositives": 0,
+                "disagree": 0,
+                "sharedErrors": 0,
+                "errorCorrelation": null,
+                "recallDelta": null,
+                "pairedRecallDeltaDomainBootstrap95": null
+              },
+              "advisoryOnlyUnionMetrics": {
+                "threshold": 0.5,
+                "tp": 0,
+                "fp": 0,
+                "tn": 29,
+                "fn": 0,
+                "precision": null,
+                "recall": null,
+                "f1": null,
+                "falsePositiveRate": 0.0,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 10,
+                "negativeDomainFalsePositiveRate": 0.0,
+                "negativeDomainFpr95Upper": 0.2588655508930522,
+                "recallBinomial95": null,
+                "urlFprBinomial95": [
+                  0.0,
+                  0.11944486906950269
+                ],
+                "precisionBinomial95": null
+              },
+              "mlAddsToBrandAdvisoryPhish": 0,
+              "mlAddsToBrandAdvisoryFalsePositives": 0
+            }
+          }
+        },
+        "fusion-mixed-20000-four": {
+          "ranking": null,
+          "cutoffs": {
+            "0.001": {
+              "metrics": {
+                "threshold": 0.9619970593281276,
+                "tp": 0,
+                "fp": 0,
+                "tn": 29,
+                "fn": 0,
+                "precision": null,
+                "recall": null,
+                "f1": null,
+                "falsePositiveRate": 0.0,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 10,
+                "negativeDomainFalsePositiveRate": 0.0,
+                "negativeDomainFpr95Upper": 0.2588655508930522,
+                "recallBinomial95": null,
+                "urlFprBinomial95": [
+                  0.0,
+                  0.11944486906950269
+                ],
+                "precisionBinomial95": null
+              },
+              "comparedWithRandomForest": {
+                "extraPhish": 0,
+                "lostPhish": 0,
+                "extraFalsePositives": 0,
+                "avoidedFalsePositives": 0,
+                "disagree": 0,
+                "sharedErrors": 0,
+                "errorCorrelation": null,
+                "recallDelta": null,
+                "pairedRecallDeltaDomainBootstrap95": null
+              },
+              "advisoryOnlyUnionMetrics": {
+                "threshold": 0.5,
+                "tp": 0,
+                "fp": 0,
+                "tn": 29,
+                "fn": 0,
+                "precision": null,
+                "recall": null,
+                "f1": null,
+                "falsePositiveRate": 0.0,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 10,
+                "negativeDomainFalsePositiveRate": 0.0,
+                "negativeDomainFpr95Upper": 0.2588655508930522,
+                "recallBinomial95": null,
+                "urlFprBinomial95": [
+                  0.0,
+                  0.11944486906950269
+                ],
+                "precisionBinomial95": null
+              },
+              "mlAddsToBrandAdvisoryPhish": 0,
+              "mlAddsToBrandAdvisoryFalsePositives": 0
+            },
+            "0.01": {
+              "metrics": {
+                "threshold": 0.9321015608646374,
+                "tp": 0,
+                "fp": 0,
+                "tn": 29,
+                "fn": 0,
+                "precision": null,
+                "recall": null,
+                "f1": null,
+                "falsePositiveRate": 0.0,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 10,
+                "negativeDomainFalsePositiveRate": 0.0,
+                "negativeDomainFpr95Upper": 0.2588655508930522,
+                "recallBinomial95": null,
+                "urlFprBinomial95": [
+                  0.0,
+                  0.11944486906950269
+                ],
+                "precisionBinomial95": null
+              },
+              "comparedWithRandomForest": {
+                "extraPhish": 0,
+                "lostPhish": 0,
+                "extraFalsePositives": 0,
+                "avoidedFalsePositives": 0,
+                "disagree": 0,
+                "sharedErrors": 0,
+                "errorCorrelation": null,
+                "recallDelta": null,
+                "pairedRecallDeltaDomainBootstrap95": null
+              },
+              "advisoryOnlyUnionMetrics": {
+                "threshold": 0.5,
+                "tp": 0,
+                "fp": 0,
+                "tn": 29,
+                "fn": 0,
+                "precision": null,
+                "recall": null,
+                "f1": null,
+                "falsePositiveRate": 0.0,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 10,
+                "negativeDomainFalsePositiveRate": 0.0,
+                "negativeDomainFpr95Upper": 0.2588655508930522,
+                "recallBinomial95": null,
+                "urlFprBinomial95": [
+                  0.0,
+                  0.11944486906950269
+                ],
+                "precisionBinomial95": null
+              },
+              "mlAddsToBrandAdvisoryPhish": 0,
+              "mlAddsToBrandAdvisoryFalsePositives": 0
+            }
+          }
+        },
+        "fusion-mixed-20000-stack": {
+          "ranking": null,
+          "cutoffs": {
+            "0.001": {
+              "metrics": {
+                "threshold": 0.9707320772239589,
+                "tp": 0,
+                "fp": 0,
+                "tn": 29,
+                "fn": 0,
+                "precision": null,
+                "recall": null,
+                "f1": null,
+                "falsePositiveRate": 0.0,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 10,
+                "negativeDomainFalsePositiveRate": 0.0,
+                "negativeDomainFpr95Upper": 0.2588655508930522,
+                "recallBinomial95": null,
+                "urlFprBinomial95": [
+                  0.0,
+                  0.11944486906950269
+                ],
+                "precisionBinomial95": null
+              },
+              "comparedWithRandomForest": {
+                "extraPhish": 0,
+                "lostPhish": 0,
+                "extraFalsePositives": 0,
+                "avoidedFalsePositives": 0,
+                "disagree": 0,
+                "sharedErrors": 0,
+                "errorCorrelation": null,
+                "recallDelta": null,
+                "pairedRecallDeltaDomainBootstrap95": null
+              },
+              "advisoryOnlyUnionMetrics": {
+                "threshold": 0.5,
+                "tp": 0,
+                "fp": 0,
+                "tn": 29,
+                "fn": 0,
+                "precision": null,
+                "recall": null,
+                "f1": null,
+                "falsePositiveRate": 0.0,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 10,
+                "negativeDomainFalsePositiveRate": 0.0,
+                "negativeDomainFpr95Upper": 0.2588655508930522,
+                "recallBinomial95": null,
+                "urlFprBinomial95": [
+                  0.0,
+                  0.11944486906950269
+                ],
+                "precisionBinomial95": null
+              },
+              "mlAddsToBrandAdvisoryPhish": 0,
+              "mlAddsToBrandAdvisoryFalsePositives": 0
+            },
+            "0.01": {
+              "metrics": {
+                "threshold": 0.9446575079500802,
+                "tp": 0,
+                "fp": 0,
+                "tn": 29,
+                "fn": 0,
+                "precision": null,
+                "recall": null,
+                "f1": null,
+                "falsePositiveRate": 0.0,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 10,
+                "negativeDomainFalsePositiveRate": 0.0,
+                "negativeDomainFpr95Upper": 0.2588655508930522,
+                "recallBinomial95": null,
+                "urlFprBinomial95": [
+                  0.0,
+                  0.11944486906950269
+                ],
+                "precisionBinomial95": null
+              },
+              "comparedWithRandomForest": {
+                "extraPhish": 0,
+                "lostPhish": 0,
+                "extraFalsePositives": 0,
+                "avoidedFalsePositives": 0,
+                "disagree": 0,
+                "sharedErrors": 0,
+                "errorCorrelation": null,
+                "recallDelta": null,
+                "pairedRecallDeltaDomainBootstrap95": null
+              },
+              "advisoryOnlyUnionMetrics": {
+                "threshold": 0.5,
+                "tp": 0,
+                "fp": 0,
+                "tn": 29,
+                "fn": 0,
+                "precision": null,
+                "recall": null,
+                "f1": null,
+                "falsePositiveRate": 0.0,
+                "falseAlertDomains": 0,
+                "legitimateDomains": 10,
+                "negativeDomainFalsePositiveRate": 0.0,
+                "negativeDomainFpr95Upper": 0.2588655508930522,
+                "recallBinomial95": null,
+                "urlFprBinomial95": [
+                  0.0,
+                  0.11944486906950269
+                ],
+                "precisionBinomial95": null
+              },
+              "mlAddsToBrandAdvisoryPhish": 0,
+              "mlAddsToBrandAdvisoryFalsePositives": 0
+            }
+          }
+        }
+      },
+      "countsByKind": {
+        "verification": 1,
+        "login": 5,
+        "banking": 9,
+        "payment": 8,
+        "security": 6
+      },
+      "knownCampaignIds": 0,
+      "observedLexicalFamilies": 7,
+      "controlsByBrand": {
+        "pnb": 4,
+        "idfc-first": 4,
+        "baroda": 4,
+        "union": 4,
+        "indian-bank": 3,
+        "bank-of-india": 2,
+        "federal": 3,
+        "cashfree": 3,
+        "phonepe": 2
+      }
+    }
+  },
+  "runtime": {
+    "phresh-20000-path-forest": {
+      "storageBytes": 324894,
+      "loadMs": 20.452500000828877,
+      "sha256": "87db72f7b3f76fac491bc687e430f7230717277115388159befb7044754646a6",
+      "p50Ms": 3.846349995001219,
+      "p95Ms": 4.456979998940369,
+      "processCpuMsPerRow": 3.7841796875,
+      "pythonTracedBytesBatchUpTo256": 36458
+    },
+    "fusion-mixed-20000-two": {
+      "storageBytes": 263785,
+      "loadMs": 23.64569999917876,
+      "sha256": "a60293eeca5770f89184a30fc24a958489c406c638c33c0b49b8a61eaa5b52c0",
+      "p50Ms": 5.072550004115328,
+      "p95Ms": 6.384805002016947,
+      "processCpuMsPerRow": 5.126953125,
+      "pythonTracedBytesBatchUpTo256": 39108
+    },
+    "fusion-mixed-20000-four": {
+      "storageBytes": 271472,
+      "loadMs": 25.56670000194572,
+      "sha256": "960a4d885aa62ab592a39ddebdc1ee5d3e7569898bc656b1415b3c6cb7cb4225",
+      "p50Ms": 6.664950000413228,
+      "p95Ms": 7.246124994708225,
+      "processCpuMsPerRow": 6.34765625,
+      "pythonTracedBytesBatchUpTo256": 70410
+    },
+    "fusion-mixed-20000-stack": {
+      "storageBytes": 271349,
+      "loadMs": 24.42220000375528,
+      "sha256": "78c3a186c807fdb557225227e0d270dab7d1a6357c5ef4528f0adbf6c9b85b66",
+      "p50Ms": 6.006249997881241,
+      "p95Ms": 7.143605000601382,
+      "processCpuMsPerRow": 5.9814453125,
+      "pythonTracedBytesBatchUpTo256": 70332
+    }
+  },
+  "privateDisagreementReportSha256": "2bb9da6aa2a746c1577e8c6f8192397e42071429be95689a953bf973721190f2",
+  "financialPhishing": {
+    "indianVerified": 0,
+    "nonIndianVerified": 0
+  },
+  "historicalReputation": {
+    "status": "unsupported",
+    "reason": "No independent time-valid snapshot for either cohort"
+  },
+  "incrementalOverCombinedRules": null
+}

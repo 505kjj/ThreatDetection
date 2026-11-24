@@ -43,7 +43,7 @@ async function addPrior(folder, name, spec, includeFamily, index) {
   for (const group of groups) index.domains.add(group);
 }
 
-async function priorIndex(uci, phase3c, phase3d) {
+export async function priorIndex(uci, phase3c, phase3d) {
   const index = { domains: new Set(), families: new Set() };
   for (const [folder, name] of [['development', 'train'], ['development', 'validation'], ['holdout', 'test']]) {
     const path = join(uci, folder);

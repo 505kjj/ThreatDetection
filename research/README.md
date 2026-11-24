@@ -8,6 +8,8 @@ The [Phase 3D laptop-bounded report](../docs/experiments/phase3d/README.md) reco
 
 The [Phase 3E financial validation report](../docs/experiments/phase3e/README.md) records the frozen-model comparison, eligible Indian financial controls, and the remaining evidence required to evaluate phishing recall.
 
+The [Phase 3F acquisition and validation report](../docs/experiments/phase3f/README.md) records a licensed historical transfer test, new independent Indian financial controls, and the evidence still required for financial phishing validation.
+
 This environment prepares unfitted Logistic Regression, Random Forest, CPU XGBoost, and a small MLP. Logistic Regression and MLP package scaling inside their estimator pipelines. All candidates use a fixed seed, and both tree ensembles use one worker. The preflight verifies constructor and input compatibility. It performs no fit, evaluation, model serialization, or deployment.
 
 ## Reproduce the environment
