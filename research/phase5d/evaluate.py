@@ -85,7 +85,9 @@ def evaluate_fusion(functions, data, cached, baseline):
     names = [CONFIG["fusionReference"], *CONFIG["fusionPartners"]]
     fitting = data["fusion-fit"]
     fitting_scores = {name: functions[name](fitting) for name in names}
+    started = perf_counter()
     scales, trial = select(labels(fitting), group_labels(fitting), fitting_scores)
+    trial["fitSeconds"] = perf_counter() - started
     trial["fitIdsSha256"] = ids_sha256(fitting)
     trial["fitRows"] = len(fitting)
     trial["pairwiseValidationAtHalf"] = pairwise(
@@ -100,6 +102,11 @@ def evaluate_fusion(functions, data, cached, baseline):
         return trial
     first, second = winner["reference"], winner["partner"]
     weight = winner["referenceWeight"]
+    trial["componentCheckpointBytes"] = sum(
+        baseline[name].get("fit", baseline[name].get("originalBenchmark"))["modelBytes"] for name in (first, second))
+    trial["probabilityScales"] = {name: {"coefficient": float(scales[name].coef_[0, 0]),
+                                        "intercept": float(scales[name].intercept_[0])}
+                                  for name in (first, second)}
 
     def combine(a, b):
         return blend(probability(scales[first], a), probability(scales[second], b), weight)
@@ -122,7 +129,7 @@ def evaluate_fusion(functions, data, cached, baseline):
     return trial
 
 
-def evaluate_adaptation(root, functions, data, cached, baseline):
+def evaluate_adaptation(root, functions, data, cached, baseline, aux_manifest):
     target_cal = data["uci-calibration"]
     result = {"calibrationRows": len(target_cal), "calibrationIdsSha256": ids_sha256(target_cal),
               "evaluationRows": len(data["uci-validation"]), "experiments": {}}
@@ -134,7 +141,8 @@ def evaluate_adaptation(root, functions, data, cached, baseline):
             "pairedRecallDelta": {target: paired_recall(data["uci-validation"], values, cut["threshold"], values,
                             baseline[name]["thresholds"][target]["threshold"]) for target, cut in local.items()}}
     fit = read(root / "mixed" / "fit.json")
-    if fit["manifestSha256"] != CONFIG["phase5cManifestSha256"] or fit["protocolSha256"] != protocol_hash():
+    if (fit["manifestSha256"] != CONFIG["phase5cManifestSha256"] or fit["protocolSha256"] != protocol_hash()
+            or fit["targetTrainingViewSha256"] != aux_manifest["partitions"]["uci-adaptation"]["sha256"]):
         raise ValueError("Mixed model did not use frozen adaptation protocol")
     mixed = scorer("ngram", root / "mixed", fit)
     local = thresholds(target_cal, mixed(target_cal))
@@ -192,7 +200,7 @@ def matched(previous, root, aux, aux_manifest):
         output[str(size)] = runs
         if size == 20000:
             fusion = evaluate_fusion(functions, data, scores, runs)
-            adaptation = evaluate_adaptation(root, functions, data, scores, runs)
+            adaptation = evaluate_adaptation(root, functions, data, scores, runs, aux_manifest)
     return output, fusion, adaptation
 
 
@@ -236,13 +244,21 @@ def temporal(root, directory, manifest):
     return reports
 
 
-def run(previous, root):
-    prep = root / "prepared"
+def run(previous, root, prepared=None):
+    prep = prepared or root / "prepared"
     temporal_dir, aux_dir = prep / "temporal", prep / "auxiliary"
     temporal_m, aux_m = read(temporal_dir / "manifest.json"), read(aux_dir / "manifest.json")
     digest = protocol_hash()
     if temporal_m["protocolSha256"] != digest or aux_m["protocolSha256"] != digest:
         raise ValueError("Frozen development protocol changed")
+    if prepared is not None:
+        original = read(root / "prepared" / "auxiliary" / "manifest.json")
+        if any(original["partitions"][name] != aux_m["partitions"][name]
+               for name in ("uci-calibration", "uci-adaptation")):
+            raise ValueError("The fusion-view rebuild changed an adaptation input")
+    fusion_spec = aux_m["partitions"]["fusion-fit"]
+    if not fusion_spec["positive"] or not fusion_spec["negative"]:
+        raise ValueError("Fusion fitting requires both labels before evaluation can start")
     torch.set_num_threads(2)
     torch.set_num_interop_threads(1)
     with threadpool_limits(limits=2):
@@ -258,6 +274,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("previous", type=private)
     parser.add_argument("root", type=private)
+    parser.add_argument("--prepared", type=private)
     args = parser.parse_args()
     if os.environ.get("THREAT_PHASE3D_GUARDED") != "1":
         parser.error("Use the Windows Job Object resource guard")

@@ -20,6 +20,7 @@ def run(kind, source, destination, auxiliary):
     train = load_partition(source, manifest, "train")
     train_size = protocol["temporalBalancedRows"]
     additional = None
+    inputs_receipt = {}
     if kind == "mixed":
         if sha256(manifest_bytes).hexdigest() != protocol["phase5cManifestSha256"] or auxiliary is None:
             raise ValueError("Mixed run needs the pinned source and frozen adaptation views")
@@ -28,6 +29,8 @@ def run(kind, source, destination, auxiliary):
             raise ValueError("Adaptation protocol changed")
         train_size = protocol["adaptationBalancedRows"] // 2
         additional = balanced(load_partition(auxiliary, target, "uci-adaptation"), train_size)
+        inputs_receipt = {"targetTrainingViewSha256": target["partitions"]["uci-adaptation"]["sha256"],
+                          "targetTrainingIdsSha256": ids_sha256(additional)}
         tuning = []
     else:
         if manifest["version"] != protocol["version"] or manifest["protocolSha256"] != pin:
@@ -40,7 +43,8 @@ def run(kind, source, destination, auxiliary):
     with threadpool_limits(limits=2):
         _, metadata = fit_model("ngram" if kind == "mixed" else kind, selected, tuning, destination, False)
     report = {"kind": kind, "trainRows": len(selected), "trainIdsSha256": ids_sha256(selected),
-              "manifestSha256": sha256(manifest_bytes).hexdigest(), "protocolSha256": pin, **metadata}
+              "manifestSha256": sha256(manifest_bytes).hexdigest(), "protocolSha256": pin,
+              **inputs_receipt, **metadata}
     (destination / "fit.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({key: report[key] for key in ("kind", "trainRows", "fitSeconds")}), flush=True)
 

@@ -62,13 +62,14 @@ function balanced(rows, size) {
   return groups.flat().sort(byId);
 }
 
-function fusionFit(train) {
-  const used = new Set(balanced(train, protocol.matchedFusionTrainingRows).map(row => row.id));
+export function fusionFit(train, trainSize = protocol.matchedFusionTrainingRows,
+                          fitSize = protocol.fusionFitMaximumRows) {
+  const used = new Set(balanced(train, trainSize).map(row => row.id));
   const untouched = [];
   for (const group of components(train)) {
     if (!group.some(row => used.has(row.id))) untouched.push(...group);
   }
-  return untouched.sort(byId).slice(0, protocol.fusionFitMaximumRows)
+  return balanced(untouched.sort(byId), fitSize)
     .map(row => ({ ...row, partition: 'fusion-fit' }));
 }
 

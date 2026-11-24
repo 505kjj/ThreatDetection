@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { candidate } from '../phase5c/cohort.mjs';
-import { match, temporal } from './prepare.mjs';
+import { fusionFit, match, temporal } from './prepare.mjs';
 
 const row = (id, host, day) => candidate({
   sourceId: id, url: 'https://' + host + '/' + id, label: 1, date: day
@@ -36,4 +36,15 @@ test('publisher ID, canonical URL alias, group and family independently exclude 
     sets[field].add(field === 'id' ? fixture.sourceId : fixture.identity[field]);
     assert.equal(match(sets, fixture), true);
   }
+});
+
+test('fusion uses both classes from components outside the sampled training view', () => {
+  const train = Array.from({ length: 12 }, (_, i) => ({
+    ...row(String(i), 'example-' + String(i) + '.test', '2024-08-20'),
+    id: String(i).padStart(2, '0'),
+    label: Number(i >= 6)
+  }));
+  const members = fusionFit(train, 4, 4);
+  assert.deepEqual(members.map(row => row.id), ['02', '03', '08', '09']);
+  assert.deepEqual(members.map(row => row.label), [0, 0, 1, 1]);
 });
