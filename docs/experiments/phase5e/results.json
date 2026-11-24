@@ -1,0 +1,5214 @@
+{
+  "preflight": {
+    "schema": "phase5e-static-dom-v1",
+    "schemaSha256": "1a05408f9deefb31994b6dbf19d40a2383127c04c0a7c288e2b13f23cb214285",
+    "audit": {
+      "shards": [
+        "train-000",
+        "train-055",
+        "train-018"
+      ],
+      "matched": 4056,
+      "statusCounts": {
+        "usable": 3950,
+        "usableWithParseErrors": 178,
+        "oversized": 105,
+        "structure-limit": 1
+      },
+      "partitionCoverage": {
+        "train": {
+          "usable/0": 889,
+          "usable/1": 1893,
+          "oversized/1": 25,
+          "oversized/0": 49
+        },
+        "tuning": {
+          "usable/1": 265,
+          "usable/0": 114,
+          "oversized/0": 11
+        },
+        "calibration": {
+          "usable/1": 275,
+          "oversized/0": 4,
+          "usable/0": 128,
+          "structure-limit/0": 1,
+          "oversized/1": 3
+        },
+        "validation": {
+          "usable/1": 267,
+          "usable/0": 119,
+          "oversized/1": 6,
+          "oversized/0": 7
+        }
+      },
+      "canonicalSha256": "b05c458d47a7840a484419bb2f20953728e9171cb7557eb3158b6a43ccee86ac"
+    },
+    "rows": 1000,
+    "identities": {
+      "train": "7a043ba959d7dba2f817a8cab580a3e19421b77b7c64cafcb43962dc37c91a78",
+      "tuning": "2d1fdea43fa0527aa97f4d33f9844cf884c611b125a8855edac3726062fde7e3",
+      "calibration": "8b2d82d8003dde10700f2f21f496adcd2c472f1e53abb7f0502bff4734722512",
+      "validation": "3134798b22e05804666d421dcc93e2bb0cb749f3dd1e2523a519b461b5610da0"
+    },
+    "usable": {
+      "train": {
+        "rows": 2782,
+        "positive": 1893
+      },
+      "tuning": {
+        "rows": 379,
+        "positive": 265
+      },
+      "calibration": {
+        "rows": 403,
+        "positive": 275
+      },
+      "validation": {
+        "rows": 386,
+        "positive": 267
+      }
+    },
+    "models": {
+      "url-ngram": {
+        "fit": {
+          "fitSeconds": 0.25518900000315625,
+          "modelBytes": 207725,
+          "modelSha256": "5e7f5fbfdfbddfbdb5299f2c64b2305cf36365565eb9b43b2e457f350ced4db5"
+        },
+        "thresholds": {
+          "0.01": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationDomains": 127,
+            "threshold": null
+          },
+          "0.001": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 127,
+            "threshold": null
+          },
+          "0.0001": {
+            "targetNegativeDomainFpr": 0.0001,
+            "calibrationDomains": 127,
+            "threshold": null
+          }
+        },
+        "evaluation": {
+          "rows": 386,
+          "positive": 267,
+          "idsSha256": "3134798b22e05804666d421dcc93e2bb0cb749f3dd1e2523a519b461b5610da0",
+          "prAucAveragePrecision": 0.9856464438091072,
+          "rocAuc": 0.9654108834545054,
+          "logLoss": 0.3529213384344802,
+          "rankingIntervals": {
+            "prAuc95": [
+              0.9766245133873224,
+              0.9921185376573112
+            ],
+            "rocAuc95": [
+              0.945949043491119,
+              0.9814514036952329
+            ]
+          },
+          "brier": 0.10294666787306427,
+          "ece10EqualWidth": 0.16980870191516426,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 222,
+            "fp": 2,
+            "tn": 117,
+            "fn": 45,
+            "precision": 0.9910714285714286,
+            "recall": 0.8314606741573034,
+            "f1": 0.9042769857433809,
+            "falsePositiveRate": 0.01680672268907563,
+            "falseAlertDomains": 2,
+            "legitimateDomains": 119,
+            "negativeDomainFalsePositiveRate": 0.01680672268907563,
+            "negativeDomainFpr95Upper": 0.05195894540588867,
+            "intervals": {
+              "recall95": [
+                0.7859160558622146,
+                0.876111752174685
+              ],
+              "precision95": [
+                0.9758163639699138,
+                1.0
+              ],
+              "f1_95": [
+                0.8724996370038296,
+                0.9313943984306888
+              ],
+              "urlFpr95": [
+                0.0,
+                0.048025490196078435
+              ],
+              "domainFpr95": [
+                0.0020418923162399782,
+                0.05939338813447564
+              ]
+            }
+          },
+          "atConstraints": {
+            "0.01": null,
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "latency": {
+          "inference": {
+            "medianMs": 1.1403500029700808,
+            "p95Ms": 1.4141099949483762
+          }
+        }
+      },
+      "url-xgboost": {
+        "fit": {
+          "fitSeconds": 0.0323699000000488,
+          "modelBytes": 20293,
+          "modelSha256": "3f268bce3b9ce0703ef3fe64048a725a17046202daf7027b922cea8ad929ebdc"
+        },
+        "thresholds": {
+          "0.01": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationDomains": 127,
+            "threshold": null
+          },
+          "0.001": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 127,
+            "threshold": null
+          },
+          "0.0001": {
+            "targetNegativeDomainFpr": 0.0001,
+            "calibrationDomains": 127,
+            "threshold": null
+          }
+        },
+        "evaluation": {
+          "rows": 386,
+          "positive": 267,
+          "idsSha256": "3134798b22e05804666d421dcc93e2bb0cb749f3dd1e2523a519b461b5610da0",
+          "prAucAveragePrecision": 0.972843977002448,
+          "rocAuc": 0.9386743461429514,
+          "logLoss": 0.3195029233318715,
+          "rankingIntervals": {
+            "prAuc95": [
+              0.9580450537613929,
+              0.9824176463131326
+            ],
+            "rocAuc95": [
+              0.9117573754547001,
+              0.9605956490485974
+            ]
+          },
+          "brier": 0.10315378062467104,
+          "ece10EqualWidth": 0.08224496343703892,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 220,
+            "fp": 14,
+            "tn": 105,
+            "fn": 47,
+            "precision": 0.9401709401709402,
+            "recall": 0.8239700374531835,
+            "f1": 0.8782435129740519,
+            "falsePositiveRate": 0.11764705882352941,
+            "falseAlertDomains": 14,
+            "legitimateDomains": 119,
+            "negativeDomainFalsePositiveRate": 0.11764705882352941,
+            "negativeDomainFpr95Upper": 0.17779076226685603,
+            "intervals": {
+              "recall95": [
+                0.7765510800714633,
+                0.8726806412932451
+              ],
+              "precision95": [
+                0.9046644088669951,
+                0.9676144894894895
+              ],
+              "f1_95": [
+                0.8457560483870967,
+                0.9091458944281525
+              ],
+              "urlFpr95": [
+                0.06200020399836801,
+                0.17804281122150792
+              ],
+              "domainFpr95": [
+                0.06583390291258781,
+                0.18950903518674506
+              ]
+            }
+          },
+          "atConstraints": {
+            "0.01": null,
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "latency": {
+          "inference": {
+            "medianMs": 0.4888500043307431,
+            "p95Ms": 0.7488400049624035
+          }
+        }
+      },
+      "dom-logistic": {
+        "fit": {
+          "fitSeconds": 0.011745600000722334,
+          "modelBytes": 1747,
+          "modelSha256": "07cd0ca611872a4fa999d82333f33715433a700560e7403703d5ea5ea47eda7e",
+          "featureCount": 36
+        },
+        "thresholds": {
+          "0.01": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationDomains": 127,
+            "threshold": null
+          },
+          "0.001": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 127,
+            "threshold": null
+          },
+          "0.0001": {
+            "targetNegativeDomainFpr": 0.0001,
+            "calibrationDomains": 127,
+            "threshold": null
+          }
+        },
+        "evaluation": {
+          "rows": 386,
+          "positive": 267,
+          "idsSha256": "3134798b22e05804666d421dcc93e2bb0cb749f3dd1e2523a519b461b5610da0",
+          "prAucAveragePrecision": 0.9320912864193437,
+          "rocAuc": 0.8863815188996946,
+          "logLoss": 0.4857264547438193,
+          "rankingIntervals": {
+            "prAuc95": [
+              0.8905804282312557,
+              0.960862506624326
+            ],
+            "rocAuc95": [
+              0.8456442738908022,
+              0.9191750589403346
+            ]
+          },
+          "brier": 0.12997427429246916,
+          "ece10EqualWidth": 0.10384025524663083,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 236,
+            "fp": 30,
+            "tn": 89,
+            "fn": 31,
+            "precision": 0.8872180451127819,
+            "recall": 0.8838951310861424,
+            "f1": 0.8855534709193246,
+            "falsePositiveRate": 0.25210084033613445,
+            "falseAlertDomains": 30,
+            "legitimateDomains": 119,
+            "negativeDomainFalsePositiveRate": 0.25210084033613445,
+            "negativeDomainFpr95Upper": 0.3260438898599403,
+            "intervals": {
+              "recall95": [
+                0.8511307800298324,
+                0.9186508985200845
+              ],
+              "precision95": [
+                0.8441409915545824,
+                0.9248856456731182
+              ],
+              "f1_95": [
+                0.8550059219399316,
+                0.9155756471357817
+              ],
+              "urlFpr95": [
+                0.17306430446194226,
+                0.3361988343724587
+              ],
+              "domainFpr95": [
+                0.17700295053880344,
+                0.3399314661592247
+              ]
+            }
+          },
+          "atConstraints": {
+            "0.01": null,
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "latency": {
+          "inference": {
+            "medianMs": 0.4639000035240315,
+            "p95Ms": 0.5622100026812404
+          },
+          "parseMs": {
+            "medianMs": 2.7807,
+            "p95Ms": 25.033335000000008
+          },
+          "extractMs": {
+            "medianMs": 0.25065000000000004,
+            "p95Ms": 3.430915000000001
+          },
+          "pipelineMs": {
+            "medianMs": 4.928549999021925,
+            "p95Ms": 39.979539998603286
+          },
+          "endToEndPairedStageMs": {
+            "medianMs": 5.474049998156261,
+            "p95Ms": 40.48136499186512
+          }
+        }
+      },
+      "dom-forest": {
+        "fit": {
+          "fitSeconds": 0.1417269999947166,
+          "modelBytes": 83532,
+          "modelSha256": "70d14ba940991f1e189c5f4a60c36ba1dfbedff9151bf6b8722a1768aac7c049",
+          "featureCount": 36
+        },
+        "thresholds": {
+          "0.01": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationDomains": 127,
+            "threshold": null
+          },
+          "0.001": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 127,
+            "threshold": null
+          },
+          "0.0001": {
+            "targetNegativeDomainFpr": 0.0001,
+            "calibrationDomains": 127,
+            "threshold": null
+          }
+        },
+        "evaluation": {
+          "rows": 386,
+          "positive": 267,
+          "idsSha256": "3134798b22e05804666d421dcc93e2bb0cb749f3dd1e2523a519b461b5610da0",
+          "prAucAveragePrecision": 0.9844103592980626,
+          "rocAuc": 0.9656626695622068,
+          "logLoss": 0.2706584776560565,
+          "rankingIntervals": {
+            "prAuc95": [
+              0.9752209481984265,
+              0.9910415864167608
+            ],
+            "rocAuc95": [
+              0.9480870370824476,
+              0.9781429039965346
+            ]
+          },
+          "brier": 0.07850689043508036,
+          "ece10EqualWidth": 0.10044977748917662,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 234,
+            "fp": 6,
+            "tn": 113,
+            "fn": 33,
+            "precision": 0.975,
+            "recall": 0.8764044943820225,
+            "f1": 0.9230769230769231,
+            "falsePositiveRate": 0.05042016806722689,
+            "falseAlertDomains": 6,
+            "legitimateDomains": 119,
+            "negativeDomainFalsePositiveRate": 0.05042016806722689,
+            "negativeDomainFpr95Upper": 0.09708537463975332,
+            "intervals": {
+              "recall95": [
+                0.8297425531914894,
+                0.9164023066485754
+              ],
+              "precision95": [
+                0.9533454073264079,
+                0.9916369225514473
+              ],
+              "f1_95": [
+                0.8954635108481263,
+                0.9451034007352941
+              ],
+              "urlFpr95": [
+                0.018336336828309308,
+                0.09302818289318092
+              ],
+              "domainFpr95": [
+                0.018725508054905617,
+                0.10651501471202389
+              ]
+            }
+          },
+          "atConstraints": {
+            "0.01": null,
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "latency": {
+          "inference": {
+            "medianMs": 17.309900009422563,
+            "p95Ms": 20.119639992481098
+          },
+          "parseMs": {
+            "medianMs": 2.7807,
+            "p95Ms": 25.033335000000008
+          },
+          "extractMs": {
+            "medianMs": 0.25065000000000004,
+            "p95Ms": 3.430915000000001
+          },
+          "pipelineMs": {
+            "medianMs": 4.928549999021925,
+            "p95Ms": 39.979539998603286
+          },
+          "endToEndPairedStageMs": {
+            "medianMs": 22.608100007346366,
+            "p95Ms": 57.346310000139056
+          }
+        }
+      },
+      "dom-xgboost": {
+        "fit": {
+          "fitSeconds": 0.04501499999605585,
+          "modelBytes": 19920,
+          "modelSha256": "cac0cd50e971a94f7905afbc07be792e630a733d74903173b43ef8b3bac8e1bf",
+          "featureCount": 36
+        },
+        "thresholds": {
+          "0.01": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationDomains": 127,
+            "threshold": null
+          },
+          "0.001": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 127,
+            "threshold": null
+          },
+          "0.0001": {
+            "targetNegativeDomainFpr": 0.0001,
+            "calibrationDomains": 127,
+            "threshold": null
+          }
+        },
+        "evaluation": {
+          "rows": 386,
+          "positive": 267,
+          "idsSha256": "3134798b22e05804666d421dcc93e2bb0cb749f3dd1e2523a519b461b5610da0",
+          "prAucAveragePrecision": 0.9818351870165598,
+          "rocAuc": 0.9616655651024455,
+          "logLoss": 0.26162011997665113,
+          "rankingIntervals": {
+            "prAuc95": [
+              0.9704237058524292,
+              0.9899127327896854
+            ],
+            "rocAuc95": [
+              0.9397808456246242,
+              0.9771600932507835
+            ]
+          },
+          "brier": 0.07365012558541266,
+          "ece10EqualWidth": 0.07367349587986487,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 241,
+            "fp": 8,
+            "tn": 111,
+            "fn": 26,
+            "precision": 0.9678714859437751,
+            "recall": 0.9026217228464419,
+            "f1": 0.9341085271317829,
+            "falsePositiveRate": 0.06722689075630252,
+            "falseAlertDomains": 8,
+            "legitimateDomains": 119,
+            "negativeDomainFalsePositiveRate": 0.06722689075630252,
+            "negativeDomainFpr95Upper": 0.11802897454565538,
+            "intervals": {
+              "recall95": [
+                0.8634646526321378,
+                0.9360126984126985
+              ],
+              "precision95": [
+                0.9428512880562061,
+                0.9880559158713982
+              ],
+              "f1_95": [
+                0.9076105664895607,
+                0.9541174383728056
+              ],
+              "urlFpr95": [
+                0.023809523809523808,
+                0.11213609383832676
+              ],
+              "domainFpr95": [
+                0.029468535026432176,
+                0.1281695496107004
+              ]
+            }
+          },
+          "atConstraints": {
+            "0.01": null,
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "latency": {
+          "inference": {
+            "medianMs": 0.49715000204741955,
+            "p95Ms": 0.7171250093961137
+          },
+          "parseMs": {
+            "medianMs": 2.7807,
+            "p95Ms": 25.033335000000008
+          },
+          "extractMs": {
+            "medianMs": 0.25065000000000004,
+            "p95Ms": 3.430915000000001
+          },
+          "pipelineMs": {
+            "medianMs": 4.928549999021925,
+            "p95Ms": 39.979539998603286
+          },
+          "endToEndPairedStageMs": {
+            "medianMs": 5.4804000101285055,
+            "p95Ms": 40.491529997234466
+          }
+        }
+      },
+      "url-dom-xgboost": {
+        "fit": {
+          "fitSeconds": 0.05071999999927357,
+          "modelBytes": 20013,
+          "modelSha256": "6fafb992c73be9c33bfc293e19519478273484d915fc763f2b975802f9558682",
+          "featureCount": 50
+        },
+        "thresholds": {
+          "0.01": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationDomains": 127,
+            "threshold": null
+          },
+          "0.001": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 127,
+            "threshold": null
+          },
+          "0.0001": {
+            "targetNegativeDomainFpr": 0.0001,
+            "calibrationDomains": 127,
+            "threshold": null
+          }
+        },
+        "evaluation": {
+          "rows": 386,
+          "positive": 267,
+          "idsSha256": "3134798b22e05804666d421dcc93e2bb0cb749f3dd1e2523a519b461b5610da0",
+          "prAucAveragePrecision": 0.99268834886609,
+          "rocAuc": 0.9828470714128348,
+          "logLoss": 0.18574629190325165,
+          "rankingIntervals": {
+            "prAuc95": [
+              0.9873295150098852,
+              0.9964991531264575
+            ],
+            "rocAuc95": [
+              0.9720106171598298,
+              0.991205391091798
+            ]
+          },
+          "brier": 0.05376505104614749,
+          "ece10EqualWidth": 0.05062251380756932,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 248,
+            "fp": 8,
+            "tn": 111,
+            "fn": 19,
+            "precision": 0.96875,
+            "recall": 0.9288389513108615,
+            "f1": 0.9483747609942639,
+            "falsePositiveRate": 0.06722689075630252,
+            "falseAlertDomains": 8,
+            "legitimateDomains": 119,
+            "negativeDomainFalsePositiveRate": 0.06722689075630252,
+            "negativeDomainFpr95Upper": 0.11802897454565538,
+            "intervals": {
+              "recall95": [
+                0.8961282771535581,
+                0.9618499299539698
+              ],
+              "precision95": [
+                0.9477023334975591,
+                0.988598476249929
+              ],
+              "f1_95": [
+                0.9283015109373826,
+                0.9669263510853673
+              ],
+              "urlFpr95": [
+                0.02586206896551724,
+                0.11278849297155932
+              ],
+              "domainFpr95": [
+                0.029468535026432176,
+                0.1281695496107004
+              ]
+            }
+          },
+          "atConstraints": {
+            "0.01": null,
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "latency": {
+          "inference": {
+            "medianMs": 0.512849997903686,
+            "p95Ms": 0.761725001211744
+          },
+          "parseMs": {
+            "medianMs": 2.7807,
+            "p95Ms": 25.033335000000008
+          },
+          "extractMs": {
+            "medianMs": 0.25065000000000004,
+            "p95Ms": 3.430915000000001
+          },
+          "pipelineMs": {
+            "medianMs": 4.928549999021925,
+            "p95Ms": 39.979539998603286
+          },
+          "endToEndPairedStageMs": {
+            "medianMs": 5.512999996426515,
+            "p95Ms": 40.51043999934336
+          }
+        }
+      },
+      "ablation-structure": {
+        "fit": {
+          "fitSeconds": 0.04058400000212714,
+          "modelBytes": 19393,
+          "modelSha256": "5601e1ccd6baa0ae7d23b71cc1d480fcc7d9dcb95221f7e22c4270b7ae462a01",
+          "featureCount": 32
+        },
+        "thresholds": {
+          "0.01": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationDomains": 127,
+            "threshold": null
+          },
+          "0.001": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 127,
+            "threshold": null
+          },
+          "0.0001": {
+            "targetNegativeDomainFpr": 0.0001,
+            "calibrationDomains": 127,
+            "threshold": null
+          }
+        },
+        "evaluation": {
+          "rows": 386,
+          "positive": 267,
+          "idsSha256": "3134798b22e05804666d421dcc93e2bb0cb749f3dd1e2523a519b461b5610da0",
+          "prAucAveragePrecision": 0.9751185903483146,
+          "rocAuc": 0.9578573002234602,
+          "logLoss": 0.2683027092919468,
+          "rankingIntervals": {
+            "prAuc95": [
+              0.9508101585365124,
+              0.9903622973920314
+            ],
+            "rocAuc95": [
+              0.9334545307728447,
+              0.9760872474412613
+            ]
+          },
+          "brier": 0.07424887260320655,
+          "ece10EqualWidth": 0.08607715148680212,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 242,
+            "fp": 7,
+            "tn": 112,
+            "fn": 25,
+            "precision": 0.9718875502008032,
+            "recall": 0.9063670411985019,
+            "f1": 0.937984496124031,
+            "falsePositiveRate": 0.058823529411764705,
+            "falseAlertDomains": 7,
+            "legitimateDomains": 119,
+            "negativeDomainFalsePositiveRate": 0.058823529411764705,
+            "negativeDomainFpr95Upper": 0.10764536318970977,
+            "intervals": {
+              "recall95": [
+                0.874966155234657,
+                0.9399547174536046
+              ],
+              "precision95": [
+                0.9501672503591955,
+                0.9882409502262444
+              ],
+              "f1_95": [
+                0.9171841825902336,
+                0.9584271485422643
+              ],
+              "urlFpr95": [
+                0.023809523809523808,
+                0.10662071535022355
+              ],
+              "domainFpr95": [
+                0.023974559730976158,
+                0.11744630485242787
+              ]
+            }
+          },
+          "atConstraints": {
+            "0.01": null,
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "latency": {
+          "inference": {
+            "medianMs": 0.494699997943826,
+            "p95Ms": 0.6987249922531192
+          },
+          "parseMs": {
+            "medianMs": 2.7807,
+            "p95Ms": 25.033335000000008
+          },
+          "extractMs": {
+            "medianMs": 0.25065000000000004,
+            "p95Ms": 3.430915000000001
+          },
+          "pipelineMs": {
+            "medianMs": 4.928549999021925,
+            "p95Ms": 39.979539998603286
+          },
+          "endToEndPairedStageMs": {
+            "medianMs": 5.466099995828699,
+            "p95Ms": 40.45906500759884
+          }
+        }
+      },
+      "ablation-credential": {
+        "fit": {
+          "fitSeconds": 0.038829899989650585,
+          "modelBytes": 19461,
+          "modelSha256": "ba3c3654793bc46b3377af17ca633736159271d44326c57031477e0c1acce849",
+          "featureCount": 21
+        },
+        "thresholds": {
+          "0.01": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationDomains": 127,
+            "threshold": null
+          },
+          "0.001": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 127,
+            "threshold": null
+          },
+          "0.0001": {
+            "targetNegativeDomainFpr": 0.0001,
+            "calibrationDomains": 127,
+            "threshold": null
+          }
+        },
+        "evaluation": {
+          "rows": 386,
+          "positive": 267,
+          "idsSha256": "3134798b22e05804666d421dcc93e2bb0cb749f3dd1e2523a519b461b5610da0",
+          "prAucAveragePrecision": 0.9744444040834377,
+          "rocAuc": 0.9535139898656091,
+          "logLoss": 0.2802944112168313,
+          "rankingIntervals": {
+            "prAuc95": [
+              0.9515864157466182,
+              0.9885170342251276
+            ],
+            "rocAuc95": [
+              0.9275263459188453,
+              0.972428289849839
+            ]
+          },
+          "brier": 0.07899339123400095,
+          "ece10EqualWidth": 0.0753843591854922,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 236,
+            "fp": 9,
+            "tn": 110,
+            "fn": 31,
+            "precision": 0.963265306122449,
+            "recall": 0.8838951310861424,
+            "f1": 0.921875,
+            "falsePositiveRate": 0.07563025210084033,
+            "falseAlertDomains": 9,
+            "legitimateDomains": 119,
+            "negativeDomainFalsePositiveRate": 0.07563025210084033,
+            "negativeDomainFpr95Upper": 0.12826375209132154,
+            "intervals": {
+              "recall95": [
+                0.841654149208106,
+                0.9222506082725062
+              ],
+              "precision95": [
+                0.9382652280379553,
+                0.9871848739495799
+              ],
+              "f1_95": [
+                0.8912002608710383,
+                0.945812899046914
+              ],
+              "urlFpr95": [
+                0.027516680567139285,
+                0.11914519906323187
+              ],
+              "domainFpr95": [
+                0.03516540219760032,
+                0.1387171194796458
+              ]
+            }
+          },
+          "atConstraints": {
+            "0.01": null,
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "latency": {
+          "inference": {
+            "medianMs": 0.4932000010740012,
+            "p95Ms": 0.7345449899730738
+          },
+          "parseMs": {
+            "medianMs": 2.7807,
+            "p95Ms": 25.033335000000008
+          },
+          "extractMs": {
+            "medianMs": 0.25065000000000004,
+            "p95Ms": 3.430915000000001
+          },
+          "pipelineMs": {
+            "medianMs": 4.928549999021925,
+            "p95Ms": 39.979539998603286
+          },
+          "endToEndPairedStageMs": {
+            "medianMs": 5.504849992576055,
+            "p95Ms": 40.50673499514233
+          }
+        }
+      },
+      "ablation-resources": {
+        "fit": {
+          "fitSeconds": 0.03258970000024419,
+          "modelBytes": 19551,
+          "modelSha256": "50c6cc25c173f885dd42f82c719d41fa04b1866d1acb8a28ac27332b25a39aae",
+          "featureCount": 23
+        },
+        "thresholds": {
+          "0.01": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationDomains": 127,
+            "threshold": null
+          },
+          "0.001": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 127,
+            "threshold": null
+          },
+          "0.0001": {
+            "targetNegativeDomainFpr": 0.0001,
+            "calibrationDomains": 127,
+            "threshold": null
+          }
+        },
+        "evaluation": {
+          "rows": 386,
+          "positive": 267,
+          "idsSha256": "3134798b22e05804666d421dcc93e2bb0cb749f3dd1e2523a519b461b5610da0",
+          "prAucAveragePrecision": 0.962498724811104,
+          "rocAuc": 0.9304440877474585,
+          "logLoss": 0.3515592253030975,
+          "rankingIntervals": {
+            "prAuc95": [
+              0.9352917709364139,
+              0.9816427578608615
+            ],
+            "rocAuc95": [
+              0.8978982096714655,
+              0.9536938578818125
+            ]
+          },
+          "brier": 0.10520447793957226,
+          "ece10EqualWidth": 0.09191027499368618,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 224,
+            "fp": 17,
+            "tn": 102,
+            "fn": 43,
+            "precision": 0.9294605809128631,
+            "recall": 0.8389513108614233,
+            "f1": 0.8818897637795275,
+            "falsePositiveRate": 0.14285714285714285,
+            "falseAlertDomains": 17,
+            "legitimateDomains": 119,
+            "negativeDomainFalsePositiveRate": 0.14285714285714285,
+            "negativeDomainFpr95Upper": 0.2065467013060133,
+            "intervals": {
+              "recall95": [
+                0.7911960132890365,
+                0.8854022788805398
+              ],
+              "precision95": [
+                0.8933868921050826,
+                0.9611048100008279
+              ],
+              "f1_95": [
+                0.8474521715119719,
+                0.9087634322086932
+              ],
+              "urlFpr95": [
+                0.0873309268940337,
+                0.2049160337258728
+              ],
+              "domainFpr95": [
+                0.08547680237964397,
+                0.21884839420605043
+              ]
+            }
+          },
+          "atConstraints": {
+            "0.01": null,
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "latency": {
+          "inference": {
+            "medianMs": 0.4849499964620918,
+            "p95Ms": 0.7042300065222662
+          },
+          "parseMs": {
+            "medianMs": 2.7807,
+            "p95Ms": 25.033335000000008
+          },
+          "extractMs": {
+            "medianMs": 0.25065000000000004,
+            "p95Ms": 3.430915000000001
+          },
+          "pipelineMs": {
+            "medianMs": 4.928549999021925,
+            "p95Ms": 39.979539998603286
+          },
+          "endToEndPairedStageMs": {
+            "medianMs": 5.4032499974709935,
+            "p95Ms": 40.464755002903985
+          }
+        }
+      },
+      "ablation-title": {
+        "fit": {
+          "fitSeconds": 0.04181359999347478,
+          "modelBytes": 19723,
+          "modelSha256": "eb8fb0113d9f8411ac6abb1bc5cef70591a34cd710d57dbdd904a1ff22df4a44",
+          "featureCount": 32
+        },
+        "thresholds": {
+          "0.01": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationDomains": 127,
+            "threshold": null
+          },
+          "0.001": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 127,
+            "threshold": null
+          },
+          "0.0001": {
+            "targetNegativeDomainFpr": 0.0001,
+            "calibrationDomains": 127,
+            "threshold": null
+          }
+        },
+        "evaluation": {
+          "rows": 386,
+          "positive": 267,
+          "idsSha256": "3134798b22e05804666d421dcc93e2bb0cb749f3dd1e2523a519b461b5610da0",
+          "prAucAveragePrecision": 0.9773112919360449,
+          "rocAuc": 0.9551505995656691,
+          "logLoss": 0.26932603851838327,
+          "rankingIntervals": {
+            "prAuc95": [
+              0.9623363040175732,
+              0.987951067359717
+            ],
+            "rocAuc95": [
+              0.931149174015453,
+              0.9729571124169513
+            ]
+          },
+          "brier": 0.07384558885773201,
+          "ece10EqualWidth": 0.07277154904691299,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 243,
+            "fp": 8,
+            "tn": 111,
+            "fn": 24,
+            "precision": 0.9681274900398407,
+            "recall": 0.9101123595505618,
+            "f1": 0.9382239382239382,
+            "falsePositiveRate": 0.06722689075630252,
+            "falseAlertDomains": 8,
+            "legitimateDomains": 119,
+            "negativeDomainFalsePositiveRate": 0.06722689075630252,
+            "negativeDomainFpr95Upper": 0.11802897454565538,
+            "intervals": {
+              "recall95": [
+                0.8711965240641711,
+                0.9409614058279211
+              ],
+              "precision95": [
+                0.9471190206088107,
+                0.9878578947368422
+              ],
+              "f1_95": [
+                0.9159599471972697,
+                0.9566825961613381
+              ],
+              "urlFpr95": [
+                0.0285515873015873,
+                0.11019303201506592
+              ],
+              "domainFpr95": [
+                0.029468535026432176,
+                0.1281695496107004
+              ]
+            }
+          },
+          "atConstraints": {
+            "0.01": null,
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "latency": {
+          "inference": {
+            "medianMs": 0.49199999921256676,
+            "p95Ms": 0.7153700033086352
+          },
+          "parseMs": {
+            "medianMs": 2.7807,
+            "p95Ms": 25.033335000000008
+          },
+          "extractMs": {
+            "medianMs": 0.25065000000000004,
+            "p95Ms": 3.430915000000001
+          },
+          "pipelineMs": {
+            "medianMs": 4.928549999021925,
+            "p95Ms": 39.979539998603286
+          },
+          "endToEndPairedStageMs": {
+            "medianMs": 5.663099989760667,
+            "p95Ms": 40.404390004550805
+          }
+        }
+      },
+      "url-fusion": {
+        "fit": {
+          "fitSeconds": 0.07627089999732561,
+          "referenceWeight": 0.75,
+          "componentModelBytes": 228018
+        },
+        "thresholds": {
+          "0.01": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationDomains": 127,
+            "threshold": null
+          },
+          "0.001": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 127,
+            "threshold": null
+          },
+          "0.0001": {
+            "targetNegativeDomainFpr": 0.0001,
+            "calibrationDomains": 127,
+            "threshold": null
+          }
+        },
+        "evaluation": {
+          "rows": 386,
+          "positive": 267,
+          "idsSha256": "3134798b22e05804666d421dcc93e2bb0cb749f3dd1e2523a519b461b5610da0",
+          "prAucAveragePrecision": 0.9885098392939493,
+          "rocAuc": 0.9732791993201775,
+          "logLoss": 0.208342392293814,
+          "rankingIntervals": {
+            "prAuc95": [
+              0.9811515485212043,
+              0.9942998176147978
+            ],
+            "rocAuc95": [
+              0.9581919697247818,
+              0.9864488381468128
+            ]
+          },
+          "brier": 0.06240847926141804,
+          "ece10EqualWidth": 0.05294502465069206,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 250,
+            "fp": 15,
+            "tn": 104,
+            "fn": 17,
+            "precision": 0.9433962264150944,
+            "recall": 0.9363295880149812,
+            "f1": 0.9398496240601504,
+            "falsePositiveRate": 0.12605042016806722,
+            "falseAlertDomains": 15,
+            "legitimateDomains": 119,
+            "negativeDomainFalsePositiveRate": 0.12605042016806722,
+            "negativeDomainFpr95Upper": 0.18744213089352457,
+            "intervals": {
+              "recall95": [
+                0.9100361304874484,
+                0.9699546700686735
+              ],
+              "precision95": [
+                0.9087591240875912,
+                0.9675244868899852
+              ],
+              "f1_95": [
+                0.9154348314769695,
+                0.9623013974043159
+              ],
+              "urlFpr95": [
+                0.0761501210653753,
+                0.19692913385826774
+              ],
+              "domainFpr95": [
+                0.07229735949830586,
+                0.1993669982506781
+              ]
+            }
+          },
+          "atConstraints": {
+            "0.01": null,
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "latency": {
+          "inference": {
+            "medianMs": 2.650750000611879,
+            "p95Ms": 3.163975004281383
+          }
+        }
+      }
+    },
+    "incrementalDetection": {
+      "url-ngram+dom-xgboost": {
+        "fixed": {
+          "predictionDisagreement": 65,
+          "bothErrors": 8,
+          "firstOnlyErrors": 39,
+          "secondOnlyErrors": 26,
+          "firstOnlyTruePositives": 19,
+          "secondOnlyTruePositives": 38,
+          "bothFalsePositives": 1,
+          "pairedRecall": {
+            "delta": 0.07116104868913857,
+            "delta95": [
+              0.011530898876404495,
+              0.12911384460901218
+            ]
+          }
+        },
+        "0.01": null,
+        "0.001": null,
+        "0.0001": null
+      },
+      "url-ngram+url-dom-xgboost": {
+        "fixed": {
+          "predictionDisagreement": 48,
+          "bothErrors": 13,
+          "firstOnlyErrors": 34,
+          "secondOnlyErrors": 14,
+          "firstOnlyTruePositives": 8,
+          "secondOnlyTruePositives": 34,
+          "bothFalsePositives": 2,
+          "pairedRecall": {
+            "delta": 0.09737827715355805,
+            "delta95": [
+              0.05161421441800625,
+              0.14234931626164968
+            ]
+          }
+        },
+        "0.01": null,
+        "0.001": null,
+        "0.0001": null
+      },
+      "url-xgboost+dom-xgboost": {
+        "fixed": {
+          "predictionDisagreement": 87,
+          "bothErrors": 4,
+          "firstOnlyErrors": 57,
+          "secondOnlyErrors": 30,
+          "firstOnlyTruePositives": 23,
+          "secondOnlyTruePositives": 44,
+          "bothFalsePositives": 1,
+          "pairedRecall": {
+            "delta": 0.07865168539325842,
+            "delta95": [
+              0.011657155399473224,
+              0.14573478338971887
+            ]
+          }
+        },
+        "0.01": null,
+        "0.001": null,
+        "0.0001": null
+      },
+      "url-xgboost+url-dom-xgboost": {
+        "fixed": {
+          "predictionDisagreement": 62,
+          "bothErrors": 13,
+          "firstOnlyErrors": 48,
+          "secondOnlyErrors": 14,
+          "firstOnlyTruePositives": 8,
+          "secondOnlyTruePositives": 36,
+          "bothFalsePositives": 2,
+          "pairedRecall": {
+            "delta": 0.10486891385767791,
+            "delta95": [
+              0.06153429602888087,
+              0.15884651442644054
+            ]
+          }
+        },
+        "0.01": null,
+        "0.001": null,
+        "0.0001": null
+      },
+      "url-fusion+dom-xgboost": {
+        "fixed": {
+          "predictionDisagreement": 50,
+          "bothErrors": 8,
+          "firstOnlyErrors": 24,
+          "secondOnlyErrors": 26,
+          "firstOnlyTruePositives": 23,
+          "secondOnlyTruePositives": 14,
+          "bothFalsePositives": 5,
+          "pairedRecall": {
+            "delta": -0.033707865168539325,
+            "delta95": [
+              -0.0785855601233299,
+              0.01167776564494548
+            ]
+          }
+        },
+        "0.01": null,
+        "0.001": null,
+        "0.0001": null
+      },
+      "url-fusion+url-dom-xgboost": {
+        "fixed": {
+          "predictionDisagreement": 41,
+          "bothErrors": 9,
+          "firstOnlyErrors": 23,
+          "secondOnlyErrors": 18,
+          "firstOnlyTruePositives": 14,
+          "secondOnlyTruePositives": 12,
+          "bothFalsePositives": 4,
+          "pairedRecall": {
+            "delta": -0.00749063670411985,
+            "delta95": [
+              -0.0530506993006993,
+              0.03156093414459558
+            ]
+          }
+        },
+        "0.01": null,
+        "0.001": null,
+        "0.0001": null
+      }
+    }
+  },
+  "scale20k": {
+    "schema": "phase5e-static-dom-v1",
+    "schemaSha256": "1a05408f9deefb31994b6dbf19d40a2383127c04c0a7c288e2b13f23cb214285",
+    "audit": {
+      "shards": [
+        "train-000",
+        "train-055",
+        "train-018",
+        "train-037",
+        "train-049",
+        "train-009",
+        "train-046",
+        "train-043",
+        "train-002",
+        "train-026",
+        "train-025",
+        "train-033",
+        "train-016",
+        "train-044",
+        "train-010",
+        "train-030",
+        "train-011"
+      ],
+      "matched": 50962,
+      "statusCounts": {
+        "usable": 49901,
+        "usableWithParseErrors": 2049,
+        "oversized": 1056,
+        "structure-limit": 5
+      },
+      "partitionCoverage": {
+        "train": {
+          "usable/0": 10046,
+          "usable/1": 24945,
+          "oversized/1": 300,
+          "oversized/0": 451,
+          "structure-limit/0": 2
+        },
+        "tuning": {
+          "usable/0": 1380,
+          "usable/1": 3589,
+          "oversized/1": 41,
+          "oversized/0": 66
+        },
+        "calibration": {
+          "usable/1": 3614,
+          "usable/0": 1316,
+          "oversized/0": 55,
+          "oversized/1": 37,
+          "structure-limit/0": 2
+        },
+        "validation": {
+          "usable/1": 3655,
+          "usable/0": 1356,
+          "oversized/0": 62,
+          "oversized/1": 44,
+          "structure-limit/0": 1
+        }
+      },
+      "canonicalSha256": "b05c458d47a7840a484419bb2f20953728e9171cb7557eb3158b6a43ccee86ac"
+    },
+    "rows": 20000,
+    "identities": {
+      "train": "861e6cb9b14609187c096de440d57b099ea5c830397b4429acfb60ea35424919",
+      "tuning": "097afb15f990a38deeb41b0b536cfa17b7552bfa7595c43ebbe99473a2f54c7e",
+      "calibration": "0bcf926916cbbaa2501553e6c5f8c124b7a91f40769f3068f48e138b5920bcba",
+      "validation": "905c31e24c275ea479c65b68010da7ad41116fc558def23a36afd31f0644798a"
+    },
+    "membershipSha256": "4ce8aadf7e9668a9bfdc59abdcc23a7e586200c32abb7a72ffb1e918bf5b2cc7",
+    "usable": {
+      "train": {
+        "rows": 34991,
+        "positive": 24945
+      },
+      "tuning": {
+        "rows": 4969,
+        "positive": 3589
+      },
+      "calibration": {
+        "rows": 4930,
+        "positive": 3614
+      },
+      "validation": {
+        "rows": 5011,
+        "positive": 3655
+      }
+    },
+    "models": {
+      "url-ngram": {
+        "fit": {
+          "fitSeconds": 6.137983499997063,
+          "modelBytes": 1610474,
+          "modelSha256": "521908b5fa3e52c4fc3c36e2a1678cddccceb35f356b86b6aaf4349d411ea386"
+        },
+        "thresholds": {
+          "0.01": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationRisk": 0.05,
+            "calibrationDomains": 1234,
+            "maximumAllowedCalibrationFalseAlertDomains": 6,
+            "observedCalibrationFalseAlertDomains": 6,
+            "threshold": 0.7424227755961785
+          },
+          "0.001": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 1234,
+            "threshold": null
+          },
+          "0.0001": {
+            "targetNegativeDomainFpr": 0.0001,
+            "calibrationDomains": 1234,
+            "threshold": null
+          }
+        },
+        "evaluation": {
+          "rows": 5011,
+          "positive": 3655,
+          "idsSha256": "905c31e24c275ea479c65b68010da7ad41116fc558def23a36afd31f0644798a",
+          "prAucAveragePrecision": 0.9955351913154402,
+          "rocAuc": 0.987447994221356,
+          "logLoss": 0.1782752591396192,
+          "rankingIntervals": {
+            "prAuc95": [
+              0.9944822392640782,
+              0.996388547878747
+            ],
+            "rocAuc95": [
+              0.9845271770041685,
+              0.9897196248645309
+            ]
+          },
+          "brier": 0.0501776651256871,
+          "ece10EqualWidth": 0.07392929959645088,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 3342,
+            "fp": 40,
+            "tn": 1316,
+            "fn": 313,
+            "precision": 0.9881726788882318,
+            "recall": 0.9143638850889193,
+            "f1": 0.9498365780872531,
+            "falsePositiveRate": 0.029498525073746312,
+            "falseAlertDomains": 40,
+            "legitimateDomains": 1249,
+            "negativeDomainFalsePositiveRate": 0.032025620496397116,
+            "negativeDomainFpr95Upper": 0.04148653041902344,
+            "intervals": {
+              "recall95": [
+                0.9018643507126608,
+                0.9255934916095984
+              ],
+              "precision95": [
+                0.9842078823810281,
+                0.9917646060393062
+              ],
+              "f1_95": [
+                0.9421955447906192,
+                0.956783345345531
+              ],
+              "urlFpr95": [
+                0.020266368143468695,
+                0.038684325515107615
+              ],
+              "domainFpr95": [
+                0.022976118824597495,
+                0.043356240002823926
+              ]
+            }
+          },
+          "atConstraints": {
+            "0.01": {
+              "threshold": 0.7424227755961785,
+              "tp": 3038,
+              "fp": 11,
+              "tn": 1345,
+              "fn": 617,
+              "precision": 0.9963922597572975,
+              "recall": 0.8311901504787962,
+              "f1": 0.9063245823389021,
+              "falsePositiveRate": 0.008112094395280236,
+              "falseAlertDomains": 11,
+              "legitimateDomains": 1249,
+              "negativeDomainFalsePositiveRate": 0.008807045636509208,
+              "negativeDomainFpr95Upper": 0.014535609057553401,
+              "intervals": {
+                "recall95": [
+                  0.8137298729575303,
+                  0.8511269032353285
+                ],
+                "precision95": [
+                  0.9940846388173028,
+                  0.9982803778503744
+                ],
+                "f1_95": [
+                  0.8954861259511133,
+                  0.918056153399992
+                ],
+                "urlFpr95": [
+                  0.0038308435299630665,
+                  0.013267512800212584
+                ],
+                "domainFpr95": [
+                  0.0044044088557081,
+                  0.01570348349291844
+                ]
+              }
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "latency": {
+          "inference": {
+            "medianMs": 1.1593999952310696,
+            "p95Ms": 1.5167449950240557
+          }
+        }
+      },
+      "url-xgboost": {
+        "fit": {
+          "fitSeconds": 0.17772010000771843,
+          "modelBytes": 20775,
+          "modelSha256": "ed971184ed755c78354c7608dea6532f70f10f05153fe8245d0878bb209749e3"
+        },
+        "thresholds": {
+          "0.01": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationRisk": 0.05,
+            "calibrationDomains": 1234,
+            "maximumAllowedCalibrationFalseAlertDomains": 6,
+            "observedCalibrationFalseAlertDomains": 6,
+            "threshold": 0.8990257382392884
+          },
+          "0.001": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 1234,
+            "threshold": null
+          },
+          "0.0001": {
+            "targetNegativeDomainFpr": 0.0001,
+            "calibrationDomains": 1234,
+            "threshold": null
+          }
+        },
+        "evaluation": {
+          "rows": 5011,
+          "positive": 3655,
+          "idsSha256": "905c31e24c275ea479c65b68010da7ad41116fc558def23a36afd31f0644798a",
+          "prAucAveragePrecision": 0.9833879190466577,
+          "rocAuc": 0.9554527882361012,
+          "logLoss": 0.2825033502862473,
+          "rankingIntervals": {
+            "prAuc95": [
+              0.9806308141965314,
+              0.9858096014555624
+            ],
+            "rocAuc95": [
+              0.9488122759143629,
+              0.9616939808370087
+            ]
+          },
+          "brier": 0.0888792485318439,
+          "ece10EqualWidth": 0.08599297089472106,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 3153,
+            "fp": 108,
+            "tn": 1248,
+            "fn": 502,
+            "precision": 0.9668813247470102,
+            "recall": 0.8626538987688098,
+            "f1": 0.9117987275882012,
+            "falsePositiveRate": 0.07964601769911504,
+            "falseAlertDomains": 108,
+            "legitimateDomains": 1249,
+            "negativeDomainFalsePositiveRate": 0.08646917534027222,
+            "negativeDomainFpr95Upper": 0.10068589528445891,
+            "intervals": {
+              "recall95": [
+                0.8472705505951657,
+                0.8778154077547666
+              ],
+              "precision95": [
+                0.9599606464708464,
+                0.9735070134221885
+              ],
+              "f1_95": [
+                0.9024329240977941,
+                0.9196374495107674
+              ],
+              "urlFpr95": [
+                0.06336809731149354,
+                0.09535217502273126
+              ],
+              "domainFpr95": [
+                0.07146980091157899,
+                0.10344712349732632
+              ]
+            }
+          },
+          "atConstraints": {
+            "0.01": {
+              "threshold": 0.8990257382392884,
+              "tp": 2223,
+              "fp": 10,
+              "tn": 1346,
+              "fn": 1432,
+              "precision": 0.9955217196596506,
+              "recall": 0.6082079343365253,
+              "f1": 0.7550951086956522,
+              "falsePositiveRate": 0.007374631268436578,
+              "falseAlertDomains": 10,
+              "legitimateDomains": 1249,
+              "negativeDomainFalsePositiveRate": 0.008006405124099279,
+              "negativeDomainFpr95Upper": 0.013542790753286736,
+              "intervals": {
+                "recall95": [
+                  0.580564592844328,
+                  0.631318022048908
+                ],
+                "precision95": [
+                  0.9923820511420179,
+                  0.9982149144869216
+                ],
+                "f1_95": [
+                  0.7331620239788857,
+                  0.7729418031359899
+                ],
+                "urlFpr95": [
+                  0.0029648311308909975,
+                  0.01263964031244468
+                ],
+                "domainFpr95": [
+                  0.0038458657037988087,
+                  0.014674627920431305
+                ]
+              }
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "latency": {
+          "inference": {
+            "medianMs": 0.46194999595172703,
+            "p95Ms": 0.687159993685782
+          }
+        }
+      },
+      "dom-logistic": {
+        "fit": {
+          "fitSeconds": 0.08014629999524914,
+          "modelBytes": 1831,
+          "modelSha256": "9ae94f17fd28f1cf89411d6a7f11b7e229fc5ff49cc7173588d84cb7696c26fd",
+          "featureCount": 36
+        },
+        "thresholds": {
+          "0.01": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationRisk": 0.05,
+            "calibrationDomains": 1234,
+            "maximumAllowedCalibrationFalseAlertDomains": 6,
+            "observedCalibrationFalseAlertDomains": 6,
+            "threshold": 0.9314079880714418
+          },
+          "0.001": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 1234,
+            "threshold": null
+          },
+          "0.0001": {
+            "targetNegativeDomainFpr": 0.0001,
+            "calibrationDomains": 1234,
+            "threshold": null
+          }
+        },
+        "evaluation": {
+          "rows": 5011,
+          "positive": 3655,
+          "idsSha256": "905c31e24c275ea479c65b68010da7ad41116fc558def23a36afd31f0644798a",
+          "prAucAveragePrecision": 0.9599193141364499,
+          "rocAuc": 0.9169888906375474,
+          "logLoss": 0.3958206726436448,
+          "rankingIntervals": {
+            "prAuc95": [
+              0.9508133824479561,
+              0.9670755813802626
+            ],
+            "rocAuc95": [
+              0.9046173267556242,
+              0.9282459724327927
+            ]
+          },
+          "brier": 0.10388684667035933,
+          "ece10EqualWidth": 0.11198174405906505,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 3363,
+            "fp": 281,
+            "tn": 1075,
+            "fn": 292,
+            "precision": 0.922886937431394,
+            "recall": 0.920109439124487,
+            "f1": 0.9214960953555281,
+            "falsePositiveRate": 0.20722713864306785,
+            "falseAlertDomains": 244,
+            "legitimateDomains": 1249,
+            "negativeDomainFalsePositiveRate": 0.1953562850280224,
+            "negativeDomainFpr95Upper": 0.21473454283158208,
+            "intervals": {
+              "recall95": [
+                0.9110358754966513,
+                0.9292573975691495
+              ],
+              "precision95": [
+                0.9101134186711213,
+                0.9356699166738656
+              ],
+              "f1_95": [
+                0.9128043406021814,
+                0.9282610619627251
+              ],
+              "urlFpr95": [
+                0.18032603367511205,
+                0.23228964401294497
+              ],
+              "domainFpr95": [
+                0.17370561871884493,
+                0.2184509403258422
+              ]
+            }
+          },
+          "atConstraints": {
+            "0.01": {
+              "threshold": 0.9314079880714418,
+              "tp": 336,
+              "fp": 6,
+              "tn": 1350,
+              "fn": 3319,
+              "precision": 0.9824561403508771,
+              "recall": 0.09192886456908345,
+              "f1": 0.1681260945709282,
+              "falsePositiveRate": 0.004424778761061947,
+              "falseAlertDomains": 6,
+              "legitimateDomains": 1249,
+              "negativeDomainFalsePositiveRate": 0.004803843074459567,
+              "negativeDomainFpr95Upper": 0.009459337064276763,
+              "intervals": {
+                "recall95": [
+                  0.07260023679525297,
+                  0.11148270053286534
+                ],
+                "precision95": [
+                  0.9641575558207286,
+                  0.9937759799135165
+                ],
+                "f1_95": [
+                  0.13495685974987698,
+                  0.2004073082265249
+                ],
+                "urlFpr95": [
+                  0.001474844855991196,
+                  0.008254094773693424
+                ],
+                "domainFpr95": [
+                  0.0017649043957924748,
+                  0.010426418442313434
+                ]
+              }
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "latency": {
+          "inference": {
+            "medianMs": 0.46160000056261197,
+            "p95Ms": 0.667004990827991
+          },
+          "parseMs": {
+            "medianMs": 3.71805,
+            "p95Ms": 31.153500000000008
+          },
+          "extractMs": {
+            "medianMs": 0.23025,
+            "p95Ms": 3.7518450000000003
+          },
+          "pipelineMs": {
+            "medianMs": 5.8720500019262545,
+            "p95Ms": 56.7109050040017
+          },
+          "endToEndPairedStageMs": {
+            "medianMs": 6.420150006306358,
+            "p95Ms": 57.155525007692646
+          }
+        }
+      },
+      "dom-forest": {
+        "fit": {
+          "fitSeconds": 0.7736583999940194,
+          "modelBytes": 343961,
+          "modelSha256": "cfb543beff1228d73341fed9d8377aeff3dca558edef84c5bbccafc2d1775899",
+          "featureCount": 36
+        },
+        "thresholds": {
+          "0.01": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationRisk": 0.05,
+            "calibrationDomains": 1234,
+            "maximumAllowedCalibrationFalseAlertDomains": 6,
+            "observedCalibrationFalseAlertDomains": 6,
+            "threshold": 0.9176918116421772
+          },
+          "0.001": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 1234,
+            "threshold": null
+          },
+          "0.0001": {
+            "targetNegativeDomainFpr": 0.0001,
+            "calibrationDomains": 1234,
+            "threshold": null
+          }
+        },
+        "evaluation": {
+          "rows": 5011,
+          "positive": 3655,
+          "idsSha256": "905c31e24c275ea479c65b68010da7ad41116fc558def23a36afd31f0644798a",
+          "prAucAveragePrecision": 0.9915861469731593,
+          "rocAuc": 0.9778383755230843,
+          "logLoss": 0.21332093713153497,
+          "rankingIntervals": {
+            "prAuc95": [
+              0.9894851181430366,
+              0.993622235798712
+            ],
+            "rocAuc95": [
+              0.9724854019363447,
+              0.9824720844718061
+            ]
+          },
+          "brier": 0.06084028805662911,
+          "ece10EqualWidth": 0.07694774085428432,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 3341,
+            "fp": 90,
+            "tn": 1266,
+            "fn": 314,
+            "precision": 0.9737685805887496,
+            "recall": 0.9140902872777018,
+            "f1": 0.9429861699125035,
+            "falsePositiveRate": 0.06637168141592921,
+            "falseAlertDomains": 84,
+            "legitimateDomains": 1249,
+            "negativeDomainFalsePositiveRate": 0.06725380304243395,
+            "negativeDomainFpr95Upper": 0.0800878773871228,
+            "intervals": {
+              "recall95": [
+                0.8926087066438403,
+                0.934012633405301
+              ],
+              "precision95": [
+                0.9672942293931871,
+                0.9795713762880766
+              ],
+              "f1_95": [
+                0.9298697330064628,
+                0.9540238745757336
+              ],
+              "urlFpr95": [
+                0.05205757282106823,
+                0.08141202267776511
+              ],
+              "domainFpr95": [
+                0.0539955067521276,
+                0.08259065599396967
+              ]
+            }
+          },
+          "atConstraints": {
+            "0.01": {
+              "threshold": 0.9176918116421772,
+              "tp": 2178,
+              "fp": 3,
+              "tn": 1353,
+              "fn": 1477,
+              "precision": 0.9986244841815681,
+              "recall": 0.5958960328317373,
+              "f1": 0.746401644962303,
+              "falsePositiveRate": 0.0022123893805309734,
+              "falseAlertDomains": 3,
+              "legitimateDomains": 1249,
+              "negativeDomainFalsePositiveRate": 0.0024019215372297837,
+              "negativeDomainFpr95Upper": 0.006196086892105872,
+              "intervals": {
+                "recall95": [
+                  0.5675948601647383,
+                  0.618292852558433
+                ],
+                "precision95": [
+                  0.9971143901542765,
+                  1.0
+                ],
+                "f1_95": [
+                  0.723785827900873,
+                  0.7636418722963011
+                ],
+                "urlFpr95": [
+                  0.0,
+                  0.004627753975960531
+                ],
+                "domainFpr95": [
+                  0.0004956081359039518,
+                  0.007003244164107344
+                ]
+              }
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "latency": {
+          "inference": {
+            "medianMs": 15.57400000456255,
+            "p95Ms": 21.856395003123907
+          },
+          "parseMs": {
+            "medianMs": 3.71805,
+            "p95Ms": 31.153500000000008
+          },
+          "extractMs": {
+            "medianMs": 0.23025,
+            "p95Ms": 3.7518450000000003
+          },
+          "pipelineMs": {
+            "medianMs": 5.8720500019262545,
+            "p95Ms": 56.7109050040017
+          },
+          "endToEndPairedStageMs": {
+            "medianMs": 21.786699988297187,
+            "p95Ms": 72.91867999520036
+          }
+        }
+      },
+      "dom-xgboost": {
+        "fit": {
+          "fitSeconds": 0.2959865000011632,
+          "modelBytes": 21433,
+          "modelSha256": "b0f2950381e05db27ca116953a4d92369987ffd523064f90931d63c2344497b5",
+          "featureCount": 36
+        },
+        "thresholds": {
+          "0.01": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationRisk": 0.05,
+            "calibrationDomains": 1234,
+            "maximumAllowedCalibrationFalseAlertDomains": 6,
+            "observedCalibrationFalseAlertDomains": 6,
+            "threshold": 0.9314034581184388
+          },
+          "0.001": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 1234,
+            "threshold": null
+          },
+          "0.0001": {
+            "targetNegativeDomainFpr": 0.0001,
+            "calibrationDomains": 1234,
+            "threshold": null
+          }
+        },
+        "evaluation": {
+          "rows": 5011,
+          "positive": 3655,
+          "idsSha256": "905c31e24c275ea479c65b68010da7ad41116fc558def23a36afd31f0644798a",
+          "prAucAveragePrecision": 0.9910477361107397,
+          "rocAuc": 0.9766218135741639,
+          "logLoss": 0.21068512857801577,
+          "rankingIntervals": {
+            "prAuc95": [
+              0.9887975573495612,
+              0.9930702002061418
+            ],
+            "rocAuc95": [
+              0.971318928592192,
+              0.9816496450813608
+            ]
+          },
+          "brier": 0.05908261197043729,
+          "ece10EqualWidth": 0.06979951091472938,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 3379,
+            "fp": 112,
+            "tn": 1244,
+            "fn": 276,
+            "precision": 0.9679175021483816,
+            "recall": 0.9244870041039671,
+            "f1": 0.9457038902882732,
+            "falsePositiveRate": 0.08259587020648967,
+            "falseAlertDomains": 106,
+            "legitimateDomains": 1249,
+            "negativeDomainFalsePositiveRate": 0.08486789431545236,
+            "negativeDomainFpr95Upper": 0.09897762760133366,
+            "intervals": {
+              "recall95": [
+                0.9020539809503642,
+                0.9411870545087313
+              ],
+              "precision95": [
+                0.9607796613036932,
+                0.9750115030674846
+              ],
+              "f1_95": [
+                0.93269452928837,
+                0.9554792028383935
+              ],
+              "urlFpr95": [
+                0.06481021506726607,
+                0.09931629164753304
+              ],
+              "domainFpr95": [
+                0.07000367709533004,
+                0.10171888538462602
+              ]
+            }
+          },
+          "atConstraints": {
+            "0.01": {
+              "threshold": 0.9314034581184388,
+              "tp": 2040,
+              "fp": 3,
+              "tn": 1353,
+              "fn": 1615,
+              "precision": 0.9985315712187959,
+              "recall": 0.5581395348837209,
+              "f1": 0.7160407160407161,
+              "falsePositiveRate": 0.0022123893805309734,
+              "falseAlertDomains": 3,
+              "legitimateDomains": 1249,
+              "negativeDomainFalsePositiveRate": 0.0024019215372297837,
+              "negativeDomainFpr95Upper": 0.006196086892105872,
+              "intervals": {
+                "recall95": [
+                  0.5339623033124226,
+                  0.5816842954145177
+                ],
+                "precision95": [
+                  0.9969530991170074,
+                  1.0
+                ],
+                "f1_95": [
+                  0.6956883140173508,
+                  0.7352571499596429
+                ],
+                "urlFpr95": [
+                  0.0,
+                  0.0046522546129490125
+                ],
+                "domainFpr95": [
+                  0.0004956081359039518,
+                  0.007003244164107344
+                ]
+              }
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "latency": {
+          "inference": {
+            "medianMs": 0.47119999362621456,
+            "p95Ms": 0.6101499893702567
+          },
+          "parseMs": {
+            "medianMs": 3.71805,
+            "p95Ms": 31.153500000000008
+          },
+          "extractMs": {
+            "medianMs": 0.23025,
+            "p95Ms": 3.7518450000000003
+          },
+          "pipelineMs": {
+            "medianMs": 5.8720500019262545,
+            "p95Ms": 56.7109050040017
+          },
+          "endToEndPairedStageMs": {
+            "medianMs": 6.380700004228856,
+            "p95Ms": 57.18814499632573
+          }
+        }
+      },
+      "url-dom-xgboost": {
+        "fit": {
+          "fitSeconds": 0.4582774000009522,
+          "modelBytes": 21385,
+          "modelSha256": "f0ee0b326806e3505b545858ad0f14a29815cc8c3d85b63aa8ec5ed6f2d934cc",
+          "featureCount": 50
+        },
+        "thresholds": {
+          "0.01": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationRisk": 0.05,
+            "calibrationDomains": 1234,
+            "maximumAllowedCalibrationFalseAlertDomains": 6,
+            "observedCalibrationFalseAlertDomains": 6,
+            "threshold": 0.880263924598694
+          },
+          "0.001": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 1234,
+            "threshold": null
+          },
+          "0.0001": {
+            "targetNegativeDomainFpr": 0.0001,
+            "calibrationDomains": 1234,
+            "threshold": null
+          }
+        },
+        "evaluation": {
+          "rows": 5011,
+          "positive": 3655,
+          "idsSha256": "905c31e24c275ea479c65b68010da7ad41116fc558def23a36afd31f0644798a",
+          "prAucAveragePrecision": 0.9955489943462301,
+          "rocAuc": 0.9883188261927532,
+          "logLoss": 0.14838713464129935,
+          "rankingIntervals": {
+            "prAuc95": [
+              0.9941877729562922,
+              0.9967203475527896
+            ],
+            "rocAuc95": [
+              0.9854278087635514,
+              0.9913251941430972
+            ]
+          },
+          "brier": 0.042718942424019954,
+          "ece10EqualWidth": 0.047362372767921025,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 3415,
+            "fp": 67,
+            "tn": 1289,
+            "fn": 240,
+            "precision": 0.9807581849511775,
+            "recall": 0.9343365253077975,
+            "f1": 0.9569847274765307,
+            "falsePositiveRate": 0.049410029498525077,
+            "falseAlertDomains": 67,
+            "legitimateDomains": 1249,
+            "negativeDomainFalsePositiveRate": 0.053642914331465175,
+            "negativeDomainFpr95Upper": 0.06533787792772164,
+            "intervals": {
+              "recall95": [
+                0.9149941945471747,
+                0.9532222363041598
+              ],
+              "precision95": [
+                0.9755105860259313,
+                0.9858238914396968
+              ],
+              "f1_95": [
+                0.9464549086624124,
+                0.9667254850326745
+              ],
+              "urlFpr95": [
+                0.03689056889867968,
+                0.061658165366467815
+              ],
+              "domainFpr95": [
+                0.04181101597833943,
+                0.0676272116448721
+              ]
+            }
+          },
+          "atConstraints": {
+            "0.01": {
+              "threshold": 0.880263924598694,
+              "tp": 2923,
+              "fp": 8,
+              "tn": 1348,
+              "fn": 732,
+              "precision": 0.9972705561241897,
+              "recall": 0.7997264021887824,
+              "f1": 0.8876404494382022,
+              "falsePositiveRate": 0.0058997050147492625,
+              "falseAlertDomains": 8,
+              "legitimateDomains": 1249,
+              "negativeDomainFalsePositiveRate": 0.006405124099279423,
+              "negativeDomainFpr95Upper": 0.01152720384660158,
+              "intervals": {
+                "recall95": [
+                  0.7761609528459175,
+                  0.826733496956422
+                ],
+                "precision95": [
+                  0.9954694624272704,
+                  0.9989301086392274
+                ],
+                "f1_95": [
+                  0.8722380329511373,
+                  0.9034828370210736
+                ],
+                "urlFpr95": [
+                  0.0021614795286457413,
+                  0.009957144722627823
+                ],
+                "domainFpr95": [
+                  0.002769213844019659,
+                  0.01258144969193987
+                ]
+              }
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "latency": {
+          "inference": {
+            "medianMs": 0.5023499979870394,
+            "p95Ms": 0.6892099896504079
+          },
+          "parseMs": {
+            "medianMs": 3.71805,
+            "p95Ms": 31.153500000000008
+          },
+          "extractMs": {
+            "medianMs": 0.23025,
+            "p95Ms": 3.7518450000000003
+          },
+          "pipelineMs": {
+            "medianMs": 5.8720500019262545,
+            "p95Ms": 56.7109050040017
+          },
+          "endToEndPairedStageMs": {
+            "medianMs": 6.455800001276657,
+            "p95Ms": 57.209454999247114
+          }
+        }
+      },
+      "ablation-structure": {
+        "fit": {
+          "fitSeconds": 0.3881132999958936,
+          "modelBytes": 21577,
+          "modelSha256": "0f97f50d4f5694a6b33078f66eeb66cf9f917c7e086bb899fb7350ada9aa89de",
+          "featureCount": 32
+        },
+        "thresholds": {
+          "0.01": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationRisk": 0.05,
+            "calibrationDomains": 1234,
+            "maximumAllowedCalibrationFalseAlertDomains": 6,
+            "observedCalibrationFalseAlertDomains": 5,
+            "threshold": 0.9322321414947511
+          },
+          "0.001": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 1234,
+            "threshold": null
+          },
+          "0.0001": {
+            "targetNegativeDomainFpr": 0.0001,
+            "calibrationDomains": 1234,
+            "threshold": null
+          }
+        },
+        "evaluation": {
+          "rows": 5011,
+          "positive": 3655,
+          "idsSha256": "905c31e24c275ea479c65b68010da7ad41116fc558def23a36afd31f0644798a",
+          "prAucAveragePrecision": 0.9890923076199988,
+          "rocAuc": 0.9725793857365955,
+          "logLoss": 0.22003547000994625,
+          "rankingIntervals": {
+            "prAuc95": [
+              0.9862961808158872,
+              0.9915385305104636
+            ],
+            "rocAuc95": [
+              0.9663170943443441,
+              0.9781113170827354
+            ]
+          },
+          "brier": 0.06163144011959166,
+          "ece10EqualWidth": 0.07075415023098319,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 3361,
+            "fp": 125,
+            "tn": 1231,
+            "fn": 294,
+            "precision": 0.9641422834193919,
+            "recall": 0.919562243502052,
+            "f1": 0.9413247444335527,
+            "falsePositiveRate": 0.09218289085545722,
+            "falseAlertDomains": 111,
+            "legitimateDomains": 1249,
+            "negativeDomainFalsePositiveRate": 0.088871096877502,
+            "negativeDomainFpr95Upper": 0.10324581328377487,
+            "intervals": {
+              "recall95": [
+                0.8977826200881609,
+                0.9394784698902563
+              ],
+              "precision95": [
+                0.9562855028725419,
+                0.9743746529830173
+              ],
+              "f1_95": [
+                0.9289658204100871,
+                0.952384387930648
+              ],
+              "urlFpr95": [
+                0.07056186713210402,
+                0.11297400054639833
+              ],
+              "domainFpr95": [
+                0.07367197890033819,
+                0.10603652427818679
+              ]
+            }
+          },
+          "atConstraints": {
+            "0.01": {
+              "threshold": 0.9322321414947511,
+              "tp": 1759,
+              "fp": 4,
+              "tn": 1352,
+              "fn": 1896,
+              "precision": 0.9977311401020987,
+              "recall": 0.48125854993160055,
+              "f1": 0.6493170911775563,
+              "falsePositiveRate": 0.0029498525073746312,
+              "falseAlertDomains": 3,
+              "legitimateDomains": 1249,
+              "negativeDomainFalsePositiveRate": 0.0024019215372297837,
+              "negativeDomainFpr95Upper": 0.006196086892105872,
+              "intervals": {
+                "recall95": [
+                  0.4608158634148227,
+                  0.5052229232167093
+                ],
+                "precision95": [
+                  0.9936670598716858,
+                  1.0
+                ],
+                "f1_95": [
+                  0.6305371498662009,
+                  0.6708032159771311
+                ],
+                "urlFpr95": [
+                  0.0,
+                  0.007913669064748202
+                ],
+                "domainFpr95": [
+                  0.0004956081359039518,
+                  0.007003244164107344
+                ]
+              }
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "latency": {
+          "inference": {
+            "medianMs": 0.4822999981115572,
+            "p95Ms": 0.6728549946274145
+          },
+          "parseMs": {
+            "medianMs": 3.71805,
+            "p95Ms": 31.153500000000008
+          },
+          "extractMs": {
+            "medianMs": 0.23025,
+            "p95Ms": 3.7518450000000003
+          },
+          "pipelineMs": {
+            "medianMs": 5.8720500019262545,
+            "p95Ms": 56.7109050040017
+          },
+          "endToEndPairedStageMs": {
+            "medianMs": 6.3667000067653134,
+            "p95Ms": 57.21217000973412
+          }
+        }
+      },
+      "ablation-credential": {
+        "fit": {
+          "fitSeconds": 0.24598079999850597,
+          "modelBytes": 21393,
+          "modelSha256": "f24b0f613771e621101e84392a4081b95d530c4dd2cce8d14ed30cb1721e0dbd",
+          "featureCount": 21
+        },
+        "thresholds": {
+          "0.01": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationRisk": 0.05,
+            "calibrationDomains": 1234,
+            "maximumAllowedCalibrationFalseAlertDomains": 6,
+            "observedCalibrationFalseAlertDomains": 6,
+            "threshold": 0.9416011571884156
+          },
+          "0.001": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 1234,
+            "threshold": null
+          },
+          "0.0001": {
+            "targetNegativeDomainFpr": 0.0001,
+            "calibrationDomains": 1234,
+            "threshold": null
+          }
+        },
+        "evaluation": {
+          "rows": 5011,
+          "positive": 3655,
+          "idsSha256": "905c31e24c275ea479c65b68010da7ad41116fc558def23a36afd31f0644798a",
+          "prAucAveragePrecision": 0.9887130169462569,
+          "rocAuc": 0.971277374913744,
+          "logLoss": 0.22735166271479504,
+          "rankingIntervals": {
+            "prAuc95": [
+              0.9858636982246646,
+              0.9912971396756759
+            ],
+            "rocAuc95": [
+              0.9639295417093323,
+              0.9773630170938724
+            ]
+          },
+          "brier": 0.06500852405914453,
+          "ece10EqualWidth": 0.07244560784168506,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 3345,
+            "fp": 112,
+            "tn": 1244,
+            "fn": 310,
+            "precision": 0.9676019670234307,
+            "recall": 0.9151846785225718,
+            "f1": 0.9406636670416197,
+            "falsePositiveRate": 0.08259587020648967,
+            "falseAlertDomains": 106,
+            "legitimateDomains": 1249,
+            "negativeDomainFalsePositiveRate": 0.08486789431545236,
+            "negativeDomainFpr95Upper": 0.09897762760133366,
+            "intervals": {
+              "recall95": [
+                0.8918606876090036,
+                0.932493887659061
+              ],
+              "precision95": [
+                0.9603277973816892,
+                0.973954851444301
+              ],
+              "f1_95": [
+                0.928122922448761,
+                0.9511783763587195
+              ],
+              "urlFpr95": [
+                0.06510656456512888,
+                0.10008018044199386
+              ],
+              "domainFpr95": [
+                0.07000367709533004,
+                0.10171888538462602
+              ]
+            }
+          },
+          "atConstraints": {
+            "0.01": {
+              "threshold": 0.9416011571884156,
+              "tp": 1836,
+              "fp": 7,
+              "tn": 1349,
+              "fn": 1819,
+              "precision": 0.9962018448182312,
+              "recall": 0.5023255813953489,
+              "f1": 0.6678792288104766,
+              "falsePositiveRate": 0.005162241887905605,
+              "falseAlertDomains": 7,
+              "legitimateDomains": 1249,
+              "negativeDomainFalsePositiveRate": 0.005604483586869495,
+              "negativeDomainFpr95Upper": 0.01050101368528941,
+              "intervals": {
+                "recall95": [
+                  0.47910965439409037,
+                  0.5261499518735396
+                ],
+                "precision95": [
+                  0.9932262545976293,
+                  0.9989150318284586
+                ],
+                "f1_95": [
+                  0.6473546405971609,
+                  0.6886432620281298
+                ],
+                "urlFpr95": [
+                  0.0015160716968907846,
+                  0.00922001932861488
+                ],
+                "domainFpr95": [
+                  0.0022561732796699233,
+                  0.011513089921022589
+                ]
+              }
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "latency": {
+          "inference": {
+            "medianMs": 0.4820500034838915,
+            "p95Ms": 0.7177750077971723
+          },
+          "parseMs": {
+            "medianMs": 3.71805,
+            "p95Ms": 31.153500000000008
+          },
+          "extractMs": {
+            "medianMs": 0.23025,
+            "p95Ms": 3.7518450000000003
+          },
+          "pipelineMs": {
+            "medianMs": 5.8720500019262545,
+            "p95Ms": 56.7109050040017
+          },
+          "endToEndPairedStageMs": {
+            "medianMs": 6.391000002622604,
+            "p95Ms": 57.189039995864746
+          }
+        }
+      },
+      "ablation-resources": {
+        "fit": {
+          "fitSeconds": 0.25894630000402685,
+          "modelBytes": 20962,
+          "modelSha256": "b21cc29038bbff073cea1106565c4a7e84737858a0c0468f88d266f444750b47",
+          "featureCount": 23
+        },
+        "thresholds": {
+          "0.01": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationRisk": 0.05,
+            "calibrationDomains": 1234,
+            "maximumAllowedCalibrationFalseAlertDomains": 6,
+            "observedCalibrationFalseAlertDomains": 6,
+            "threshold": 0.9080876111984254
+          },
+          "0.001": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 1234,
+            "threshold": null
+          },
+          "0.0001": {
+            "targetNegativeDomainFpr": 0.0001,
+            "calibrationDomains": 1234,
+            "threshold": null
+          }
+        },
+        "evaluation": {
+          "rows": 5011,
+          "positive": 3655,
+          "idsSha256": "905c31e24c275ea479c65b68010da7ad41116fc558def23a36afd31f0644798a",
+          "prAucAveragePrecision": 0.9817265463631758,
+          "rocAuc": 0.9523584696278181,
+          "logLoss": 0.29878585021826726,
+          "rankingIntervals": {
+            "prAuc95": [
+              0.978397625532826,
+              0.9850209960735715
+            ],
+            "rocAuc95": [
+              0.9456475832831468,
+              0.9590913219768631
+            ]
+          },
+          "brier": 0.08829455075883696,
+          "ece10EqualWidth": 0.09546190720962963,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 3184,
+            "fp": 148,
+            "tn": 1208,
+            "fn": 471,
+            "precision": 0.9555822328931572,
+            "recall": 0.8711354309165527,
+            "f1": 0.9114068985258337,
+            "falsePositiveRate": 0.10914454277286136,
+            "falseAlertDomains": 139,
+            "legitimateDomains": 1249,
+            "negativeDomainFalsePositiveRate": 0.11128903122497999,
+            "negativeDomainFpr95Upper": 0.12701146427134297,
+            "intervals": {
+              "recall95": [
+                0.8538735866255034,
+                0.8905617087355907
+              ],
+              "precision95": [
+                0.9486655926938743,
+                0.9647158798634766
+              ],
+              "f1_95": [
+                0.9008530305336525,
+                0.9234237530628691
+              ],
+              "urlFpr95": [
+                0.0877082308542122,
+                0.1282854292847842
+              ],
+              "domainFpr95": [
+                0.09437839212357627,
+                0.13005317375003536
+              ]
+            }
+          },
+          "atConstraints": {
+            "0.01": {
+              "threshold": 0.9080876111984254,
+              "tp": 1655,
+              "fp": 3,
+              "tn": 1353,
+              "fn": 2000,
+              "precision": 0.9981905910735827,
+              "recall": 0.4528043775649795,
+              "f1": 0.6230001882175795,
+              "falsePositiveRate": 0.0022123893805309734,
+              "falseAlertDomains": 3,
+              "legitimateDomains": 1249,
+              "negativeDomainFalsePositiveRate": 0.0024019215372297837,
+              "negativeDomainFpr95Upper": 0.006196086892105872,
+              "intervals": {
+                "recall95": [
+                  0.4316330245289789,
+                  0.47461548996167024
+                ],
+                "precision95": [
+                  0.9958695937606681,
+                  1.0
+                ],
+                "f1_95": [
+                  0.602761457152094,
+                  0.6433337785597455
+                ],
+                "urlFpr95": [
+                  0.0,
+                  0.005048429367589557
+                ],
+                "domainFpr95": [
+                  0.0004956081359039518,
+                  0.007003244164107344
+                ]
+              }
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "latency": {
+          "inference": {
+            "medianMs": 0.4778499933308922,
+            "p95Ms": 0.674619996425463
+          },
+          "parseMs": {
+            "medianMs": 3.71805,
+            "p95Ms": 31.153500000000008
+          },
+          "extractMs": {
+            "medianMs": 0.23025,
+            "p95Ms": 3.7518450000000003
+          },
+          "pipelineMs": {
+            "medianMs": 5.8720500019262545,
+            "p95Ms": 56.7109050040017
+          },
+          "endToEndPairedStageMs": {
+            "medianMs": 6.370750008500181,
+            "p95Ms": 57.16957999829903
+          }
+        }
+      },
+      "ablation-title": {
+        "fit": {
+          "fitSeconds": 0.2768274000118254,
+          "modelBytes": 21323,
+          "modelSha256": "28121911995b0a5b69bb308ce9a29bd77bacb328c651c2908f3fd7a59461ca4f",
+          "featureCount": 32
+        },
+        "thresholds": {
+          "0.01": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationRisk": 0.05,
+            "calibrationDomains": 1234,
+            "maximumAllowedCalibrationFalseAlertDomains": 6,
+            "observedCalibrationFalseAlertDomains": 5,
+            "threshold": 0.940548062324524
+          },
+          "0.001": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 1234,
+            "threshold": null
+          },
+          "0.0001": {
+            "targetNegativeDomainFpr": 0.0001,
+            "calibrationDomains": 1234,
+            "threshold": null
+          }
+        },
+        "evaluation": {
+          "rows": 5011,
+          "positive": 3655,
+          "idsSha256": "905c31e24c275ea479c65b68010da7ad41116fc558def23a36afd31f0644798a",
+          "prAucAveragePrecision": 0.9901323348705894,
+          "rocAuc": 0.9741131274489627,
+          "logLoss": 0.2196522010160627,
+          "rankingIntervals": {
+            "prAuc95": [
+              0.9874266932514157,
+              0.9925687963573235
+            ],
+            "rocAuc95": [
+              0.9666924762871495,
+              0.9797279942363138
+            ]
+          },
+          "brier": 0.061935564760960835,
+          "ece10EqualWidth": 0.07069598574507659,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 3374,
+            "fp": 115,
+            "tn": 1241,
+            "fn": 281,
+            "precision": 0.9670392662654056,
+            "recall": 0.9231190150478796,
+            "f1": 0.944568868980963,
+            "falsePositiveRate": 0.08480825958702065,
+            "falseAlertDomains": 109,
+            "legitimateDomains": 1249,
+            "negativeDomainFalsePositiveRate": 0.08726981585268215,
+            "negativeDomainFpr95Upper": 0.10153952831822081,
+            "intervals": {
+              "recall95": [
+                0.9012003971152378,
+                0.940278686155984
+              ],
+              "precision95": [
+                0.9606261056008075,
+                0.9738695962209586
+              ],
+              "f1_95": [
+                0.9321084880918911,
+                0.9540996812061628
+              ],
+              "urlFpr95": [
+                0.06811026591068307,
+                0.10098743540378965
+              ],
+              "domainFpr95": [
+                0.07220346626134819,
+                0.10431064639470619
+              ]
+            }
+          },
+          "atConstraints": {
+            "0.01": {
+              "threshold": 0.940548062324524,
+              "tp": 1755,
+              "fp": 2,
+              "tn": 1354,
+              "fn": 1900,
+              "precision": 0.9988616960728515,
+              "recall": 0.4801641586867305,
+              "f1": 0.6485587583148559,
+              "falsePositiveRate": 0.0014749262536873156,
+              "falseAlertDomains": 2,
+              "legitimateDomains": 1249,
+              "negativeDomainFalsePositiveRate": 0.0016012810248198558,
+              "negativeDomainFpr95Upper": 0.005032006031525067,
+              "intervals": {
+                "recall95": [
+                  0.4585851839097502,
+                  0.5025463237669522
+                ],
+                "precision95": [
+                  0.9971747278878774,
+                  1.0
+                ],
+                "f1_95": [
+                  0.6282687028306935,
+                  0.6689200296893181
+                ],
+                "urlFpr95": [
+                  0.0,
+                  0.0037467424274789597
+                ],
+                "domainFpr95": [
+                  0.00019398142308657313,
+                  0.005772291965198247
+                ]
+              }
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "latency": {
+          "inference": {
+            "medianMs": 0.49035000120056793,
+            "p95Ms": 0.8048650008277036
+          },
+          "parseMs": {
+            "medianMs": 3.71805,
+            "p95Ms": 31.153500000000008
+          },
+          "extractMs": {
+            "medianMs": 0.23025,
+            "p95Ms": 3.7518450000000003
+          },
+          "pipelineMs": {
+            "medianMs": 5.8720500019262545,
+            "p95Ms": 56.7109050040017
+          },
+          "endToEndPairedStageMs": {
+            "medianMs": 6.369600007019471,
+            "p95Ms": 57.18932500603843
+          }
+        }
+      },
+      "url-fusion": {
+        "fit": {
+          "fitSeconds": 0.7545365999976639,
+          "referenceWeight": 0.75,
+          "componentModelBytes": 1631249,
+          "componentScales": {
+            "url-ngram": {
+              "coefficient": 1.6676120786126083,
+              "intercept": 1.3511553797209892
+            },
+            "url-xgboost": {
+              "coefficient": 1.2083174500284874,
+              "intercept": 1.0802670667185486
+            }
+          }
+        },
+        "thresholds": {
+          "0.01": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationRisk": 0.05,
+            "calibrationDomains": 1234,
+            "maximumAllowedCalibrationFalseAlertDomains": 6,
+            "observedCalibrationFalseAlertDomains": 6,
+            "threshold": 0.9170531077335398
+          },
+          "0.001": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 1234,
+            "threshold": null
+          },
+          "0.0001": {
+            "targetNegativeDomainFpr": 0.0001,
+            "calibrationDomains": 1234,
+            "threshold": null
+          }
+        },
+        "evaluation": {
+          "rows": 5011,
+          "positive": 3655,
+          "idsSha256": "905c31e24c275ea479c65b68010da7ad41116fc558def23a36afd31f0644798a",
+          "prAucAveragePrecision": 0.9955484904339782,
+          "rocAuc": 0.9879360717326651,
+          "logLoss": 0.13499194758191965,
+          "rankingIntervals": {
+            "prAuc95": [
+              0.9943567042611393,
+              0.9965183816119091
+            ],
+            "rocAuc95": [
+              0.984644459087054,
+              0.9904844887833089
+            ]
+          },
+          "brier": 0.03815401466578547,
+          "ece10EqualWidth": 0.03158314942557696,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 3557,
+            "fp": 135,
+            "tn": 1221,
+            "fn": 98,
+            "precision": 0.9634344528710725,
+            "recall": 0.973187414500684,
+            "f1": 0.9682863753913162,
+            "falsePositiveRate": 0.09955752212389381,
+            "falseAlertDomains": 132,
+            "legitimateDomains": 1249,
+            "negativeDomainFalsePositiveRate": 0.10568454763811048,
+            "negativeDomainFpr95Upper": 0.1210897374528249,
+            "intervals": {
+              "recall95": [
+                0.9652695918816733,
+                0.979499247001047
+              ],
+              "precision95": [
+                0.9574347460927365,
+                0.970022414751061
+              ],
+              "f1_95": [
+                0.9631314845681462,
+                0.9734279196775273
+              ],
+              "urlFpr95": [
+                0.08222133526850509,
+                0.11399174822490885
+              ],
+              "domainFpr95": [
+                0.08917811334800556,
+                0.1240724479242643
+              ]
+            }
+          },
+          "atConstraints": {
+            "0.01": {
+              "threshold": 0.9170531077335398,
+              "tp": 3008,
+              "fp": 10,
+              "tn": 1346,
+              "fn": 647,
+              "precision": 0.9966865473823724,
+              "recall": 0.8229822161422709,
+              "f1": 0.9015435336430391,
+              "falsePositiveRate": 0.007374631268436578,
+              "falseAlertDomains": 10,
+              "legitimateDomains": 1249,
+              "negativeDomainFalsePositiveRate": 0.008006405124099279,
+              "negativeDomainFpr95Upper": 0.013542790753286736,
+              "intervals": {
+                "recall95": [
+                  0.8046165594540896,
+                  0.8410468233856735
+                ],
+                "precision95": [
+                  0.9942996427694184,
+                  0.9983974766988023
+                ],
+                "f1_95": [
+                  0.8906060183487843,
+                  0.9122508932564717
+                ],
+                "urlFpr95": [
+                  0.0034944685878098396,
+                  0.012160351373483216
+                ],
+                "domainFpr95": [
+                  0.0038458657037988087,
+                  0.014674627920431305
+                ]
+              }
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "latency": {
+          "inference": {
+            "medianMs": 2.4254500021925196,
+            "p95Ms": 3.1557400085148406
+          }
+        }
+      },
+      "url-dom-fusion": {
+        "fit": {
+          "fitSeconds": 0.7810463000059826,
+          "referenceWeight": 0.75,
+          "componentModelBytes": 1631907,
+          "componentScales": {
+            "url-ngram": {
+              "coefficient": 1.6676120786126083,
+              "intercept": 1.3511553797209892
+            },
+            "dom-xgboost": {
+              "coefficient": 1.1493941565251,
+              "intercept": 0.9754834650228406
+            }
+          }
+        },
+        "thresholds": {
+          "0.01": {
+            "targetNegativeDomainFpr": 0.01,
+            "calibrationRisk": 0.05,
+            "calibrationDomains": 1234,
+            "maximumAllowedCalibrationFalseAlertDomains": 6,
+            "observedCalibrationFalseAlertDomains": 6,
+            "threshold": 0.8694662823864124
+          },
+          "0.001": {
+            "targetNegativeDomainFpr": 0.001,
+            "calibrationDomains": 1234,
+            "threshold": null
+          },
+          "0.0001": {
+            "targetNegativeDomainFpr": 0.0001,
+            "calibrationDomains": 1234,
+            "threshold": null
+          }
+        },
+        "evaluation": {
+          "rows": 5011,
+          "positive": 3655,
+          "idsSha256": "905c31e24c275ea479c65b68010da7ad41116fc558def23a36afd31f0644798a",
+          "prAucAveragePrecision": 0.9972740772480401,
+          "rocAuc": 0.9926021653773672,
+          "logLoss": 0.1152636174474883,
+          "rankingIntervals": {
+            "prAuc95": [
+              0.9966479740401447,
+              0.997917570925101
+            ],
+            "rocAuc95": [
+              0.9908102496284742,
+              0.9942181988774041
+            ]
+          },
+          "brier": 0.031363191039190795,
+          "ece10EqualWidth": 0.03348309658219671,
+          "atHalf": {
+            "threshold": 0.5,
+            "tp": 3581,
+            "fp": 121,
+            "tn": 1235,
+            "fn": 74,
+            "precision": 0.9673149648838466,
+            "recall": 0.9797537619699043,
+            "f1": 0.973494630963708,
+            "falsePositiveRate": 0.08923303834808259,
+            "falseAlertDomains": 120,
+            "legitimateDomains": 1249,
+            "negativeDomainFalsePositiveRate": 0.09607686148919135,
+            "negativeDomainFpr95Upper": 0.11090865980395768,
+            "intervals": {
+              "recall95": [
+                0.9735653176110444,
+                0.9849320642908982
+              ],
+              "precision95": [
+                0.9612492206048107,
+                0.9737005244158642
+              ],
+              "f1_95": [
+                0.9696569117903963,
+                0.9778287714869716
+              ],
+              "urlFpr95": [
+                0.07167973713333242,
+                0.10410570740465633
+              ],
+              "domainFpr95": [
+                0.08029887349410658,
+                0.11378459938665017
+              ]
+            }
+          },
+          "atConstraints": {
+            "0.01": {
+              "threshold": 0.8694662823864124,
+              "tp": 3149,
+              "fp": 10,
+              "tn": 1346,
+              "fn": 506,
+              "precision": 0.9968344412788858,
+              "recall": 0.8615595075239398,
+              "f1": 0.9242735544467273,
+              "falsePositiveRate": 0.007374631268436578,
+              "falseAlertDomains": 10,
+              "legitimateDomains": 1249,
+              "negativeDomainFalsePositiveRate": 0.008006405124099279,
+              "negativeDomainFpr95Upper": 0.013542790753286736,
+              "intervals": {
+                "recall95": [
+                  0.8418574855895379,
+                  0.8816249805150159
+                ],
+                "precision95": [
+                  0.9950060861423221,
+                  0.9987279752416605
+                ],
+                "f1_95": [
+                  0.9129259959040366,
+                  0.9358315643217108
+                ],
+                "urlFpr95": [
+                  0.002964559804648323,
+                  0.011531163886493195
+                ],
+                "domainFpr95": [
+                  0.0038458657037988087,
+                  0.014674627920431305
+                ]
+              }
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "latency": {
+          "inference": {
+            "medianMs": 2.3896999991848134,
+            "p95Ms": 2.91733000703971
+          },
+          "parseMs": {
+            "medianMs": 3.71805,
+            "p95Ms": 31.153500000000008
+          },
+          "extractMs": {
+            "medianMs": 0.23025,
+            "p95Ms": 3.7518450000000003
+          },
+          "pipelineMs": {
+            "medianMs": 5.8720500019262545,
+            "p95Ms": 56.7109050040017
+          },
+          "endToEndPairedStageMs": {
+            "medianMs": 8.515100002114195,
+            "p95Ms": 59.45211000507699
+          }
+        }
+      }
+    },
+    "incrementalDetection": {
+      "url-ngram+dom-xgboost": {
+        "fixed": {
+          "predictionDisagreement": 611,
+          "bothErrors": 65,
+          "firstOnlyErrors": 288,
+          "secondOnlyErrors": 323,
+          "firstOnlyTruePositives": 223,
+          "secondOnlyTruePositives": 260,
+          "bothFalsePositives": 12,
+          "pairedRecall": {
+            "delta": 0.01012311901504788,
+            "delta95": [
+              -0.017353147476169648,
+              0.03348188221994328
+            ]
+          }
+        },
+        "0.01": {
+          "predictionDisagreement": 1312,
+          "bothErrors": 467,
+          "firstOnlyErrors": 161,
+          "secondOnlyErrors": 1151,
+          "firstOnlyTruePositives": 1148,
+          "secondOnlyTruePositives": 150,
+          "bothFalsePositives": 0,
+          "pairedRecall": {
+            "delta": -0.27305061559507526,
+            "delta95": [
+              -0.2973711890870244,
+              -0.2488040174612816
+            ]
+          }
+        },
+        "0.001": null,
+        "0.0001": null
+      },
+      "url-ngram+url-dom-xgboost": {
+        "fixed": {
+          "predictionDisagreement": 480,
+          "bothErrors": 90,
+          "firstOnlyErrors": 263,
+          "secondOnlyErrors": 217,
+          "firstOnlyTruePositives": 165,
+          "secondOnlyTruePositives": 238,
+          "bothFalsePositives": 15,
+          "pairedRecall": {
+            "delta": 0.01997264021887825,
+            "delta95": [
+              -0.0034178150285824743,
+              0.039348691408853546
+            ]
+          }
+        },
+        "0.01": {
+          "predictionDisagreement": 600,
+          "bothErrors": 384,
+          "firstOnlyErrors": 244,
+          "secondOnlyErrors": 356,
+          "firstOnlyTruePositives": 350,
+          "secondOnlyTruePositives": 235,
+          "bothFalsePositives": 2,
+          "pairedRecall": {
+            "delta": -0.03146374829001368,
+            "delta95": [
+              -0.05652936518494351,
+              -0.010547179277598477
+            ]
+          }
+        },
+        "0.001": null,
+        "0.0001": null
+      },
+      "url-ngram+url-dom-fusion": {
+        "fixed": {
+          "predictionDisagreement": 320,
+          "bothErrors": 114,
+          "firstOnlyErrors": 239,
+          "secondOnlyErrors": 81,
+          "firstOnlyTruePositives": 0,
+          "secondOnlyTruePositives": 239,
+          "bothFalsePositives": 40,
+          "pairedRecall": {
+            "delta": 0.06538987688098495,
+            "delta95": [
+              0.05445052235317238,
+              0.07908994552259627
+            ]
+          }
+        },
+        "0.01": {
+          "predictionDisagreement": 298,
+          "bothErrors": 423,
+          "firstOnlyErrors": 205,
+          "secondOnlyErrors": 93,
+          "firstOnlyTruePositives": 89,
+          "secondOnlyTruePositives": 200,
+          "bothFalsePositives": 6,
+          "pairedRecall": {
+            "delta": 0.03036935704514364,
+            "delta95": [
+              0.00838091224861937,
+              0.0464737358931378
+            ]
+          }
+        },
+        "0.001": null,
+        "0.0001": null
+      },
+      "url-xgboost+dom-xgboost": {
+        "fixed": {
+          "predictionDisagreement": 798,
+          "bothErrors": 100,
+          "firstOnlyErrors": 510,
+          "secondOnlyErrors": 288,
+          "firstOnlyTruePositives": 199,
+          "secondOnlyTruePositives": 425,
+          "bothFalsePositives": 23,
+          "pairedRecall": {
+            "delta": 0.06183310533515732,
+            "delta95": [
+              0.03199005840210766,
+              0.08811842058562004
+            ]
+          }
+        },
+        "0.01": {
+          "predictionDisagreement": 1404,
+          "bothErrors": 828,
+          "firstOnlyErrors": 614,
+          "secondOnlyErrors": 790,
+          "firstOnlyTruePositives": 787,
+          "secondOnlyTruePositives": 604,
+          "bothFalsePositives": 0,
+          "pairedRecall": {
+            "delta": -0.05006839945280438,
+            "delta95": [
+              -0.08023803319952902,
+              -0.01635532438843903
+            ]
+          }
+        },
+        "0.001": null,
+        "0.0001": null
+      },
+      "url-xgboost+url-dom-xgboost": {
+        "fixed": {
+          "predictionDisagreement": 559,
+          "bothErrors": 179,
+          "firstOnlyErrors": 431,
+          "secondOnlyErrors": 128,
+          "firstOnlyTruePositives": 93,
+          "secondOnlyTruePositives": 355,
+          "bothFalsePositives": 32,
+          "pairedRecall": {
+            "delta": 0.07168262653898769,
+            "delta95": [
+              0.046985133863844356,
+              0.09125421850082448
+            ]
+          }
+        },
+        "0.01": {
+          "predictionDisagreement": 888,
+          "bothErrors": 647,
+          "firstOnlyErrors": 795,
+          "secondOnlyErrors": 93,
+          "firstOnlyTruePositives": 90,
+          "secondOnlyTruePositives": 790,
+          "bothFalsePositives": 5,
+          "pairedRecall": {
+            "delta": 0.19151846785225718,
+            "delta95": [
+              0.1655855137667404,
+              0.22089681723691054
+            ]
+          }
+        },
+        "0.001": null,
+        "0.0001": null
+      },
+      "url-xgboost+url-dom-fusion": {
+        "fixed": {
+          "predictionDisagreement": 595,
+          "bothErrors": 105,
+          "firstOnlyErrors": 505,
+          "secondOnlyErrors": 90,
+          "firstOnlyTruePositives": 12,
+          "secondOnlyTruePositives": 440,
+          "bothFalsePositives": 43,
+          "pairedRecall": {
+            "delta": 0.11709986320109439,
+            "delta95": [
+              0.1038273263472007,
+              0.13261265358621727
+            ]
+          }
+        },
+        "0.01": {
+          "predictionDisagreement": 1104,
+          "bothErrors": 427,
+          "firstOnlyErrors": 1015,
+          "secondOnlyErrors": 89,
+          "firstOnlyTruePositives": 81,
+          "secondOnlyTruePositives": 1007,
+          "bothFalsePositives": 2,
+          "pairedRecall": {
+            "delta": 0.2533515731874145,
+            "delta95": [
+              0.2240415798147174,
+              0.28018370315808044
+            ]
+          }
+        },
+        "0.001": null,
+        "0.0001": null
+      },
+      "url-fusion+dom-xgboost": {
+        "fixed": {
+          "predictionDisagreement": 507,
+          "bothErrors": 57,
+          "firstOnlyErrors": 176,
+          "secondOnlyErrors": 331,
+          "firstOnlyTruePositives": 254,
+          "secondOnlyTruePositives": 76,
+          "bothFalsePositives": 35,
+          "pairedRecall": {
+            "delta": -0.048700410396716826,
+            "delta95": [
+              -0.07242753155000088,
+              -0.028049695560662356
+            ]
+          }
+        },
+        "0.01": {
+          "predictionDisagreement": 1293,
+          "bothErrors": 491,
+          "firstOnlyErrors": 166,
+          "secondOnlyErrors": 1127,
+          "firstOnlyTruePositives": 1124,
+          "secondOnlyTruePositives": 156,
+          "bothFalsePositives": 0,
+          "pairedRecall": {
+            "delta": -0.26484268125854993,
+            "delta95": [
+              -0.2903606157701242,
+              -0.24279173620478114
+            ]
+          }
+        },
+        "0.001": null,
+        "0.0001": null
+      },
+      "url-fusion+url-dom-xgboost": {
+        "fixed": {
+          "predictionDisagreement": 400,
+          "bothErrors": 70,
+          "firstOnlyErrors": 163,
+          "secondOnlyErrors": 237,
+          "firstOnlyTruePositives": 202,
+          "secondOnlyTruePositives": 60,
+          "bothFalsePositives": 32,
+          "pairedRecall": {
+            "delta": -0.038850889192886456,
+            "delta95": [
+              -0.05933380507642707,
+              -0.020899216446034846
+            ]
+          }
+        },
+        "0.01": {
+          "predictionDisagreement": 511,
+          "bothErrors": 443,
+          "firstOnlyErrors": 214,
+          "secondOnlyErrors": 297,
+          "firstOnlyTruePositives": 293,
+          "secondOnlyTruePositives": 208,
+          "bothFalsePositives": 4,
+          "pairedRecall": {
+            "delta": -0.023255813953488372,
+            "delta95": [
+              -0.04798321587228717,
+              -0.0013331180543416333
+            ]
+          }
+        },
+        "0.001": null,
+        "0.0001": null
+      },
+      "url-fusion+url-dom-fusion": {
+        "fixed": {
+          "predictionDisagreement": 76,
+          "bothErrors": 176,
+          "firstOnlyErrors": 57,
+          "secondOnlyErrors": 19,
+          "firstOnlyTruePositives": 4,
+          "secondOnlyTruePositives": 28,
+          "bothFalsePositives": 106,
+          "pairedRecall": {
+            "delta": 0.006566347469220246,
+            "delta95": [
+              0.0030994741333695303,
+              0.010385564236261656
+            ]
+          }
+        },
+        "0.01": {
+          "predictionDisagreement": 347,
+          "bothErrors": 413,
+          "firstOnlyErrors": 244,
+          "secondOnlyErrors": 103,
+          "firstOnlyTruePositives": 99,
+          "secondOnlyTruePositives": 240,
+          "bothFalsePositives": 6,
+          "pairedRecall": {
+            "delta": 0.038577291381668946,
+            "delta95": [
+              0.015213795914435627,
+              0.05703201411419405
+            ]
+          }
+        },
+        "0.001": null,
+        "0.0001": null
+      }
+    },
+    "validationRowsWithMatchingTrainingDomVector": 1321,
+    "observedBenignStructures": {
+      "url-fusion": {
+        "password-field": {
+          "urls": 224,
+          "domains": 191,
+          "alerts": {
+            "fixed": {
+              "urls": 26,
+              "domains": 26
+            },
+            "0.01": {
+              "urls": 2,
+              "domains": 2
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "payment-field-metadata": {
+          "urls": 1,
+          "domains": 1,
+          "alerts": {
+            "fixed": {
+              "urls": 0,
+              "domains": 0
+            },
+            "0.01": {
+              "urls": 0,
+              "domains": 0
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "cross-origin-form": {
+          "urls": 163,
+          "domains": 152,
+          "alerts": {
+            "fixed": {
+              "urls": 11,
+              "domains": 11
+            },
+            "0.01": {
+              "urls": 0,
+              "domains": 0
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "external-frame": {
+          "urls": 599,
+          "domains": 556,
+          "alerts": {
+            "fixed": {
+              "urls": 43,
+              "domains": 41
+            },
+            "0.01": {
+              "urls": 4,
+              "domains": 4
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        }
+      },
+      "dom-xgboost": {
+        "password-field": {
+          "urls": 224,
+          "domains": 191,
+          "alerts": {
+            "fixed": {
+              "urls": 33,
+              "domains": 32
+            },
+            "0.01": {
+              "urls": 1,
+              "domains": 1
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "payment-field-metadata": {
+          "urls": 1,
+          "domains": 1,
+          "alerts": {
+            "fixed": {
+              "urls": 0,
+              "domains": 0
+            },
+            "0.01": {
+              "urls": 0,
+              "domains": 0
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "cross-origin-form": {
+          "urls": 163,
+          "domains": 152,
+          "alerts": {
+            "fixed": {
+              "urls": 8,
+              "domains": 8
+            },
+            "0.01": {
+              "urls": 0,
+              "domains": 0
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "external-frame": {
+          "urls": 599,
+          "domains": 556,
+          "alerts": {
+            "fixed": {
+              "urls": 12,
+              "domains": 12
+            },
+            "0.01": {
+              "urls": 0,
+              "domains": 0
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        }
+      },
+      "url-dom-xgboost": {
+        "password-field": {
+          "urls": 224,
+          "domains": 191,
+          "alerts": {
+            "fixed": {
+              "urls": 17,
+              "domains": 17
+            },
+            "0.01": {
+              "urls": 1,
+              "domains": 1
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "payment-field-metadata": {
+          "urls": 1,
+          "domains": 1,
+          "alerts": {
+            "fixed": {
+              "urls": 0,
+              "domains": 0
+            },
+            "0.01": {
+              "urls": 0,
+              "domains": 0
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "cross-origin-form": {
+          "urls": 163,
+          "domains": 152,
+          "alerts": {
+            "fixed": {
+              "urls": 3,
+              "domains": 3
+            },
+            "0.01": {
+              "urls": 0,
+              "domains": 0
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "external-frame": {
+          "urls": 599,
+          "domains": 556,
+          "alerts": {
+            "fixed": {
+              "urls": 6,
+              "domains": 6
+            },
+            "0.01": {
+              "urls": 1,
+              "domains": 1
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        }
+      },
+      "url-dom-fusion": {
+        "password-field": {
+          "urls": 224,
+          "domains": 191,
+          "alerts": {
+            "fixed": {
+              "urls": 32,
+              "domains": 32
+            },
+            "0.01": {
+              "urls": 2,
+              "domains": 2
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "payment-field-metadata": {
+          "urls": 1,
+          "domains": 1,
+          "alerts": {
+            "fixed": {
+              "urls": 0,
+              "domains": 0
+            },
+            "0.01": {
+              "urls": 0,
+              "domains": 0
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "cross-origin-form": {
+          "urls": 163,
+          "domains": 152,
+          "alerts": {
+            "fixed": {
+              "urls": 9,
+              "domains": 9
+            },
+            "0.01": {
+              "urls": 0,
+              "domains": 0
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "external-frame": {
+          "urls": 599,
+          "domains": 556,
+          "alerts": {
+            "fixed": {
+              "urls": 30,
+              "domains": 29
+            },
+            "0.01": {
+              "urls": 4,
+              "domains": 4
+            },
+            "0.001": null,
+            "0.0001": null
+          }
+        }
+      }
+    }
+  },
+  "projections": [
+    {
+      "revision": "eca603e0ecd4f698f8d4d226c088659e72681239",
+      "cohortSha256": "b05c458d47a7840a484419bb2f20953728e9171cb7557eb3158b6a43ccee86ac",
+      "budgetBytes": 680000000,
+      "transferBytes": 582235159,
+      "requestedShards": [
+        "train-000",
+        "train-055",
+        "train-018"
+      ],
+      "completedShards": [
+        {
+          "name": "train-000",
+          "file": "train-000.jsonl",
+          "publisherSha256": "9a9c693a95daeddb127c4446df4c5673b3f1a39e457ffe964b9849069bd739fe",
+          "sourceRows": 1000,
+          "matched": 358,
+          "statuses": {
+            "usable": 354,
+            "usableWithParseErrors": 19,
+            "oversized": 4
+          },
+          "coverage": {
+            "train/0": 91,
+            "tuning/1": 20,
+            "train/1": 161,
+            "validation/1": 23,
+            "calibration/1": 23,
+            "validation/0": 11,
+            "tuning/0": 12,
+            "calibration/0": 13
+          },
+          "projectedBytes": 49663875,
+          "processedRowGroups": 1,
+          "availableRowGroups": 1,
+          "seconds": 21.02168679999886,
+          "derivedSha256": "018b4abbed8be3f6db6c6e9e30f7653aa02e568ef8028654061857b1130ba624",
+          "derivedBytes": 295271
+        },
+        {
+          "name": "train-055",
+          "file": "train-055.jsonl",
+          "publisherSha256": "205a7e1cf4fb11032683e90fdbd1c13ddc9d9dd86109658d13e69929b53b31d0",
+          "sourceRows": 361,
+          "matched": 143,
+          "statuses": {
+            "usable": 135,
+            "oversized": 8,
+            "usableWithParseErrors": 8
+          },
+          "coverage": {
+            "train/1": 68,
+            "calibration/1": 11,
+            "train/0": 27,
+            "tuning/0": 5,
+            "validation/1": 9,
+            "tuning/1": 10,
+            "calibration/0": 5
+          },
+          "projectedBytes": 20262006,
+          "processedRowGroups": 1,
+          "availableRowGroups": 1,
+          "seconds": 8.80240459999186,
+          "derivedSha256": "e4c8e41c02bc393c2d6283fc1131217d4a15251ba63cce589ba861197a71703f",
+          "derivedBytes": 113368
+        },
+        {
+          "name": "train-018",
+          "file": "train-018.jsonl",
+          "publisherSha256": "a95f097bd5f90d90520cdbe425832cb60a4772e945ef6a06f02eaf1244eefb3b",
+          "sourceRows": 9408,
+          "matched": 3555,
+          "statuses": {
+            "usable": 3461,
+            "usableWithParseErrors": 151,
+            "oversized": 93,
+            "structure-limit": 1
+          },
+          "coverage": {
+            "train/1": 1664,
+            "calibration/0": 110,
+            "train/0": 771,
+            "validation/0": 108,
+            "calibration/1": 241,
+            "tuning/1": 235,
+            "validation/1": 235,
+            "tuning/0": 97
+          },
+          "projectedBytes": 512309278,
+          "processedRowGroups": 1,
+          "availableRowGroups": 1,
+          "seconds": 178.22347120000632,
+          "derivedSha256": "5b63b0acca123b7185de55899f8e682bed00c32b5c1bfaf63c384111e671de6e",
+          "derivedBytes": 2894165
+        }
+      ]
+    },
+    {
+      "revision": "eca603e0ecd4f698f8d4d226c088659e72681239",
+      "cohortSha256": "b05c458d47a7840a484419bb2f20953728e9171cb7557eb3158b6a43ccee86ac",
+      "budgetBytes": 14000000000,
+      "transferBytes": 6907911090,
+      "requestedShards": [
+        "train-037",
+        "train-049",
+        "train-009",
+        "train-046",
+        "train-043",
+        "train-002",
+        "train-026",
+        "train-025",
+        "train-033",
+        "train-016",
+        "train-044",
+        "train-010",
+        "train-030",
+        "train-011",
+        "train-014",
+        "train-034",
+        "train-029",
+        "train-052",
+        "train-022",
+        "train-039",
+        "train-019",
+        "train-051",
+        "train-024",
+        "train-032",
+        "train-007",
+        "train-028",
+        "train-004",
+        "train-023",
+        "train-005",
+        "train-040",
+        "train-031",
+        "train-038",
+        "train-008",
+        "train-013",
+        "train-041",
+        "train-001",
+        "train-035",
+        "train-050",
+        "train-036",
+        "train-015",
+        "train-006",
+        "train-020",
+        "train-021",
+        "train-045",
+        "train-054",
+        "train-017",
+        "train-053",
+        "train-012",
+        "train-042",
+        "train-027",
+        "train-048",
+        "train-047",
+        "train-003"
+      ],
+      "targetTrainRows": 20000,
+      "cumulativeUsableTrainingRowsByClass": [
+        10046,
+        24945
+      ],
+      "completedShards": [
+        {
+          "name": "train-037",
+          "file": "train-037.jsonl",
+          "publisherSha256": "276b68b7cb60892c5da21df662d9c4dcfef481767ca1c81fc4bddc22e26664c1",
+          "sourceRows": 9622,
+          "matched": 3680,
+          "statuses": {
+            "usable": 3595,
+            "usableWithParseErrors": 140,
+            "oversized": 85
+          },
+          "coverage": {
+            "train/1": 1754,
+            "validation/1": 260,
+            "tuning/0": 111,
+            "train/0": 768,
+            "tuning/1": 246,
+            "calibration/1": 248,
+            "validation/0": 116,
+            "calibration/0": 92
+          },
+          "projectedBytes": 528502165,
+          "processedRowGroups": 1,
+          "availableRowGroups": 1,
+          "seconds": 171.22573950000515,
+          "derivedSha256": "53e81335c15866b2cb29553f502466a4072ca6005984369413e200a0419a1a7d",
+          "derivedBytes": 3003240
+        },
+        {
+          "name": "train-049",
+          "file": "train-049.jsonl",
+          "publisherSha256": "f33cade179e5463c199be6d91697780dee5e9a968719979f679f0948776e87d5",
+          "sourceRows": 9503,
+          "matched": 3453,
+          "statuses": {
+            "usable": 3390,
+            "usableWithParseErrors": 119,
+            "oversized": 63
+          },
+          "coverage": {
+            "train/0": 675,
+            "train/1": 1694,
+            "calibration/1": 233,
+            "validation/1": 258,
+            "tuning/0": 92,
+            "tuning/1": 261,
+            "validation/0": 81,
+            "calibration/0": 96
+          },
+          "projectedBytes": 493184098,
+          "processedRowGroups": 1,
+          "availableRowGroups": 1,
+          "seconds": 163.74736370000755,
+          "derivedSha256": "f50d48dc4d97bac23efffd56238428b43e92e5827c8fb64f23061439acc6d720",
+          "derivedBytes": 2829117
+        },
+        {
+          "name": "train-009",
+          "file": "train-009.jsonl",
+          "publisherSha256": "1f2c36eb106e707efad78ad6daa31bb5a9935a1b3c223007a9306768585b794b",
+          "sourceRows": 8783,
+          "matched": 3167,
+          "statuses": {
+            "usable": 3116,
+            "usableWithParseErrors": 134,
+            "oversized": 51
+          },
+          "coverage": {
+            "train/0": 630,
+            "train/1": 1561,
+            "tuning/1": 226,
+            "calibration/0": 65,
+            "validation/1": 217,
+            "calibration/1": 239,
+            "tuning/0": 94,
+            "validation/0": 84
+          },
+          "projectedBytes": 459061656,
+          "processedRowGroups": 1,
+          "availableRowGroups": 1,
+          "seconds": 135.47717009999906,
+          "derivedSha256": "fddb6d15aa6b4117f310729a2004346dcc1cbd58010d59f4383f3dceefc1a428",
+          "derivedBytes": 2600425
+        },
+        {
+          "name": "train-046",
+          "file": "train-046.jsonl",
+          "publisherSha256": "08e2335e64e63edf16f0d42ea176586b0aec2730ab9bef79b99e3b53b8ab901b",
+          "sourceRows": 9606,
+          "matched": 3417,
+          "statuses": {
+            "usable": 3362,
+            "usableWithParseErrors": 133,
+            "oversized": 54,
+            "structure-limit": 1
+          },
+          "coverage": {
+            "train/1": 1670,
+            "calibration/1": 242,
+            "calibration/0": 103,
+            "tuning/1": 236,
+            "train/0": 686,
+            "validation/0": 78,
+            "tuning/0": 88,
+            "validation/1": 259
+          },
+          "projectedBytes": 513022561,
+          "processedRowGroups": 1,
+          "availableRowGroups": 1,
+          "seconds": 172.98766780000005,
+          "derivedSha256": "cb745430c8ba227a3323420fbd253f93032f8df72327d00e613866a6032a45d5",
+          "derivedBytes": 2804811
+        },
+        {
+          "name": "train-043",
+          "file": "train-043.jsonl",
+          "publisherSha256": "3e483aea9ee38c0ba8c67dad8c7fac25600735aa359ad91de118539549fa80b7",
+          "sourceRows": 9492,
+          "matched": 3508,
+          "statuses": {
+            "usable": 3432,
+            "usableWithParseErrors": 131,
+            "oversized": 75,
+            "structure-limit": 1
+          },
+          "coverage": {
+            "validation/1": 287,
+            "train/1": 1678,
+            "validation/0": 92,
+            "train/0": 683,
+            "calibration/1": 241,
+            "tuning/1": 268,
+            "tuning/0": 96,
+            "calibration/0": 87
+          },
+          "projectedBytes": 516797788,
+          "processedRowGroups": 1,
+          "availableRowGroups": 1,
+          "seconds": 197.95594749999873,
+          "derivedSha256": "c177db01989ede61b1ad0a76da71f1829c87441998d5be8a2f84c84e6f54518f",
+          "derivedBytes": 2865804
+        },
+        {
+          "name": "train-002",
+          "file": "train-002.jsonl",
+          "publisherSha256": "75d891908c1f921542ea9e4f94578f8442da05333621f1cb3ef386c9698935a7",
+          "sourceRows": 6506,
+          "matched": 2377,
+          "statuses": {
+            "usable": 2327,
+            "usableWithParseErrors": 103,
+            "oversized": 50
+          },
+          "coverage": {
+            "train/0": 472,
+            "train/1": 1147,
+            "calibration/1": 171,
+            "tuning/1": 169,
+            "calibration/0": 55,
+            "validation/1": 190,
+            "tuning/0": 62,
+            "validation/0": 61
+          },
+          "projectedBytes": 354543458,
+          "processedRowGroups": 1,
+          "availableRowGroups": 1,
+          "seconds": 110.91936349999742,
+          "derivedSha256": "c4e680e655194acb218cb5171faa70fcd54635f11464d3ae319e41b3bccbc671",
+          "derivedBytes": 1943097
+        },
+        {
+          "name": "train-026",
+          "file": "train-026.jsonl",
+          "publisherSha256": "c34b1dcb379bf1cd1140cd5f0a58eaaa97970a99d389daca63a2e2895855aba3",
+          "sourceRows": 9583,
+          "matched": 3481,
+          "statuses": {
+            "usable": 3407,
+            "usableWithParseErrors": 138,
+            "oversized": 73,
+            "structure-limit": 1
+          },
+          "coverage": {
+            "train/1": 1734,
+            "tuning/1": 240,
+            "validation/1": 215,
+            "train/0": 666,
+            "calibration/1": 280,
+            "validation/0": 93,
+            "calibration/0": 89,
+            "tuning/0": 90
+          },
+          "projectedBytes": 507055964,
+          "processedRowGroups": 1,
+          "availableRowGroups": 1,
+          "seconds": 191.42928080000274,
+          "derivedSha256": "4b681d5441ef52a740b48731850561b480e4a5b90c1925ff9b705ea7174d5514",
+          "derivedBytes": 2845162
+        },
+        {
+          "name": "train-025",
+          "file": "train-025.jsonl",
+          "publisherSha256": "1eebce31468381626456360527a1ef6d4b1e22322f0f58e027e9e5ed5e21415a",
+          "sourceRows": 9575,
+          "matched": 3543,
+          "statuses": {
+            "usable": 3466,
+            "usableWithParseErrors": 152,
+            "oversized": 77
+          },
+          "coverage": {
+            "train/1": 1739,
+            "calibration/1": 235,
+            "train/0": 684,
+            "tuning/1": 249,
+            "validation/0": 102,
+            "tuning/0": 96,
+            "validation/1": 264,
+            "calibration/0": 97
+          },
+          "projectedBytes": 521715633,
+          "processedRowGroups": 1,
+          "availableRowGroups": 1,
+          "seconds": 178.25834840000607,
+          "derivedSha256": "428211f433b463b55d5c5cff1684cdd5e2bade1044cda76c2d8b1c32c3d7231f",
+          "derivedBytes": 2894556
+        },
+        {
+          "name": "train-033",
+          "file": "train-033.jsonl",
+          "publisherSha256": "367c3645a0a467f9deec17ca293d136c8967928c01ed0a1ac6b1b64cf5e1d9ff",
+          "sourceRows": 9664,
+          "matched": 3484,
+          "statuses": {
+            "usable": 3400,
+            "usableWithParseErrors": 138,
+            "oversized": 84
+          },
+          "coverage": {
+            "tuning/1": 253,
+            "calibration/1": 245,
+            "train/1": 1727,
+            "validation/1": 230,
+            "tuning/0": 103,
+            "train/0": 667,
+            "validation/0": 82,
+            "calibration/0": 93
+          },
+          "projectedBytes": 518163687,
+          "processedRowGroups": 1,
+          "availableRowGroups": 1,
+          "seconds": 195.78598679999413,
+          "derivedSha256": "90e5ca370283ee30e2f79004aa0b3321fc0da9a9f46441903970ff5765921f66",
+          "derivedBytes": 2840506
+        },
+        {
+          "name": "train-016",
+          "file": "train-016.jsonl",
+          "publisherSha256": "abb2a14210d0061da98e0efa567f5ea59be5e3fdbc89fdebbd79926582e79344",
+          "sourceRows": 9342,
+          "matched": 3428,
+          "statuses": {
+            "usable": 3372,
+            "oversized": 56,
+            "usableWithParseErrors": 112
+          },
+          "coverage": {
+            "train/1": 1719,
+            "validation/1": 244,
+            "train/0": 632,
+            "tuning/0": 70,
+            "validation/0": 91,
+            "tuning/1": 257,
+            "calibration/0": 88,
+            "calibration/1": 271
+          },
+          "projectedBytes": 481165715,
+          "processedRowGroups": 1,
+          "availableRowGroups": 1,
+          "seconds": 161.18038600000727,
+          "derivedSha256": "9a16501bc0b08b50b0cce0b0f8cbbe80978c62f8f6a7a0a5f00d637de303190b",
+          "derivedBytes": 2813050
+        },
+        {
+          "name": "train-044",
+          "file": "train-044.jsonl",
+          "publisherSha256": "ba619d9ac74ffe4e9b90887c7c91c2c47dbd91dfee2db4fde9009fca91ac042d",
+          "sourceRows": 9518,
+          "matched": 3385,
+          "statuses": {
+            "usable": 3311,
+            "usableWithParseErrors": 122,
+            "oversized": 74
+          },
+          "coverage": {
+            "train/0": 657,
+            "validation/0": 100,
+            "train/1": 1657,
+            "tuning/1": 237,
+            "tuning/0": 95,
+            "calibration/0": 85,
+            "validation/1": 243,
+            "calibration/1": 237
+          },
+          "projectedBytes": 512333387,
+          "processedRowGroups": 1,
+          "availableRowGroups": 1,
+          "seconds": 171.89025799999945,
+          "derivedSha256": "7677f7ffd821f28081fe4358b7a73e2f276ec2f27c9f62d7cf027cf159163694",
+          "derivedBytes": 2765297
+        },
+        {
+          "name": "train-010",
+          "file": "train-010.jsonl",
+          "publisherSha256": "2248103f6867733767b12abbe7f39d2e0c8f9872be1c2889f7fe12c7ba8fd9ed",
+          "sourceRows": 9031,
+          "matched": 3231,
+          "statuses": {
+            "usable": 3154,
+            "usableWithParseErrors": 115,
+            "oversized": 76,
+            "structure-limit": 1
+          },
+          "coverage": {
+            "tuning/1": 200,
+            "train/1": 1617,
+            "train/0": 630,
+            "tuning/0": 84,
+            "calibration/1": 219,
+            "validation/1": 241,
+            "validation/0": 85,
+            "calibration/0": 78
+          },
+          "projectedBytes": 496511681,
+          "processedRowGroups": 1,
+          "availableRowGroups": 1,
+          "seconds": 153.12770569999702,
+          "derivedSha256": "dae6cef536a87e858a6c476659f3fc900824a0da55d47b1a58d2a6ceb977e03c",
+          "derivedBytes": 2635296
+        },
+        {
+          "name": "train-030",
+          "file": "train-030.jsonl",
+          "publisherSha256": "b75045291d54c0854929d284733ceeeccbfda149964a852f5a7d0f90fef1ea22",
+          "sourceRows": 9692,
+          "matched": 3488,
+          "statuses": {
+            "usable": 3417,
+            "usableWithParseErrors": 172,
+            "oversized": 71
+          },
+          "coverage": {
+            "train/0": 674,
+            "train/1": 1715,
+            "calibration/0": 88,
+            "calibration/1": 256,
+            "tuning/1": 255,
+            "validation/1": 245,
+            "tuning/0": 94,
+            "validation/0": 90
+          },
+          "projectedBytes": 516834904,
+          "processedRowGroups": 1,
+          "availableRowGroups": 1,
+          "seconds": 160.35048999999708,
+          "derivedSha256": "35abbb32b69b4a07bbd1f2ae73c5f45941a57512a81e49b24064b14412f2fa5d",
+          "derivedBytes": 2852737
+        },
+        {
+          "name": "train-011",
+          "file": "train-011.jsonl",
+          "publisherSha256": "f0444a6a5ac7931141be5853f46ef4c0ca5cffb1e0954c0fac378f5b4901a089",
+          "sourceRows": 9130,
+          "matched": 3264,
+          "statuses": {
+            "usable": 3202,
+            "oversized": 62,
+            "usableWithParseErrors": 162
+          },
+          "coverage": {
+            "train/1": 1640,
+            "train/0": 633,
+            "calibration/1": 222,
+            "tuning/1": 227,
+            "validation/1": 235,
+            "validation/0": 82,
+            "calibration/0": 72,
+            "tuning/0": 91
+          },
+          "projectedBytes": 489018393,
+          "processedRowGroups": 1,
+          "availableRowGroups": 1,
+          "seconds": 160.18524340000295,
+          "derivedSha256": "dd42b97ae3ebc0303478d7bef51c2cbe06b1e44b30772467e193d6b8fa7ad417",
+          "derivedBytes": 2672315
+        }
+      ]
+    }
+  ],
+  "browser": {
+    "engine": "159.0.8154.6",
+    "manifestVersion": 3,
+    "runAt": "document_idle",
+    "fulfilledSyntheticDocuments": 7,
+    "blockedRequests": 0,
+    "rows": [
+      {
+        "name": "banking-login",
+        "staticParity": true,
+        "browserMs": 5.4000000059604645,
+        "features": {
+          "elements": 7,
+          "depth": 4,
+          "hidden": 0,
+          "templates": 0,
+          "forms": 1,
+          "forms_post": 1,
+          "actions_local": 1,
+          "actions_external": 0,
+          "actions_other": 0,
+          "actions_http": 0,
+          "inputs": 2,
+          "inputs_password": 1,
+          "inputs_email": 1,
+          "inputs_hidden": 0,
+          "inputs_payment": 0,
+          "inputs_otp": 0,
+          "password_forms": 1,
+          "payment_forms": 0,
+          "unassociated_password": 0,
+          "iframe": 0,
+          "iframe_external": 0,
+          "iframe_sandbox": 0,
+          "iframe_srcdoc": 0,
+          "links": 0,
+          "links_external_ratio": 0,
+          "links_other": 0,
+          "scripts": 0,
+          "scripts_inline": 0,
+          "scripts_external": 0,
+          "scripts_other": 0,
+          "refresh": 0,
+          "refresh_external": 0,
+          "title_length": 23,
+          "title_brand": 0,
+          "title_login": 1,
+          "title_payment": 0
+        }
+      },
+      {
+        "name": "payment-gateway",
+        "staticParity": true,
+        "browserMs": 3.0999999940395355,
+        "features": {
+          "elements": 8,
+          "depth": 4,
+          "hidden": 0,
+          "templates": 0,
+          "forms": 1,
+          "forms_post": 1,
+          "actions_local": 0,
+          "actions_external": 1,
+          "actions_other": 0,
+          "actions_http": 0,
+          "inputs": 3,
+          "inputs_password": 0,
+          "inputs_email": 0,
+          "inputs_hidden": 0,
+          "inputs_payment": 3,
+          "inputs_otp": 0,
+          "password_forms": 0,
+          "payment_forms": 1,
+          "unassociated_password": 0,
+          "iframe": 0,
+          "iframe_external": 0,
+          "iframe_sandbox": 0,
+          "iframe_srcdoc": 0,
+          "links": 0,
+          "links_external_ratio": 0,
+          "links_other": 0,
+          "scripts": 0,
+          "scripts_inline": 0,
+          "scripts_external": 0,
+          "scripts_other": 0,
+          "refresh": 0,
+          "refresh_external": 0,
+          "title_length": 16,
+          "title_brand": 0,
+          "title_login": 0,
+          "title_payment": 1
+        }
+      },
+      {
+        "name": "oauth-sso",
+        "staticParity": true,
+        "browserMs": 0.8999999910593033,
+        "features": {
+          "elements": 7,
+          "depth": 4,
+          "hidden": 0,
+          "templates": 0,
+          "forms": 1,
+          "forms_post": 0,
+          "actions_local": 0,
+          "actions_external": 1,
+          "actions_other": 0,
+          "actions_http": 0,
+          "inputs": 1,
+          "inputs_password": 0,
+          "inputs_email": 0,
+          "inputs_hidden": 1,
+          "inputs_payment": 0,
+          "inputs_otp": 0,
+          "password_forms": 0,
+          "payment_forms": 0,
+          "unassociated_password": 0,
+          "iframe": 0,
+          "iframe_external": 0,
+          "iframe_sandbox": 0,
+          "iframe_srcdoc": 0,
+          "links": 1,
+          "links_external_ratio": 1,
+          "links_other": 0,
+          "scripts": 0,
+          "scripts_inline": 0,
+          "scripts_external": 0,
+          "scripts_other": 0,
+          "refresh": 0,
+          "refresh_external": 0,
+          "title_length": 11,
+          "title_brand": 0,
+          "title_login": 0,
+          "title_payment": 0
+        }
+      },
+      {
+        "name": "cross-origin-form",
+        "staticParity": true,
+        "browserMs": 0.7000000029802322,
+        "features": {
+          "elements": 6,
+          "depth": 3,
+          "hidden": 0,
+          "templates": 0,
+          "forms": 1,
+          "forms_post": 1,
+          "actions_local": 0,
+          "actions_external": 1,
+          "actions_other": 0,
+          "actions_http": 0,
+          "inputs": 1,
+          "inputs_password": 1,
+          "inputs_email": 0,
+          "inputs_hidden": 0,
+          "inputs_payment": 0,
+          "inputs_otp": 0,
+          "password_forms": 1,
+          "payment_forms": 0,
+          "unassociated_password": 0,
+          "iframe": 0,
+          "iframe_external": 0,
+          "iframe_sandbox": 0,
+          "iframe_srcdoc": 0,
+          "links": 0,
+          "links_external_ratio": 0,
+          "links_other": 0,
+          "scripts": 0,
+          "scripts_inline": 0,
+          "scripts_external": 0,
+          "scripts_other": 0,
+          "refresh": 0,
+          "refresh_external": 0,
+          "title_length": 23,
+          "title_brand": 0,
+          "title_login": 1,
+          "title_payment": 0
+        }
+      },
+      {
+        "name": "ordinary-password",
+        "staticParity": true,
+        "browserMs": 0.7999999970197678,
+        "features": {
+          "elements": 7,
+          "depth": 4,
+          "hidden": 0,
+          "templates": 0,
+          "forms": 1,
+          "forms_post": 0,
+          "actions_local": 1,
+          "actions_external": 0,
+          "actions_other": 0,
+          "actions_http": 0,
+          "inputs": 1,
+          "inputs_password": 1,
+          "inputs_email": 0,
+          "inputs_hidden": 0,
+          "inputs_payment": 0,
+          "inputs_otp": 0,
+          "password_forms": 1,
+          "payment_forms": 0,
+          "unassociated_password": 0,
+          "iframe": 0,
+          "iframe_external": 0,
+          "iframe_sandbox": 0,
+          "iframe_srcdoc": 0,
+          "links": 1,
+          "links_external_ratio": 0,
+          "links_other": 0,
+          "scripts": 0,
+          "scripts_inline": 0,
+          "scripts_external": 0,
+          "scripts_other": 0,
+          "refresh": 0,
+          "refresh_external": 0,
+          "title_length": 17,
+          "title_brand": 0,
+          "title_login": 0,
+          "title_payment": 0
+        }
+      },
+      {
+        "name": "embedded-payment-auth",
+        "staticParity": true,
+        "browserMs": 2.5999999940395355,
+        "features": {
+          "elements": 6,
+          "depth": 3,
+          "hidden": 0,
+          "templates": 0,
+          "forms": 0,
+          "forms_post": 0,
+          "actions_local": 0,
+          "actions_external": 0,
+          "actions_other": 0,
+          "actions_http": 0,
+          "inputs": 0,
+          "inputs_password": 0,
+          "inputs_email": 0,
+          "inputs_hidden": 0,
+          "inputs_payment": 0,
+          "inputs_otp": 0,
+          "password_forms": 0,
+          "payment_forms": 0,
+          "unassociated_password": 0,
+          "iframe": 2,
+          "iframe_external": 2,
+          "iframe_sandbox": 2,
+          "iframe_srcdoc": 0,
+          "links": 0,
+          "links_external_ratio": 0,
+          "links_other": 0,
+          "scripts": 0,
+          "scripts_inline": 0,
+          "scripts_external": 0,
+          "scripts_other": 0,
+          "refresh": 0,
+          "refresh_external": 0,
+          "title_length": 15,
+          "title_brand": 0,
+          "title_login": 0,
+          "title_payment": 1
+        }
+      },
+      {
+        "name": "dynamic-login",
+        "staticParity": true,
+        "browserMs": 0.29999999701976776,
+        "features": {
+          "elements": 5,
+          "depth": 3,
+          "hidden": 0,
+          "templates": 0,
+          "forms": 0,
+          "forms_post": 0,
+          "actions_local": 0,
+          "actions_external": 0,
+          "actions_other": 0,
+          "actions_http": 0,
+          "inputs": 0,
+          "inputs_password": 0,
+          "inputs_email": 0,
+          "inputs_hidden": 0,
+          "inputs_payment": 0,
+          "inputs_otp": 0,
+          "password_forms": 0,
+          "payment_forms": 0,
+          "unassociated_password": 0,
+          "iframe": 0,
+          "iframe_external": 0,
+          "iframe_sandbox": 0,
+          "iframe_srcdoc": 0,
+          "links": 0,
+          "links_external_ratio": 0,
+          "links_other": 0,
+          "scripts": 0,
+          "scripts_inline": 0,
+          "scripts_external": 0,
+          "scripts_other": 0,
+          "refresh": 0,
+          "refresh_external": 0,
+          "title_length": 11,
+          "title_brand": 0,
+          "title_login": 0,
+          "title_payment": 0
+        },
+        "dynamic": {
+          "features": {
+            "elements": 7,
+            "depth": 5,
+            "hidden": 0,
+            "templates": 0,
+            "forms": 1,
+            "forms_post": 0,
+            "actions_local": 1,
+            "actions_external": 0,
+            "actions_other": 0,
+            "actions_http": 0,
+            "inputs": 1,
+            "inputs_password": 1,
+            "inputs_email": 0,
+            "inputs_hidden": 0,
+            "inputs_payment": 0,
+            "inputs_otp": 0,
+            "password_forms": 1,
+            "payment_forms": 0,
+            "unassociated_password": 0,
+            "iframe": 0,
+            "iframe_external": 0,
+            "iframe_sandbox": 0,
+            "iframe_srcdoc": 0,
+            "links": 0,
+            "links_external_ratio": 0,
+            "links_other": 0,
+            "scripts": 0,
+            "scripts_inline": 0,
+            "scripts_external": 0,
+            "scripts_other": 0,
+            "refresh": 0,
+            "refresh_external": 0,
+            "title_length": 11,
+            "title_brand": 0,
+            "title_login": 0,
+            "title_payment": 0
+          },
+          "browserMs": 0.29999999701976776
+        }
+      }
+    ]
+  },
+  "syntheticControls": {
+    "preflight": {
+      "modelSha256": "cac0cd50e971a94f7905afbc07be792e630a733d74903173b43ef8b3bac8e1bf",
+      "fabricatedControls": {
+        "banking-login": {
+          "score": 0.8398249745368958,
+          "atHalf": true,
+          "atConstraints": {
+            "0.01": null,
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "payment-gateway": {
+          "score": 0.9620485305786133,
+          "atHalf": true,
+          "atConstraints": {
+            "0.01": null,
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "oauth-sso": {
+          "score": 0.9396464228630066,
+          "atHalf": true,
+          "atConstraints": {
+            "0.01": null,
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "cross-origin-form": {
+          "score": 0.9376377463340759,
+          "atHalf": true,
+          "atConstraints": {
+            "0.01": null,
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "ordinary-password": {
+          "score": 0.8624228239059448,
+          "atHalf": true,
+          "atConstraints": {
+            "0.01": null,
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "embedded-payment-auth": {
+          "score": 0.4924042224884033,
+          "atHalf": false,
+          "atConstraints": {
+            "0.01": null,
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "dynamic-login": {
+          "score": 0.8563224077224731,
+          "atHalf": true,
+          "atConstraints": {
+            "0.01": null,
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "dynamic-login-materialized": {
+          "score": 0.8063291907310486,
+          "atHalf": true,
+          "atConstraints": {
+            "0.01": null,
+            "0.001": null,
+            "0.0001": null
+          }
+        }
+      },
+      "examples": 300,
+      "endToEndMedianMs": 1.0951499934890307,
+      "endToEndP95Ms": 2.4388950107095315
+    },
+    "scale20k": {
+      "modelSha256": "b0f2950381e05db27ca116953a4d92369987ffd523064f90931d63c2344497b5",
+      "fabricatedControls": {
+        "banking-login": {
+          "score": 0.9697458744049072,
+          "atHalf": true,
+          "atConstraints": {
+            "0.01": true,
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "payment-gateway": {
+          "score": 0.9715357422828674,
+          "atHalf": true,
+          "atConstraints": {
+            "0.01": true,
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "oauth-sso": {
+          "score": 0.9826219081878662,
+          "atHalf": true,
+          "atConstraints": {
+            "0.01": true,
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "cross-origin-form": {
+          "score": 0.9810319542884827,
+          "atHalf": true,
+          "atConstraints": {
+            "0.01": true,
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "ordinary-password": {
+          "score": 0.9679430723190308,
+          "atHalf": true,
+          "atConstraints": {
+            "0.01": true,
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "embedded-payment-auth": {
+          "score": 0.9366910457611084,
+          "atHalf": true,
+          "atConstraints": {
+            "0.01": true,
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "dynamic-login": {
+          "score": 0.9440000057220459,
+          "atHalf": true,
+          "atConstraints": {
+            "0.01": true,
+            "0.001": null,
+            "0.0001": null
+          }
+        },
+        "dynamic-login-materialized": {
+          "score": 0.9679430723190308,
+          "atHalf": true,
+          "atConstraints": {
+            "0.01": true,
+            "0.001": null,
+            "0.0001": null
+          }
+        }
+      },
+      "examples": 300,
+      "endToEndMedianMs": 1.0988000067300163,
+      "endToEndP95Ms": 2.8965200079255737
+    }
+  },
+  "sensitivity": {
+    "coverage": {
+      "rows": 3690,
+      "positive": 2352,
+      "validationRows": 5011,
+      "excludedRepeatedVectors": 1321
+    },
+    "url": {
+      "rows": 3690,
+      "positive": 2352,
+      "idsSha256": "b067bc36c6730d9e7e1cda2cf16cca0db2e8438414e35edc5346d3f0b09129fd",
+      "prAucAveragePrecision": 0.992243467732617,
+      "rocAuc": 0.9853716710899606,
+      "logLoss": 0.18779891517207511,
+      "rankingIntervals": {
+        "prAuc95": [
+          0.9903976496064382,
+          0.9938752367858795
+        ],
+        "rocAuc95": [
+          0.9819164220378545,
+          0.9890143933845998
+        ]
+      },
+      "brier": 0.05397095554338019,
+      "ece10EqualWidth": 0.06723902187891037,
+      "atHalf": {
+        "threshold": 0.5,
+        "tp": 2100,
+        "fp": 40,
+        "tn": 1298,
+        "fn": 252,
+        "precision": 0.9813084112149533,
+        "recall": 0.8928571428571429,
+        "f1": 0.9349955476402493,
+        "falsePositiveRate": 0.029895366218236172,
+        "falseAlertDomains": 40,
+        "legitimateDomains": 1238,
+        "negativeDomainFalsePositiveRate": 0.03231017770597738,
+        "negativeDomainFpr95Upper": 0.041853328810948526,
+        "intervals": {
+          "recall95": [
+            0.8761702565835388,
+            0.9118997124828253
+          ],
+          "precision95": [
+            0.9757981825650146,
+            0.9863672016147845
+          ],
+          "f1_95": [
+            0.9266816307422184,
+            0.9456495125175137
+          ],
+          "urlFpr95": [
+            0.02155240888530549,
+            0.03808598581332692
+          ],
+          "domainFpr95": [
+            0.023181143869918056,
+            0.04373919114443939
+          ]
+        }
+      },
+      "atConstraints": {
+        "0.01": {
+          "threshold": 0.7424227755961785,
+          "tp": 1905,
+          "fp": 11,
+          "tn": 1327,
+          "fn": 447,
+          "precision": 0.994258872651357,
+          "recall": 0.8099489795918368,
+          "f1": 0.8926897844423618,
+          "falsePositiveRate": 0.008221225710014948,
+          "falseAlertDomains": 11,
+          "legitimateDomains": 1238,
+          "negativeDomainFalsePositiveRate": 0.008885298869143781,
+          "negativeDomainFpr95Upper": 0.014664385180192054,
+          "intervals": {
+            "recall95": [
+              0.7855984835074055,
+              0.8354784282204615
+            ],
+            "precision95": [
+              0.9905729181125182,
+              0.9978678895257947
+            ],
+            "f1_95": [
+              0.8774693773821391,
+              0.9082389881008028
+            ],
+            "urlFpr95": [
+              0.0030206380900361044,
+              0.013657575030787183
+            ],
+            "domainFpr95": [
+              0.004443614984270735,
+              0.01584252294636383
+            ]
+          }
+        },
+        "0.001": null,
+        "0.0001": null
+      }
+    },
+    "urlDomBlend": {
+      "rows": 3690,
+      "positive": 2352,
+      "idsSha256": "b067bc36c6730d9e7e1cda2cf16cca0db2e8438414e35edc5346d3f0b09129fd",
+      "prAucAveragePrecision": 0.995095929986349,
+      "rocAuc": 0.991171206898305,
+      "logLoss": 0.13632849020640392,
+      "rankingIntervals": {
+        "prAuc95": [
+          0.9936845042375283,
+          0.996200649089009
+        ],
+        "rocAuc95": [
+          0.9886985363142979,
+          0.9932377169121606
+        ]
+      },
+      "brier": 0.037720641157921536,
+      "ece10EqualWidth": 0.040114057269276915,
+      "atHalf": {
+        "threshold": 0.5,
+        "tp": 2294,
+        "fp": 117,
+        "tn": 1221,
+        "fn": 58,
+        "precision": 0.9514724180837827,
+        "recall": 0.9753401360544217,
+        "f1": 0.963258450556372,
+        "falsePositiveRate": 0.08744394618834081,
+        "falseAlertDomains": 116,
+        "legitimateDomains": 1238,
+        "negativeDomainFalsePositiveRate": 0.09369951534733441,
+        "negativeDomainFpr95Upper": 0.10845340391772802,
+        "intervals": {
+          "recall95": [
+            0.9675007975437915,
+            0.9836311777419163
+          ],
+          "precision95": [
+            0.9415830024652341,
+            0.9602440724839577
+          ],
+          "f1_95": [
+            0.9574363604102422,
+            0.9686648387076416
+          ],
+          "urlFpr95": [
+            0.07288213945006702,
+            0.10389988761130804
+          ],
+          "domainFpr95": [
+            0.07804281544110794,
+            0.11131549160400618
+          ]
+        }
+      },
+      "atConstraints": {
+        "0.01": {
+          "threshold": 0.8694662823864124,
+          "tp": 1954,
+          "fp": 10,
+          "tn": 1328,
+          "fn": 398,
+          "precision": 0.994908350305499,
+          "recall": 0.83078231292517,
+          "f1": 0.9054680259499537,
+          "falsePositiveRate": 0.007473841554559043,
+          "falseAlertDomains": 10,
+          "legitimateDomains": 1238,
+          "negativeDomainFalsePositiveRate": 0.008077544426494346,
+          "negativeDomainFpr95Upper": 0.013662783221612603,
+          "intervals": {
+            "recall95": [
+              0.8018099232124768,
+              0.8577141084682506
+            ],
+            "precision95": [
+              0.9916108580032068,
+              0.9979886753623824
+            ],
+            "f1_95": [
+              0.8887659354139001,
+              0.9211246516542965
+            ],
+            "urlFpr95": [
+              0.0029669758121913564,
+              0.012448186170940782
+            ],
+            "domainFpr95": [
+              0.003880095676519143,
+              0.014804573391773736
+            ]
+          }
+        },
+        "0.001": null,
+        "0.0001": null
+      }
+    },
+    "pairedRecallAtOnePercent": {
+      "delta": 0.020833333333333332,
+      "delta95": [
+        -0.005323894908840729,
+        0.04409010963240899
+      ]
+    }
+  },
+  "resources": {
+    "projectionPilot": {
+      "exitCode": 0,
+      "stopReason": null,
+      "resourceViolations": [],
+      "wallSeconds": 211.35899999999674,
+      "jobCpuSeconds": 64.046875,
+      "peakJobCommitBytes": 2234064896,
+      "hostCpuMaxPercent": 14.046345811051697,
+      "hostCpuMeanPercent": 5.950994318123466,
+      "cpuSamples": 105,
+      "samplesAbove30Percent": 0,
+      "logicalCpuAffinityCount": 2,
+      "jobCommitLimitBytes": 8000000000,
+      "memoryTargetBytes": 6000000000
+    },
+    "modelPilot": {
+      "exitCode": 0,
+      "stopReason": null,
+      "resourceViolations": [],
+      "wallSeconds": 21.281000000002678,
+      "jobCpuSeconds": 20.15625,
+      "peakJobCommitBytes": 884228096,
+      "hostCpuMaxPercent": 10.881934566145091,
+      "hostCpuMeanPercent": 7.549191921133767,
+      "cpuSamples": 10,
+      "samplesAbove30Percent": 0,
+      "logicalCpuAffinityCount": 2,
+      "jobCommitLimitBytes": 8000000000,
+      "memoryTargetBytes": 6000000000
+    },
+    "projection20k": {
+      "exitCode": 0,
+      "stopReason": null,
+      "resourceViolations": [],
+      "wallSeconds": 2331.1870000000054,
+      "jobCpuSeconds": 642.5625,
+      "peakJobCommitBytes": 3079278592,
+      "hostCpuMaxPercent": 28.726762539459838,
+      "hostCpuMeanPercent": 6.1112543366807595,
+      "cpuSamples": 1161,
+      "samplesAbove30Percent": 0,
+      "logicalCpuAffinityCount": 2,
+      "jobCommitLimitBytes": 8000000000,
+      "memoryTargetBytes": 6000000000
+    },
+    "model20k": {
+      "exitCode": 0,
+      "stopReason": null,
+      "resourceViolations": [],
+      "wallSeconds": 43.67200000000594,
+      "jobCpuSeconds": 41.078125,
+      "peakJobCommitBytes": 1172099072,
+      "hostCpuMaxPercent": 14.67923160565422,
+      "hostCpuMeanPercent": 8.428730644282668,
+      "cpuSamples": 21,
+      "samplesAbove30Percent": 0,
+      "logicalCpuAffinityCount": 2,
+      "jobCommitLimitBytes": 8000000000,
+      "memoryTargetBytes": 6000000000
+    },
+    "browser": {
+      "exitCode": 0,
+      "stopReason": null,
+      "resourceViolations": [],
+      "wallSeconds": 6.23399999999674,
+      "jobCpuSeconds": 5.9375,
+      "peakJobCommitBytes": 551800832,
+      "hostCpuMaxPercent": 12.89408430747432,
+      "hostCpuMeanPercent": 11.01841246479943,
+      "cpuSamples": 3,
+      "samplesAbove30Percent": 0,
+      "logicalCpuAffinityCount": 2,
+      "jobCommitLimitBytes": 8000000000,
+      "memoryTargetBytes": 6000000000
+    },
+    "controls": {
+      "exitCode": 0,
+      "stopReason": null,
+      "resourceViolations": [],
+      "wallSeconds": 8.219000000011874,
+      "jobCpuSeconds": 6.46875,
+      "peakJobCommitBytes": 378347520,
+      "hostCpuMaxPercent": 9.82078853046595,
+      "hostCpuMeanPercent": 7.164200110734756,
+      "cpuSamples": 4,
+      "samplesAbove30Percent": 0,
+      "logicalCpuAffinityCount": 2,
+      "jobCommitLimitBytes": 8000000000,
+      "memoryTargetBytes": 6000000000
+    },
+    "controls20k": {
+      "exitCode": 0,
+      "stopReason": null,
+      "resourceViolations": [],
+      "wallSeconds": 8.25,
+      "jobCpuSeconds": 6.421875,
+      "peakJobCommitBytes": 379060224,
+      "hostCpuMaxPercent": 7.932011331444755,
+      "hostCpuMeanPercent": 7.235534480177311,
+      "cpuSamples": 4,
+      "samplesAbove30Percent": 0,
+      "logicalCpuAffinityCount": 2,
+      "jobCommitLimitBytes": 8000000000,
+      "memoryTargetBytes": 6000000000
+    },
+    "sensitivity": {
+      "exitCode": 0,
+      "stopReason": null,
+      "resourceViolations": [],
+      "wallSeconds": 14.90700000000652,
+      "jobCpuSeconds": 11.46875,
+      "peakJobCommitBytes": 928387072,
+      "hostCpuMaxPercent": 14.768235716852319,
+      "hostCpuMeanPercent": 10.432961431463923,
+      "cpuSamples": 7,
+      "samplesAbove30Percent": 0,
+      "logicalCpuAffinityCount": 2,
+      "jobCommitLimitBytes": 8000000000
+    },
+    "freeze": {
+      "exitCode": 0,
+      "stopReason": null,
+      "resourceViolations": [],
+      "wallSeconds": 7.10899999999674,
+      "jobCpuSeconds": 4.890625,
+      "peakJobCommitBytes": 238927872,
+      "hostCpuMaxPercent": 9.122562674094702,
+      "hostCpuMeanPercent": 8.078838358576952,
+      "cpuSamples": 3,
+      "samplesAbove30Percent": 0,
+      "logicalCpuAffinityCount": 2,
+      "jobCommitLimitBytes": 8000000000,
+      "memoryTargetBytes": 6000000000
+    },
+    "pythonTests": {
+      "exitCode": 0,
+      "stopReason": null,
+      "resourceViolations": [],
+      "wallSeconds": 20.98399999999674,
+      "jobCpuSeconds": 3.34375,
+      "peakJobCommitBytes": 104439808,
+      "hostCpuMaxPercent": 45.547342485040474,
+      "hostCpuMeanPercent": 17.461925726153495,
+      "cpuSamples": 10,
+      "samplesAbove30Percent": 2,
+      "logicalCpuAffinityCount": 2,
+      "jobCommitLimitBytes": 8000000000
+    }
+  }
+}

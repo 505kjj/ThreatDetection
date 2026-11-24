@@ -1,0 +1,52 @@
+{
+  "inputs": {
+    "manifestSha256": "89399e8984a0444f297fbd8f80805b8ebf5b48cddbabc0e092ed8dc6cc297f95",
+    "recordsSha256": "af3384a5bd7011c99d5aae6666c854390e3f3db37d7d1f4934ec7bf857806047"
+  },
+  "kind": "real",
+  "checked": 2000,
+  "eligible": 0,
+  "rejected": 2000,
+  "historicalOverlap": "checked",
+  "historicalCampaignCoverage": "previous-experiments-have-no-comparable-campaign-ids",
+  "readyForIndependentEvidenceReview": false,
+  "manifestIssues": {
+    "targets.empty": 1
+  },
+  "errors": {
+    "history.lexical-family-overlap": 1375,
+    "history.literal-ip-overlap": 97,
+    "history.registered-domain-overlap": 1903,
+    "target.missing": 2000
+  },
+  "warnings": {
+    "campaign.missing": 2000,
+    "verification.timestamp-missing": 2000
+  },
+  "splits": {
+    "development": {
+      "eligibleRows": 0,
+      "registeredDomains": 0,
+      "literalIps": 0,
+      "documentedCampaigns": 0,
+      "labels": {},
+      "observationPrecision": {}
+    },
+    "calibration": {
+      "eligibleRows": 0,
+      "registeredDomains": 0,
+      "literalIps": 0,
+      "documentedCampaigns": 0,
+      "labels": {},
+      "observationPrecision": {}
+    },
+    "test": {
+      "eligibleRows": 0,
+      "registeredDomains": 0,
+      "literalIps": 0,
+      "documentedCampaigns": 0,
+      "labels": {},
+      "observationPrecision": {}
+    }
+  }
+}

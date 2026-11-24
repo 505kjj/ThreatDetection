@@ -43,7 +43,7 @@ async function addPrior(folder, name, spec, includeFamily, index) {
   for (const group of groups) index.domains.add(group);
 }
 
-async function priorIndex(uci, phase3c, phase3d) {
+export async function priorIndex(uci, phase3c, phase3d, { evaluationOnly = false } = {}) {
   const index = { domains: new Set(), families: new Set() };
   for (const [folder, name] of [['development', 'train'], ['development', 'validation'], ['holdout', 'test']]) {
     const path = join(uci, folder);
@@ -58,10 +58,12 @@ async function priorIndex(uci, phase3c, phase3d) {
   }
   const earlier = await json(phase3cReport);
   for (const [name, spec] of Object.entries(earlier.source.partitions)) {
+    if (evaluationOnly && name === 'train') continue;
     await addPrior(phase3c, name, spec, false, index);
   }
   const previous = await json(phase3dReport);
   for (const [name, spec] of Object.entries(previous.dataset.partitions)) {
+    if (evaluationOnly && name === 'train') continue;
     await addPrior(phase3d, name, spec, true, index);
   }
   // The Phase 3D financial-control path hosts are covered by the same official list.

@@ -1,0 +1,39 @@
+{
+  "phase3eCommit": "4c8255a9474296c66ab36b52264a03ce642cf5df",
+  "candidateOrder": [
+    "phresh-20000-path-forest",
+    "fusion-mixed-20000-two",
+    "fusion-mixed-20000-four",
+    "fusion-mixed-20000-stack"
+  ],
+  "featureVersion": "url-lexical-v1",
+  "primaryDomainTarget": 0.001,
+  "secondaryDomainTarget": 0.01,
+  "limits": {
+    "pairedBootstrapResamples": 500,
+    "seed": 227,
+    "archivalDomainLimit": 2000,
+    "binomialDomainSupportForPointOnePercent": 2995,
+    "minimumPositiveDomainsForDescriptiveComparison": 100
+  },
+  "confirmation": {
+    "eligibleIndianFinancialPositive": false,
+    "eligibleNonIndianFinancialPositive": false,
+    "historicalReputationAvailable": false
+  },
+  "archive": {
+    "record": "10.5281/zenodo.8371046",
+    "license": "CC BY 4.0",
+    "dateField": "Original PhishTank submission time, day precision as published",
+    "files": {
+      "Valid_Phishes_Offline 20.xlsx": {
+        "id": "phishtank-archive-20",
+        "bytes": 3667157,
+        "md5": "1680d9b54d1257e70c6a0b8089fc24c4",
+        "sha256": "47503f002adb4a293b0b9b54d45ac9d2ed71dbb97287aa83f89c081d8697a190",
+        "labelColumn": "G",
+        "statusColumn": "H"
+      }
+    }
+  }
+}
