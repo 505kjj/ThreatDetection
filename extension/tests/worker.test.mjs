@@ -77,6 +77,7 @@ function chromeModel() {
     alarms: {
       async get(name) { return alarms.get(name); },
       async create(name, { when }) { alarms.set(name, { scheduledTime: when }); },
+      async clear(name) { alarms.delete(name); },
       onAlarm: hook('alarm')
     },
     permissions: {
@@ -131,6 +132,68 @@ async function worker(response, feed = () => json(snapshot())) {
 }
 
 const json = (value, status = 200) => new Response(JSON.stringify(value), { status });
+
+async function waitFor(predicate) {
+  for (let attempt = 0; attempt < 80; attempt++) {
+    if (await predicate()) return;
+    await new Promise(resolve => setTimeout(resolve, 10));
+  }
+  assert.fail('Timed out waiting for reporting');
+}
+
+test('dashboard consent is options-only, origin-bound and sends only classified evidence', async t => {
+  const state = await worker(() => new Response(null, { status: 204 }));
+  t.after(state.restore);
+  const consent = enabled => ({ type: 'SET_THREAT_REPORTING', enabled });
+  const monitorCalls = () => state.calls.filter(call => call.url.includes('/monitoring/'));
+  const events = () => monitorCalls().filter(call => call.url.endsWith('/events'));
+  state.frames[1].url = 'https://sbi.bank.in.example.org/private?fixture=secret#fragment';
+  await state.save(defaultOrigin, token);
+  assert.deepEqual(await state.message(consent(true)), { state: 'inactive' });
+  assert.ok((await state.message({ type: 'PAGE_CONFIGURATION' })).verdict.impersonation.length);
+  assert.equal(monitorCalls().length, 0);
+  assert.deepEqual(await state.message(consent(true), state.options), { saved: true });
+  await waitFor(() => monitorCalls().some(call => call.url.endsWith('/heartbeat')));
+  assert.deepEqual(await state.message({ type: 'REPORT_THREAT', signal: 'MALWARE', action: 'BLOCKED' }),
+    { state: 'inactive' });
+  await state.message({ type: 'PAGE_CONFIGURATION', signal: 'MALWARE', action: 'BLOCKED', reason: 'private' });
+  await state.status();
+  await waitFor(() => events().length === 1);
+  const [detection] = events();
+  assert.deepEqual(Object.keys(detection.body).sort(), ['action', 'detectedAt', 'id', 'signal']);
+  assert.equal(detection.body.signal, 'EMBEDDED_OFFICIAL_DOMAIN');
+  assert.equal(detection.body.action, 'WARNED');
+  assert.match(detection.body.id, /^[0-9a-f-]{36}$/);
+  assert.ok(Number.isFinite(Date.parse(detection.body.detectedAt)));
+  assert.equal(detection.options.credentials, 'omit');
+  assert.equal(detection.options.referrerPolicy, 'no-referrer');
+  assert.equal(detection.options.headers.Authorization, 'Bearer ' + token);
+  const journal = JSON.stringify(state.stored.session['threat-reporting-journal']);
+  assert.doesNotMatch(journal, /sbi|private|secret|fragment/);
+  await state.save('https://api.example.test', token);
+  assert.equal((await state.message({ type: 'GET_THREAT_REPORTING' }, state.options)).optedIn, false);
+  await state.status();
+  assert.equal(events().length, 1);
+});
+
+test('a dashboard failure leaves financial advisory decisions intact and opt-out removes the journal', async t => {
+  const state = await worker(() => { throw new TypeError('offline fixture'); });
+  t.after(state.restore);
+  await state.save(defaultOrigin, token);
+  await state.message({ type: 'SET_THREAT_REPORTING', enabled: true }, state.options);
+  state.frames[1].url = 'https://sbi.bank.in.example.org/private';
+  const verdict = await state.message({ type: 'PAGE_CONFIGURATION' });
+  assert.equal(verdict.verdict.state, 'no_match');
+  assert.equal(verdict.verdict.impersonation[0].kind, 'embedded_official_domain');
+  await waitFor(async () => (await state.message({ type: 'GET_THREAT_REPORTING' }, state.options))
+    .status === 'disconnected');
+  await state.message({ type: 'SET_THREAT_REPORTING', enabled: false }, state.options);
+  await waitFor(() => !('threat-reporting-journal' in state.stored.session));
+  const before = state.calls.length;
+  state.handlers.history({ frameId: 0, tabId: 1, documentId: 'current-1' });
+  assert.ok((await state.status()).impersonation.length);
+  assert.equal(state.calls.length, before);
+});
 
 test('origin validation and telemetry allowlisting match the secured contract', () => {
   assert.equal(backendOrigin('https://api.example.test:8443/'), 'https://api.example.test:8443');

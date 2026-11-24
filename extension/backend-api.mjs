@@ -126,3 +126,10 @@ export async function analyze(credential, sessionId, fields, signal) {
 export function requestFailure(error) {
   return error instanceof BackendStatus && [401, 403].includes(error.status) ? 'authentication' : 'backend';
 }
+
+export async function postMonitoring(credential, route, body, signal) {
+  const response = await request(credential, 'monitoring/' + route, signal, body);
+  if (response.status === 412 && route === 'events') return false;
+  if (response.status !== 204) throw new BackendStatus(response.status);
+  return true;
+}

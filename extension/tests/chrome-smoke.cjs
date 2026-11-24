@@ -12,6 +12,7 @@ const extension = path.resolve(__dirname, '..');
 const jar = path.resolve(extension, '../backend/target/threat-detection-0.0.1-SNAPSHOT.jar');
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 const token = randomBytes(32).toString('base64url');
+const adminToken = randomBytes(32).toString('base64url');
 const privateMarkers = ['private-path', 'private-query', 'private-fragment', 'private-form-value',
   'private-otp-value', 'private-card-value', 'private-cookie-value'];
 
@@ -41,11 +42,14 @@ async function stop(process) {
 
 async function startBackend(java, extensionOrigin, snapshotPath, port = 0) {
   const config = {
-    threat: { security: {
+    threat: { monitoring: { 'synthetic-clients': ['chrome-smoke'] }, security: {
       'allowed-origins': [extensionOrigin],
       clients: { 'chrome-smoke': {
         role: 'BROWSER',
         'token-sha256': createHash('sha256').update(token).digest('hex')
+      }, 'chrome-smoke-admin': {
+        role: 'ADMIN',
+        'token-sha256': createHash('sha256').update(adminToken).digest('hex')
       } }
     } }
   };
@@ -64,7 +68,7 @@ async function startBackend(java, extensionOrigin, snapshotPath, port = 0) {
       if (match) {
         const health = await fetch('http://127.0.0.1:' + match[1] + '/api/health',
           { signal: AbortSignal.timeout(2000) }).catch(() => null);
-        if (health?.ok) return { process, port: Number(match[1]) };
+        if (health?.ok) return { process, port: Number(match[1]), logs: () => logs };
       }
       if (process.exitCode !== null) break;
       await wait(500);
@@ -99,10 +103,19 @@ async function badge(worker, url) {
   }, url);
 }
 
-function writeFixture(file, content) {
+async function writeFixture(file, content) {
   const pending = file + '.next';
   writeFileSync(pending, JSON.stringify(content));
-  renameSync(pending, file);
+  for (let attempt = 0;; attempt++) {
+    try {
+      renameSync(pending, file);
+      return;
+    } catch (error) {
+      // Windows may hold the snapshot briefly while the backend reads it.
+      if (attempt === 15 || !['EPERM', 'EACCES', 'EBUSY'].includes(error.code)) throw error;
+      await wait(35);
+    }
+  }
 }
 
 async function inPageWarning(page, phrase) {
@@ -150,7 +163,7 @@ async function main() {
   const phishingFixture = phishingRoot + 'private-path?fixture=private-query#private-fragment';
   const cautionFixture = 'http://' + cautionHost + ':' + fixture.address().port + '/private-path?x=private-query';
   function publish(lifetime) {
-    writeFixture(snapshotPath, {
+    return writeFixture(snapshotPath, {
       generatedAt: new Date(Date.now() - 1000).toISOString(),
       expiresAt: new Date(Date.now() + lifetime).toISOString(),
       entries: [
@@ -164,7 +177,7 @@ async function main() {
   let browser;
   let backend;
   try {
-    publish(300000);
+    await publish(300000);
     browser = await chromium.launchPersistentContext('', {
       channel: 'chromium',
       args: ['--disable-extensions-except=' + extension, '--load-extension=' + extension,
@@ -199,6 +212,18 @@ async function main() {
     }
     await refreshCredential();
     await options.locator('#tokenStatus').getByText('Browser token set for this session.').waitFor();
+    assert.equal(await options.locator('#threatReporting').isChecked(), false);
+    const monitoring = origin + '/api/threat/monitoring';
+    const reportingCalls = () => apiCalls.filter(call => call.url().startsWith(monitoring + '/'));
+    const eventCalls = () => reportingCalls().filter(call => call.url() === monitoring + '/events');
+    const adminHeaders = { Authorization: 'Bearer ' + adminToken };
+    const adminReports = async (scope = 'SYNTHETIC') => {
+      const response = await fetch(monitoring + '/dashboard?scope=' + scope, { headers: adminHeaders });
+      assert.equal(response.status, 200);
+      return response.json();
+    };
+    assert.equal((await fetch(monitoring + '/dashboard')).status, 401);
+    assert.equal((await fetch(monitoring + '/dashboard', { headers: { Authorization: 'Bearer ' + token } })).status, 403);
     await options.locator('#newDomain').fill('127.0.0.1');
     await options.locator('#addDomain').click();
     await options.locator('#siteList').getByText('127.0.0.1', { exact: true }).waitFor();
@@ -269,6 +294,12 @@ async function main() {
     assert.equal(hits('127.0.0.1', '/download-fixture/help').length, 1);
     await malware.goto(localSite + '/Download-fixture');
     assert.equal(hits('127.0.0.1', '/Download-fixture').length, 1);
+    assert.equal(reportingCalls().length, 0, 'blocking and normal usage must not report before opt-in');
+    assert.equal((await adminReports()).total, 0);
+    await options.locator('#threatReporting').check();
+    await eventually(reportingCalls, calls => calls.some(call => call.url().endsWith('/heartbeat')), 'opt-in heartbeat');
+    await blocked(malware, localSite + '/download-fixture?case=private-query#private-fragment');
+    assert.equal(hits('127.0.0.1', '/download-fixture').length, 0);
     const phish = await browser.newPage();
     await blocked(phish, phishingFixture);
     await phish.getByText(/subdomain uses the HDFC Bank name/).waitFor();
@@ -360,7 +391,81 @@ async function main() {
     assert.equal(await badge(worker, site.url()), '');
     console.log('Chrome: behavior-only signals stay unconfirmed and never set the malicious badge');
 
+    const report = await eventually(() => adminReports(), result =>
+      ['BLOCKED', 'WARNED', 'BYPASSED'].every(action => result.recent.some(entry => entry.action === action)) &&
+      Object.values(result.categories).every(count => count > 0), 'four categories and three actions in the backend');
+    assert.equal(report.total, report.blocked + report.warned);
+    assert.ok(report.recent.some(entry => entry.category === 'MALWARE' && entry.action === 'WARNED'));
+    assert.ok(report.recent.some(entry => entry.category === 'MALWARE' && entry.action === 'BLOCKED'));
+    assert.equal(report.categories.FINANCIAL_IMPERSONATION, 1, 'popup, badge and content rechecks must not duplicate an advisory');
+    assert.equal((await adminReports('REAL')).total, 0, 'fixture reports must stay out of live totals');
+    for (const request of reportingCalls()) {
+      const headers = await request.allHeaders();
+      assert.ok(request.serviceWorker());
+      assert.equal(headers.authorization, 'Bearer ' + token);
+      assert.equal(headers.cookie, undefined);
+      assert.equal(headers.referer, undefined);
+      const keys = request.url().endsWith('/events') ? ['action', 'detectedAt', 'id', 'signal'] : ['protection'];
+      assert.deepEqual(Object.keys(request.postDataJSON()).sort(), keys);
+      for (const marker of [...privateMarkers, phishingHost, cautionHost, localSite]) {
+        assert.ok(!request.postData().includes(marker));
+        assert.ok(!JSON.stringify(report).includes(marker));
+        assert.ok(!backend.logs().includes(marker));
+      }
+    }
+
+    const dashboard = await browser.newPage();
+    await dashboard.setViewportSize({ width: 1280, height: 1060 });
+    await dashboard.goto(origin + '/monitor');
+    assert.equal(await dashboard.locator('#dashboard').isVisible(), false);
+    async function login(credential) {
+      await dashboard.locator('#token').fill(credential);
+      await dashboard.getByRole('button', { name: 'Sign in', exact: true }).click();
+    }
+    await login(token);
+    await dashboard.getByText(/Access denied/).waitFor();
+    await login(adminToken);
+    await dashboard.locator('#backend-state').getByText('Backend connected').waitFor();
+    await dashboard.getByText('No events reported for this view.').waitFor();
+    await dashboard.getByRole('button', { name: 'Synthetic fixtures' }).click();
+    await dashboard.getByText('Synthetic test data.').waitFor();
+    await dashboard.locator('#history').getByText(/A verified financial address/).first().waitFor();
+    await dashboard.locator('#history').getByText('Bypassed', { exact: true }).first().waitFor();
+    assert.equal(Number(await dashboard.locator('#total').textContent()), report.total);
+    assert.match(await dashboard.locator('#extension-state').textContent(), /1 with current reputation data/);
+    assert.equal(await dashboard.locator('#token').inputValue(), '');
+    assert.equal(await dashboard.evaluate(() => localStorage.length + sessionStorage.length), 0);
+    if (globalThis.process.env.THREAT_MONITOR_SCREENSHOT) {
+      await dashboard.screenshot({ path: globalThis.process.env.THREAT_MONITOR_SCREENSHOT, fullPage: true });
+    }
+    await dashboard.setViewportSize({ width: 390, height: 844 });
+    assert.equal(await dashboard.evaluate(() => document.documentElement.scrollWidth), 390);
+    await dashboard.setViewportSize({ width: 1280, height: 820 });
+    await dashboard.getByRole('button', { name: 'Sign out' }).click();
+    assert.equal(await dashboard.locator('#history').textContent(), '');
+    await login(adminToken);
+    await dashboard.locator('#backend-state').getByText('Backend connected').waitFor();
+    await dashboard.getByRole('button', { name: 'Synthetic fixtures' }).click();
+    await dashboard.locator('#history').getByText('Bypassed', { exact: true }).first().waitFor();
+
+    await options.locator('#threatReporting').uncheck();
+    await options.locator('#reportingStatus').getByText('Reporting is off.').waitFor();
+    const beforeOptOut = eventCalls().length;
+    const optedOut = await browser.newPage();
+    await blocked(optedOut, localSite + '/download-fixture');
+    await optedOut.close();
+    assert.equal(eventCalls().length, beforeOptOut);
+    await options.locator('#threatReporting').check();
+    await options.locator('#reportingStatus').getByText('Reporting connected.').waitFor({ timeout: 18000 });
+    console.log('Chrome: opted-in alerts reached the admin dashboard, fixture counts were isolated, and opt-out stopped reports');
+
     await stop(backend.process);
+    await dashboard.getByRole('button', { name: 'Refresh' }).click();
+    await dashboard.locator('#load-state').getByText(/Backend unavailable/).waitFor();
+    assert.equal(await dashboard.locator('#snapshot').isVisible(), false);
+    if (globalThis.process.env.THREAT_MONITOR_OFFLINE_SCREENSHOT) {
+      await dashboard.screenshot({ path: globalThis.process.env.THREAT_MONITOR_OFFLINE_SCREENSHOT, fullPage: true });
+    }
     const offline = await browser.newPage();
     await blocked(offline, phishingFixture);
     assert.equal(hits(phishingHost).length, 1);
@@ -392,7 +497,7 @@ async function main() {
 
     await options.locator('#enableMonitoring').click();
     await site.close();
-    writeFixture(snapshotPath, { invalid: 'synthetic-provider-error' });
+    await writeFixture(snapshotPath, { invalid: 'synthetic-provider-error' });
     const headers = { Authorization: 'Bearer ' + token };
     const snapshotEndpoint = origin + '/api/threat/reputation/snapshot';
     await eventually(async () => (await fetch(snapshotEndpoint, { headers })).status,
@@ -404,8 +509,10 @@ async function main() {
     await popup.locator('#impersonationReasons').getByText(/subdomain uses the HDFC Bank name/).waitFor();
     await eventually(() => inPageWarning(stale, 'The protection service is unavailable.'),
       value => value === true, 'degraded in-page warning');
+    await eventually(() => adminReports(), result => result.clientStatus.REPUTATION_UNAVAILABLE === 1,
+      'reported reputation unavailable');
     assert.equal(await badge(worker, stale.url()), '');
-    publish(17000);
+    await publish(17000);
     await eventually(async () => (await fetch(snapshotEndpoint, { headers })).status,
       status => status === 200, 'restored short-lived snapshot');
     await refreshCredential();

@@ -30,6 +30,33 @@ async function renderMonitoring() {
   byId('disableMonitoring').disabled = !enabled;
 }
 
+async function renderReporting() {
+  const result = await chrome.runtime.sendMessage({ type: 'GET_THREAT_REPORTING' });
+  if (typeof result?.optedIn !== 'boolean') throw new Error('Reporting settings unavailable');
+  byId('threatReporting').checked = result.optedIn;
+  byId('reportingStatus').textContent = !result.optedIn ? 'Reporting is off.' : {
+    paused: 'Reporting is paused while protection is paused.',
+    connected: 'Reporting connected.',
+    waiting: 'Waiting to connect to the dashboard backend.',
+    disconnected: 'Reporting unavailable. Local protection continues when valid data is available.'
+  }[result.status];
+}
+
+byId('threatReporting').addEventListener('change', async event => {
+  const checkbox = event.currentTarget;
+  checkbox.disabled = true;
+  try {
+    const result = await chrome.runtime.sendMessage({ type: 'SET_THREAT_REPORTING', enabled: checkbox.checked });
+    if (!result?.saved) throw new Error('Reporting settings unavailable');
+    await renderReporting();
+  } catch {
+    announce('Could not update dashboard reporting.');
+    await renderReporting().catch(() => {});
+  } finally {
+    checkbox.disabled = false;
+  }
+});
+
 function button(label, onClick) {
   const element = document.createElement('button');
   element.type = 'button';
@@ -115,6 +142,7 @@ byId('saveConnection').addEventListener('click', async () => {
     if (!result?.saved) throw new Error('Connection rejected');
     byId('browserToken').value = '';
     await loadConnection();
+    await renderReporting();
     announce('Connection settings saved.');
   } catch {
     announce('Could not save the connection.');
@@ -128,6 +156,7 @@ byId('clearToken').addEventListener('click', async () => {
     await chrome.runtime.sendMessage({ type: 'CLEAR_CONNECTION' });
     byId('browserToken').value = '';
     await loadConnection();
+    await renderReporting();
     announce('Browser token cleared.');
   } catch {
     announce('Could not clear the browser token.');
@@ -177,15 +206,19 @@ for (const [id, enabled] of [['enableMonitoring', true], ['disableMonitoring', f
   byId(id).addEventListener('click', async () => {
     await chrome.storage.local.set({ monitoringEnabled: enabled });
     await renderMonitoring();
+    await renderReporting();
   });
 }
 
 byId('resetDefaults').addEventListener('click', async () => {
   await chrome.runtime.sendMessage({ type: 'CLEAR_CONNECTION' });
   await chrome.storage.local.set({ backendOrigin: DEFAULT_ORIGIN, monitoredSites: [], monitoringEnabled: true });
+  await chrome.storage.local.remove('threatReportingOrigin');
   byId('browserToken').value = '';
-  await Promise.all([loadConnection(), renderSites(), renderMonitoring()]);
+  await Promise.all([loadConnection(), renderSites(), renderMonitoring(), renderReporting()]);
   announce('Settings reset.');
 });
 
-Promise.all([loadConnection(), renderSites(), renderMonitoring()]).catch(() => announce('Could not load settings.'));
+Promise.all([loadConnection(), renderSites(), renderMonitoring(), renderReporting()])
+  .catch(() => announce('Could not load settings.'));
+setInterval(() => void renderReporting().catch(() => {}), 10000);

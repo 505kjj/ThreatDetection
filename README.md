@@ -127,6 +127,8 @@ Financial impersonation checks use only the hostname and run locally, including 
 
 Confirmed host and authorized exact-path indicators can stop navigations before they reach the destination. See the [blocking policy and verification](docs/browser-protection.md).
 
+Open `/monitor` on the backend to sign into the threat dashboard as an administrator. In extension **Settings**, opt in to **Share threat detections with this backend** to send event categories, actions and protection status without sending any site address. See [setup, API, fixture isolation, and retention](docs/threat-dashboard.md).
+
 ### Extension regression checks
 
 Run `node --test extension/tests/*.test.mjs` from the repository root with Node.js 24.
@@ -142,7 +144,7 @@ node (Join-Path $env:NODE_PATH 'playwright/cli.js') install chromium --no-shell
 node extension/tests/chrome-smoke.cjs
 ```
 
-It uses a disposable Chromium profile, a local login fixture, synthetic phishing, malware and impersonation indicators, and an isolated backend with a generated credential. The browser resolves the synthetic sites to loopback.
+It uses a disposable Chromium profile, a local login fixture, synthetic phishing, malware and impersonation indicators, and an isolated backend with separate generated browser and admin credentials. The browser resolves the synthetic sites to loopback. The test verifies that reports flow to the authenticated dashboard only after opt-in and only in the synthetic view.
 
 ## Authentication and CORS configuration
 
