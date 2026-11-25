@@ -68,6 +68,8 @@ The dashboard aggregate is generated from `browser-summary.json` by `node script
 
 ## Remaining work
 
+An additional guarded synthetic near-threshold check generated 4,000 fictional `.test` URLs and selected 160 strings, including the 20 closest to each non-null frozen score cutoff. Chromium matched the frozen Python TF-IDF scores with maximum absolute error `5.56e-16` and all tested threshold decisions agreed. The closest generated scores were 0.0000797 from 0.5, 0.0000415 from 0.7444548803360985 and 0.0860 from 0.9748486034939972. The strictest cutoff therefore still lacks a close synthetic case. The two-CPU browser job used 6.73 CPU seconds and 568,926,208 bytes peak job commit. These synthetic strings provide numerical parity evidence only. Reproduce the reference with the Windows guard and `research/phase6c/near_threshold.py <private-experiments-directory> <new-private-reference>` and run the Phase 6C browser harness using that reference in a new private experiment directory.
+
 - Expand model and fusion parity beyond the small synthetic sample, including near-threshold cases and complete browser feature pipelines.
 - Expand URL feature parity coverage and validate the frozen DOM feature definitions in the browser. Cover delayed DOM changes, cross-origin frames and unavailable evidence without collecting field values.
 - Evaluate native JavaScript, typed-array and WebAssembly tradeoffs further. Measure end-to-end latency, initialization distributions, CPU, model-only memory and repeated-run memory growth under the resource guard.
