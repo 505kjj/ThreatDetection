@@ -694,6 +694,13 @@ function renderResearch(data) {
     return card;
   }));
   const { ml, datasets, visual, revisions } = data;
+  const browserResearch = data.browserResearch;
+  if (browserResearch) {
+    byId('browser-research-scope').textContent = browserResearch.scope + ' ' + browserResearch.readiness;
+    statusRows('browser-research-models', browserResearch.models.map(model => [model.name,
+      `${number.format(model.bytes)} B · ${milli(model.p95Ms)} p95 · max error ${model.maxError.toExponential(2)} (${model.fixtures} fixtures) · ${model.runtime}`]));
+    byId('browser-research-memory').textContent = `${number.format(browserResearch.jobPeakBytes)} B peak. ${browserResearch.jobPeakScope}`;
+  }
   const lead = ml.models.find(model => model.id === 'fixed');
   byId('ml-lead').textContent = 'Retrospective Phase 5F PhreshPhish v1.0.1 development results. Calibrated score cutoff ' + cutoffNumber.format(lead.threshold) + '.';
   statusRows('ml-metrics', ['recall', 'precision', 'f1', 'domainFpr', 'prAuc'].map(key => {
