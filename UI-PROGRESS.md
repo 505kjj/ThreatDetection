@@ -1,8 +1,8 @@
 # Frontend progress
 
-## Phase 7C research summary
+## Phase 7C stabilization
 
-- The laboratory presents a single bounded synthetic H2 load result and its limitations. Maven, extension units and both direct and secure Windows Chromium responsive smokes passed after the summary was added. Live screen-reader speech and comparison with the missing dashboard reference remain open on this branch.
+- The laboratory presents separate in-memory and file-backed H2 results from the paced synthetic runs, including the isolated rate-limit check. The [release report](docs/phase-7-release-readiness.md) records verification and open acceptance gates. Live screen-reader speech and comparison with the dashboard reference remain open.
 
 ## Phase 6B integration verification
 
