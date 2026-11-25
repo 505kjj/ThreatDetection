@@ -75,3 +75,11 @@ An additional guarded synthetic near-threshold check generated 4,000 fictional `
 - Evaluate native JavaScript, typed-array and WebAssembly tradeoffs further. Measure end-to-end latency, initialization distributions, CPU, model-only memory and repeated-run memory growth under the resource guard.
 - Add reviewed aggregate results to the existing research dashboard only after the measurements and scope are complete. Run the requested full regression and frozen-integrity checks on the final branch.
 - Identify preferred candidates only after their comparable parity, performance and independent-validation limitations are documented.
+
+## Stabilization results
+
+Chromium processed all 160 synthetic TF-IDF fixtures with added query and fragment data through canonicalization, numerical URL projection and model scoring. All frozen threshold decisions agreed. Five batches of 160 took 27.80 ms median and 39.90 ms p95, including extension messaging. A separate run measured 36.90 ms median and 65.60 ms p95. Timings are for whole batches. The initial model load and scorer construction took 292.40 ms in the run with DOM fixtures.
+
+Eight synthetic Phase 5E HTML fixtures, including the materialized delayed form, passed Chromium DOM projection, weighted numerical features, calibrated fixed fusion and threshold checks against the pinned Python path. Maximum score error was `5.52e-8` under the predefined `2e-6` tolerance. A mixed request returned an unavailable score for absent DOM and the original score for the complete pair. The browser uses an inert DOM parser. Live navigation, cross-origin DOM access and per-page collection latency remain outside this check. Peak browser-job commit was 585,990,144 bytes with 9.09 CPU seconds for the combined URL and DOM harness.
+
+Export a fresh private DOM receipt with `research/phase6c/export_dom_reference.py <private-experiments-directory> <new-private-dom-reference>` under the Windows resource guard and existing Phase 5B environment. Use the Phase 5E parser dependencies and pass the receipt as the second argument to `research/phase6c/browser.cjs <private-conversion-directory> <private-dom-reference>`. Use a new directory containing the unchanged converted models and synthetic references. The corpus, strictest cutoff, neural worker and long-running memory limitations still apply.

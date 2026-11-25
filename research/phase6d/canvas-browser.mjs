@@ -100,6 +100,21 @@ async function benchmark(exported, runtime, output) {
     const similarities = distances(result.prediction);
     const canonical = distances(result.canonical);
     assert(canonical.every(value => value >= 0.9999), 'Identical normalized inputs diverged in ONNX');
+    const scoreTolerance = 0.004;
+    const comparisons = input => expected.map(({ vector }) =>
+      vector.reduce((sum, value, index) => sum + value * input[index], 0));
+    const decide = scores => {
+      const ranked = scores.map((score, index) => ({ index, score })).sort((a, b) => b.score - a.score);
+      return ranked[0].score < 0.82 || ranked[0].score - ranked[1].score < 0.055 ? null : ranked[0].index;
+    };
+    const scoreErrors = [];
+    let agreedDecisions = 0;
+    for (const [index, item] of expected.entries()) {
+      const referenceScores = comparisons(item.vector);
+      const browserScores = comparisons(result.prediction[index]);
+      scoreErrors.push(...browserScores.map((score, reference) => Math.abs(score - referenceScores[reference])));
+      if (decide(browserScores) === decide(referenceScores)) agreedDecisions++;
+    }
     await page.goto(allowedOrigins[0] + '/controls', { waitUntil: 'load' });
     const canvasReadback = await page.evaluate(async () => {
       const outcome = {};
@@ -137,7 +152,9 @@ async function benchmark(exported, runtime, output) {
     const runtimeBytes = (await Promise.all(runtimeFiles.map(name => stat(join(extension, name)))))
       .reduce((sum, entry) => sum + entry.size, 0);
     const report = {
-      preprocessingVariant: 'canvas-high-smoothing', predefinedCosineGate: 0.97,
+      preprocessingVariant: 'canvas-readback-bilinear', predefinedCosineGate: 0.97,
+      scoreTolerance, maximumPairScoreError: Math.max(...scoreErrors),
+      pairScoreParity: scoreErrors.every(error => error <= scoreTolerance), agreedDecisions,
       engine: context.browser()?.version() ?? await page.evaluate(() => navigator.userAgent),
       permissions: manifest.permissions, hostPermissions: manifest.host_permissions, wasmThreads: 1,
       runtimeBytes, modelBytes, initializationMs: result.initializationMs,

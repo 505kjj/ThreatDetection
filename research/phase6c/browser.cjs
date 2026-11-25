@@ -51,6 +51,26 @@ async function main() {
     for (let index = 0; index < urlFixtures.length; index++) {
       assert.deepEqual(urlResults.scores[index]?.features ?? null, extractUrl(urlFixtures[index], 'synthetic')?.features ?? null);
     }
+    const timed = [];
+    // Canonicalization and scoring must agree when synthetic query and fragment data is appended.
+    const decorated = reference.fixtures.map(url => url + '?fixture=ignored#ignored');
+    for (let repeat = 0; repeat < 5; repeat++) {
+      const endToEnd = await page.evaluate(async inputs => {
+        const start = performance.now();
+        const response = await chrome.runtime.sendMessage({ type: 'synthetic-url', inputs });
+        return { response, elapsed: performance.now() - start };
+      }, decorated);
+      assert.equal(endToEnd.response.scores.length, reference.scores.length);
+      endToEnd.response.scores.forEach((result, index) => {
+        assert.ok(Math.abs(result.score - reference.scores[index]) <= reference.tolerance);
+        for (const threshold of Object.values(reference.thresholds).filter(value => value !== null)) {
+          assert.equal(result.score >= threshold, reference.scores[index] >= threshold);
+        }
+      });
+      timed.push(endToEnd.elapsed);
+    }
+    const urlPipeline = { fixtures: decorated.length, batches: timed.length,
+      batchMedianMs: quantile(timed, 0.5), batchP95Ms: quantile(timed, 0.95) };
     const trees = {};
     for (const name of ['url', 'dom']) {
       const expected = JSON.parse(readFileSync(join(experiment, 'xgboost', `${name}-reference.json`)));
@@ -72,6 +92,7 @@ async function main() {
     }
     const fusionReference = JSON.parse(readFileSync(join(experiment, 'fusion-reference.json')));
     const fusion = {};
+    let domPipeline = null;
     for (const name of ['phase5d', 'phase5f']) {
       const expected = fusionReference[name];
       const urlScale = name === 'phase5d'
@@ -82,6 +103,52 @@ async function main() {
       const inputs = fusionReference.fixtures.map((text, index) => ({ text, vector: vectors[index] }));
       const actual = await page.evaluate(async message => chrome.runtime.sendMessage(message),
         { type: 'synthetic-fusion', model: name, inputs, urlScale, otherScale });
+      if (name === 'phase5f') {
+        const missing = await page.evaluate(async message => chrome.runtime.sendMessage(message),
+          { type: 'synthetic-fusion', model: name, inputs: [{ text: inputs[0].text, vector: null }, inputs[0]],
+            urlScale, otherScale });
+        assert.deepEqual(missing.scores, [null, actual.scores[0]]);
+        if (process.argv[3]) {
+          const reference = JSON.parse(readFileSync(process.argv[3]));
+          const { FIXTURES, ORIGIN } = await import('../phase5e/fixtures.mjs');
+          const { describeDOM, FEATURE_GROUPS } = await import('../phase5e/dom.mjs');
+          const fixtureInputs = reference.names.map(name => ({
+            text: ORIGIN + '/' + name,
+            html: name === 'dynamic-login-materialized'
+              ? FIXTURES['dynamic-login'].replace('</main>', '<form><input type="password"></form></main>')
+              : FIXTURES[name]
+          }));
+          const dom = await page.evaluate(async ({ source, fixtures, columns }) => {
+            // Playwright serializes the frozen function into its isolated execution world.
+            const describe = (0, eval)(`(${source})`);
+            const adapter = { tag: node => node.nodeType === 1 ? node.localName : undefined,
+              attr: (node, attribute) => node.getAttribute(attribute),
+              children: node => Array.from(node.children || []), text: node => node.textContent || '' };
+            return fixtures.map(({ text, html }) => {
+              const doc = new DOMParser().parseFromString(html, 'text/html');
+              const values = describe(doc, text, adapter);
+              const forms = Math.max(values.forms, 1);
+              const auth = Number([values.inputs_password, values.inputs_payment,
+                values.actions_external, values.iframe_external].some(value => value > 0));
+              return { text, vector: [...columns.map(key => Math.fround(values[key])),
+                values.actions_external / forms, values.actions_local / forms, values.password_forms / forms,
+                values.payment_forms / forms, values.iframe_external / Math.max(values.iframe, 1), auth] };
+            });
+          }, { source: describeDOM.toString(), fixtures: fixtureInputs, columns: Object.values(FEATURE_GROUPS).flat() });
+          assert.deepEqual(dom.map(item => item.vector), reference.vectors);
+          const scored = await page.evaluate(async message => chrome.runtime.sendMessage(message),
+            { type: 'synthetic-fusion', model: name, inputs: dom, urlScale, otherScale });
+          assert.equal(scored.scores.length, reference.scores.length);
+          const maximumError = Math.max(...scored.scores.map((score, index) => {
+            for (const threshold of Object.values(expected.thresholds).filter(value => value !== null)) {
+              assert.equal(score >= threshold, reference.scores[index] >= threshold);
+            }
+            return Math.abs(score - reference.scores[index]);
+          }));
+          assert.ok(maximumError <= reference.tolerance);
+          domPipeline = { fixtures: dom.length, maximumError, missingDomUnavailable: true };
+        }
+      }
       if (actual.error) throw new Error(actual.error);
       const errors = actual.scores.map((score, index) => Math.abs(score - expected.scores[index]));
       assert.ok(Math.max(...errors) <= fusionReference.tolerance, `${name} fusion parity exceeds tolerance`);
@@ -117,7 +184,8 @@ async function main() {
       repeatedInferences: durations.length, medianMs: quantile(durations, 0.5), p95Ms: quantile(durations, 0.95),
       concurrentRequests: runs.length, serviceWorkerRecovery: true, invalidInputRecovery: true,
       outboundPageRequests: outboundRequests, urlFeatureFixtures: urlFixtures.length, trees, fusion,
-      note: 'Synthetic normalized strings only. DOM, end-to-end URL extraction, memory growth and CPU attribution are not measured.'
+      urlPipeline, domPipeline,
+      note: 'Synthetic URL and inert HTML fixtures. Live navigation collection and long-running memory are outside this run.'
     };
     writeFileSync(join(experiment, 'browser-results.json'), JSON.stringify(result, null, 2) + '\n', { flag: 'wx' });
     console.log(JSON.stringify(result));

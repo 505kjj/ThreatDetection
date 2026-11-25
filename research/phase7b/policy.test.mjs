@@ -19,6 +19,8 @@ test('rollback disables research output and rejects malformed inputs', () => {
   const result = aggregateEvidence({ production: { decision: 'ALLOW', bypassAllowed: false }, observations });
   assert.deepEqual(result.evidence, []);
   assert.equal(result.researchEnabled, false);
+  assert.throws(() => aggregateEvidence({ production: { decision: 'BLOCK_MALWARE', bypassAllowed: true },
+    observations }), TypeError);
   assert.throws(() => aggregateEvidence({ production: { decision: 'ALLOW', bypassAllowed: false },
     observations: [{ source: 'visual', availability: 'available', code: 'https://example.test/private' }] }), TypeError);
   assert.throws(() => aggregateEvidence({ production: { decision: 'ALLOW', bypassAllowed: false },
