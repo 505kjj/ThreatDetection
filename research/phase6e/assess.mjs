@@ -17,6 +17,7 @@ export function assessFixture(input) {
   if (input.redirect === 'unexplained') results.push(evidence('redirect', 'advisory', 'unexplained-destination-change'));
   if (input.form === 'insecure') results.push(evidence('credential', 'advisory', 'insecure-credential-form'));
   if (input.form === 'external') results.push(evidence('credential', 'advisory', 'external-form-action'));
+  if (input.form === 'unavailable') results.push(evidence('credential', 'unavailable', 'form-evidence-unavailable'));
   if (input.cookie === 'missing-secure' || input.cookie === 'broad-scope' || input.cookie === 'samesite-none') {
     results.push(evidence('cookie', 'privacy', input.cookie));
   }

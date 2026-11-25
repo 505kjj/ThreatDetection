@@ -78,8 +78,8 @@
     ]
   },
   "securityResearch": {
-    "status": "Offline research pilot. New warnings and blocking are disabled.",
-    "scope": "Synthetic metadata classification only. No browser observations or operational accuracy were measured.",
+    "status": "Isolated browser research. New warnings and blocking are disabled.",
+    "scope": "Five loopback Chromium redirect and form fixtures matched expected categories. Three legitimate controls produced zero advisories; two suspicious form controls produced two advisories. This is not operational accuracy.",
     "categories": [
       "Reputation",
       "Financial impersonation",
@@ -92,7 +92,7 @@
       "Page behavior",
       "Experimental models"
     ],
-    "limitations": "Cookie, navigation, download and content-setting APIs require additional permissions. No new permissions are requested by this pilot."
+    "limitations": "Form-inspection messaging median 39.19 ms and p95 98.81 ms in five samples. The browser job peaked at 562,417,664 bytes. Cookie, download, permission and tracker extraction remain unimplemented. The production extension has no new permissions."
   },
   "financial": [
     {
