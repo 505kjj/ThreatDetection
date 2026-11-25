@@ -9,7 +9,7 @@ async function main() {
     const page = await browser.newPage();
     await page.route('**/*', route => route.abort());
     await page.setContent('<header><img alt="Bank logo" width="160" height="40"><svg width="80" height="30"></svg></header><main><img alt="Product" width="80" height="80"><div id="later"></div></main>');
-    const source = readFileSync(join(__dirname, 'localize.mjs'), 'utf8').replace('export function', 'function');
+    const source = readFileSync(join(__dirname, 'localize.mjs'), 'utf8').replaceAll('export function', 'function');
     const result = await page.evaluate(sourceText => {
       const locate = new Function(sourceText + '; return locateCandidates;')();
       const first = locate(document);
