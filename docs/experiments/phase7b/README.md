@@ -1,0 +1,7 @@
+# Phase 7B evidence policy research
+
+This initial offline policy prototype accepts an existing product decision, its existing bypass flag and up to 32 bounded, enumerated research evidence records. It reports evidence availability and an explanation when the explicit research flag is enabled. Disabling the flag removes research observations from the result. The supplied product decision and bypass flag pass through unchanged. The prototype does not obtain evidence, invoke models, enforce navigation, persist observations or connect to the product extension.
+
+The `production` input is a trusted fixture in this experiment. This interface is not an authorization boundary and must not be connected to untrusted pages or used as a replacement for the existing reputation rules. Unknown or malformed evidence fails closed at the interface. An unavailable observation does not imply safety. Confirmed malware and phishing precedence, warnings and bypass remain controlled by the existing product.
+
+Run `node --test research/phase7b/*.test.mjs` for synthetic checks of pass-through, bypass preservation, rollback, unavailable evidence and malformed input. Further work is required to map real product decisions and evidence, perform integration and concurrency tests, review privacy and authorization boundaries, and validate false-positive behavior independently. **GO for offline research. NO-GO for production integration, new warnings, blocking, shadow testing and visual telemetry.**
