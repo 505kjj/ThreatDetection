@@ -1,0 +1,4 @@
+**
+!backend/
+!backend/target/
+!backend/target/threat-detection-0.0.1-SNAPSHOT.jar

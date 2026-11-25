@@ -1,5 +1,9 @@
 # Frontend progress
 
+## Phase 7C research summary
+
+- The laboratory presents a single bounded synthetic H2 load result and its limitations. Maven, extension units and the direct Chromium responsive smoke passed after the summary was added. Secure Windows smoke, live screen-reader speech and comparison with the missing dashboard reference remain open on this branch.
+
 ## Phase 6B integration verification
 
 - The integrated product runtime matches UI-2 commit `9661a263`. Direct and secure Chromium smoke runs passed with the responsive matrix. The secure run exercised PowerShell 5.1 setup and PowerShell 7 restart, persistence and credential rotation.

@@ -696,6 +696,12 @@ function renderResearch(data) {
   const { ml, datasets, visual, revisions } = data;
   const browserResearch = data.browserResearch;
   const securityResearch = data.securityResearch;
+  const scalabilityResearch = data.scalabilityResearch;
+  if (scalabilityResearch) {
+    byId('scalability-research-status').textContent = scalabilityResearch.status;
+    byId('scalability-research-result').textContent = scalabilityResearch.result;
+    byId('scalability-research-limitations').textContent = scalabilityResearch.limitations;
+  }
   if (securityResearch) {
     byId('security-research-status').textContent = securityResearch.status + ' ' + securityResearch.scope;
     byId('security-research-categories').textContent = securityResearch.categories.join(' · ');

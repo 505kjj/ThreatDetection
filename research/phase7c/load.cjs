@@ -1,0 +1,76 @@
+// Bounded loopback-only load fixture. No real records or credentials are used.
+const assert = require('node:assert/strict');
+const { randomBytes, randomUUID, createHash } = require('node:crypto');
+const { spawn, spawnSync } = require('node:child_process');
+const { once } = require('node:events');
+const { writeFileSync } = require('node:fs');
+const { resolve, sep } = require('node:path');
+
+async function main() {
+  const output = resolve(process.argv[2] || '');
+  const root = resolve(__dirname, '../..');
+  if (!process.argv[2] || output === root || output.startsWith(root + sep)) throw new Error('Private output path required');
+  const token = () => randomBytes(32).toString('base64url');
+  const digest = value => createHash('sha256').update(value).digest('hex');
+  const browserTokens = Array.from({ length: 4 }, token);
+  const admin = token();
+  const clients = Object.fromEntries(browserTokens.map((value, index) => [`fixture-${index}`,
+    { role: 'BROWSER', 'token-sha256': digest(value) }]));
+  clients.admin = { role: 'ADMIN', 'token-sha256': digest(admin) };
+  const config = { threat: { monitoring: { 'synthetic-clients': browserTokens.map((_, i) => `fixture-${i}`) },
+    security: { clients, 'allowed-origins': [] } } };
+  const java = /^\s*java\.home = (.+)$/m.exec(spawnSync('java', ['-XshowSettings:properties', '-version'],
+    { encoding: 'utf8' }).stderr)[1].trim();
+  const server = spawn(java + '/bin/java.exe', ['-jar', resolve(root, 'backend/target/threat-detection-0.0.1-SNAPSHOT.jar'),
+    '--server.address=127.0.0.1', '--server.port=0'],
+  { env: { ...globalThis.process.env, SPRING_APPLICATION_JSON: JSON.stringify(config) } });
+  let logs = '';
+  for (const stream of [server.stdout, server.stderr]) stream.on('data', part => { logs = (logs + part).slice(-8000); });
+  try {
+    let origin;
+    const deadline = Date.now() + 120000;
+    while (Date.now() < deadline && server.exitCode === null) {
+      const port = /Tomcat started on port (\d+)/.exec(logs)?.[1];
+      if (port) {
+        const address = `http://127.0.0.1:${port}`;
+        if ((await fetch(address + '/api/health', { signal: AbortSignal.timeout(1500) }).catch(() => null))?.ok) {
+          origin = address; break;
+        }
+      }
+      await new Promise(resolve => setTimeout(resolve, 350));
+    }
+    assert.ok(origin, 'Backend did not become healthy');
+    async function send(endpoint, credential, body) {
+      const start = performance.now();
+      const response = await fetch(origin + '/api/threat/monitoring/' + endpoint, { method: 'POST',
+        headers: { Authorization: 'Bearer ' + credential, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      return { status: response.status, ms: performance.now() - start };
+    }
+    for (const credential of browserTokens) assert.equal((await send('heartbeat', credential, { protection: 'REPUTATION_AVAILABLE' })).status, 204);
+    const started = performance.now();
+    const results = (await Promise.all(browserTokens.map(async credential => {
+      const values = [];
+      for (let index = 0; index < 25; index++) values.push(await send('events', credential,
+        { id: randomUUID(), signal: 'PHISHING', action: 'BLOCKED', detectedAt: new Date().toISOString() }));
+      return values;
+    }))).flat();
+    const wallMs = performance.now() - started;
+    assert.ok(results.every(item => item.status === 204));
+    const dashboard = await fetch(origin + '/api/threat/monitoring/dashboard?scope=SYNTHETIC',
+      { headers: { Authorization: 'Bearer ' + admin } });
+    assert.equal(dashboard.status, 200);
+    const data = await dashboard.json();
+    assert.equal(data.total, 100);
+    const times = results.map(item => item.ms).sort((a, b) => a - b);
+    const report = { clients: 4, events: results.length, concurrency: 4, successful: results.length,
+      wallMs, eventsPerSecond: results.length * 1000 / wallMs, medianMs: times[49], p95Ms: times[94],
+      syntheticDashboardTotal: data.total, storage: 'in-memory H2', scope: 'single bounded loopback run' };
+    writeFileSync(output, JSON.stringify(report, null, 2) + '\n', { flag: 'wx' });
+    console.log(JSON.stringify(report));
+  } finally {
+    if (server.exitCode === null && server.signalCode === null) {
+      const exited = once(server, 'exit'); server.kill(); await exited;
+    }
+  }
+}
+main().catch(error => { console.error(error.stack); process.exitCode = 1; });

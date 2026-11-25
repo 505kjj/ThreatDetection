@@ -94,6 +94,11 @@
     ],
     "limitations": "Across three runs, median inspection was 24.47–30.10 ms and p95 was 45.75–114.43 ms. Maximum browser job peak was 599,756,800 bytes. Download and tracker assessment remain deferred. No experimental production permissions are added."
   },
+  "scalabilityResearch": {
+    "status": "One bounded synthetic loopback test. Deployment readiness remains unverified.",
+    "result": "Four clients submitted 100 events at concurrency four. All were accepted and the synthetic dashboard returned 100. Request median was 5.55 ms and p95 was 36.04 ms.",
+    "limitations": "In-memory H2 on one workstation, 316.59 events per second over a short run. This does not measure sustained load, durable storage or multiple instances. Docker and PostgreSQL remain unverified."
+  },
   "financial": [
     {
       "name": "State Bank of India",

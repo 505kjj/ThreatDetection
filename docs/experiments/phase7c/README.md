@@ -1,0 +1,23 @@
+# Phase 7C security and scalability review
+
+## Current controls and boundaries
+
+The existing API uses opaque bearer tokens, separate browser and administrator roles, exact-origin CORS, an allowlist of routes and deny-by-default routing. The monitoring service validates event fields, limits per-client rates, separates synthetic and real scope, deduplicates by client and event ID, and bounds retention. The monitoring repository uses a three-connection H2 pool, a two-second connection timeout, three-second query timeout, Flyway migrations and indexed scope and expiry queries. The Windows setup keeps separate DPAPI-protected browser and administrator credentials and stores dashboard events in a private H2 file. These observations describe the current implementation and do not constitute a complete security audit.
+
+The repository constructs an H2-specific URL internally and uses an H2 driver and H2-specific migration. PostgreSQL is not currently configurable for this store. A migration would need a PostgreSQL JDBC driver and the Flyway PostgreSQL module, explicit credential and TLS configuration, reviewed schema compatibility, concurrency and backup tests, a migration path and failure recovery tests. No database migration or production configuration change is included. [Flyway PostgreSQL support](https://documentation.red-gate.com/flyway/reference/database-driver-reference/postgresql-database)
+
+After adding the sanitized research summary, Maven verification passed 62 tests, extension unit tests passed 29, four Phase 6E and 7B research tests passed, and the direct Chromium smoke passed with the six-size responsive matrix. The secure Windows smoke was last run on the Phase 6E branch. Frozen research paths were unchanged by this work and the earlier 54-receipt verification and grouped membership check remain recorded in the Phase 6 reports. The dashboard reference and live screen-reader speech checks remain open.
+
+## Bounded synthetic load
+
+A guarded loopback test launched the existing backend with four disposable synthetic browser identities, an in-memory H2 store and four concurrent request streams. All 100 event submissions returned 204 and the synthetic dashboard returned 100. The measured submission interval was 315.87 ms, approximately 316.59 events per second, with 5.55 ms median and 36.04 ms p95 per request. This is one short run on the available workstation, below the configured per-client rate limit. It is not a sustained capacity, durability or multi-instance result. The two-CPU guard observed 17.42 seconds wall time including startup, 15.61 CPU seconds and 688,836,608 bytes peak job commit across the harness and JVM.
+
+Reproduce after building the backend with `backend/mvnw.cmd verify`. With the Phase 5B Python environment, run `research/phase3d/resource_guard.py --metrics <new-private-resource-file> -- node research/phase7c/load.cjs <new-private-result-file>`. The harness generates ephemeral credentials, binds to loopback, creates synthetic records only and stops its own backend process. It does not test database failure recovery or persistent storage.
+
+## Container preparation
+
+The root Dockerfile packages the existing built JAR with a Java 21 runtime and runs as numeric non-root user 10001. The build context excludes everything except the JAR. Docker was unavailable in this environment, so image build, runtime, base-image provenance and container security checks remain unverified. The application retains its loopback default and requires deliberate listener and port configuration for container access. Supply independent browser and administrator token digests through secured runtime configuration. Do not put plaintext tokens in the image. Local Windows startup remains documented in the existing Windows guide. Docker port publishing can bind explicitly to loopback. [Docker port publishing](https://docs.docker.com/engine/network/port-publishing/)
+
+## Decision and remaining work
+
+GO for local synthetic research. NO-GO for deployment readiness or public exposure. Complete dependency and security audits, authenticated stress and rate-limit tests, persistence and recovery testing, PostgreSQL feasibility testing, container build and runtime verification, secret management, accessibility acceptance, and independent validation before release. Phase 6B, 6C, 6D, 6E and Phase 7A–7B remain draft dependencies. The Phase 6B reference image and live screen-reader gates, Phase 6C broader parity, Phase 6D canvas parity, and independent custody remain open. Production ML, visual inference, shadow testing and new warnings remain disabled.
