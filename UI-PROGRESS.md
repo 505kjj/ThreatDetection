@@ -1,5 +1,11 @@
 # Frontend progress
 
+## Phase 6B integration verification
+
+- The integrated product runtime matches UI-2 commit `9661a263`. Direct and secure Chromium smoke runs passed with the responsive matrix. The secure run exercised PowerShell 5.1 setup and PowerShell 7 restart, persistence and credential rotation.
+- A repeat on the same Windows 11 Core Ultra 7 155H workstation used six cold Chromium contexts with 12 synthetic reports. Median navigation was 97.1 ms, DOMContentLoaded 85.3 ms, count settlement 476.3 ms and chart response to first frame 28.2 ms. Frame interval p95 was 16.8 ms, with zero of 294 intervals above 33.4 ms. Measurements and a fresh animation recording are in `C:/Users/kj/threat-detection-experiments/phase-6b-evidence`.
+- The dashboard reference image and live screen-reader speech review remain outstanding. Keep PR #27 in draft until both are completed. See the [integration report](docs/phase-6b-integration.md) for branch dependencies and research verification.
+
 ## Expanded UI-2 changes
 
 - Continued from `b02b8e6` on the Phase 4C product line. Draft PR #27 continues to track that branch.

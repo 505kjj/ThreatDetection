@@ -2,9 +2,7 @@
 
 ## 1. Unified Workspace and Repository Layout
 
-- **Antigravity Workspace:** `C:\Users\kj\threat-detection-system`
-- **Primary Integrated Git Repository:** `C:\Users\kj\threat-detection-system\phase-6b-system-consolidation`
-- **Development Workflow:** Future phases (starting with Phase 6C) use feature branches inside the primary repository rather than creating additional worktrees. Legacy phase worktrees and private experiment directories (`C:\Users\kj\threat-detection-experiments`) remain preserved outside the active branch flow.
+The repository contains the product and versioned research code. Private experiment directories remain outside Git. The [integration report](phase-6b-integration.md) records branch dependencies and remaining review gates.
 
 | Directory | Role | Runtime / Build Stack |
 | --- | --- | --- |
@@ -25,6 +23,23 @@ Production protection and offline ML research are strictly separated:
 3. **Sanitized Aggregate Projection:** The `/monitor` console's Financial Protection, ML Laboratory (17 cohort views), Visual Intelligence, and Dataset Laboratory read static, sanitized aggregates from [`backend/src/main/resources/monitoring/research.json`](../backend/src/main/resources/monitoring/research.json), served only to authenticated `ADMIN` callers at `GET /api/threat/monitoring/research-summary`. Regenerate this file offline with `node scripts/project-monitor-research.mjs`.
 
 ## 3. Production Runtime Architecture
+
+```mermaid
+flowchart LR
+    A[Browser navigation] --> B[Extension detection]
+    B --> C[Local security decision]
+    C -->|Optional reporting| D[Spring Boot API]
+    D --> E[Monitoring storage]
+    E --> F[Administrator dashboard]
+```
+
+```mermaid
+flowchart LR
+    A[Dataset preparation] --> B[Offline training]
+    B --> C[Evaluation]
+    C --> D[Frozen aggregate results]
+    D --> E[Research dashboard]
+```
 
 ### Chrome Extension (`extension/`)
 

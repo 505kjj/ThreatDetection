@@ -1,6 +1,6 @@
 # Windows local setup
 
-Use Java 21, Windows PowerShell 5.1 or PowerShell 7, and Chromium or Chrome. Run the commands from the primary repository directory (`C:\Users\kj\threat-detection-system\phase-6b-system-consolidation`). The scripts run under your Windows account and bind the backend to IPv4 loopback. No Python or offline research dependencies are needed to run the production backend, `/monitor` console, or Chrome extension.
+Use Java 21, Windows PowerShell 5.1 or PowerShell 7, and Chromium or Chrome. Run the commands from the repository root. The scripts run under your Windows account and bind the backend to IPv4 loopback. No Python or offline research dependencies are needed to run the production backend, `/monitor` console, or Chrome extension.
 
 If `java.exe` on `PATH` points to an Oracle javapath shim or another JDK version, point `JAVA_HOME` and `PATH` to JDK 21 first (for example `$env:JAVA_HOME = 'C:\Program Files\Java\jdk-21'; $env:Path = "$env:JAVA_HOME\bin;$env:Path"`).
 

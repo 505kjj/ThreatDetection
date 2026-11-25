@@ -4,11 +4,10 @@ Threat Detection contains a Java 21 Spring Boot API and monitoring console, a Ma
 
 ## Unified workspace and modules
 
-- **Antigravity workspace:** `C:\Users\kj\threat-detection-system`
-- **Primary repository directory:** `C:\Users\kj\threat-detection-system\phase-6b-system-consolidation`
 - **Architecture guide:** [System architecture](docs/architecture.md)
+- **Integration audit:** [Phase 6B integration report](docs/phase-6b-integration.md)
 
-Use Git branches inside the primary repository directory above for ongoing development rather than creating additional worktrees. Legacy worktrees and private research artifacts remain preserved separately.
+Use a repository checkout for product development. Keep private research artifacts outside Git.
 
 See [threat intelligence ingestion](docs/threat-intelligence-ingestion.md) for the managed CERT Polska source, provider terms, signed publication, and operations. [URL reputation operations](docs/url-reputation.md) describes the browser contract and the legacy operator-file format. An instance without a current, authorized browser snapshot reports **Protection unavailable**.
 
@@ -29,7 +28,7 @@ The [Phase 3B research preflight](research/README.md) and Phases 3C–6A researc
 
 ## Unified startup and test workflow
 
-Run commands from the primary repository directory (`C:\Users\kj\threat-detection-system\phase-6b-system-consolidation`). Production startup does not require Python or any research packages.
+Run commands from the repository root. Production startup does not require Python or any research packages.
 
 ### Production lifecycle (Windows PowerShell 5.1 or 7)
 
