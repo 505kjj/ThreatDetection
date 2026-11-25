@@ -1,0 +1,6 @@
+{
+  "manifest_version": 3,
+  "name": "Offline inference research fixture",
+  "version": "0.1.0",
+  "background": { "service_worker": "worker.mjs", "type": "module" }
+}
