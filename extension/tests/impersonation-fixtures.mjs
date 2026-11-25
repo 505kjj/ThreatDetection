@@ -5,14 +5,18 @@ export const official = [
   'www.hdfc.bank.in', 'now.hdfc.bank.in', 'netbanking.hdfcbank.com',
   'npci.org.in', 'www.npci.org.in',
   'razorpay.com', 'api.razorpay.com', 'hdfcbank-collectnow-docs.razorpay.com', 'rzp.io',
-  'accounts.google.com', 'login.microsoftonline.com'
+  'accounts.google.com', 'login.microsoftonline.com',
+  'axis.bank.in', 'application.axis.bank.in', 'www.axisbank.com', 'retail.axisbank.co.in',
+  'bankofbaroda.bank.in', 'bobworld.bankofbaroda.bank.in', 'www.bankofbaroda.in', 'www.bobibanking.com',
+  'www.bhimupi.org.in', 'www.phonepe.com'
 ];
 
 export const benignSynthetic = [
   'sbi.example.org', 'npci.example.net', 'hdfc.example.com', 'hdfc.github.io', 'sbi.co.jp',
   'subscription.payments.example.org', 'banking.example.net', 'holiday-checkout.example.com',
   'razor.pages.dev', 'example.org', 'bücher.example.org', '127.0.0.1', 'localhost',
-  'sbi.bank.invalid', 'help.example.com.'
+  'sbi.bank.invalid', 'help.example.com.', 'axis-history.example.org',
+  'axisbnak.documentation.example.org', 'bhim.community.example.net'
 ];
 
 // A merchant alias or fan page name can resemble a financial brand.
@@ -36,5 +40,12 @@ export const suspicious = [
   ['hdfcbnk.github.io', 'registered_typo'],
   ['rаzorpay.github.io', 'registered_homograph'], // Cyrillic а.
   ['razorpаy.example.org', 'subdomain_homograph'], // Cyrillic а.
-  ['hdfcbаnk.pages.dev', 'registered_homograph'] // Cyrillic а.
+  ['hdfcbаnk.pages.dev', 'registered_homograph'], // Cyrillic а.
+  ['axis.bank.in.example.org', 'embedded_official_domain'],
+  ['bankofbaroda.bank.in.example.net', 'embedded_official_domain'],
+  ['axisbnak-login.example.org', 'subdomain_typo'],
+  ['bobworld-payments.example.org', 'subdomain_brand'],
+  ['bhimupi.org.in.example.org', 'embedded_official_domain'],
+  ['phoneep.github.io', 'registered_typo'],
+  ['pһonepe.example.org', 'subdomain_homograph'] // Cyrillic һ.
 ];

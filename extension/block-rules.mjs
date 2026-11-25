@@ -43,6 +43,7 @@ export function bypassRule(id, tabId, extensionId, key) {
 export function createBlockRules(api, extensionId, now = Date.now) {
   let queue = Promise.resolve();
   let installed;
+  let installedRules = [];
   let installedIds = [];
   let initialized = false;
   const bypasses = new Map();
@@ -78,12 +79,14 @@ export function createBlockRules(api, extensionId, now = Date.now) {
         // Chrome makes rule replacement atomic. Clear previous rules if the replacement was rejected.
         await api.updateSessionRules({ removeRuleIds });
         installedIds = [];
+        installedRules = [];
         installed = null;
         bypasses.clear();
         throw error;
       }
       bypasses.clear();
       installedIds = addRules.map(rule => rule.id);
+      installedRules = addRules;
       installed = current;
     });
   }
@@ -112,5 +115,7 @@ export function createBlockRules(api, extensionId, now = Date.now) {
 
   return { setSnapshot, revoke, allowOnce,
     snapshot: () => installed?.expires > now() ? installed : null,
+    matchesBlock: url => installed?.expires > now() && installedRules.some(({ condition }) =>
+      new RegExp(condition.regexFilter, condition.isUrlFilterCaseSensitive ? '' : 'i').test(url.split('#', 1)[0])),
     bypass: tabId => bypasses.get(tabId) };
 }

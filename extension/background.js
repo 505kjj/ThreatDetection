@@ -1,20 +1,25 @@
-import { analysisFields, analyze, downloadSnapshot, requestFailure, startSession, validToken } from './backend-api.mjs';
+import { analysisFields, analyze, downloadSnapshot, probeReputationConnection,
+  requestFailure, startSession, validToken } from './backend-api.mjs';
 import { createBlockRules } from './block-rules.mjs';
 import { BYPASS_ALARM, createBrowserProtection } from './browser-protection.mjs';
-import { detectImpersonation } from './impersonation.mjs';
+import { detectImpersonation, verifiedFinancialHost } from './impersonation.mjs';
+import { loginEvidence } from './login-risk.mjs';
 import { checkDestination, createSnapshotCache, destinationFor } from './reputation.mjs';
 import { DEFAULT_ORIGIN, backendOrigin, backendPermission, matchingSite, pageHostname, readSites } from './settings.mjs';
+import { createThreatReporting, REPORTING_ALARM } from './threat-reporting.mjs';
 
 const CREDENTIAL = 'backendCredential';
 const statusKey = tabId => 'tab-status:' + tabId;
 const navigationKey = tabId => 'tab-navigation:' + tabId;
 const requests = new Map();
 const navigations = new Map();
+const financialChecks = new Map();
 const local = chrome.storage.local;
 const session = chrome.storage.session;
 const reputation = createSnapshotCache(session, downloadSnapshot);
 const rules = createBlockRules(chrome.declarativeNetRequest, chrome.runtime.id);
-const protection = createBrowserProtection(chrome, rules);
+const reporting = createThreatReporting(chrome, reportingConnection, () => !!rules.snapshot());
+const protection = createBrowserProtection(chrome, rules, Date.now, reporting.report);
 const REPUTATION_REFRESH = 'reputation-refresh';
 let connectionRevision = 0;
 
@@ -38,17 +43,32 @@ function optionsSender(sender) {
 }
 
 async function settings() {
-  const data = await local.get(['backendOrigin', 'monitoringEnabled', 'monitoredSites']);
+  const data = await local.get(['backendOrigin', 'monitoringEnabled', 'monitoredSites', 'threatReportingOrigin']);
+  const origin = backendOrigin(data.backendOrigin);
   return {
-    origin: backendOrigin(data.backendOrigin),
+    origin,
     enabled: data.monitoringEnabled !== false,
-    sites: readSites(data.monitoredSites)
+    sites: readSites(data.monitoredSites),
+    reporting: !!origin && data.threatReportingOrigin === origin
   };
 }
 
 async function credentialFor(origin) {
   const { [CREDENTIAL]: credential } = await session.get(CREDENTIAL);
   return origin && credential?.origin === origin && validToken(credential.token) ? credential : null;
+}
+
+async function reportingConnection() {
+  await setup;
+  const config = await settings();
+  if (!config.reporting || !config.enabled) return null;
+  const credential = await credentialFor(config.origin);
+  return credential && await chrome.permissions.contains(backendPermission(credential.origin)) ? credential : null;
+}
+
+async function reportingStatus(config) {
+  return { optedIn: config.reporting, status: !config.enabled ? 'paused'
+    : await reportingConnection() ? reporting.status() : 'disconnected' };
 }
 
 async function synchronizeRules(revision = connectionRevision) {
@@ -114,6 +134,60 @@ function withImpersonation(verdict, evidence) {
   return evidence?.length ? { ...verdict, impersonation: evidence } : verdict;
 }
 
+function discardFinancialCheck(tabId) {
+  clearTimeout(financialChecks.get(tabId)?.timer);
+  financialChecks.delete(tabId);
+}
+
+function financialCheck(page, config, result, domainEvidence) {
+  if (!domainEvidence.length || !['no_match', 'unavailable'].includes(result.state)) {
+    discardFinancialCheck(page.tabId);
+    return null;
+  }
+  let check = financialChecks.get(page.tabId);
+  if (!check || check.documentId !== page.documentId || check.navigation !== page.navigation ||
+      check.revision !== page.settingsRevision) {
+    discardFinancialCheck(page.tabId);
+    check = { id: crypto.randomUUID(), documentId: page.documentId, navigation: page.navigation,
+      revision: page.settingsRevision, inspected: [], observations: 0 };
+    financialChecks.set(page.tabId, check);
+  }
+  check.domainEvidence = domainEvidence;
+  if (config.reporting && !check.reported && !check.timer) {
+    check.timer = setTimeout(() => {
+      if (financialChecks.get(page.tabId) === check && check.revision === connectionRevision) publishFinancial(page, check);
+    }, 1100);
+  }
+  return check;
+}
+
+function publishFinancial(page, check) {
+  if (!check.timer || check.reported) return;
+  clearTimeout(check.timer);
+  check.timer = null;
+  check.reported = true;
+  const key = check.inspected.find(item => item.kind === 'financial_external_form')?.kind ??
+    check.inspected[0]?.kind ?? check.domainEvidence[0].kind;
+  reporting.report(key.toUpperCase(), 'WARNED', page.documentId, 'FINANCIAL_IMPERSONATION');
+}
+
+async function inspectLogin(page, message) {
+  const check = financialChecks.get(page.tabId);
+  if (!check || verifiedFinancialHost(page.host) || message.id !== check.id || check.documentId !== page.documentId ||
+      check.navigation !== page.navigation || check.revision !== connectionRevision ||
+      check.observations >= 8) return { inspected: false };
+  check.observations++;
+  const key = navigationKey(page.tabId);
+  const { [key]: nav } = await session.get(key);
+  const latest = await currentPage(page.tabId);
+  if (financialChecks.get(page.tabId) !== check || check.revision !== connectionRevision ||
+      !samePage(page, latest)) return { inspected: false };
+  check.inspected = loginEvidence(message.forms, new URL(page.destination.key).origin,
+    check.domainEvidence, nav?.documentId === page.documentId && nav.redirected);
+  publishFinancial(page, check);
+  return { inspected: true, evidence: [...check.domainEvidence, ...check.inspected] };
+}
+
 async function reputationFor(page, config) {
   const revision = page.settingsRevision;
   let result;
@@ -143,7 +217,9 @@ async function reputationFor(page, config) {
   } else {
     await clearBadge(page.tabId);
   }
-  return withImpersonation(result, impersonation);
+  if (revision !== connectionRevision || navigations.get(page.tabId) !== page.navigation) return { state: 'inactive' };
+  const financial = financialCheck(page, config, result, impersonation);
+  return withImpersonation(result, financial ? [...impersonation, ...financial.inspected] : impersonation);
 }
 
 async function saveConnection(message) {
@@ -151,6 +227,7 @@ async function saveConnection(message) {
   const { token } = message;
   if (!origin || (token !== '' && !validToken(token))) return { saved: false };
   if (!await chrome.permissions.contains(backendPermission(origin))) return { saved: false };
+  if ((await settings()).origin !== origin) await local.remove('threatReportingOrigin');
   // The credential includes its origin so it cannot be reused after an endpoint change.
   if (token) await session.set({ [CREDENTIAL]: { id: crypto.randomUUID(), origin, token } });
   else if (!await credentialFor(origin)) await session.remove(CREDENTIAL);
@@ -161,12 +238,15 @@ async function saveConnection(message) {
 async function pageConfiguration(page) {
   const config = await pageSettings(page);
   const verdict = await reputationFor(page, config);
+  const scan = !verifiedFinancialHost(page.host) && ['no_match', 'unavailable'].includes(verdict.state)
+    ? financialChecks.get(page.tabId)?.id : null;
   if (!config.canMonitor || verdict.state !== 'no_match') {
-    return { active: false, verdict, recheck: config.permitted && verdict.state !== 'inactive' };
+    return { active: false, verdict, scan, recheck: config.permitted && verdict.state !== 'inactive' };
   }
   return {
     active: true,
     verdict,
+    scan,
     sensitivePaths: config.site.sensitivePaths,
     sensitiveFields: config.site.sensitiveFields
   };
@@ -250,6 +330,9 @@ async function submitTelemetry(page, message) {
       [key]: { documentId, navigation: page.navigation ?? null, credentialId: credential.id,
         sessionId: id, verdict, checkedAt: Date.now() }
     });
+    if (config.reporting && verdict.state === 'warning') {
+      reporting.report('SUSPICIOUS_BEHAVIOR', 'WARNED', documentId);
+    }
     return withImpersonation(verdict, localVerdict.impersonation);
   } finally {
     if (requests.get(tabId) === task) requests.delete(tabId);
@@ -263,18 +346,58 @@ async function handleMessage(message, sender) {
       const { origin } = await settings();
       return { origin: origin ?? DEFAULT_ORIGIN, hasToken: !!await credentialFor(origin) };
     }
+    if (message.type === 'CHECK_CANDIDATE') {
+      const origin = backendOrigin(message.origin);
+      if (!origin || !validToken(message.token)) return { status: 'unexpected' };
+      if (!await chrome.permissions.contains(backendPermission(origin))) return { status: 'permission' };
+      return { status: await probeReputationConnection({ origin, token: message.token }) };
+    }
+    if (message.type === 'CHECK_CONNECTION') {
+      const config = await settings();
+      const credential = await credentialFor(config.origin);
+      if (!credential) return { status: 'missing-token' };
+      if (!await chrome.permissions.contains(backendPermission(credential.origin))) return { status: 'permission' };
+      const status = await probeReputationConnection(credential);
+      const latest = await settings();
+      if ((await credentialFor(latest.origin))?.id !== credential.id) return { status: 'changed' };
+      return { status, reputation: !latest.enabled ? 'paused' : rules.snapshot() ? 'current' : 'unavailable' };
+    }
+    if (message.type === 'GET_THREAT_REPORTING') {
+      return reportingStatus(await settings());
+    }
+    if (message.type === 'SET_THREAT_REPORTING' && typeof message.enabled === 'boolean') {
+      const { origin } = await settings();
+      if (message.enabled && !origin) return { saved: false };
+      if (message.enabled) await local.set({ threatReportingOrigin: origin });
+      else await local.remove('threatReportingOrigin');
+      return { saved: true };
+    }
     if (message.type === 'SAVE_CONNECTION') return saveConnection(message);
     if (message.type === 'CLEAR_CONNECTION') {
       await session.remove(CREDENTIAL);
       return { saved: true };
     }
   }
-  if (sender.url === chrome.runtime.getURL('popup.html') && message.type === 'GET_TAB_STATUS') {
-    return tabStatus(message.tabId);
+  if (sender.url === chrome.runtime.getURL('popup.html')) {
+    if (message.type === 'GET_TAB_STATUS') return tabStatus(message.tabId);
+    if (message.type === 'GET_POPUP_CONTEXT') {
+      const config = await settings();
+      return {
+        enabled: config.enabled,
+        origin: config.origin,
+        hasToken: !!await credentialFor(config.origin),
+        reputation: !config.enabled ? 'paused' : rules.snapshot() ? 'current' : 'unavailable',
+        reporting: await reportingStatus(config)
+      };
+    }
   }
   if (['GET_NETWORK_WARNING', 'PROCEED_ONCE', 'LEAVE_NETWORK_WARNING'].includes(message.type)) {
     if (!rules.snapshot()) void synchronizeRules().catch(() => {});
     return protection.message(message.type, sender, message.token);
+  }
+  if (message.type === 'LOGIN_STRUCTURE') {
+    const page = await verifiedPage(sender);
+    return page ? inspectLogin(page, message) : { inspected: false };
   }
   if (message.type === 'PAGE_CONFIGURATION' || message.type === 'TELEMETRY') {
     const page = await verifiedPage(sender);
@@ -302,6 +425,7 @@ chrome.webNavigation.onCommitted.addListener(details => {
   const { tabId, frameId, documentId, transitionQualifiers = [] } = details;
   if (frameId !== 0) return;
   navigations.set(tabId, crypto.randomUUID());
+  discardFinancialCheck(tabId);
   requests.get(tabId)?.controller.abort();
   void clearBadge(tabId).catch(() => {});
   const redirected = transitionQualifiers.includes('server_redirect') || transitionQualifiers.includes('client_redirect');
@@ -313,6 +437,7 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(details => {
   const { tabId, frameId, documentId } = details;
   if (frameId !== 0) return;
   navigations.set(tabId, crypto.randomUUID());
+  discardFinancialCheck(tabId);
   requests.get(tabId)?.controller.abort();
   void clearBadge(tabId).catch(() => {});
   void chrome.tabs.sendMessage(tabId, { type: 'REFRESH_CONFIGURATION' }, { documentId }).catch(() => {});
@@ -321,6 +446,7 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(details => {
 
 chrome.tabs.onRemoved.addListener(tabId => {
   navigations.delete(tabId);
+  discardFinancialCheck(tabId);
   requests.get(tabId)?.controller.abort();
   void session.remove([statusKey(tabId), navigationKey(tabId)]).catch(() => {});
   void protection.remove(tabId).catch(() => {});
@@ -336,6 +462,7 @@ async function refreshOpenPages() {
 
 function invalidateRequests() {
   connectionRevision++;
+  for (const tabId of financialChecks.keys()) discardFinancialCheck(tabId);
   for (const task of requests.values()) task.controller.abort();
 }
 
@@ -348,6 +475,10 @@ async function resetProtection(clearCache) {
 }
 
 chrome.storage.onChanged.addListener((changes, area) => {
+  if ((area === 'session' && CREDENTIAL in changes) ||
+      (area === 'local' && ['threatReportingOrigin', 'backendOrigin', 'monitoringEnabled'].some(key => key in changes))) {
+    void reporting.reset().then(() => reporting.refreshAlarm()).catch(() => {});
+  }
   if (area === 'session' && CREDENTIAL in changes) {
     void resetProtection(true).catch(() => {});
   } else if (area === 'local' && ['backendOrigin', 'monitoringEnabled'].some(key => key in changes)) {
@@ -360,13 +491,17 @@ chrome.storage.onChanged.addListener((changes, area) => {
 
 chrome.permissions.onRemoved.addListener(() => {
   void resetProtection(false).catch(() => {});
+  void reporting.reset().then(() => reporting.refreshAlarm()).catch(() => {});
 });
 
 chrome.alarms.onAlarm.addListener(alarm => {
   if (alarm.name === REPUTATION_REFRESH) {
-    void setup.then(synchronizeRules).then(refreshOpenPages).catch(() => {});
+    void setup.then(synchronizeRules).then(refreshOpenPages).then(reporting.heartbeat).catch(() => {});
+  } else if (alarm.name === REPORTING_ALARM) {
+    void initialRules.then(reporting.heartbeat).catch(() => {});
   } else if (alarm.name.startsWith(BYPASS_ALARM)) {
     void protection.expire(Number(alarm.name.slice(BYPASS_ALARM.length))).catch(() => {});
   }
 });
-void setup.then(synchronizeRules).catch(() => {});
+const initialRules = setup.then(synchronizeRules).catch(() => {});
+void initialRules.then(reporting.refreshAlarm).catch(() => {});

@@ -19,6 +19,10 @@ const brands = financialBrands.map(brand => ({
   skeletons: new Set(brand.aliases.map(skeleton))
 }));
 
+export function verifiedFinancialHost(host) {
+  return brands.some(brand => brand.scopes.some(scope => scopeMatches(host, scope)) || brand.sharedHosts?.includes(host));
+}
+
 function singleTypo(label, alias) {
   // Short initialisms overlap too many ordinary domains for fuzzy matching.
   if (alias.length < 7 || Math.abs(alias.length - label.length) > 1) return false;
@@ -57,7 +61,10 @@ function evidenceFor(brand, labelsBeforeSuffix, registrant, subdomainLabels, fin
     return 'embedded_official_domain';
   }
   return nameSignal(registrant, brand, true, financialContext) ??
-    nameSignal(subdomainLabels, brand, false, financialContext);
+    nameSignal(subdomainLabels, brand, false, financialContext) ??
+    (financialContext && subdomainLabels.some(token =>
+      /^[a-z0-9]+$/.test(token) && brand.aliases.some(alias => alias.length >= 8 && singleTypo(token, alias)))
+      ? 'subdomain_typo' : null);
 }
 
 const descriptions = {
@@ -66,6 +73,7 @@ const descriptions = {
   registered_typo: brand => `The registered domain differs from the ${brand} name by one typing change.`,
   registered_homograph: brand => `The registered domain uses Unicode characters that resemble the ${brand} name.`,
   subdomain_brand: brand => `A subdomain uses the ${brand} name under a different registered domain.`,
+  subdomain_typo: brand => `A subdomain with a sign-in or payment term resembles the ${brand} name with one typing change.`,
   subdomain_homograph: brand => `A subdomain uses Unicode characters that resemble the ${brand} name.`
 };
 

@@ -2,8 +2,45 @@ import { DEFAULT_ORIGIN, backendOrigin, backendPermission, newSite, readSites, s
 import { validToken } from './backend-api.mjs';
 
 const byId = id => document.getElementById(id);
+byId('extensionId').textContent = chrome.runtime.id;
 let editingDomain = null;
 let connectionBusy = false;
+let checkRevision = 0;
+
+const connectionMessages = {
+  connected: 'Backend connected. Browser credential accepted.',
+  unauthorized: 'Browser credential rejected. Copy the current Browser token for this backend.',
+  forbidden: 'Connection denied. Check the allowed extension ID and make sure you used the Browser token.',
+  'no-reputation': 'Backend reached. Reputation data is unavailable on the server.',
+  offline: 'Backend unavailable. Check that it is running and that the origin is correct.',
+  unexpected: 'The server did not return a ThreatDetection reputation response. Check the backend origin.',
+  'missing-token': 'Set a Browser token to check the connection.',
+  permission: 'Backend access is missing. Save the connection and approve the host permission.',
+  changed: 'Connection settings changed. Check the connection again.'
+};
+
+async function checkConnection() {
+  const revision = ++checkRevision;
+  byId('checkConnection').disabled = true;
+  byId('backendStatus').textContent = 'Checking saved backend…';
+  byId('reputationStatus').textContent = '';
+  try {
+    const result = await chrome.runtime.sendMessage({ type: 'CHECK_CONNECTION' });
+    if (revision !== checkRevision) return;
+    byId('backendStatus').textContent = connectionMessages[result?.status] ?? 'Could not check the saved backend.';
+    byId('reputationStatus').textContent = {
+      current: 'Current reputation data is loaded in this browser.',
+      unavailable: 'Reputation protection is unavailable in this browser.',
+      paused: 'Browser protection is paused.'
+    }[result?.reputation] ?? '';
+  } catch {
+    if (revision === checkRevision) byId('backendStatus').textContent = 'Could not check the saved backend.';
+  } finally {
+    if (revision === checkRevision) byId('checkConnection').disabled = false;
+  }
+}
+
+byId('checkConnection').addEventListener('click', () => void checkConnection());
 
 function announce(text) {
   byId('message').textContent = text;
@@ -15,6 +52,7 @@ async function loadConnection() {
   byId('backendOrigin').value = result.origin;
   byId('tokenStatus').textContent = result.hasToken ? 'Browser token set for this session.' : 'Browser token required.';
   byId('clearToken').disabled = !result.hasToken;
+  void checkConnection();
 }
 
 async function getSites() {
@@ -29,6 +67,33 @@ async function renderMonitoring() {
   byId('enableMonitoring').disabled = enabled;
   byId('disableMonitoring').disabled = !enabled;
 }
+
+async function renderReporting() {
+  const result = await chrome.runtime.sendMessage({ type: 'GET_THREAT_REPORTING' });
+  if (typeof result?.optedIn !== 'boolean') throw new Error('Reporting settings unavailable');
+  byId('threatReporting').checked = result.optedIn;
+  byId('reportingStatus').textContent = !result.optedIn ? 'Reporting is off.' : {
+    paused: 'Reporting is paused while protection is paused.',
+    connected: 'Reporting connected.',
+    waiting: 'Waiting to connect to the dashboard backend.',
+    disconnected: 'Reporting unavailable. Local protection continues when valid data is available.'
+  }[result.status];
+}
+
+byId('threatReporting').addEventListener('change', async event => {
+  const checkbox = event.currentTarget;
+  checkbox.disabled = true;
+  try {
+    const result = await chrome.runtime.sendMessage({ type: 'SET_THREAT_REPORTING', enabled: checkbox.checked });
+    if (!result?.saved) throw new Error('Reporting settings unavailable');
+    await renderReporting();
+  } catch {
+    announce('Could not update dashboard reporting.');
+    await renderReporting().catch(() => {});
+  } finally {
+    checkbox.disabled = false;
+  }
+});
 
 function button(label, onClick) {
   const element = document.createElement('button');
@@ -84,13 +149,11 @@ function openEditor(site) {
   byId('editDomain').value = site.domain;
   byId('editPaths').value = site.sensitivePaths.join('\n');
   byId('editFields').value = site.sensitiveFields.join(', ');
-  byId('editModal').style.display = 'flex';
-  byId('editPaths').focus();
+  byId('editModal').showModal();
 }
 
 function closeEditor() {
-  editingDomain = null;
-  byId('editModal').style.display = 'none';
+  byId('editModal').close();
 }
 
 byId('saveConnection').addEventListener('click', async () => {
@@ -111,10 +174,24 @@ byId('saveConnection').addEventListener('click', async () => {
       announce('Allow access to the backend host to save this connection.');
       return;
     }
+    if (token) {
+      byId('browserToken').value = '';
+      byId('backendStatus').textContent = 'Verifying browser token…';
+      const result = await chrome.runtime.sendMessage({ type: 'CHECK_CANDIDATE', origin, token });
+      if (!['connected', 'no-reputation'].includes(result?.status)) {
+        ++checkRevision;
+        byId('checkConnection').disabled = false;
+        byId('backendStatus').textContent = connectionMessages[result?.status] ?? 'Could not verify the browser token.';
+        byId('reputationStatus').textContent = '';
+        announce('The saved connection was kept.');
+        return;
+      }
+    }
     const result = await chrome.runtime.sendMessage({ type: 'SAVE_CONNECTION', origin, token });
     if (!result?.saved) throw new Error('Connection rejected');
     byId('browserToken').value = '';
     await loadConnection();
+    await renderReporting();
     announce('Connection settings saved.');
   } catch {
     announce('Could not save the connection.');
@@ -128,6 +205,7 @@ byId('clearToken').addEventListener('click', async () => {
     await chrome.runtime.sendMessage({ type: 'CLEAR_CONNECTION' });
     byId('browserToken').value = '';
     await loadConnection();
+    await renderReporting();
     announce('Browser token cleared.');
   } catch {
     announce('Could not clear the browser token.');
@@ -158,6 +236,7 @@ byId('newDomain').addEventListener('keydown', event => {
 
 byId('modalClose').addEventListener('click', closeEditor);
 byId('modalCancel').addEventListener('click', closeEditor);
+byId('editModal').addEventListener('close', () => { editingDomain = null; });
 byId('modalSave').addEventListener('click', async () => {
   if (!editingDomain) return;
   const split = (value, separator) => value.split(separator).map(item => item.trim()).filter(Boolean);
@@ -177,15 +256,26 @@ for (const [id, enabled] of [['enableMonitoring', true], ['disableMonitoring', f
   byId(id).addEventListener('click', async () => {
     await chrome.storage.local.set({ monitoringEnabled: enabled });
     await renderMonitoring();
+    await renderReporting();
+    void checkConnection();
   });
 }
 
 byId('resetDefaults').addEventListener('click', async () => {
   await chrome.runtime.sendMessage({ type: 'CLEAR_CONNECTION' });
   await chrome.storage.local.set({ backendOrigin: DEFAULT_ORIGIN, monitoredSites: [], monitoringEnabled: true });
+  await chrome.storage.local.remove('threatReportingOrigin');
   byId('browserToken').value = '';
-  await Promise.all([loadConnection(), renderSites(), renderMonitoring()]);
+  await Promise.all([loadConnection(), renderSites(), renderMonitoring(), renderReporting()]);
   announce('Settings reset.');
 });
 
-Promise.all([loadConnection(), renderSites(), renderMonitoring()]).catch(() => announce('Could not load settings.'));
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area !== 'local' || !changes.monitoringEnabled) return;
+  byId('reputationStatus').textContent = changes.monitoringEnabled.newValue === false ? 'Browser protection is paused.' : '';
+  void Promise.all([renderMonitoring(), renderReporting()]).catch(() => announce('Could not refresh protection status.'));
+});
+
+Promise.all([loadConnection(), renderSites(), renderMonitoring(), renderReporting()])
+  .catch(() => announce('Could not load settings.'));
+setInterval(() => void renderReporting().catch(() => {}), 10000);

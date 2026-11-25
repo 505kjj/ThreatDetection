@@ -77,6 +77,7 @@ function chromeModel() {
     alarms: {
       async get(name) { return alarms.get(name); },
       async create(name, { when }) { alarms.set(name, { scheduledTime: when }); },
+      async clear(name) { alarms.delete(name); },
       onAlarm: hook('alarm')
     },
     permissions: {
@@ -131,6 +132,120 @@ async function worker(response, feed = () => json(snapshot())) {
 }
 
 const json = (value, status = 200) => new Response(JSON.stringify(value), { status });
+
+async function waitFor(predicate) {
+  for (let attempt = 0; attempt < 180; attempt++) {
+    if (await predicate()) return;
+    await new Promise(resolve => setTimeout(resolve, 10));
+  }
+  assert.fail('Timed out waiting for reporting');
+}
+
+test('dashboard consent is options-only, origin-bound and sends only classified evidence', async t => {
+  const state = await worker(() => new Response(null, { status: 204 }));
+  t.after(state.restore);
+  const consent = enabled => ({ type: 'SET_THREAT_REPORTING', enabled });
+  const monitorCalls = () => state.calls.filter(call => call.url.includes('/monitoring/'));
+  const events = () => monitorCalls().filter(call => call.url.endsWith('/events'));
+  state.frames[1].url = 'https://sbi.bank.in.example.org/private?fixture=secret#fragment';
+  await state.save(defaultOrigin, token);
+  assert.deepEqual(await state.message(consent(true)), { state: 'inactive' });
+  assert.ok((await state.message({ type: 'PAGE_CONFIGURATION' })).verdict.impersonation.length);
+  assert.equal(monitorCalls().length, 0);
+  assert.deepEqual(await state.message(consent(true), state.options), { saved: true });
+  await waitFor(() => monitorCalls().some(call => call.url.endsWith('/heartbeat')));
+  assert.deepEqual(await state.message({ type: 'REPORT_THREAT', signal: 'MALWARE', action: 'BLOCKED' }),
+    { state: 'inactive' });
+  await state.message({ type: 'PAGE_CONFIGURATION', signal: 'MALWARE', action: 'BLOCKED', reason: 'private' });
+  await state.status();
+  await waitFor(() => events().length === 1);
+  const [detection] = events();
+  assert.deepEqual(Object.keys(detection.body).sort(), ['action', 'detectedAt', 'id', 'signal']);
+  assert.equal(detection.body.signal, 'EMBEDDED_OFFICIAL_DOMAIN');
+  assert.equal(detection.body.action, 'WARNED');
+  assert.match(detection.body.id, /^[0-9a-f-]{36}$/);
+  assert.ok(Number.isFinite(Date.parse(detection.body.detectedAt)));
+  assert.equal(detection.options.credentials, 'omit');
+  assert.equal(detection.options.referrerPolicy, 'no-referrer');
+  assert.equal(detection.options.headers.Authorization, 'Bearer ' + token);
+  const journal = JSON.stringify(state.stored.session['threat-reporting-journal']);
+  assert.doesNotMatch(journal, /sbi|private|secret|fragment/);
+  await state.save('https://api.example.test', token);
+  assert.equal((await state.message({ type: 'GET_THREAT_REPORTING' }, state.options)).optedIn, false);
+  await state.status();
+  assert.equal(events().length, 1);
+});
+
+test('a dashboard failure leaves financial advisory decisions intact and opt-out removes the journal', async t => {
+  const state = await worker(() => { throw new TypeError('offline fixture'); });
+  t.after(state.restore);
+  await state.save(defaultOrigin, token);
+  await state.message({ type: 'SET_THREAT_REPORTING', enabled: true }, state.options);
+  state.frames[1].url = 'https://sbi.bank.in.example.org/private';
+  const verdict = await state.message({ type: 'PAGE_CONFIGURATION' });
+  assert.equal(verdict.verdict.state, 'no_match');
+  assert.equal(verdict.verdict.impersonation[0].kind, 'embedded_official_domain');
+  await waitFor(async () => (await state.message({ type: 'GET_THREAT_REPORTING' }, state.options))
+    .status === 'disconnected');
+  await state.message({ type: 'SET_THREAT_REPORTING', enabled: false }, state.options);
+  await waitFor(() => !('threat-reporting-journal' in state.stored.session));
+  const before = state.calls.length;
+  state.handlers.history({ frameId: 0, tabId: 1, documentId: 'current-1' });
+  assert.ok((await state.status()).impersonation.length);
+  assert.equal(state.calls.length, before);
+});
+
+test('structural evidence and telemetry stay bound to an eligible top document', async t => {
+  const state = await worker(() => new Response(null, { status: 204 }));
+  t.after(state.restore);
+  await state.save(defaultOrigin, token);
+  await state.message({ type: 'SET_THREAT_REPORTING', enabled: true }, state.options);
+  state.frames[1].url = 'https://sbi.bank.in.example.org/private';
+  const page = await state.message({ type: 'PAGE_CONFIGURATION' });
+  assert.ok(page.scan);
+  const message = { type: 'LOGIN_STRUCTURE', id: page.scan,
+    forms: [{ kind: 'password', destination: 'https://forms.example.net' }] };
+  assert.deepEqual(await state.message(message, { ...state.sender(), frameId: 3 }), { inspected: false });
+  assert.deepEqual(await state.message(message, state.sender(2)), { inspected: false });
+  const inspected = await state.message(message);
+  assert.ok(inspected.evidence.some(item => item.kind === 'financial_external_form'));
+  const events = () => state.calls.filter(call => call.url.endsWith('/monitoring/events'));
+  await waitFor(() => events().length === 1);
+  assert.equal(events()[0].body.signal, 'FINANCIAL_EXTERNAL_FORM');
+  assert.doesNotMatch(JSON.stringify(events()[0].body), /forms\.example\.net|private/);
+  assert.ok((await state.status()).impersonation.some(item => item.kind === 'financial_password_form'));
+  state.handlers.history({ frameId: 0, tabId: 1, documentId: 'current-1' });
+  assert.deepEqual(await state.message(message), { inspected: false });
+  assert.equal((await state.status()).impersonation.some(item => item.kind.startsWith('financial_')), false);
+  assert.equal(events().length, 1);
+});
+
+test('the connection check is private to Settings and distinguishes authentication from a missing snapshot', async t => {
+  let probe = 200;
+  const state = await worker(() => new Response(null, { status: 204 }), () => {
+    if (probe === 0) throw new TypeError('offline fixture');
+    return new Response(JSON.stringify(snapshot()), { status: probe, headers: { 'content-type': 'application/json' } });
+  });
+  t.after(state.restore);
+  const check = () => state.message({ type: 'CHECK_CONNECTION' }, state.options);
+  assert.deepEqual(await state.message({ type: 'CHECK_CONNECTION' }), { state: 'inactive' });
+  const candidate = { type: 'CHECK_CANDIDATE', origin: defaultOrigin, token };
+  assert.deepEqual(await state.message(candidate), { state: 'inactive' });
+  assert.deepEqual(await check(), { status: 'missing-token' });
+  assert.deepEqual(await state.message(candidate, state.options), { status: 'connected' });
+  assert.deepEqual(await check(), { status: 'missing-token' });
+  await state.save(defaultOrigin, token);
+  assert.equal((await check()).status, 'connected');
+  for (const [code, status] of [[401, 'unauthorized'], [403, 'forbidden'], [503, 'no-reputation'], [0, 'offline']]) {
+    probe = code;
+    assert.equal((await check()).status, status);
+  }
+  assert.equal(state.calls.length, 0, 'connection checks must not post telemetry');
+  const request = state.downloads.at(-1);
+  assert.equal(request.url, defaultOrigin + '/api/threat/reputation/snapshot');
+  assert.equal(request.options.credentials, 'omit');
+  assert.equal(request.options.referrerPolicy, 'no-referrer');
+});
 
 test('origin validation and telemetry allowlisting match the secured contract', () => {
   assert.equal(backendOrigin('https://api.example.test:8443/'), 'https://api.example.test:8443');

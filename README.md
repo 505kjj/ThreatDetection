@@ -1,21 +1,81 @@
 # Threat Detection
 
-Threat Detection contains a Java 21 Spring Boot API, a Manifest V3 Chrome extension, and a Java Swing admin client. Chrome matches exact hostnames and URL-path hashes locally against an authenticated reputation snapshot. Optional activity monitoring on configured sites can produce an unconfirmed warning.
+Threat Detection contains a Java 21 Spring Boot API and monitoring console, a Manifest V3 Chrome extension, a Java Swing admin client, an offline evaluation framework, and isolated ML/visual phishing research pipelines. Chrome matches exact hostnames and URL-path hashes locally against an authenticated reputation snapshot, evaluates local financial impersonation signals, and can run optional activity monitoring on configured sites. Production ML warnings, blocking, shadow testing, and visual telemetry remain disabled.
+
+## Unified workspace and modules
+
+- **Architecture guide:** [System architecture](docs/architecture.md)
+- **Integration audit:** [Phase 6B integration report](docs/phase-6b-integration.md)
+
+Use a repository checkout for product development. Keep private research artifacts outside Git.
 
 See [threat intelligence ingestion](docs/threat-intelligence-ingestion.md) for the managed CERT Polska source, provider terms, signed publication, and operations. [URL reputation operations](docs/url-reputation.md) describes the browser contract and the legacy operator-file format. An instance without a current, authorized browser snapshot reports **Protection unavailable**.
 
 The [offline evaluation guide](docs/dataset-evaluation.md) covers Phase 3A dataset provenance, held-out rule baselines, and the versioned URL feature interface. It is separate from the browser and backend.
 
-The [Phase 3B research preflight](research/README.md) verifies the CPU model environment and accepts the Phase 3A numeric feature contract.
+The [Phase 3B research preflight](research/README.md) and Phases 3C–6A research directories verify the offline CPU model environment and frozen research artifacts independently of the production runtime.
 
 | Module | Location | Current behavior |
 | --- | --- | --- |
-| Spring Boot REST API, rules and JPA persistence | [`backend/`](backend/) | Secured API. Temporary H2 database is configured by default. |
-| Chrome extension | [`extension/`](extension/) | Downloads one authenticated threat snapshot and checks websites on the device. Optional activity monitoring uses the secured session API. |
-| Swing admin client | [`admin-swing/`](admin-swing/) | Existing client needs admin bearer authentication. The simulator also needs the new browser session contract. |
-| Static browser demos | [`backend/src/main/resources/static/`](backend/src/main/resources/static/) | Assets retained for reference. The server disables static mappings and denies the demo routes. |
+| Spring Boot REST API, rules, and `/monitor` UI | [`backend/`](backend/) | Secured API with temporary activity sessions, Flyway-migrated H2 monitoring store, and UI-1/UI-2 black-and-violet console at `/monitor`. |
+| Chrome extension | [`extension/`](extension/) | MV3 extension that downloads an authenticated threat snapshot, enforces local blocks/advisories, and supports opt-in privacy-preserving reporting. |
+| Swing admin client | [`admin-swing/`](admin-swing/) | Desktop client (compiles on Java 21; requires admin bearer token and updated session contract for live requests). |
+| Offline evaluation harness | [`evaluation/`](evaluation/) | Dataset manifest validator, feature extractor (`url-lexical-v1`), and replay tests. |
+| Offline ML and visual research | [`research/`](research/) | Phases 3B–6A offline experiments, Windows resource guard, and Phase 5G frozen-model custody preflight. Not required by production. |
+| Windows lifecycle & research projection | [`scripts/`](scripts/) | DPAPI-protected local backend manager (`local.ps1`) and sanitized aggregate projector (`project-monitor-research.mjs`). |
+| Documentation & experiment receipts | [`docs/`](docs/) | Operational guides, [architecture overview](docs/architecture.md), and Phases 3B–6A experiment receipts. |
+| Static browser demos | [`backend/src/main/resources/static/`](backend/src/main/resources/static/) | Legacy assets retained for reference. The server disables static mappings and denies the demo routes. |
+
+## Unified startup and test workflow
+
+Run commands from the repository root. Production startup does not require Python or any research packages.
+
+### Production lifecycle (Windows PowerShell 5.1 or 7)
+
+1. Build and verify the backend JAR (set `JAVA_HOME` to Java 21 if an Oracle javapath shim or another JDK is ahead on `PATH`):
+   ```powershell
+   Push-Location backend
+   .\mvnw.cmd clean verify
+   Pop-Location
+   ```
+2. Load `extension/` unpacked in `chrome://extensions` (Developer mode) and copy the 32-character extension ID.
+3. Provision a DPAPI-protected profile, start the backend, and check status:
+   ```powershell
+   $extensionId = Read-Host 'Chrome extension ID'
+   .\scripts\local.ps1 -Action Setup -Profile demo -ExtensionId $extensionId -Synthetic
+   .\scripts\local.ps1 -Action Start -Profile demo
+   .\scripts\local.ps1 -Action Status -Profile demo
+   ```
+4. Retrieve credentials safely via clipboard and connect the clients:
+   - Browser extension Settings (`http://127.0.0.1:8081`): `.\scripts\local.ps1 -Action CopyToken -Profile demo -Role Browser`
+   - Admin dashboard (`http://127.0.0.1:8081/monitor`): `.\scripts\local.ps1 -Action CopyToken -Profile demo -Role Admin`
+5. Stop the backend or rotate credentials when needed:
+   ```powershell
+   .\scripts\local.ps1 -Action Stop -Profile demo
+   .\scripts\local.ps1 -Action Rotate -Profile demo -Role Admin
+   ```
+
+See [Windows local setup](docs/windows-local-setup.md) for live vs. synthetic profiles, H2 backup/restore, and troubleshooting.
+
+### Verification and isolated research commands
+
+- **Backend Maven tests:** `Push-Location backend; .\mvnw.cmd clean verify; Pop-Location`
+- **Swing client compile:** `Push-Location admin-swing; .\mvnw.cmd test-compile; Pop-Location`
+- **Extension unit tests:** `node --test --test-concurrency=1 extension/tests/*.test.mjs`
+- **Evaluation tests:** `npm ci --prefix evaluation --ignore-scripts --offline; node --test evaluation/tests/evaluation.test.mjs`
+- **Chromium smoke tests (direct & secure Windows setup):** see [Extension regression checks](#extension-regression-checks) and [Windows local setup](docs/windows-local-setup.md#verify-in-chromium).
+- **Research aggregate projection check:** `node scripts/project-monitor-research.mjs`
+- **Isolated research tests & Phase 5G frozen-artifact preflight:** run with the private Phase 5B CPython 3.11 environment and `research/phase3d/resource_guard.py` (see [`research/phase5g/README.md`](research/phase5g/README.md) and [`research/phase6a/README.md`](research/phase6a/README.md)).
+
+### Outstanding acceptance gates
+
+- **Visual reference comparison:** Compare `overview.png`, `mobile.png`, and `light.png` in `C:\Users\kj\threat-detection-experiments\ui-2-final-evidence` against the external dashboard reference image before final UI sign-off.
+- **Live screen-reader speech verification:** Complete an interactive Windows desktop NVDA/Narrator speech pass across login, navigation, scopes, sorting, dialogs, research controls, and warnings (see [`UI-PROGRESS.md`](UI-PROGRESS.md)).
+- **Production ML gate:** Production ML deployment remains **NO-GO** pending independent Phase 5G validation.
 
 ## Run and verify locally
+
+For repeated local use on Windows, follow the [PowerShell 5.1 and 7 setup](docs/windows-local-setup.md). It provisions a locked-down profile with separate browser and administrator tokens, starts the loopback backend, and keeps dashboard events across restarts. The procedure below remains available for disposable manual verification.
 
 Use **Java 21** and **PowerShell 7** from the repository root. This procedure generates disposable credentials in memory and passes only SHA-256 digests to the server. The default listener is loopback on port 8081.
 
@@ -125,7 +185,11 @@ The token and snapshot are kept in trusted extension memory for the browser sess
 
 Financial impersonation checks use only the hostname and run locally, including when reputation is unavailable. See the [verified domain registry, decision policy, and evaluation](docs/financial-impersonation.md).
 
+On an unverified financial lookalike, a bounded local check can add credential-form and redirect evidence to the amber advisory. See the [financial login protection rules and evaluation](docs/financial-login-protection.md).
+
 Confirmed host and authorized exact-path indicators can stop navigations before they reach the destination. See the [blocking policy and verification](docs/browser-protection.md).
+
+Open `/monitor` on the backend to sign into the threat dashboard as an administrator. In extension **Settings**, opt in to **Share threat detections with this backend** to send event categories, actions and protection status without sending any site address. See [setup, API, fixture isolation, and retention](docs/threat-dashboard.md).
 
 ### Extension regression checks
 
@@ -142,7 +206,7 @@ node (Join-Path $env:NODE_PATH 'playwright/cli.js') install chromium --no-shell
 node extension/tests/chrome-smoke.cjs
 ```
 
-It uses a disposable Chromium profile, a local login fixture, synthetic phishing, malware and impersonation indicators, and an isolated backend with a generated credential. The browser resolves the synthetic sites to loopback.
+It uses a disposable Chromium profile, a local login fixture, synthetic phishing, malware and impersonation indicators, and an isolated backend with separate generated browser and admin credentials. The browser resolves the synthetic sites to loopback. The test verifies that reports flow to the authenticated dashboard only after opt-in and only in the synthetic view.
 
 ## Authentication and CORS configuration
 

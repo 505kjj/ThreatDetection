@@ -1,0 +1,456 @@
+{
+  "registry": {
+    "revision": "b9b4addf54ec3cae200e7b87dc05a4e5b57cd770",
+    "blob": "637215825cb05723133cd2f0dfad1aafa84aa1c4",
+    "brands": [
+      {
+        "name": "State Bank of India",
+        "aliases": [
+          "sbi",
+          "onlinesbi",
+          "statebankofindia"
+        ],
+        "scopes": [
+          "sbi.bank.in",
+          "bank.sbi",
+          "onlinesbi.sbi"
+        ]
+      },
+      {
+        "name": "HDFC Bank",
+        "aliases": [
+          "hdfcbank",
+          "hdfc"
+        ],
+        "scopes": [
+          "hdfc.bank.in",
+          "hdfcbank.com"
+        ],
+        "sharedHosts": [
+          "hdfcbank-collectnow-docs.razorpay.com"
+        ]
+      },
+      {
+        "name": "NPCI",
+        "aliases": [
+          "npci"
+        ],
+        "scopes": [
+          "npci.org.in"
+        ]
+      },
+      {
+        "name": "Razorpay",
+        "aliases": [
+          "razorpay"
+        ],
+        "scopes": [
+          "razorpay.com",
+          "rzp.io"
+        ]
+      },
+      {
+        "name": "Axis Bank",
+        "aliases": [
+          "axisbank"
+        ],
+        "scopes": [
+          "axis.bank.in",
+          "axisbank.com",
+          "axisbank.co.in"
+        ]
+      },
+      {
+        "name": "Bank of Baroda",
+        "aliases": [
+          "bankofbaroda",
+          "bobworld",
+          "bobibanking"
+        ],
+        "scopes": [
+          "bankofbaroda.bank.in",
+          "bankofbaroda.in",
+          "bobibanking.com"
+        ]
+      },
+      {
+        "name": "BHIM",
+        "aliases": [
+          "bhimupi",
+          "bhim"
+        ],
+        "scopes": [
+          "bhimupi.org.in",
+          "npci.org.in"
+        ]
+      },
+      {
+        "name": "PhonePe",
+        "aliases": [
+          "phonepe"
+        ],
+        "scopes": [
+          "phonepe.com"
+        ]
+      }
+    ]
+  },
+  "approvedAssetManifestSha256": "7b40a143ae2ce7bf8a724e46e5402f9f8e6e44100f01ac00c4fea2367f72d1b7",
+  "referenceCounts": {
+    "State Bank of India": 1,
+    "HDFC Bank": 1,
+    "NPCI": 0,
+    "Razorpay": 0,
+    "Axis Bank": 1,
+    "Bank of Baroda": 0,
+    "BHIM": 0,
+    "PhonePe": 0
+  },
+  "referencePairCollisions": {
+    "pairs": 3,
+    "exact": 0,
+    "near": 0,
+    "nearMetric": "pHash Hamming distance <= 4"
+  },
+  "thresholds": {
+    "phash": [
+      0.8,
+      0.055
+    ],
+    "orb": [
+      0.15,
+      0.06
+    ],
+    "mobilenet": [
+      0.82,
+      0.055
+    ]
+  },
+  "referenceStorage": {
+    "phash": 24,
+    "orb": 24576,
+    "mobilenet": 12288,
+    "privateCompressedIndexBytes": 35220
+  },
+  "realReferencesSyntheticTransformations": {
+    "rows": 21,
+    "transformations": {
+      "phash": {
+        "resized": {
+          "correct": 3
+        },
+        "jpeg-quality-30": {
+          "correct": 3
+        },
+        "cropped": {
+          "correct": 1,
+          "unrecognized": 2
+        },
+        "desaturated": {
+          "correct": 3
+        },
+        "colored-background": {
+          "correct": 3
+        },
+        "padded-transparent": {
+          "correct": 3
+        },
+        "unrelated-invented-0": {
+          "unrecognized": 1
+        },
+        "unrelated-invented-1": {
+          "unrecognized": 1
+        },
+        "unrelated-invented-2": {
+          "unrecognized": 1
+        }
+      },
+      "orb": {
+        "resized": {
+          "correct": 3
+        },
+        "jpeg-quality-30": {
+          "correct": 3
+        },
+        "cropped": {
+          "correct": 3
+        },
+        "desaturated": {
+          "correct": 3
+        },
+        "colored-background": {
+          "correct": 2,
+          "unrecognized": 1
+        },
+        "padded-transparent": {
+          "correct": 3
+        },
+        "unrelated-invented-0": {
+          "unrecognized": 1
+        },
+        "unrelated-invented-1": {
+          "unrecognized": 1
+        },
+        "unrelated-invented-2": {
+          "unrecognized": 1
+        }
+      },
+      "mobilenet": {
+        "resized": {
+          "correct": 3
+        },
+        "jpeg-quality-30": {
+          "correct": 3
+        },
+        "cropped": {
+          "correct": 3
+        },
+        "desaturated": {
+          "correct": 3
+        },
+        "colored-background": {
+          "correct": 2,
+          "ambiguous": 1
+        },
+        "padded-transparent": {
+          "correct": 3
+        },
+        "unrelated-invented-0": {
+          "unrecognized": 1
+        },
+        "unrelated-invented-1": {
+          "false-match": 1
+        },
+        "unrelated-invented-2": {
+          "ambiguous": 1
+        }
+      }
+    },
+    "sameFamilyCollisionProbe": {
+      "sameNormalizedPixels": 3,
+      "withinFourHashBits": 12
+    },
+    "timing": {
+      "decode": {
+        "medianMs": 0.38779999886173755,
+        "p95Ms": 2.0606999896699563
+      },
+      "normalizeMs": {
+        "medianMs": 1.6953000013018027,
+        "p95Ms": 2.785699995001778
+      },
+      "phashMs": {
+        "medianMs": 0.1720000000204891,
+        "p95Ms": 0.21689999266527593
+      },
+      "orbMs": {
+        "medianMs": 0.9118000016314909,
+        "p95Ms": 1.1236999998800457
+      },
+      "mobileNetMs": {
+        "medianMs": 9.27709999086801,
+        "p95Ms": 10.834699991391972
+      },
+      "phashMatchMs": {
+        "medianMs": 0.01170000177808106,
+        "p95Ms": 0.015099998563528061
+      },
+      "phashEndToEndMs": {
+        "medianMs": 2.2865000210003927,
+        "p95Ms": 5.088100006105378
+      },
+      "orbMatchMs": {
+        "medianMs": 4.1218999976990744,
+        "p95Ms": 4.483799988520332
+      },
+      "orbEndToEndMs": {
+        "medianMs": 7.206399997812696,
+        "p95Ms": 10.422099992865697
+      },
+      "mobilenetMatchMs": {
+        "medianMs": 0.04199999966658652,
+        "p95Ms": 0.07770000956952572
+      },
+      "mobilenetEndToEndMs": {
+        "medianMs": 11.459300003480166,
+        "p95Ms": 15.338799974415451
+      }
+    }
+  },
+  "fictionalMarks": {
+    "rows": 19,
+    "transformations": {
+      "phash": {
+        "resized": {
+          "correct": 2,
+          "ambiguous": 1
+        },
+        "jpeg-quality-30": {
+          "correct": 2,
+          "ambiguous": 1
+        },
+        "cropped": {
+          "unrecognized": 2,
+          "correct": 1
+        },
+        "desaturated": {
+          "correct": 2,
+          "ambiguous": 1
+        },
+        "colored-background": {
+          "unrecognized": 2,
+          "correct": 1
+        },
+        "padded-transparent": {
+          "correct": 3
+        },
+        "similar-unrelated-mark": {
+          "unrecognized": 1
+        }
+      },
+      "orb": {
+        "resized": {
+          "correct": 3
+        },
+        "jpeg-quality-30": {
+          "correct": 2,
+          "unrecognized": 1
+        },
+        "cropped": {
+          "correct": 2,
+          "unrecognized": 1
+        },
+        "desaturated": {
+          "correct": 3
+        },
+        "colored-background": {
+          "correct": 3
+        },
+        "padded-transparent": {
+          "correct": 3
+        },
+        "similar-unrelated-mark": {
+          "false-match": 1
+        }
+      },
+      "mobilenet": {
+        "resized": {
+          "correct": 3
+        },
+        "jpeg-quality-30": {
+          "correct": 3
+        },
+        "cropped": {
+          "correct": 2,
+          "ambiguous": 1
+        },
+        "desaturated": {
+          "correct": 2,
+          "ambiguous": 1
+        },
+        "colored-background": {
+          "ambiguous": 1,
+          "correct": 2
+        },
+        "padded-transparent": {
+          "correct": 3
+        },
+        "similar-unrelated-mark": {
+          "false-match": 1
+        }
+      }
+    },
+    "sameFamilyCollisionProbe": {
+      "sameNormalizedPixels": 3,
+      "withinFourHashBits": 8
+    },
+    "timing": {
+      "decode": {
+        "medianMs": 0.4020000051241368,
+        "p95Ms": 0.47157999069895595
+      },
+      "normalizeMs": {
+        "medianMs": 1.6959999920800328,
+        "p95Ms": 1.9493300016620196
+      },
+      "phashMs": {
+        "medianMs": 0.16840000171214342,
+        "p95Ms": 0.18961000168928877
+      },
+      "orbMs": {
+        "medianMs": 0.9200000058626756,
+        "p95Ms": 0.9596600066288374
+      },
+      "mobileNetMs": {
+        "medianMs": 9.3806999939261,
+        "p95Ms": 10.117310009081846
+      },
+      "phashMatchMs": {
+        "medianMs": 0.011500000255182385,
+        "p95Ms": 0.0125800070236437
+      },
+      "phashEndToEndMs": {
+        "medianMs": 2.3224999895319343,
+        "p95Ms": 2.575300002354197
+      },
+      "orbMatchMs": {
+        "medianMs": 4.252500002621673,
+        "p95Ms": 4.989069989824201
+      },
+      "orbEndToEndMs": {
+        "medianMs": 7.328399995458312,
+        "p95Ms": 8.30210996355163
+      },
+      "mobilenetMatchMs": {
+        "medianMs": 0.043099993490614,
+        "p95Ms": 0.05062999262008815
+      },
+      "mobilenetEndToEndMs": {
+        "medianMs": 11.559099992155097,
+        "p95Ms": 12.259759992593898
+      }
+    }
+  },
+  "offlineContextDiagnostics": {
+    "phash": {
+      "sameBrandScope": "recognized-brand-on-authorized-domain",
+      "syntheticMerchantReference": "recognized-brand-on-unverified-domain",
+      "twoKnownCandidates": "ambiguous-visual-match",
+      "absentCandidates": "missing-visual-evidence"
+    },
+    "orb": {
+      "sameBrandScope": "recognized-brand-on-authorized-domain",
+      "syntheticMerchantReference": "recognized-brand-on-unverified-domain",
+      "twoKnownCandidates": "ambiguous-visual-match",
+      "absentCandidates": "missing-visual-evidence"
+    },
+    "mobilenet": {
+      "sameBrandScope": "recognized-brand-on-authorized-domain",
+      "syntheticMerchantReference": "recognized-brand-on-unverified-domain",
+      "twoKnownCandidates": "ambiguous-visual-match",
+      "absentCandidates": "missing-visual-evidence"
+    }
+  },
+  "model": {
+    "revision": "76b303ec28c466e9df37f4745dfb7aef20ab87ae",
+    "sha256": "46d2c063b18125884c48937afa4c49e18128869e52e8db96df48bf0a4d7ff697",
+    "bytes": 10241912,
+    "license": "Apache-2.0",
+    "embeddingDimensions": 1024
+  },
+  "runtime": {
+    "pillow": "12.3.0",
+    "opencv": "4.13.0",
+    "timm": "1.0.24",
+    "torch": "2.6.0+cpu",
+    "numpy": "2.4.6"
+  },
+  "independentVisualRows": 0,
+  "independentPairedRows": 0,
+  "siameseTrained": false,
+  "browserExport": {
+    "modelBytes": 6078504,
+    "sha256": "265620d3de7224fe4f21f967a15808252cfc72efcf0d61c8c01ce6c81f8f5c8f",
+    "syntheticFixtures": 3
+  }
+}

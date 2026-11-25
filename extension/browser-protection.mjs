@@ -6,7 +6,7 @@ const WARNING_MS = 30 * 60000;
 const warningKey = tabId => 'network-warning:' + tabId;
 export const BYPASS_ALARM = 'network-bypass:';
 
-export function createBrowserProtection(chrome, rules, now = Date.now) {
+export function createBrowserProtection(chrome, rules, now = Date.now, report = () => {}) {
   const warningPage = chrome.runtime.getURL('warning.html');
   const starts = new Map();
   const admitted = new Map();
@@ -48,6 +48,7 @@ export function createBrowserProtection(chrome, rules, now = Date.now) {
         if (frame?.documentId !== details.documentId || destinationFor(frame?.url)?.key !== destination.key) return;
       }
       if (!unchanged(tabId, marker) || rules.snapshot() !== snapshot) return;
+      const action = phase === 'before_request' && rules.matchesBlock?.(url) ? 'BLOCKED' : 'WARNED';
       const token = crypto.randomUUID();
       const resume = result.threat === 'PHISHING' && phase === 'before_request'
         ? resumeDestination(result.evidence, destination) : null;
@@ -56,6 +57,8 @@ export function createBrowserProtection(chrome, rules, now = Date.now) {
       if (unchanged(tabId, marker) && rules.snapshot() === snapshot) {
         // The warning is never a web-accessible resource.
         await chrome.tabs.update(tabId, { url: pageFor(token) });
+        // Browser navigation identifiers stay in the private deduplication journal.
+        report(result.threat, action, details.documentId ?? (tabId + ':' + timeStamp));
       }
     } finally {
       if (opening.get(tabId) === marker) opening.delete(tabId);
@@ -79,6 +82,7 @@ export function createBrowserProtection(chrome, rules, now = Date.now) {
     await discard(tabId);
     if (bypass?.key === url && bypass.deadline > now()) {
       admitted.set(tabId, { documentId, key: bypass.key });
+      report('PHISHING', 'BYPASSED', documentId);
       return;
     }
     await show(details, 'after_commit');

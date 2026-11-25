@@ -2,37 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Threat Monitor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ThreatDetection</title>
+    <link rel="stylesheet" href="theme.css">
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="popup">
     <main class="popup-container">
         <header class="popup-header">
-            <div class="header-icon" aria-hidden="true">🛡️</div>
-            <div class="header-text"><h1>Threat Monitor</h1></div>
+            <span class="product-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 22s7-3 7-9V5l-7-3-7 3v8c0 6 7 9 7 9Z"/><path d="m9 12 2 2 4-4"/></svg></span>
+            <h1>ThreatDetection</h1>
         </header>
         <div class="status-bar" role="status">
             <span class="status-dot idle" id="statusDot"></span>
             <span id="statusText">Checking monitoring…</span>
         </div>
-        <section class="section" aria-label="Current website">
+        <section class="site-summary" aria-label="Current website">
             <div class="domain-display" id="currentDomain">—</div>
             <p class="section-desc" id="details"></p>
         </section>
-        <section id="impersonationSection" class="risk-section" aria-label="Financial impersonation evidence" hidden>
-            <div class="section-label">Address evidence</div>
+        <details id="impersonationSection" class="risk-section" open hidden>
+            <summary class="section-label">Address evidence</summary>
             <ul id="impersonationReasons" class="reasons-list"></ul>
-        </section>
-        <section id="riskSection" class="risk-section" aria-label="Activity check details" hidden>
-            <div class="section-label">Activity score</div>
+        </details>
+        <details id="riskSection" class="risk-section" open hidden>
+            <summary class="section-label">Activity score</summary>
             <p id="riskScore"></p>
             <ul id="reasonsList" class="reasons-list"></ul>
-        </section>
+        </details>
+        <dl class="popup-status" aria-label="Protection and reporting">
+            <div><dt>Reputation</dt><dd id="popupReputation">Checking…</dd></div>
+            <div><dt>Backend</dt><dd id="popupBackend">Checking…</dd></div>
+            <div><dt>Reporting</dt><dd id="popupReporting">Checking…</dd></div>
+        </dl>
         <div class="actions">
             <button class="btn btn-add" id="btnAddSite" hidden>Monitor this site</button>
             <button class="btn btn-remove" id="btnRemoveSite" hidden>Stop monitoring this site</button>
+            <button class="btn" id="btnPauseProtection" type="button" hidden>Pause protection</button>
+            <a class="btn" id="openDashboard" target="_blank" rel="noopener noreferrer" hidden>Dashboard</a>
             <button class="btn btn-options" id="btnOptions">Settings</button>
         </div>
+        <p id="popupMessage" class="section-desc" role="status" hidden></p>
     </main>
     <script type="module" src="popup.js"></script>
 </body>

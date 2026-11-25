@@ -1,0 +1,3338 @@
+{
+  "revisions": {
+    "phase3b": "b917d231ec251208debf6ab7138af73135b24801",
+    "phase3c": "a09394b",
+    "phase3d": "a09394b",
+    "phase3e": "a09394b",
+    "phase3f": "a09394b",
+    "phase5b": "a09394b",
+    "phase5c": "a09394b",
+    "phase5d": "a09394b",
+    "phase5e": "a09394b",
+    "phase5f": "a09394b",
+    "phase5g": "ebe0f4f",
+    "phase6a": "9908b49"
+  },
+  "financial": [
+    {
+      "name": "State Bank of India",
+      "scopes": [
+        "sbi.bank.in",
+        "bank.sbi",
+        "onlinesbi.sbi"
+      ]
+    },
+    {
+      "name": "HDFC Bank",
+      "scopes": [
+        "hdfc.bank.in",
+        "hdfcbank.com"
+      ],
+      "sharedHosts": [
+        "hdfcbank-collectnow-docs.razorpay.com"
+      ]
+    },
+    {
+      "name": "NPCI",
+      "scopes": [
+        "npci.org.in"
+      ]
+    },
+    {
+      "name": "Razorpay",
+      "scopes": [
+        "razorpay.com",
+        "rzp.io"
+      ]
+    },
+    {
+      "name": "Axis Bank",
+      "scopes": [
+        "axis.bank.in",
+        "axisbank.com",
+        "axisbank.co.in"
+      ]
+    },
+    {
+      "name": "Bank of Baroda",
+      "scopes": [
+        "bankofbaroda.bank.in",
+        "bankofbaroda.in",
+        "bobibanking.com"
+      ]
+    },
+    {
+      "name": "BHIM",
+      "scopes": [
+        "bhimupi.org.in",
+        "npci.org.in"
+      ]
+    },
+    {
+      "name": "PhonePe",
+      "scopes": [
+        "phonepe.com"
+      ]
+    }
+  ],
+  "ml": {
+    "models": [
+      {
+        "id": "url-ngram",
+        "threshold": 0.7730325410435989,
+        "recall": 0.7655266757865937,
+        "precision": 0.995729537366548,
+        "f1": 0.8655839133797371,
+        "urlFpr": 0.008849557522123894,
+        "domainFpr": 0.009607686148919135,
+        "domainFprUpper": 0.015520120098094635,
+        "prAuc": 0.9931388973194308,
+        "rocAuc": 0.9815158045107322,
+        "computeMs": 1.2658000050578266,
+        "projectionMs": 1.2658000050578266,
+        "bytes": 1531828
+      },
+      {
+        "id": "url-xgboost",
+        "threshold": 0.9615553617477418,
+        "recall": 0.4002735978112175,
+        "precision": 0.9965940054495913,
+        "f1": 0.5711497169627172,
+        "urlFpr": 0.003687315634218289,
+        "domainFpr": 0.0040032025620496394,
+        "domainFprUpper": 0.00839859612336198,
+        "prAuc": 0.9780720128097891,
+        "rocAuc": 0.9431594494146701,
+        "computeMs": 0.5139999993843958,
+        "projectionMs": 0.5139999993843958,
+        "bytes": 20736
+      },
+      {
+        "id": "url-blend",
+        "threshold": 0.8462310329735782,
+        "recall": 0.6867305061559508,
+        "precision": 0.9976152623211447,
+        "f1": 0.8134824177604927,
+        "urlFpr": 0.004424778761061947,
+        "domainFpr": 0.004803843074459567,
+        "domainFprUpper": 0.009459337064276763,
+        "prAuc": 0.993435345825137,
+        "rocAuc": 0.9825563236202074,
+        "computeMs": 2.889050003432203,
+        "projectionMs": 2.889050003432203,
+        "bytes": 1552564
+      },
+      {
+        "id": "dom-full",
+        "threshold": 0.9284069538116456,
+        "recall": 0.32749658002735976,
+        "precision": 0.9835661462612982,
+        "f1": 0.49137931034482757,
+        "urlFpr": 0.014749262536873156,
+        "domainFpr": 0.01521216973578863,
+        "domainFprUpper": 0.022241814681853236,
+        "prAuc": 0.9704923256921807,
+        "rocAuc": 0.9433720123159368,
+        "computeMs": 0.5293499998515472,
+        "projectionMs": 5.25670000934042,
+        "bytes": 21422
+      },
+      {
+        "id": "dom-reduced",
+        "threshold": 0.922551453113556,
+        "recall": 0.07058823529411765,
+        "precision": 0.9772727272727273,
+        "f1": 0.1316662413881092,
+        "urlFpr": 0.004424778761061947,
+        "domainFpr": 0.004803843074459567,
+        "domainFprUpper": 0.009459337064276763,
+        "prAuc": 0.9566603081614026,
+        "rocAuc": 0.9174633487887849,
+        "computeMs": 0.5200000014156103,
+        "projectionMs": 5.2214000024832785,
+        "bytes": 20934
+      },
+      {
+        "id": "dom-regularized",
+        "threshold": 0.9512755870819093,
+        "recall": 0.26621067031463747,
+        "precision": 0.9858156028368794,
+        "f1": 0.4192158552348126,
+        "urlFpr": 0.01032448377581121,
+        "domainFpr": 0.010408326661329063,
+        "domainFprUpper": 0.016497275968127403,
+        "prAuc": 0.9751532365887052,
+        "rocAuc": 0.9539380127436855,
+        "computeMs": 0.5210999952396378,
+        "projectionMs": 5.253249990346376,
+        "bytes": 39260
+      },
+      {
+        "id": "dom-context",
+        "threshold": 0.9445338249206544,
+        "recall": 0.32585499316005473,
+        "precision": 0.9851116625310173,
+        "f1": 0.4897203947368421,
+        "urlFpr": 0.01327433628318584,
+        "domainFpr": 0.013610888710968775,
+        "domainFprUpper": 0.020346192847194515,
+        "prAuc": 0.9767945424701074,
+        "rocAuc": 0.9554532926568448,
+        "computeMs": 0.5573500020545907,
+        "projectionMs": 5.405149997386616,
+        "bytes": 39375
+      },
+      {
+        "id": "dom-weighted",
+        "threshold": 0.9703070521354676,
+        "recall": 0.2503419972640219,
+        "precision": 0.9902597402597403,
+        "f1": 0.39965057872898013,
+        "urlFpr": 0.00663716814159292,
+        "domainFpr": 0.007205764611689352,
+        "domainFprUpper": 0.012540485890149129,
+        "prAuc": 0.9799691500532881,
+        "rocAuc": 0.9602873584090973,
+        "computeMs": 0.5546999964280985,
+        "projectionMs": 5.328050006937701,
+        "bytes": 39434
+      },
+      {
+        "id": "fixed",
+        "threshold": 0.7963963524112841,
+        "recall": 0.815047879616963,
+        "precision": 0.9963210702341138,
+        "f1": 0.8966139954853273,
+        "urlFpr": 0.008112094395280236,
+        "domainFpr": 0.008807045636509208,
+        "domainFprUpper": 0.014535609057553401,
+        "prAuc": 0.9958859705348262,
+        "rocAuc": 0.9891858245665007,
+        "computeMs": 2.930899994680658,
+        "projectionMs": 7.7775999961886555,
+        "bytes": 1571262
+      },
+      {
+        "id": "stack",
+        "threshold": 0.9160534623105493,
+        "recall": 0.8035567715458276,
+        "precision": 0.995593220338983,
+        "f1": 0.889326267978804,
+        "urlFpr": 0.009587020648967551,
+        "domainFpr": 0.010408326661329063,
+        "domainFprUpper": 0.016497275968127403,
+        "prAuc": 0.9963553826941767,
+        "rocAuc": 0.9903379215444152,
+        "computeMs": 3.220949998649303,
+        "projectionMs": 8.169500004441943,
+        "bytes": 1571262
+      },
+      {
+        "id": "adaptive",
+        "threshold": 0.8460501779387779,
+        "recall": 0.7652530779753762,
+        "precision": 0.9960826210826211,
+        "f1": 0.865542317809067,
+        "urlFpr": 0.008112094395280236,
+        "domainFpr": 0.008807045636509208,
+        "domainFprUpper": 0.014535609057553401,
+        "prAuc": 0.994660628617065,
+        "rocAuc": 0.986563845542333,
+        "computeMs": 2.979199998662807,
+        "projectionMs": 7.794400007696822,
+        "bytes": 1571262
+      },
+      {
+        "id": "selective",
+        "threshold": 0.8460501779387779,
+        "recall": 0.7652530779753762,
+        "precision": 0.9960826210826211,
+        "f1": 0.865542317809067,
+        "urlFpr": 0.008112094395280236,
+        "domainFpr": 0.008807045636509208,
+        "domainFprUpper": 0.014535609057553401,
+        "prAuc": 0.9930473346966084,
+        "rocAuc": 0.9817072826249248,
+        "computeMs": 2.887750008085277,
+        "projectionMs": 4.354700009571388,
+        "bytes": 1571262
+      }
+    ],
+    "cohorts": [
+      {
+        "id": "uci-holdout",
+        "phase": "phase3b",
+        "revision": "b917d231ec251208debf6ab7138af73135b24801",
+        "name": "Numerical holdout",
+        "dataset": "UCI PhiUSIIL",
+        "rows": 33621,
+        "positive": 13330,
+        "description": "Reserved UCI holdout scored after candidate and cutoff freeze. Numerical URL features.",
+        "models": [
+          {
+            "id": "logistic_regression",
+            "training": "UCI PhiUSIIL",
+            "prAuc": 0.8368776216229874,
+            "rocAuc": 0.8200608490795016,
+            "computeMs": 0.5257999999999999,
+            "bytes": 1029,
+            "fitSeconds": 0.1063815000015893,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.6269317329332333,
+                "precision": 0.9333258878713424,
+                "f1": 0.7500448752468138,
+                "urlFpr": 0.029421911192154156,
+                "domainFpr": 0.02778334000800961,
+                "domainFprUpper": 0.02977274007886488
+              },
+              "0.01": {
+                "threshold": 0.7772676944732667,
+                "recall": 0.46399099774943736,
+                "precision": 0.9679186228482003,
+                "f1": 0.6272819472616633,
+                "urlFpr": 0.0101030013306392,
+                "domainFpr": 0.0092110532639167,
+                "domainFprUpper": 0.010402563224064545
+              },
+              "0.001": {
+                "threshold": 0.9933381080627443,
+                "recall": 0.2981995498874719,
+                "precision": 0.9964903484582602,
+                "f1": 0.4590334314914256,
+                "urlFpr": 0.000689961066482677,
+                "domainFpr": 0.0006507809371245495,
+                "domainFprUpper": 0.0010344714544720751
+              }
+            }
+          },
+          {
+            "id": "random_forest",
+            "training": "UCI PhiUSIIL",
+            "prAuc": 0.887647428976279,
+            "rocAuc": 0.8823056634002275,
+            "computeMs": 6.186100000000001,
+            "bytes": 2592825,
+            "fitSeconds": 1.5348834000033094,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.6872468117029258,
+                "precision": 0.9425866858730322,
+                "f1": 0.7949151807019827,
+                "urlFpr": 0.0274998767926667,
+                "domainFpr": 0.02377853424108931,
+                "domainFprUpper": 0.0256289092222159
+              },
+              "0.01": {
+                "threshold": 0.6716826708916309,
+                "recall": 0.6347336834208552,
+                "precision": 0.9726405333946431,
+                "f1": 0.7681692314676108,
+                "urlFpr": 0.01172933813020551,
+                "domainFpr": 0.0092110532639167,
+                "domainFprUpper": 0.010402563224064545
+              },
+              "0.001": {
+                "threshold": 0.9122480699049088,
+                "recall": 0.5669917479369843,
+                "precision": 0.9974924112445559,
+                "f1": 0.7230114315779405,
+                "urlFpr": 0.0009363757330836331,
+                "domainFpr": 0.0008009611533840609,
+                "domainFprUpper": 0.0012162662284308221
+              }
+            }
+          },
+          {
+            "id": "xgboost",
+            "training": "UCI PhiUSIIL",
+            "prAuc": 0.8850181107721427,
+            "rocAuc": 0.8803005726543756,
+            "computeMs": 0.5083,
+            "bytes": 99316,
+            "fitSeconds": 0.671426099994278,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.6587396849212304,
+                "precision": 0.9447014523937601,
+                "f1": 0.7762209944751381,
+                "urlFpr": 0.025331427726578287,
+                "domainFpr": 0.0210252302763316,
+                "domainFprUpper": 0.022772537451554362
+              },
+              "0.01": {
+                "threshold": 0.5922904014587403,
+                "recall": 0.6404351087771943,
+                "precision": 0.9671462558060496,
+                "f1": 0.7705916866001715,
+                "urlFpr": 0.014292050662855453,
+                "domainFpr": 0.010662795354425311,
+                "domainFprUpper": 0.011937513112452683
+              },
+              "0.001": {
+                "threshold": 0.9056730270385743,
+                "recall": 0.5660165041260315,
+                "precision": 0.9963026541661165,
+                "f1": 0.7219059465148543,
+                "urlFpr": 0.001379922132965354,
+                "domainFpr": 0.0012515018021625952,
+                "domainFprUpper": 0.0017474676065347252
+              }
+            }
+          },
+          {
+            "id": "mlp",
+            "training": "UCI PhiUSIIL",
+            "prAuc": 0.8873759217858717,
+            "rocAuc": 0.8812021009540001,
+            "computeMs": 0.54835,
+            "bytes": 17669,
+            "fitSeconds": 18.213661999994656,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.6937734433608402,
+                "precision": 0.9346134411318848,
+                "f1": 0.7963832077502692,
+                "urlFpr": 0.031886057858163716,
+                "domainFpr": 0.02643171806167401,
+                "domainFprUpper": 0.028375491434322907
+              },
+              "0.01": {
+                "threshold": 0.6978968381881715,
+                "recall": 0.6408852213053263,
+                "precision": 0.9738942088463293,
+                "f1": 0.7730522124694598,
+                "urlFpr": 0.01128579173032379,
+                "domainFpr": 0.009711653984781738,
+                "domainFprUpper": 0.010932571252653058
+              },
+              "0.001": {
+                "threshold": 0.9623747467994691,
+                "recall": 0.5405851462865716,
+                "precision": 0.9980609418282549,
+                "f1": 0.7013138686131387,
+                "urlFpr": 0.000689961066482677,
+                "domainFpr": 0.0007008410092110533,
+                "domainFprUpper": 0.0010954227781991125
+              }
+            }
+          }
+        ],
+        "calibration": "UCI development calibration"
+      },
+      {
+        "id": "phresh-transfer",
+        "phase": "phase3c",
+        "revision": "a09394b",
+        "name": "Frozen UCI models on PhreshPhish",
+        "dataset": "PhreshPhish v1.0.1",
+        "rows": 19570,
+        "positive": 8569,
+        "description": "September to December 2025 test cohort after excluding UCI domain overlap. The original UCI cutoffs were applied unchanged.",
+        "models": [
+          {
+            "id": "logistic_regression",
+            "training": "UCI PhiUSIIL",
+            "prAuc": 0.7818778026030188,
+            "rocAuc": 0.8236812917070132,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.7921577780371105,
+                "precision": 0.6366535359219658,
+                "f1": 0.7059435286776559,
+                "urlFpr": 0.35214980456322154,
+                "domainFpr": 0.41925381263616557,
+                "domainFprUpper": 0.4288153349358914
+              },
+              "0.01": {
+                "threshold": 0.7772676944732667,
+                "recall": 0.5803477652001401,
+                "precision": 0.8237535199602452,
+                "f1": 0.6809530330001369,
+                "urlFpr": 0.09671848013816926,
+                "domainFpr": 0.12241285403050109,
+                "domainFprUpper": 0.1288830737633728
+              },
+              "0.001": {
+                "threshold": 0.9933381080627443,
+                "recall": 0.15439374489438673,
+                "precision": 0.8635770234986945,
+                "f1": 0.26195426195426197,
+                "urlFpr": 0.018998272884283247,
+                "domainFpr": 0.025735294117647058,
+                "domainFprUpper": 0.028986019046853176
+              }
+            }
+          },
+          {
+            "id": "random_forest",
+            "training": "UCI PhiUSIIL",
+            "prAuc": 0.6107771004555472,
+            "rocAuc": 0.7559491483226857,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.8310187886567861,
+                "precision": 0.6506761695906432,
+                "f1": 0.7298723927637984,
+                "urlFpr": 0.3475138623761476,
+                "domainFpr": 0.43763616557734203,
+                "domainFprUpper": 0.44724330361452425
+              },
+              "0.01": {
+                "threshold": 0.6716826708916309,
+                "recall": 0.7782705099778271,
+                "precision": 0.6536953538521858,
+                "f1": 0.7105641681316925,
+                "urlFpr": 0.32115262248886467,
+                "domainFpr": 0.4098583877995643,
+                "domainFprUpper": 0.41939139934064407
+              },
+              "0.001": {
+                "threshold": 0.9122480699049088,
+                "recall": 0.6875948185319174,
+                "precision": 0.672295755362848,
+                "f1": 0.6798592280620781,
+                "urlFpr": 0.26106717571129895,
+                "domainFpr": 0.3440904139433551,
+                "domainFprUpper": 0.3533215974700707
+              }
+            }
+          },
+          {
+            "id": "xgboost",
+            "training": "UCI PhiUSIIL",
+            "prAuc": 0.6357573588599869,
+            "rocAuc": 0.7627836461975592,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.793208075621426,
+                "precision": 0.6498709245625777,
+                "f1": 0.7144208534790835,
+                "urlFpr": 0.3328788291973457,
+                "domainFpr": 0.42088779956427014,
+                "domainFprUpper": 0.4304539195269426
+              },
+              "0.01": {
+                "threshold": 0.5922904014587403,
+                "recall": 0.7760532150776053,
+                "precision": 0.6542699724517906,
+                "f1": 0.7099770458549084,
+                "urlFpr": 0.3194255067721116,
+                "domainFpr": 0.4079520697167756,
+                "domainFprUpper": 0.41747886325490496
+              },
+              "0.001": {
+                "threshold": 0.9056730270385743,
+                "recall": 0.7088341696814098,
+                "precision": 0.6741398446170921,
+                "f1": 0.6910518231981342,
+                "urlFpr": 0.26688482865194074,
+                "domainFpr": 0.35062636165577343,
+                "domainFprUpper": 0.3598958313977487
+              }
+            }
+          },
+          {
+            "id": "mlp",
+            "training": "UCI PhiUSIIL",
+            "prAuc": 0.7752873284564998,
+            "rocAuc": 0.8109264014223173,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.8940366437157194,
+                "precision": 0.6507815154604145,
+                "f1": 0.7532569686839389,
+                "urlFpr": 0.37369330060903555,
+                "domainFpr": 0.44812091503267976,
+                "domainFprUpper": 0.4577481117695944
+              },
+              "0.01": {
+                "threshold": 0.6978968381881715,
+                "recall": 0.8074454428754814,
+                "precision": 0.6397595931576514,
+                "f1": 0.7138877424680149,
+                "urlFpr": 0.35414962276156714,
+                "domainFpr": 0.4249727668845316,
+                "domainFprUpper": 0.43454991574428914
+              },
+              "0.001": {
+                "threshold": 0.9623747467994691,
+                "recall": 0.6972808962539386,
+                "precision": 0.6737708615245828,
+                "f1": 0.685324310374491,
+                "urlFpr": 0.26297609308244707,
+                "domainFpr": 0.34572440087145967,
+                "domainFprUpper": 0.3549653341126407
+              }
+            }
+          }
+        ],
+        "calibration": "Original UCI development calibration"
+      },
+      {
+        "id": "phresh-chronological",
+        "phase": "phase3d",
+        "revision": "a09394b",
+        "name": "Cross-source training comparisons",
+        "dataset": "PhreshPhish v1.0.1",
+        "rows": 67653,
+        "positive": 33595,
+        "description": "Chronological holdout from 2025-09-08 to 2025-12-16. Domain and lexical-family exclusions were applied. Each training budget was balanced at 20,000 rows.",
+        "models": [
+          {
+            "id": "logistic",
+            "training": "UCI PhiUSIIL",
+            "prAuc": 0.7990656009519896,
+            "rocAuc": 0.7987158931170626,
+            "computeMs": 0.22539999918080866,
+            "bytes": 1075,
+            "fitSeconds": 0.01540720000048168,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.8164310165203156,
+                "precision": 0.6328856892334672,
+                "f1": 0.7130360183536324,
+                "urlFpr": 0.467144283281461,
+                "domainFpr": 0.48117671261057393,
+                "domainFprUpper": 0.4860073668390783
+              },
+              "0.01": {
+                "threshold": 0.9986289739608766,
+                "recall": 0.062300937639529694,
+                "precision": 0.8831223628691983,
+                "f1": 0.11639093563186431,
+                "urlFpr": 0.008133184567502496,
+                "domainFpr": 0.008811629980113832,
+                "domainFprUpper": 0.009766149487449102
+              },
+              "0.001": {
+                "threshold": 0.9999998807907106,
+                "recall": 0.01062658133650841,
+                "precision": 0.9780821917808219,
+                "f1": 0.021024734982332156,
+                "urlFpr": 0.00023489341711198543,
+                "domainFpr": 0.00027429198381677297,
+                "domainFprUpper": 0.0004948589946040301
+              }
+            }
+          },
+          {
+            "id": "forest",
+            "training": "UCI PhiUSIIL",
+            "prAuc": 0.6646003284115687,
+            "rocAuc": 0.7011234383348102,
+            "computeMs": 3.106050004134886,
+            "bytes": 152368,
+            "fitSeconds": 0.13998459999857005,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.7637743711861884,
+                "precision": 0.6673342002600781,
+                "f1": 0.7123048094940662,
+                "urlFpr": 0.37556521228492573,
+                "domainFpr": 0.39127751491462665,
+                "domainFprUpper": 0.39600298071415824
+              },
+              "0.01": {
+                "threshold": 0.9995060811182654,
+                "recall": 0.07435630302128293,
+                "precision": 0.881439661256175,
+                "f1": 0.13714348458645584,
+                "urlFpr": 0.009865523518703389,
+                "domainFpr": 0.010320235891106082,
+                "domainFprUpper": 0.011347807332476936
+              },
+              "0.001": {
+                "threshold": 0.9999690440812283,
+                "recall": 0.0010120553653817533,
+                "precision": 0.9714285714285714,
+                "f1": 0.0020220041629497474,
+                "urlFpr": 0.00002936167713899818,
+                "domainFpr": 0.00003428649797709662,
+                "domainFprUpper": 0.00016264006235178959
+              }
+            }
+          },
+          {
+            "id": "xgboost",
+            "training": "UCI PhiUSIIL",
+            "prAuc": 0.7552274169716648,
+            "rocAuc": 0.7598824325934946,
+            "computeMs": 0.43169999844394624,
+            "bytes": 19436,
+            "fitSeconds": 0.060715200001141056,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.7711861884208959,
+                "precision": 0.6627951597636164,
+                "f1": 0.7128941720323593,
+                "urlFpr": 0.387016266369135,
+                "domainFpr": 0.40310635671672496,
+                "domainFprUpper": 0.407854888792612
+              },
+              "0.01": {
+                "threshold": 0.9987725615501405,
+                "recall": 0.050007441583568985,
+                "precision": 0.9627507163323782,
+                "f1": 0.09507640067911714,
+                "urlFpr": 0.0019085090140348816,
+                "domainFpr": 0.0018514708907632176,
+                "domainFprUpper": 0.002322023187129061
+              },
+              "0.001": {
+                "threshold": 0.9991866946220399,
+                "recall": 0.025986009822890312,
+                "precision": 0.9786995515695067,
+                "f1": 0.050627772783947575,
+                "urlFpr": 0.0005578718656409654,
+                "domainFpr": 0.0006514434615648358,
+                "domainFprUpper": 0.0009557359830044113
+              }
+            }
+          },
+          {
+            "id": "mlp",
+            "training": "UCI PhiUSIIL",
+            "prAuc": 0.7000279793556886,
+            "rocAuc": 0.718591578861239,
+            "computeMs": 0.1975999985006638,
+            "bytes": 7280,
+            "fitSeconds": 0.4624069999990752,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.7922607530882572,
+                "precision": 0.6465843941307939,
+                "f1": 0.7120480477266952,
+                "urlFpr": 0.4271536790181455,
+                "domainFpr": 0.44390728930946993,
+                "domainFprUpper": 0.44871370213827905
+              },
+              "0.01": {
+                "threshold": 0.9997795224189759,
+                "recall": 0.13695490400357196,
+                "precision": 0.9385964912280702,
+                "f1": 0.23903161285294958,
+                "urlFpr": 0.008837864818838453,
+                "domainFpr": 0.00953164643763286,
+                "domainFprUpper": 0.010521772611619087
+              },
+              "0.001": {
+                "threshold": 0.9999916553497316,
+                "recall": 0.022056853698467035,
+                "precision": 0.9762845849802372,
+                "f1": 0.043139081329685046,
+                "urlFpr": 0.0005285101885019672,
+                "domainFpr": 0.0005828704656106426,
+                "domainFprUpper": 0.0008741519095617971
+              }
+            }
+          },
+          {
+            "id": "logistic",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.8178201467405017,
+            "rocAuc": 0.7900523341414618,
+            "computeMs": 0.20869999934802763,
+            "bytes": 1068,
+            "fitSeconds": 0.02325379999820143,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.5269831820211341,
+                "precision": 0.8602526724975704,
+                "f1": 0.6535856022150438,
+                "urlFpr": 0.08444418345175876,
+                "domainFpr": 0.09085921963930604,
+                "domainFprUpper": 0.09367473137016376
+              },
+              "0.01": {
+                "threshold": 0.9546445012092591,
+                "recall": 0.273880041672868,
+                "precision": 0.9729301046843608,
+                "f1": 0.427436588311809,
+                "urlFpr": 0.007516589347583534,
+                "domainFpr": 0.007988754028663511,
+                "domainFprUpper": 0.008900700519515392
+              },
+              "0.001": {
+                "threshold": 0.9999330043792726,
+                "recall": 0.01616311951183212,
+                "precision": 0.9766187050359713,
+                "f1": 0.03179994729290504,
+                "urlFpr": 0.00038170180280697636,
+                "domainFpr": 0.0004114379757251594,
+                "domainFprUpper": 0.000666532559647774
+              }
+            }
+          },
+          {
+            "id": "forest",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.847893037393447,
+            "rocAuc": 0.8230523412819563,
+            "computeMs": 2.8959500014025252,
+            "bytes": 258672,
+            "fitSeconds": 0.1612225999997463,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.47584461973507963,
+                "precision": 0.8992518422680992,
+                "f1": 0.6223623763918088,
+                "urlFpr": 0.05258676375594574,
+                "domainFpr": 0.057155592127820065,
+                "domainFprUpper": 0.059441396803491364
+              },
+              "0.01": {
+                "threshold": 0.7628824257779884,
+                "recall": 0.35969638339038545,
+                "precision": 0.9809237762805423,
+                "f1": 0.5263753974822494,
+                "urlFpr": 0.006899994127664572,
+                "domainFpr": 0.007474456559007063,
+                "domainFprUpper": 0.008358646549584197
+              },
+              "0.001": {
+                "threshold": 0.966791998144966,
+                "recall": 0.16425063253460337,
+                "precision": 0.9976496112818658,
+                "f1": 0.28206307825998056,
+                "urlFpr": 0.00038170180280697636,
+                "domainFpr": 0.00044572447370225607,
+                "domainFprUpper": 0.0007085596880167532
+              }
+            }
+          },
+          {
+            "id": "xgboost",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.8443018836364685,
+            "rocAuc": 0.8238813391102757,
+            "computeMs": 0.41170000258716755,
+            "bytes": 20423,
+            "fitSeconds": 0.09422819999599596,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.5286500967405864,
+                "precision": 0.8718275980560601,
+                "f1": 0.6581921950857947,
+                "urlFpr": 0.07666333900992425,
+                "domainFpr": 0.08283617911266543,
+                "domainFprUpper": 0.08553890209396878
+              },
+              "0.01": {
+                "threshold": 0.8751246333122255,
+                "recall": 0.33814555737460933,
+                "precision": 0.9795636802621368,
+                "f1": 0.5027438484687555,
+                "urlFpr": 0.006958717481942569,
+                "domainFpr": 0.00740588356305287,
+                "domainFprUpper": 0.008286299885840091
+              },
+              "0.001": {
+                "threshold": 0.9930772781372071,
+                "recall": 0.06697425212085131,
+                "precision": 0.992501102779003,
+                "f1": 0.1254810105404049,
+                "urlFpr": 0.000499148511362969,
+                "domainFpr": 0.0005485839676335459,
+                "domainFprUpper": 0.0008330839090736972
+              }
+            }
+          },
+          {
+            "id": "mlp",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.83742482886183,
+            "rocAuc": 0.8107286724866034,
+            "computeMs": 0.21515000116778538,
+            "bytes": 7287,
+            "fitSeconds": 0.7453284000002895,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.5125762762315821,
+                "precision": 0.8753558357055714,
+                "f1": 0.6465541517262094,
+                "urlFpr": 0.07199483234482354,
+                "domainFpr": 0.0781046423918261,
+                "domainFprUpper": 0.08073743710654474
+              },
+              "0.01": {
+                "threshold": 0.8921227455139161,
+                "recall": 0.3501413900878107,
+                "precision": 0.9810675562969141,
+                "f1": 0.5160908193484699,
+                "urlFpr": 0.006665100710552587,
+                "domainFpr": 0.007097305081259,
+                "domainFprUpper": 0.007960515106474483
+              },
+              "0.001": {
+                "threshold": 0.9991557598114015,
+                "recall": 0.06313439499925584,
+                "precision": 0.9925128685072532,
+                "f1": 0.11871711631031008,
+                "urlFpr": 0.00046978683422397086,
+                "domainFpr": 0.0005142974696564493,
+                "domainFprUpper": 0.0007918097627457873
+              }
+            }
+          },
+          {
+            "id": "logistic",
+            "training": "UCI + PhreshPhish",
+            "prAuc": 0.8183153559114997,
+            "rocAuc": 0.8007154211452547,
+            "computeMs": 0.2114000017172657,
+            "bytes": 1074,
+            "fitSeconds": 0.025318299994978588,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.631969043012353,
+                "precision": 0.8110245244098098,
+                "f1": 0.7103876332123199,
+                "urlFpr": 0.145252216806624,
+                "domainFpr": 0.15254062950010286,
+                "domainFprUpper": 0.156046245238577
+              },
+              "0.01": {
+                "threshold": 0.9808862805366517,
+                "recall": 0.17047179639827356,
+                "precision": 0.9567323755429336,
+                "f1": 0.28938126879058135,
+                "urlFpr": 0.0076046743790005285,
+                "domainFpr": 0.008365905506411576,
+                "domainFprUpper": 0.00929763035573417
+              },
+              "0.001": {
+                "threshold": 0.9999848604202272,
+                "recall": 0.014912933472242894,
+                "precision": 0.9766081871345029,
+                "f1": 0.029377272194206636,
+                "urlFpr": 0.00035234012566797817,
+                "domainFpr": 0.00037715147774806284,
+                "domainFprUpper": 0.0006241947651165827
+              }
+            }
+          },
+          {
+            "id": "forest",
+            "training": "UCI + PhreshPhish",
+            "prAuc": 0.8415703675103621,
+            "rocAuc": 0.8141608663843896,
+            "computeMs": 2.023749999352731,
+            "bytes": 242460,
+            "fitSeconds": 0.2637509999985923,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.6201518083048073,
+                "precision": 0.8076445960614048,
+                "f1": 0.7015877826606725,
+                "urlFpr": 0.14569264196370896,
+                "domainFpr": 0.1509634505931564,
+                "domainFprUpper": 0.15445443998517946
+              },
+              "0.01": {
+                "threshold": 0.8519590587032982,
+                "recall": 0.3499627920821551,
+                "precision": 0.97975,
+                "f1": 0.5157144423730672,
+                "urlFpr": 0.0071348875447765575,
+                "domainFpr": 0.007268737571144483,
+                "domainFprUpper": 0.008141552697008225
+              },
+              "0.001": {
+                "threshold": 0.9761055482981646,
+                "recall": 0.04316118470010418,
+                "precision": 0.977088948787062,
+                "f1": 0.08267054363009207,
+                "urlFpr": 0.000998297022725938,
+                "domainFpr": 0.0008228759514503189,
+                "domainFprUpper": 0.001157058212620322
+              }
+            }
+          },
+          {
+            "id": "xgboost",
+            "training": "UCI + PhreshPhish",
+            "prAuc": 0.8351661037301314,
+            "rocAuc": 0.8100675212821469,
+            "computeMs": 0.2259499997308012,
+            "bytes": 20785,
+            "fitSeconds": 0.12435510000068462,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.5810090787319542,
+                "precision": 0.8280235863063674,
+                "f1": 0.6828645396025749,
+                "urlFpr": 0.11903223912149861,
+                "domainFpr": 0.12531715010628813,
+                "domainFprUpper": 0.1285506450260332
+              },
+              "0.01": {
+                "threshold": 0.933162033557892,
+                "recall": 0.3403184997767525,
+                "precision": 0.9793558334761008,
+                "f1": 0.505113874837085,
+                "urlFpr": 0.007076164190498562,
+                "domainFpr": 0.00699444558732771,
+                "domainFprUpper": 0.007851835711222875
+              },
+              "0.001": {
+                "threshold": 0.9954642653465272,
+                "recall": 0.03289179937490698,
+                "precision": 0.9857270294380018,
+                "f1": 0.06365940776587165,
+                "urlFpr": 0.00046978683422397086,
+                "domainFpr": 0.0005485839676335459,
+                "domainFprUpper": 0.0008330839090736972
+              }
+            }
+          },
+          {
+            "id": "mlp",
+            "training": "UCI + PhreshPhish",
+            "prAuc": 0.8386323918327437,
+            "rocAuc": 0.8111982028049103,
+            "computeMs": 0.2252000012958888,
+            "bytes": 7283,
+            "fitSeconds": 0.7344499999962864,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.6077987795802947,
+                "precision": 0.8038027004684486,
+                "f1": 0.6921929556934133,
+                "urlFpr": 0.14633859886076692,
+                "domainFpr": 0.1541863814030035,
+                "domainFprUpper": 0.1577071220817878
+              },
+              "0.01": {
+                "threshold": 0.9456948041915895,
+                "recall": 0.35314778984968004,
+                "precision": 0.9804148417486158,
+                "f1": 0.5192577030812325,
+                "urlFpr": 0.006958717481942569,
+                "domainFpr": 0.007165878077213194,
+                "domainFprUpper": 0.00803294418435976
+              },
+              "0.001": {
+                "threshold": 0.9997209906578065,
+                "recall": 0.03167137966959369,
+                "precision": 0.9879294336118849,
+                "f1": 0.06137517305029996,
+                "urlFpr": 0.00038170180280697636,
+                "domainFpr": 0.0004114379757251594,
+                "domainFprUpper": 0.000666532559647774
+              }
+            }
+          }
+        ],
+        "calibration": "Phase 3D PhreshPhish validation"
+      },
+      {
+        "id": "phase3e-india-control",
+        "phase": "phase3e",
+        "revision": "a09394b",
+        "name": "Official benign financial controls",
+        "dataset": "Official Indian financial controls",
+        "rows": 10,
+        "positive": 0,
+        "description": "Evidence dates 2026-11-24 to 2026-11-24. These reviewed controls span a small set of domains. Recall and ranking are unavailable.",
+        "models": [
+          {
+            "id": "phresh-20000-path-forest",
+            "points": {
+              "0.001": {
+                "threshold": 0.9610560908349034,
+                "recall": null,
+                "precision": null,
+                "f1": null,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.527129195498412
+              },
+              "0.01": {
+                "threshold": 0.757831940665843,
+                "recall": null,
+                "precision": null,
+                "f1": null,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.527129195498412
+              }
+            }
+          },
+          {
+            "id": "fusion-mixed-20000-two",
+            "points": {
+              "0.001": {
+                "threshold": 0.9666654318351997,
+                "recall": null,
+                "precision": null,
+                "f1": null,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.527129195498412
+              },
+              "0.01": {
+                "threshold": 0.9390406044771592,
+                "recall": null,
+                "precision": null,
+                "f1": null,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.527129195498412
+              }
+            }
+          },
+          {
+            "id": "fusion-mixed-20000-four",
+            "points": {
+              "0.001": {
+                "threshold": 0.9619970593281276,
+                "recall": null,
+                "precision": null,
+                "f1": null,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.527129195498412
+              },
+              "0.01": {
+                "threshold": 0.9321015608646374,
+                "recall": null,
+                "precision": null,
+                "f1": null,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.527129195498412
+              }
+            }
+          },
+          {
+            "id": "fusion-mixed-20000-stack",
+            "points": {
+              "0.001": {
+                "threshold": 0.9707320772239589,
+                "recall": null,
+                "precision": null,
+                "f1": null,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.527129195498412
+              },
+              "0.01": {
+                "threshold": 0.9446575079500802,
+                "recall": null,
+                "precision": null,
+                "f1": null,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.527129195498412
+              }
+            }
+          }
+        ],
+        "calibration": "Frozen Phase 3D development cutoffs"
+      },
+      {
+        "id": "phase3f-general-transfer",
+        "phase": "phase3f",
+        "revision": "a09394b",
+        "name": "Historical positive-only transfer",
+        "dataset": "Historical phishing archive",
+        "rows": 2000,
+        "positive": 2000,
+        "description": "Evidence dates 2014-01-12 to 2014-02-21. This positive-only transfer can measure recall. False-positive rates and ranking are unavailable.",
+        "models": [
+          {
+            "id": "phresh-20000-path-forest",
+            "points": {
+              "0.001": {
+                "threshold": 0.9610560908349034,
+                "recall": 0.0045,
+                "precision": null,
+                "f1": null,
+                "urlFpr": null,
+                "domainFpr": null,
+                "domainFprUpper": null
+              },
+              "0.01": {
+                "threshold": 0.757831940665843,
+                "recall": 0.029,
+                "precision": null,
+                "f1": null,
+                "urlFpr": null,
+                "domainFpr": null,
+                "domainFprUpper": null
+              }
+            }
+          },
+          {
+            "id": "fusion-mixed-20000-two",
+            "points": {
+              "0.001": {
+                "threshold": 0.9666654318351997,
+                "recall": 0.008,
+                "precision": null,
+                "f1": null,
+                "urlFpr": null,
+                "domainFpr": null,
+                "domainFprUpper": null
+              },
+              "0.01": {
+                "threshold": 0.9390406044771592,
+                "recall": 0.115,
+                "precision": null,
+                "f1": null,
+                "urlFpr": null,
+                "domainFpr": null,
+                "domainFprUpper": null
+              }
+            }
+          },
+          {
+            "id": "fusion-mixed-20000-four",
+            "points": {
+              "0.001": {
+                "threshold": 0.9619970593281276,
+                "recall": 0.0435,
+                "precision": null,
+                "f1": null,
+                "urlFpr": null,
+                "domainFpr": null,
+                "domainFprUpper": null
+              },
+              "0.01": {
+                "threshold": 0.9321015608646374,
+                "recall": 0.104,
+                "precision": null,
+                "f1": null,
+                "urlFpr": null,
+                "domainFpr": null,
+                "domainFprUpper": null
+              }
+            }
+          },
+          {
+            "id": "fusion-mixed-20000-stack",
+            "points": {
+              "0.001": {
+                "threshold": 0.9707320772239589,
+                "recall": 0.0075,
+                "precision": null,
+                "f1": null,
+                "urlFpr": null,
+                "domainFpr": null,
+                "domainFprUpper": null
+              },
+              "0.01": {
+                "threshold": 0.9446575079500802,
+                "recall": 0.106,
+                "precision": null,
+                "f1": null,
+                "urlFpr": null,
+                "domainFpr": null,
+                "domainFprUpper": null
+              }
+            }
+          }
+        ],
+        "calibration": "Frozen Phase 3D development cutoffs"
+      },
+      {
+        "id": "phase3f-india-control",
+        "phase": "phase3f",
+        "revision": "a09394b",
+        "name": "Official benign financial controls",
+        "dataset": "Official Indian financial controls",
+        "rows": 29,
+        "positive": 0,
+        "description": "Evidence dates 2026-11-24 to 2026-11-24. These reviewed controls span a small set of domains. Recall and ranking are unavailable.",
+        "models": [
+          {
+            "id": "phresh-20000-path-forest",
+            "points": {
+              "0.001": {
+                "threshold": 0.9610560908349034,
+                "recall": null,
+                "precision": null,
+                "f1": null,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.2588655508930522
+              },
+              "0.01": {
+                "threshold": 0.757831940665843,
+                "recall": null,
+                "precision": null,
+                "f1": null,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.2588655508930522
+              }
+            }
+          },
+          {
+            "id": "fusion-mixed-20000-two",
+            "points": {
+              "0.001": {
+                "threshold": 0.9666654318351997,
+                "recall": null,
+                "precision": null,
+                "f1": null,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.2588655508930522
+              },
+              "0.01": {
+                "threshold": 0.9390406044771592,
+                "recall": null,
+                "precision": null,
+                "f1": null,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.2588655508930522
+              }
+            }
+          },
+          {
+            "id": "fusion-mixed-20000-four",
+            "points": {
+              "0.001": {
+                "threshold": 0.9619970593281276,
+                "recall": null,
+                "precision": null,
+                "f1": null,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.2588655508930522
+              },
+              "0.01": {
+                "threshold": 0.9321015608646374,
+                "recall": null,
+                "precision": null,
+                "f1": null,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.2588655508930522
+              }
+            }
+          },
+          {
+            "id": "fusion-mixed-20000-stack",
+            "points": {
+              "0.001": {
+                "threshold": 0.9707320772239589,
+                "recall": null,
+                "precision": null,
+                "f1": null,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.2588655508930522
+              },
+              "0.01": {
+                "threshold": 0.9446575079500802,
+                "recall": null,
+                "precision": null,
+                "f1": null,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.2588655508930522
+              }
+            }
+          }
+        ],
+        "calibration": "Frozen Phase 3D development cutoffs"
+      },
+      {
+        "id": "sequence-validation",
+        "phase": "phase5c",
+        "revision": "a09394b",
+        "name": "Matched URL and sequence baselines",
+        "dataset": "PhreshPhish v1.0.1",
+        "rows": 18026,
+        "positive": 12944,
+        "description": "Retrospective PhreshPhish development validation. All candidates used the same 20,000 training rows.",
+        "models": [
+          {
+            "id": "logistic",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9726004128986148,
+            "rocAuc": 0.9350565512370912,
+            "computeMs": 0.20155000675003976,
+            "bytes": 1192,
+            "fitSeconds": 0.022809400004916824,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.7925679851668727,
+                "precision": 0.9435298445691161,
+                "f1": 0.8614854935550237,
+                "urlFpr": 0.12081857536402991,
+                "domainFpr": 0.1357360168499883,
+                "domainFprUpper": 0.14465604133427676
+              },
+              "0.01": {
+                "threshold": 0.9681029319763185,
+                "recall": 0.3666563658838072,
+                "precision": 0.9949685534591195,
+                "f1": 0.5358473523766513,
+                "urlFpr": 0.004722550177095631,
+                "domainFpr": 0.004914579920430611,
+                "domainFprUpper": 0.007069443427904763
+              },
+              "0.001": {
+                "threshold": 0.9999995231628419,
+                "recall": 0.012592707045735476,
+                "precision": 1,
+                "f1": 0.024872205691615166,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.0007008383779121109
+              }
+            }
+          },
+          {
+            "id": "forest",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9828733333421269,
+            "rocAuc": 0.9558827396944742,
+            "computeMs": 12.693900003796443,
+            "bytes": 311240,
+            "fitSeconds": 0.18605990000651218,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.8695148331273177,
+                "precision": 0.9538135593220339,
+                "f1": 0.9097154865826059,
+                "urlFpr": 0.10724124360487997,
+                "domainFpr": 0.12520477416335127,
+                "domainFprUpper": 0.13383963350792558
+              },
+              "0.01": {
+                "threshold": 0.7726707311379384,
+                "recall": 0.6025185414091471,
+                "precision": 0.9964226395809378,
+                "f1": 0.7509508449280247,
+                "urlFpr": 0.005509641873278237,
+                "domainFpr": 0.006552773227240814,
+                "domainFprUpper": 0.008973133731531868
+              },
+              "0.001": {
+                "threshold": 0.9930492529391237,
+                "recall": 0.04789864029666255,
+                "precision": 1,
+                "f1": 0.09141846063108228,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.0007008383779121109
+              }
+            }
+          },
+          {
+            "id": "xgboost",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.983680905781541,
+            "rocAuc": 0.958565154154195,
+            "computeMs": 0.4769999941345304,
+            "bytes": 20794,
+            "fitSeconds": 0.19991730000765529,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.8593170580964153,
+                "precision": 0.9677222898903776,
+                "f1": 0.9103036255012685,
+                "urlFpr": 0.07300275482093664,
+                "domainFpr": 0.08378188626257899,
+                "domainFprUpper": 0.09108340658583636
+              },
+              "0.01": {
+                "threshold": 0.9266397356987001,
+                "recall": 0.5764833127317676,
+                "precision": 0.996660878856685,
+                "f1": 0.7304586168077921,
+                "urlFpr": 0.004919323101141283,
+                "domainFpr": 0.005850690381465013,
+                "domainFprUpper": 0.008161840011766619
+              },
+              "0.001": {
+                "threshold": 0.9976153373718263,
+                "recall": 0.015142150803461063,
+                "precision": 1,
+                "f1": 0.029832572298325723,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.0007008383779121109
+              }
+            }
+          },
+          {
+            "id": "ngram",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9951675864160365,
+            "rocAuc": 0.9873369235270855,
+            "computeMs": 0.7978000066941604,
+            "bytes": 1611706,
+            "fitSeconds": 4.033842899996671,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.9124690976514215,
+                "precision": 0.9872116349047142,
+                "f1": 0.9483700016059098,
+                "urlFpr": 0.03010625737898465,
+                "domainFpr": 0.03510414228879008,
+                "domainFprUpper": 0.04009458738981458
+              },
+              "0.01": {
+                "threshold": 0.7444548803360985,
+                "recall": 0.8231613102595797,
+                "precision": 0.997005707869374,
+                "f1": 0.9017815581228048,
+                "urlFpr": 0.006296733569460842,
+                "domainFpr": 0.007488883688275216,
+                "domainFprUpper": 0.01004614251702692
+              },
+              "0.001": {
+                "threshold": 0.9748486034939972,
+                "recall": 0.3938504326328801,
+                "precision": 0.9998038831143361,
+                "f1": 0.5650944964806296,
+                "urlFpr": 0.0001967729240456513,
+                "domainFpr": 0.0002340276152586005,
+                "domainFprUpper": 0.0011097090603595736
+              }
+            }
+          },
+          {
+            "id": "cnn",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9932705794254586,
+            "rocAuc": 0.9825216419812723,
+            "computeMs": 0.6026499977451749,
+            "bytes": 24994,
+            "fitSeconds": 38.3989631000004,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.9089153275648949,
+                "precision": 0.9810707138092062,
+                "f1": 0.9436156560795637,
+                "urlFpr": 0.04466745375836285,
+                "domainFpr": 0.05054996489585771,
+                "domainFprUpper": 0.05641189520424371
+              },
+              "0.01": {
+                "threshold": 0.8981561660766603,
+                "recall": 0.7844561186650185,
+                "precision": 0.9968584331435303,
+                "f1": 0.8779939472546476,
+                "urlFpr": 0.006296733569460842,
+                "domainFpr": 0.007488883688275216,
+                "domainFprUpper": 0.01004614251702692
+              },
+              "0.001": {
+                "threshold": 0.9906134605407716,
+                "recall": 0.5304388133498146,
+                "precision": 0.9997087944088526,
+                "f1": 0.6931152836664648,
+                "urlFpr": 0.0003935458480913026,
+                "domainFpr": 0.000468055230517201,
+                "domainFprUpper": 0.0014726491178679464
+              }
+            }
+          }
+        ],
+        "calibration": "Separate PhreshPhish calibration"
+      },
+      {
+        "id": "retraining-uci",
+        "phase": "phase5b",
+        "revision": "a09394b",
+        "name": "Controlled numerical retraining",
+        "dataset": "UCI PhiUSIIL",
+        "rows": 37269,
+        "positive": 16980,
+        "description": "Previously used development validation. Published rounded values use score 0.5. Batch timing covers model scoring per URL.",
+        "models": [
+          {
+            "id": "logistic",
+            "training": "UCI PhiUSIIL",
+            "prAuc": 0.9959,
+            "rocAuc": 0.9939,
+            "bytes": 1202,
+            "fitSeconds": 0.06,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.9648,
+                "precision": 0.9955,
+                "f1": 0.9799,
+                "urlFpr": 0.0036
+              }
+            },
+            "batchMs": 0.0001
+          },
+          {
+            "id": "forest",
+            "training": "UCI PhiUSIIL",
+            "prAuc": 0.9938,
+            "rocAuc": 0.993,
+            "bytes": 85297,
+            "fitSeconds": 0.12,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.9314,
+                "precision": 0.9975,
+                "f1": 0.9634,
+                "urlFpr": 0.0019
+              }
+            },
+            "batchMs": 0.0007
+          },
+          {
+            "id": "xgboost",
+            "training": "UCI PhiUSIIL",
+            "prAuc": 0.9946,
+            "rocAuc": 0.9936,
+            "bytes": 17404,
+            "fitSeconds": 0.06,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.9401,
+                "precision": 0.9969,
+                "f1": 0.9677,
+                "urlFpr": 0.0024
+              }
+            },
+            "batchMs": 0.0004
+          }
+        ]
+      },
+      {
+        "id": "retraining-phresh",
+        "phase": "phase5b",
+        "revision": "a09394b",
+        "name": "Controlled numerical retraining",
+        "dataset": "PhreshPhish v1.0.1",
+        "rows": 51059,
+        "positive": 20973,
+        "description": "Previously used development validation. Published rounded values use score 0.5. Batch timing covers model scoring per URL.",
+        "models": [
+          {
+            "id": "logistic",
+            "training": "UCI PhiUSIIL",
+            "prAuc": 0.391,
+            "rocAuc": 0.476,
+            "bytes": 1202,
+            "fitSeconds": 0.06,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.9265,
+                "precision": 0.4191,
+                "f1": 0.5771,
+                "urlFpr": 0.8954
+              }
+            },
+            "batchMs": 0.0001
+          },
+          {
+            "id": "forest",
+            "training": "UCI PhiUSIIL",
+            "prAuc": 0.4333,
+            "rocAuc": 0.5253,
+            "bytes": 85297,
+            "fitSeconds": 0.12,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.9206,
+                "precision": 0.4176,
+                "f1": 0.5746,
+                "urlFpr": 0.895
+              }
+            },
+            "batchMs": 0.0007
+          },
+          {
+            "id": "xgboost",
+            "training": "UCI PhiUSIIL",
+            "prAuc": 0.6294,
+            "rocAuc": 0.7058,
+            "bytes": 17404,
+            "fitSeconds": 0.06,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.9199,
+                "precision": 0.4172,
+                "f1": 0.5741,
+                "urlFpr": 0.8957
+              }
+            },
+            "batchMs": 0.0004
+          },
+          {
+            "id": "logistic",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.8858,
+            "rocAuc": 0.9039,
+            "bytes": 1224,
+            "fitSeconds": 0.03,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.721,
+                "precision": 0.858,
+                "f1": 0.7836,
+                "urlFpr": 0.0832
+              }
+            },
+            "batchMs": 0.0001
+          },
+          {
+            "id": "forest",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.8969,
+            "rocAuc": 0.9155,
+            "bytes": 278289,
+            "fitSeconds": 0.12,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.666,
+                "precision": 0.888,
+                "f1": 0.7611,
+                "urlFpr": 0.0586
+              }
+            },
+            "batchMs": 0.0011
+          },
+          {
+            "id": "xgboost",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9,
+            "rocAuc": 0.9195,
+            "bytes": 20884,
+            "fitSeconds": 0.07,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.6655,
+                "precision": 0.8992,
+                "f1": 0.7649,
+                "urlFpr": 0.052
+              }
+            },
+            "batchMs": 0.0004
+          },
+          {
+            "id": "logistic",
+            "training": "UCI + PhreshPhish",
+            "prAuc": 0.8721,
+            "rocAuc": 0.8944,
+            "bytes": 1203,
+            "fitSeconds": 0.03,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.7231,
+                "precision": 0.8384,
+                "f1": 0.7765,
+                "urlFpr": 0.0972
+              }
+            },
+            "batchMs": 0.0001
+          },
+          {
+            "id": "forest",
+            "training": "UCI + PhreshPhish",
+            "prAuc": 0.8932,
+            "rocAuc": 0.9059,
+            "bytes": 256683,
+            "fitSeconds": 0.15,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.6893,
+                "precision": 0.8762,
+                "f1": 0.7716,
+                "urlFpr": 0.0679
+              }
+            },
+            "batchMs": 0.0013
+          },
+          {
+            "id": "xgboost",
+            "training": "UCI + PhreshPhish",
+            "prAuc": 0.893,
+            "rocAuc": 0.9081,
+            "bytes": 20796,
+            "fitSeconds": 0.08,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.7276,
+                "precision": 0.8519,
+                "f1": 0.7849,
+                "urlFpr": 0.0882
+              }
+            },
+            "batchMs": 0.0004
+          }
+        ]
+      },
+      {
+        "id": "validation-5d",
+        "phase": "phase5d",
+        "revision": "a09394b",
+        "name": "Transformer and URL ensemble",
+        "dataset": "PhreshPhish v1.0.1",
+        "rows": 18026,
+        "positive": 12944,
+        "description": "Retrospective validation. Source models used 20,000 matched training rows. The 75:25 TF-IDF and XGBoost blend used a separate fusion fit.",
+        "models": [
+          {
+            "id": "transformer",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9849285060793616,
+            "rocAuc": 0.9644965717365004,
+            "computeMs": 2.2420500026782975,
+            "bytes": 65085,
+            "fitSeconds": 209.2549272000033,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.9082200247218789,
+                "precision": 0.9534468775344688,
+                "f1": 0.9302840864129145,
+                "urlFpr": 0.11294765840220386,
+                "domainFpr": 0.12333255324128248,
+                "domainFprUpper": 0.13191476225446255
+              },
+              "0.01": {
+                "threshold": 0.978699564933777,
+                "recall": 0.48841161928306553,
+                "precision": 0.9955905511811024,
+                "f1": 0.6553332642272209,
+                "urlFpr": 0.005509641873278237,
+                "domainFpr": 0.006084717996723613,
+                "domainFprUpper": 0.008432961144678954
+              },
+              "0.001": {
+                "threshold": 0.9949518442153932,
+                "recall": 0.10159147095179234,
+                "precision": 0.9984813971146546,
+                "f1": 0.18441904494775962,
+                "urlFpr": 0.0003935458480913026,
+                "domainFpr": 0.000468055230517201,
+                "domainFprUpper": 0.0014726491178679464
+              }
+            }
+          },
+          {
+            "id": "logistic",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9726004128986148,
+            "rocAuc": 0.9350565512370912,
+            "computeMs": 0.20155000675003976,
+            "bytes": 1192,
+            "fitSeconds": 0.022809400004916824,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.7925679851668727,
+                "precision": 0.9435298445691161,
+                "f1": 0.8614854935550237,
+                "urlFpr": 0.12081857536402991,
+                "domainFpr": 0.1357360168499883,
+                "domainFprUpper": 0.14465604133427676
+              },
+              "0.01": {
+                "threshold": 0.9681029319763185,
+                "recall": 0.3666563658838072,
+                "precision": 0.9949685534591195,
+                "f1": 0.5358473523766513,
+                "urlFpr": 0.004722550177095631,
+                "domainFpr": 0.004914579920430611,
+                "domainFprUpper": 0.007069443427904763
+              },
+              "0.001": {
+                "threshold": 0.9999995231628419,
+                "recall": 0.012592707045735476,
+                "precision": 1,
+                "f1": 0.024872205691615166,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.0007008383779121109
+              }
+            }
+          },
+          {
+            "id": "forest",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9828733333421269,
+            "rocAuc": 0.9558827396944742,
+            "computeMs": 12.693900003796443,
+            "bytes": 311240,
+            "fitSeconds": 0.18605990000651218,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.8695148331273177,
+                "precision": 0.9538135593220339,
+                "f1": 0.9097154865826059,
+                "urlFpr": 0.10724124360487997,
+                "domainFpr": 0.12520477416335127,
+                "domainFprUpper": 0.13383963350792558
+              },
+              "0.01": {
+                "threshold": 0.7726707311379384,
+                "recall": 0.6025185414091471,
+                "precision": 0.9964226395809378,
+                "f1": 0.7509508449280247,
+                "urlFpr": 0.005509641873278237,
+                "domainFpr": 0.006552773227240814,
+                "domainFprUpper": 0.008973133731531868
+              },
+              "0.001": {
+                "threshold": 0.9930492529391237,
+                "recall": 0.04789864029666255,
+                "precision": 1,
+                "f1": 0.09141846063108228,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.0007008383779121109
+              }
+            }
+          },
+          {
+            "id": "xgboost",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.983680905781541,
+            "rocAuc": 0.958565154154195,
+            "computeMs": 0.4769999941345304,
+            "bytes": 20794,
+            "fitSeconds": 0.19991730000765529,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.8593170580964153,
+                "precision": 0.9677222898903776,
+                "f1": 0.9103036255012685,
+                "urlFpr": 0.07300275482093664,
+                "domainFpr": 0.08378188626257899,
+                "domainFprUpper": 0.09108340658583636
+              },
+              "0.01": {
+                "threshold": 0.9266397356987001,
+                "recall": 0.5764833127317676,
+                "precision": 0.996660878856685,
+                "f1": 0.7304586168077921,
+                "urlFpr": 0.004919323101141283,
+                "domainFpr": 0.005850690381465013,
+                "domainFprUpper": 0.008161840011766619
+              },
+              "0.001": {
+                "threshold": 0.9976153373718263,
+                "recall": 0.015142150803461063,
+                "precision": 1,
+                "f1": 0.029832572298325723,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.0007008383779121109
+              }
+            }
+          },
+          {
+            "id": "ngram",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9951675864160365,
+            "rocAuc": 0.9873369235270855,
+            "computeMs": 0.7978000066941604,
+            "bytes": 1611706,
+            "fitSeconds": 4.033842899996671,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.9124690976514215,
+                "precision": 0.9872116349047142,
+                "f1": 0.9483700016059098,
+                "urlFpr": 0.03010625737898465,
+                "domainFpr": 0.03510414228879008,
+                "domainFprUpper": 0.04009458738981458
+              },
+              "0.01": {
+                "threshold": 0.7444548803360985,
+                "recall": 0.8231613102595797,
+                "precision": 0.997005707869374,
+                "f1": 0.9017815581228048,
+                "urlFpr": 0.006296733569460842,
+                "domainFpr": 0.007488883688275216,
+                "domainFprUpper": 0.01004614251702692
+              },
+              "0.001": {
+                "threshold": 0.9748486034939972,
+                "recall": 0.3938504326328801,
+                "precision": 0.9998038831143361,
+                "f1": 0.5650944964806296,
+                "urlFpr": 0.0001967729240456513,
+                "domainFpr": 0.0002340276152586005,
+                "domainFprUpper": 0.0011097090603595736
+              }
+            }
+          },
+          {
+            "id": "cnn",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9932705794254586,
+            "rocAuc": 0.9825216419812723,
+            "computeMs": 0.6026499977451749,
+            "bytes": 24994,
+            "fitSeconds": 38.3989631000004,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.9089153275648949,
+                "precision": 0.9810707138092062,
+                "f1": 0.9436156560795637,
+                "urlFpr": 0.04466745375836285,
+                "domainFpr": 0.05054996489585771,
+                "domainFprUpper": 0.05641189520424371
+              },
+              "0.01": {
+                "threshold": 0.8981561660766603,
+                "recall": 0.7844561186650185,
+                "precision": 0.9968584331435303,
+                "f1": 0.8779939472546476,
+                "urlFpr": 0.006296733569460842,
+                "domainFpr": 0.007488883688275216,
+                "domainFprUpper": 0.01004614251702692
+              },
+              "0.001": {
+                "threshold": 0.9906134605407716,
+                "recall": 0.5304388133498146,
+                "precision": 0.9997087944088526,
+                "f1": 0.6931152836664648,
+                "urlFpr": 0.0003935458480913026,
+                "domainFpr": 0.000468055230517201,
+                "domainFprUpper": 0.0014726491178679464
+              }
+            }
+          },
+          {
+            "id": "url-weighted-75",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9956682451619132,
+            "rocAuc": 0.9888052867460666,
+            "computeMs": 2.7023000075132586,
+            "bytes": 1632500,
+            "fitSeconds": 0.21769220000714995,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.9238257107540173,
+                "precision": 0.9858202802967848,
+                "f1": 0.9538167025604212,
+                "urlFpr": 0.033844942935852024,
+                "domainFpr": 0.039550666978703485,
+                "domainFprUpper": 0.044811307778194524
+              },
+              "0.01": {
+                "threshold": 0.7611078574383651,
+                "recall": 0.8469561186650185,
+                "precision": 0.9966363636363637,
+                "f1": 0.9157200133645172,
+                "urlFpr": 0.007280598189689099,
+                "domainFpr": 0.008659021764568219,
+                "domainFprUpper": 0.011375827176086057
+              },
+              "0.001": {
+                "threshold": 0.9654823799825953,
+                "recall": 0.5798053152039555,
+                "precision": 0.9996004262120405,
+                "f1": 0.733913553686681,
+                "urlFpr": 0.0005903187721369539,
+                "domainFpr": 0.0007020828457758015,
+                "domainFprUpper": 0.0018135606261539168
+              }
+            }
+          }
+        ],
+        "calibration": "Separate PhreshPhish calibration"
+      },
+      {
+        "id": "uci-validation-5d",
+        "phase": "phase5d",
+        "revision": "a09394b",
+        "name": "Cross-dataset transfer with source cutoffs",
+        "dataset": "UCI PhiUSIIL",
+        "rows": 32608,
+        "positive": 13733,
+        "description": "Retrospective validation. Source models used 20,000 matched training rows. The 75:25 TF-IDF and XGBoost blend used a separate fusion fit.",
+        "models": [
+          {
+            "id": "transformer",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9840258207615686,
+            "rocAuc": 0.9809399353710282,
+            "computeMs": 2.2420500026782975,
+            "bytes": 65085,
+            "fitSeconds": 209.2549272000033,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.8186849195368819,
+                "precision": 0.9968082276797589,
+                "f1": 0.8990084759315529,
+                "urlFpr": 0.0019072847682119205,
+                "domainFpr": 0.0018656716417910447,
+                "domainFprUpper": 0.0024728159594882403
+              },
+              "0.01": {
+                "threshold": 0.978699564933777,
+                "recall": 0.22500546129760432,
+                "precision": 1,
+                "f1": 0.36735421744040897,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.00015967447207910078
+              },
+              "0.001": {
+                "threshold": 0.9949518442153932,
+                "recall": 0.027889026432680406,
+                "precision": 1,
+                "f1": 0.0542646642108246,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.00015967447207910078
+              }
+            }
+          },
+          {
+            "id": "logistic",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.932741090882603,
+            "rocAuc": 0.9050957740406802,
+            "computeMs": 0.20155000675003976,
+            "bytes": 1192,
+            "fitSeconds": 0.022809400004916824,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.8580790795893104,
+                "precision": 0.9033346109620545,
+                "f1": 0.8801254761371274,
+                "urlFpr": 0.06680794701986754,
+                "domainFpr": 0.06695095948827293,
+                "domainFprUpper": 0.07002911406531118
+              },
+              "0.01": {
+                "threshold": 0.9681029319763185,
+                "recall": 0.26308890992499817,
+                "precision": 0.9977906655619995,
+                "f1": 0.4163881525872998,
+                "urlFpr": 0.000423841059602649,
+                "domainFpr": 0.00042643923240938164,
+                "domainFprUpper": 0.0007693056626257888
+              },
+              "0.001": {
+                "threshold": 0.9999995231628419,
+                "recall": 0.02250054612976043,
+                "precision": 1,
+                "f1": 0.04401082466885059,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.00015967447207910078
+              }
+            }
+          },
+          {
+            "id": "forest",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.8902272935565749,
+            "rocAuc": 0.8547974131050888,
+            "computeMs": 12.693900003796443,
+            "bytes": 311240,
+            "fitSeconds": 0.18605990000651218,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.8740260685938979,
+                "precision": 0.523371413621697,
+                "f1": 0.6547031390623722,
+                "urlFpr": 0.5791258278145696,
+                "domainFpr": 0.5803304904051173,
+                "domainFprUpper": 0.5862742032411863
+              },
+              "0.01": {
+                "threshold": 0.7726707311379384,
+                "recall": 0.4023884074856186,
+                "precision": 0.9992766726943942,
+                "f1": 0.5737424077246535,
+                "urlFpr": 0.0002119205298013245,
+                "domainFpr": 0.00021321961620469082,
+                "domainFprUpper": 0.00048786043772412524
+              },
+              "0.001": {
+                "threshold": 0.9930492529391237,
+                "recall": 0.0036408650695405227,
+                "precision": 1,
+                "f1": 0.0072553145178843505,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.00015967447207910078
+              }
+            }
+          },
+          {
+            "id": "xgboost",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9197445965747841,
+            "rocAuc": 0.8841165578345387,
+            "computeMs": 0.4769999941345304,
+            "bytes": 20794,
+            "fitSeconds": 0.19991730000765529,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.8533459549989078,
+                "precision": 0.7428372210953347,
+                "f1": 0.7942661560879731,
+                "urlFpr": 0.21494039735099338,
+                "domainFpr": 0.21396588486140725,
+                "domainFprUpper": 0.21895013456448312
+              },
+              "0.01": {
+                "threshold": 0.9266397356987001,
+                "recall": 0.3486492390592005,
+                "precision": 1,
+                "f1": 0.5170347173478754,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.00015967447207910078
+              },
+              "0.001": {
+                "threshold": 0.9976153373718263,
+                "recall": 0.006116653316828078,
+                "precision": 1,
+                "f1": 0.01215893464572628,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.00015967447207910078
+              }
+            }
+          },
+          {
+            "id": "ngram",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9936484932169979,
+            "rocAuc": 0.9938735168297178,
+            "computeMs": 0.7978000066941604,
+            "bytes": 1611706,
+            "fitSeconds": 4.033842899996671,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.7167406975897473,
+                "precision": 0.9992893401015228,
+                "f1": 0.8347538481109273,
+                "urlFpr": 0.0003708609271523179,
+                "domainFpr": 0.00037313432835820896,
+                "domainFprUpper": 0.0007007441033217277
+              },
+              "0.01": {
+                "threshold": 0.7444548803360985,
+                "recall": 0.45525376829534697,
+                "precision": 1,
+                "f1": 0.6256692519389542,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.00015967447207910078
+              },
+              "0.001": {
+                "threshold": 0.9748486034939972,
+                "recall": 0.05803538920847593,
+                "precision": 1,
+                "f1": 0.10970406056434961,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.00015967447207910078
+              }
+            }
+          },
+          {
+            "id": "cnn",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9754515355396554,
+            "rocAuc": 0.9738992179614724,
+            "computeMs": 0.6026499977451749,
+            "bytes": 24994,
+            "fitSeconds": 38.3989631000004,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.8308454088691473,
+                "precision": 0.9813365442504516,
+                "f1": 0.8998422712933754,
+                "urlFpr": 0.011496688741721854,
+                "domainFpr": 0.011300639658848614,
+                "domainFprUpper": 0.01265450768945508
+              },
+              "0.01": {
+                "threshold": 0.8981561660766603,
+                "recall": 0.4283113667807471,
+                "precision": 0.9991506709699337,
+                "f1": 0.599592252803262,
+                "urlFpr": 0.00026490066225165563,
+                "domainFpr": 0.00021321961620469082,
+                "domainFprUpper": 0.00048786043772412524
+              },
+              "0.001": {
+                "threshold": 0.9906134605407716,
+                "recall": 0.10791524066118109,
+                "precision": 1,
+                "f1": 0.1948077555044364,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.00015967447207910078
+              }
+            }
+          },
+          {
+            "id": "url-weighted-75",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9893500050389407,
+            "rocAuc": 0.9856409103995162,
+            "computeMs": 2.7023000075132586,
+            "bytes": 1632500,
+            "fitSeconds": 0.21769220000714995,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.8009903152989151,
+                "precision": 0.9993640410647769,
+                "f1": 0.889248181083266,
+                "urlFpr": 0.0003708609271523179,
+                "domainFpr": 0.00037313432835820896,
+                "domainFprUpper": 0.0007007441033217277
+              },
+              "0.01": {
+                "threshold": 0.7611078574383651,
+                "recall": 0.5644797203815627,
+                "precision": 1,
+                "f1": 0.721619734698627,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.00015967447207910078
+              },
+              "0.001": {
+                "threshold": 0.9654823799825953,
+                "recall": 0.24422922886477827,
+                "precision": 1,
+                "f1": 0.3925791537426113,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.00015967447207910078
+              }
+            }
+          }
+        ],
+        "calibration": "Separate PhreshPhish calibration"
+      },
+      {
+        "id": "uci-adapted",
+        "phase": "phase5d",
+        "revision": "a09394b",
+        "name": "UCI target calibration",
+        "dataset": "UCI PhiUSIIL",
+        "rows": 32608,
+        "positive": 13733,
+        "description": "Same UCI validation URLs as source transfer. Only the source-balanced TF-IDF model changes training composition.",
+        "models": [
+          {
+            "id": "ngram",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9936484932169979,
+            "rocAuc": 0.9938735168297178,
+            "computeMs": 0.7978000066941604,
+            "bytes": 1611706,
+            "fitSeconds": 4.033842899996671,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.7167406975897473,
+                "precision": 0.9992893401015228,
+                "f1": 0.8347538481109273,
+                "urlFpr": 0.0003708609271523179,
+                "domainFpr": 0.00037313432835820896,
+                "domainFprUpper": 0.0007007441033217277
+              },
+              "0.01": {
+                "threshold": 0.26464384301514254,
+                "recall": 0.9302410252676035,
+                "precision": 0.9877068192361218,
+                "f1": 0.9581130235872052,
+                "urlFpr": 0.008423841059602649,
+                "domainFpr": 0.008368869936034116,
+                "domainFprUpper": 0.009548073041268933
+              },
+              "0.001": {
+                "threshold": 0.46794631184582336,
+                "recall": 0.7492900313114396,
+                "precision": 0.9992231501262381,
+                "f1": 0.8563938246431693,
+                "urlFpr": 0.000423841059602649,
+                "domainFpr": 0.00042643923240938164,
+                "domainFprUpper": 0.0007693056626257888
+              }
+            }
+          },
+          {
+            "id": "cnn",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9754515355396554,
+            "rocAuc": 0.9738992179614724,
+            "computeMs": 0.6026499977451749,
+            "bytes": 24994,
+            "fitSeconds": 38.3989631000004,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.8308454088691473,
+                "precision": 0.9813365442504516,
+                "f1": 0.8998422712933754,
+                "urlFpr": 0.011496688741721854,
+                "domainFpr": 0.011300639658848614,
+                "domainFprUpper": 0.01265450768945508
+              },
+              "0.01": {
+                "threshold": 0.5508024692535402,
+                "recall": 0.7996796038738805,
+                "precision": 0.9855514672888809,
+                "f1": 0.8829393793214343,
+                "urlFpr": 0.008529801324503311,
+                "domainFpr": 0.008422174840085287,
+                "domainFprUpper": 0.009604812259589762
+              },
+              "0.001": {
+                "threshold": 0.8792618513107301,
+                "recall": 0.45736547003568045,
+                "precision": 0.9988867684478372,
+                "f1": 0.6274411867539084,
+                "urlFpr": 0.0003708609271523179,
+                "domainFpr": 0.0003198294243070363,
+                "domainFprUpper": 0.0006311594714504393
+              }
+            }
+          },
+          {
+            "id": "xgboost",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9197445965747841,
+            "rocAuc": 0.8841165578345387,
+            "computeMs": 0.4769999941345304,
+            "bytes": 20794,
+            "fitSeconds": 0.19991730000765529,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.8533459549989078,
+                "precision": 0.7428372210953347,
+                "f1": 0.7942661560879731,
+                "urlFpr": 0.21494039735099338,
+                "domainFpr": 0.21396588486140725,
+                "domainFprUpper": 0.21895013456448312
+              },
+              "0.01": {
+                "threshold": 0.6708604097366334,
+                "recall": 0.7576640209713827,
+                "precision": 0.9865364558642268,
+                "f1": 0.8570840197693574,
+                "urlFpr": 0.00752317880794702,
+                "domainFpr": 0.007462686567164179,
+                "domainFprUpper": 0.008581699784845057
+              },
+              "0.001": {
+                "threshold": 0.8325453400611879,
+                "recall": 0.5265419063569504,
+                "precision": 1,
+                "f1": 0.689849265407365,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.00015967447207910078
+              }
+            }
+          },
+          {
+            "id": "transformer",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9840258207615686,
+            "rocAuc": 0.9809399353710282,
+            "computeMs": 2.2420500026782975,
+            "bytes": 65085,
+            "fitSeconds": 209.2549272000033,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.8186849195368819,
+                "precision": 0.9968082276797589,
+                "f1": 0.8990084759315529,
+                "urlFpr": 0.0019072847682119205,
+                "domainFpr": 0.0018656716417910447,
+                "domainFprUpper": 0.0024728159594882403
+              },
+              "0.01": {
+                "threshold": 0.2965319454669953,
+                "recall": 0.9063569504114177,
+                "precision": 0.9862916006339144,
+                "f1": 0.9446362842940083,
+                "urlFpr": 0.009165562913907285,
+                "domainFpr": 0.009115138592750533,
+                "domainFprUpper": 0.01034144816195403
+              },
+              "0.001": {
+                "threshold": 0.6049221754074098,
+                "recall": 0.7625427801645671,
+                "precision": 0.9985696576714027,
+                "f1": 0.8647398843930636,
+                "urlFpr": 0.0007947019867549669,
+                "domainFpr": 0.0007462686567164179,
+                "domainFprUpper": 0.0011664117995478496
+              }
+            }
+          },
+          {
+            "id": "mixed",
+            "training": "UCI + PhreshPhish",
+            "prAuc": 0.9980770945177669,
+            "rocAuc": 0.9977000341903753,
+            "computeMs": 1.1088000028394163,
+            "bytes": 1593356,
+            "fitSeconds": 4.716164099998423,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.9462608315735819,
+                "precision": 1,
+                "f1": 0.972388506435199,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.00015967447207910078
+              },
+              "0.01": {
+                "threshold": 0.16884007981805166,
+                "recall": 0.9902424816136314,
+                "precision": 0.9881557913094027,
+                "f1": 0.9891980360065467,
+                "urlFpr": 0.008635761589403974,
+                "domainFpr": 0.008688699360341152,
+                "domainFprUpper": 0.009888343915044671
+              },
+              "0.001": {
+                "threshold": 0.292800217499405,
+                "recall": 0.9798296075147455,
+                "precision": 0.9991831885349373,
+                "f1": 0.9894117647058823,
+                "urlFpr": 0.0005827814569536423,
+                "domainFpr": 0.0005863539445628998,
+                "domainFprUpper": 0.0009703633586201924
+              }
+            }
+          }
+        ],
+        "calibration": "Separate target calibration on 43,118 UCI development rows"
+      },
+      {
+        "id": "temporal-near",
+        "phase": "phase5d",
+        "revision": "a09394b",
+        "name": "Temporal near window",
+        "dataset": "PhreshPhish v1.0.1",
+        "rows": 19633,
+        "positive": 15580,
+        "description": "Chronological validation from 2024-10-01 to 2024-10-31 after separate training, tuning and calibration. The windows have different class balances.",
+        "models": [
+          {
+            "id": "transformer",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9881499605218711,
+            "rocAuc": 0.9595071496509503,
+            "computeMs": 2.282150002429262,
+            "bytes": 65085,
+            "fitSeconds": 212.86020609999832,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.7667522464698331,
+                "precision": 0.9839387200395354,
+                "f1": 0.8618736697810324,
+                "urlFpr": 0.04811250925240563,
+                "domainFpr": 0.04783370899073378,
+                "domainFprUpper": 0.053764838310973256
+              },
+              "0.01": {
+                "threshold": 0.9597075581550599,
+                "recall": 0.4324775353016688,
+                "precision": 0.9974833456698742,
+                "f1": 0.6033579583613163,
+                "urlFpr": 0.004194423883543055,
+                "domainFpr": 0.004257450538442274,
+                "domainFprUpper": 0.00637918475290893
+              },
+              "0.001": {
+                "threshold": 0.994658648967743,
+                "recall": 0.11553273427471117,
+                "precision": 1,
+                "f1": 0.20713463751438435,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.0007499646347256373
+              }
+            }
+          },
+          {
+            "id": "ngram",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9961082126515535,
+            "rocAuc": 0.9855168218790372,
+            "computeMs": 1.1512500059325248,
+            "bytes": 1614259,
+            "fitSeconds": 5.097711700000218,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.8586649550706034,
+                "precision": 0.9952388037494421,
+                "f1": 0.9219213010819378,
+                "urlFpr": 0.015790772267456205,
+                "domainFpr": 0.016028049085900324,
+                "domainFprUpper": 0.019699094924090874
+              },
+              "0.01": {
+                "threshold": 0.6033400980881581,
+                "recall": 0.7659820282413351,
+                "precision": 0.9971590909090909,
+                "f1": 0.8664149847538841,
+                "urlFpr": 0.00838884776708611,
+                "domainFpr": 0.008514901076884547,
+                "domainFprUpper": 0.011320232826060445
+              },
+              "0.001": {
+                "threshold": 0.9126123811185026,
+                "recall": 0.4069319640564827,
+                "precision": 0.9996846420687481,
+                "f1": 0.5784143782501596,
+                "urlFpr": 0.0004934616333580064,
+                "domainFpr": 0.0005008765339343851,
+                "domainFprUpper": 0.001575859722660742
+              }
+            }
+          },
+          {
+            "id": "cnn",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9942870195089681,
+            "rocAuc": 0.9787853622429636,
+            "computeMs": 0.8921499975258484,
+            "bytes": 24994,
+            "fitSeconds": 60.54001700000663,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.860783055198973,
+                "precision": 0.9902532673705974,
+                "f1": 0.9209902825945129,
+                "urlFpr": 0.03256846780162842,
+                "domainFpr": 0.03280741297270223,
+                "domainFprUpper": 0.037830924104912365
+              },
+              "0.01": {
+                "threshold": 0.8077314496040345,
+                "recall": 0.6992939666238768,
+                "precision": 0.9975279252884087,
+                "f1": 0.8222020979548713,
+                "urlFpr": 0.006661732050333087,
+                "domainFpr": 0.0067618332081141996,
+                "domainFprUpper": 0.009312900380970492
+              },
+              "0.001": {
+                "threshold": 0.9918984174728395,
+                "recall": 0.26630295250320923,
+                "precision": 1,
+                "f1": 0.4205991180495717,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.0007499646347256373
+              }
+            }
+          },
+          {
+            "id": "xgboost",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9823928361666299,
+            "rocAuc": 0.9387669619518276,
+            "computeMs": 0.48349999997299165,
+            "bytes": 20621,
+            "fitSeconds": 0.1781112999888137,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.6942875481386392,
+                "precision": 0.9883954678362573,
+                "f1": 0.8156386668677424,
+                "urlFpr": 0.031334813718233406,
+                "domainFpr": 0.03105434510393188,
+                "domainFprUpper": 0.03595772657844537
+              },
+              "0.01": {
+                "threshold": 0.8714247941970826,
+                "recall": 0.4819640564826701,
+                "precision": 0.9956245027844073,
+                "f1": 0.6495112879508693,
+                "urlFpr": 0.008142116950407105,
+                "domainFpr": 0.008264462809917356,
+                "domainFprUpper": 0.011035199128122817
+              },
+              "0.001": {
+                "threshold": 0.993196725845337,
+                "recall": 0.0886392811296534,
+                "precision": 1,
+                "f1": 0.16284417192382525,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.0007499646347256373
+              }
+            }
+          }
+        ],
+        "calibration": "Phase 5D chronological calibration window"
+      },
+      {
+        "id": "temporal-far",
+        "phase": "phase5d",
+        "revision": "a09394b",
+        "name": "Temporal far window",
+        "dataset": "PhreshPhish v1.0.1",
+        "rows": 46562,
+        "positive": 45407,
+        "description": "Chronological validation from 2024-11-01 to 2025-09-08 after separate training, tuning and calibration. The windows have different class balances.",
+        "models": [
+          {
+            "id": "transformer",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9976921830196491,
+            "rocAuc": 0.927012340622577,
+            "computeMs": 2.282150002429262,
+            "bytes": 65085,
+            "fitSeconds": 212.86020609999832,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.6968088620697249,
+                "precision": 0.9972892895417008,
+                "f1": 0.8204011253289772,
+                "urlFpr": 0.07445887445887446,
+                "domainFpr": 0.0797872340425532,
+                "domainFprUpper": 0.10113088830221482
+              },
+              "0.01": {
+                "threshold": 0.9597075581550599,
+                "recall": 0.4230405003633801,
+                "precision": 0.9992717057691307,
+                "f1": 0.5944298313476714,
+                "urlFpr": 0.012121212121212121,
+                "domainFpr": 0.01773049645390071,
+                "domainFprUpper": 0.029889245969311105
+              },
+              "0.001": {
+                "threshold": 0.994658648967743,
+                "recall": 0.13020018939811043,
+                "precision": 0.9998308811094199,
+                "f1": 0.2303975058456742,
+                "urlFpr": 0.0008658008658008658,
+                "domainFpr": 0.0017730496453900709,
+                "domainFprUpper": 0.008383242123166252
+              }
+            }
+          },
+          {
+            "id": "ngram",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9991512450036072,
+            "rocAuc": 0.9690171919828139,
+            "computeMs": 1.1512500059325248,
+            "bytes": 1614259,
+            "fitSeconds": 5.097711700000218,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.74603034774374,
+                "precision": 0.9996753821637254,
+                "f1": 0.8544259896838309,
+                "urlFpr": 0.009523809523809525,
+                "domainFpr": 0.012411347517730497,
+                "domainFprUpper": 0.023185305236583492
+              },
+              "0.01": {
+                "threshold": 0.6033400980881581,
+                "recall": 0.6489968507058383,
+                "precision": 0.9998642825637024,
+                "f1": 0.787099358974359,
+                "urlFpr": 0.003463203463203463,
+                "domainFpr": 0.0035460992907801418,
+                "domainFprUpper": 0.011120319199101779
+              },
+              "0.001": {
+                "threshold": 0.9126123811185026,
+                "recall": 0.39463078379985467,
+                "precision": 1,
+                "f1": 0.5659286864794871,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.005297500536125241
+              }
+            }
+          },
+          {
+            "id": "cnn",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9986059656515788,
+            "rocAuc": 0.9519086678951898,
+            "computeMs": 0.8921499975258484,
+            "bytes": 24994,
+            "fitSeconds": 60.54001700000663,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.7860902504019204,
+                "precision": 0.9976521884957237,
+                "f1": 0.8793249984603068,
+                "urlFpr": 0.07272727272727272,
+                "domainFpr": 0.06205673758865248,
+                "domainFprUpper": 0.08143821168586139
+              },
+              "0.01": {
+                "threshold": 0.8077314496040345,
+                "recall": 0.6051930319113793,
+                "precision": 0.9992727272727273,
+                "f1": 0.7538370801157639,
+                "urlFpr": 0.017316017316017316,
+                "domainFpr": 0.01773049645390071,
+                "domainFprUpper": 0.029889245969311105
+              },
+              "0.001": {
+                "threshold": 0.9918984174728395,
+                "recall": 0.3175942035368996,
+                "precision": 1,
+                "f1": 0.4820819683091529,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.005297500536125241
+              }
+            }
+          },
+          {
+            "id": "xgboost",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9976891054766917,
+            "rocAuc": 0.924214185180556,
+            "computeMs": 0.48349999997299165,
+            "bytes": 20621,
+            "fitSeconds": 0.1781112999888137,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.5719382474067874,
+                "precision": 0.9990767100100023,
+                "f1": 0.7274407921457683,
+                "urlFpr": 0.02077922077922078,
+                "domainFpr": 0.03546099290780142,
+                "domainFprUpper": 0.051113220436757055
+              },
+              "0.01": {
+                "threshold": 0.8714247941970826,
+                "recall": 0.4489616138480851,
+                "precision": 0.9998038254046101,
+                "f1": 0.6196635104943995,
+                "urlFpr": 0.003463203463203463,
+                "domainFpr": 0.0070921985815602835,
+                "domainFprUpper": 0.01615560602988124
+              },
+              "0.001": {
+                "threshold": 0.993196725845337,
+                "recall": 0.0649018873741934,
+                "precision": 1,
+                "f1": 0.1218927079455681,
+                "urlFpr": 0,
+                "domainFpr": 0,
+                "domainFprUpper": 0.005297500536125241
+              }
+            }
+          }
+        ],
+        "calibration": "Phase 5D chronological calibration window"
+      },
+      {
+        "id": "content-matched",
+        "phase": "phase5e",
+        "revision": "a09394b",
+        "name": "Matched URL and DOM models",
+        "dataset": "PhreshPhish v1.0.1",
+        "rows": 5011,
+        "positive": 3655,
+        "description": "Retrospective comparison on identical matched rows. Some numerical DOM vectors also appear in training.",
+        "models": [
+          {
+            "id": "url-ngram",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9955351913154402,
+            "rocAuc": 0.987447994221356,
+            "computeMs": 1.1593999952310696,
+            "bytes": 1610474,
+            "fitSeconds": 6.137983499997063,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.9143638850889193,
+                "precision": 0.9881726788882318,
+                "f1": 0.9498365780872531,
+                "urlFpr": 0.029498525073746312,
+                "domainFpr": 0.032025620496397116,
+                "domainFprUpper": 0.04148653041902344
+              },
+              "0.01": {
+                "threshold": 0.7424227755961785,
+                "recall": 0.8311901504787962,
+                "precision": 0.9963922597572975,
+                "f1": 0.9063245823389021,
+                "urlFpr": 0.008112094395280236,
+                "domainFpr": 0.008807045636509208,
+                "domainFprUpper": 0.014535609057553401
+              }
+            }
+          },
+          {
+            "id": "url-xgboost",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9833879190466577,
+            "rocAuc": 0.9554527882361012,
+            "computeMs": 0.46194999595172703,
+            "bytes": 20775,
+            "fitSeconds": 0.17772010000771843,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.8626538987688098,
+                "precision": 0.9668813247470102,
+                "f1": 0.9117987275882012,
+                "urlFpr": 0.07964601769911504,
+                "domainFpr": 0.08646917534027222,
+                "domainFprUpper": 0.10068589528445891
+              },
+              "0.01": {
+                "threshold": 0.8990257382392884,
+                "recall": 0.6082079343365253,
+                "precision": 0.9955217196596506,
+                "f1": 0.7550951086956522,
+                "urlFpr": 0.007374631268436578,
+                "domainFpr": 0.008006405124099279,
+                "domainFprUpper": 0.013542790753286736
+              }
+            }
+          },
+          {
+            "id": "dom-logistic",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9599193141364499,
+            "rocAuc": 0.9169888906375474,
+            "computeMs": 0.46160000056261197,
+            "projectionMs": 6.420150006306358,
+            "bytes": 1831,
+            "fitSeconds": 0.08014629999524914,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.920109439124487,
+                "precision": 0.922886937431394,
+                "f1": 0.9214960953555281,
+                "urlFpr": 0.20722713864306785,
+                "domainFpr": 0.1953562850280224,
+                "domainFprUpper": 0.21473454283158208
+              },
+              "0.01": {
+                "threshold": 0.9314079880714418,
+                "recall": 0.09192886456908345,
+                "precision": 0.9824561403508771,
+                "f1": 0.1681260945709282,
+                "urlFpr": 0.004424778761061947,
+                "domainFpr": 0.004803843074459567,
+                "domainFprUpper": 0.009459337064276763
+              }
+            }
+          },
+          {
+            "id": "dom-forest",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9915861469731593,
+            "rocAuc": 0.9778383755230843,
+            "computeMs": 15.57400000456255,
+            "projectionMs": 21.786699988297187,
+            "bytes": 343961,
+            "fitSeconds": 0.7736583999940194,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.9140902872777018,
+                "precision": 0.9737685805887496,
+                "f1": 0.9429861699125035,
+                "urlFpr": 0.06637168141592921,
+                "domainFpr": 0.06725380304243395,
+                "domainFprUpper": 0.0800878773871228
+              },
+              "0.01": {
+                "threshold": 0.9176918116421772,
+                "recall": 0.5958960328317373,
+                "precision": 0.9986244841815681,
+                "f1": 0.746401644962303,
+                "urlFpr": 0.0022123893805309734,
+                "domainFpr": 0.0024019215372297837,
+                "domainFprUpper": 0.006196086892105872
+              }
+            }
+          },
+          {
+            "id": "dom-xgboost",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9910477361107397,
+            "rocAuc": 0.9766218135741639,
+            "computeMs": 0.47119999362621456,
+            "projectionMs": 6.380700004228856,
+            "bytes": 21433,
+            "fitSeconds": 0.2959865000011632,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.9244870041039671,
+                "precision": 0.9679175021483816,
+                "f1": 0.9457038902882732,
+                "urlFpr": 0.08259587020648967,
+                "domainFpr": 0.08486789431545236,
+                "domainFprUpper": 0.09897762760133366
+              },
+              "0.01": {
+                "threshold": 0.9314034581184388,
+                "recall": 0.5581395348837209,
+                "precision": 0.9985315712187959,
+                "f1": 0.7160407160407161,
+                "urlFpr": 0.0022123893805309734,
+                "domainFpr": 0.0024019215372297837,
+                "domainFprUpper": 0.006196086892105872
+              }
+            }
+          },
+          {
+            "id": "url-dom-xgboost",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9955489943462301,
+            "rocAuc": 0.9883188261927532,
+            "computeMs": 0.5023499979870394,
+            "projectionMs": 6.455800001276657,
+            "bytes": 21385,
+            "fitSeconds": 0.4582774000009522,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.9343365253077975,
+                "precision": 0.9807581849511775,
+                "f1": 0.9569847274765307,
+                "urlFpr": 0.049410029498525077,
+                "domainFpr": 0.053642914331465175,
+                "domainFprUpper": 0.06533787792772164
+              },
+              "0.01": {
+                "threshold": 0.880263924598694,
+                "recall": 0.7997264021887824,
+                "precision": 0.9972705561241897,
+                "f1": 0.8876404494382022,
+                "urlFpr": 0.0058997050147492625,
+                "domainFpr": 0.006405124099279423,
+                "domainFprUpper": 0.01152720384660158
+              }
+            }
+          },
+          {
+            "id": "url-fusion",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9955484904339782,
+            "rocAuc": 0.9879360717326651,
+            "computeMs": 2.4254500021925196,
+            "bytes": 1631249,
+            "fitSeconds": 0.7545365999976639,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.973187414500684,
+                "precision": 0.9634344528710725,
+                "f1": 0.9682863753913162,
+                "urlFpr": 0.09955752212389381,
+                "domainFpr": 0.10568454763811048,
+                "domainFprUpper": 0.1210897374528249
+              },
+              "0.01": {
+                "threshold": 0.9170531077335398,
+                "recall": 0.8229822161422709,
+                "precision": 0.9966865473823724,
+                "f1": 0.9015435336430391,
+                "urlFpr": 0.007374631268436578,
+                "domainFpr": 0.008006405124099279,
+                "domainFprUpper": 0.013542790753286736
+              }
+            }
+          },
+          {
+            "id": "url-dom-fusion",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.9972740772480401,
+            "rocAuc": 0.9926021653773672,
+            "computeMs": 2.3896999991848134,
+            "projectionMs": 8.515100002114195,
+            "bytes": 1631907,
+            "fitSeconds": 0.7810463000059826,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.9797537619699043,
+                "precision": 0.9673149648838466,
+                "f1": 0.973494630963708,
+                "urlFpr": 0.08923303834808259,
+                "domainFpr": 0.09607686148919135,
+                "domainFprUpper": 0.11090865980395768
+              },
+              "0.01": {
+                "threshold": 0.8694662823864124,
+                "recall": 0.8615595075239398,
+                "precision": 0.9968344412788858,
+                "f1": 0.9242735544467273,
+                "urlFpr": 0.007374631268436578,
+                "domainFpr": 0.008006405124099279,
+                "domainFprUpper": 0.013542790753286736
+              }
+            }
+          }
+        ],
+        "calibration": "Separate Phase 5E matched calibration"
+      },
+      {
+        "id": "content-unseen",
+        "phase": "phase5e",
+        "revision": "a09394b",
+        "name": "Unseen exact DOM vectors",
+        "dataset": "PhreshPhish v1.0.1",
+        "rows": 3690,
+        "positive": 2352,
+        "description": "Sensitivity comparison after excluding 1,321 numerical validation vectors repeated in training. Broader template similarity can remain.",
+        "models": [
+          {
+            "id": "url-ngram",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.992243467732617,
+            "rocAuc": 0.9853716710899606,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.8928571428571429,
+                "precision": 0.9813084112149533,
+                "f1": 0.9349955476402493,
+                "urlFpr": 0.029895366218236172,
+                "domainFpr": 0.03231017770597738,
+                "domainFprUpper": 0.041853328810948526
+              },
+              "0.01": {
+                "threshold": 0.7424227755961785,
+                "recall": 0.8099489795918368,
+                "precision": 0.994258872651357,
+                "f1": 0.8926897844423618,
+                "urlFpr": 0.008221225710014948,
+                "domainFpr": 0.008885298869143781,
+                "domainFprUpper": 0.014664385180192054
+              }
+            }
+          },
+          {
+            "id": "url-dom-fusion",
+            "training": "PhreshPhish v1.0.1",
+            "prAuc": 0.995095929986349,
+            "rocAuc": 0.991171206898305,
+            "points": {
+              "0.5": {
+                "threshold": 0.5,
+                "recall": 0.9753401360544217,
+                "precision": 0.9514724180837827,
+                "f1": 0.963258450556372,
+                "urlFpr": 0.08744394618834081,
+                "domainFpr": 0.09369951534733441,
+                "domainFprUpper": 0.10845340391772802
+              },
+              "0.01": {
+                "threshold": 0.8694662823864124,
+                "recall": 0.83078231292517,
+                "precision": 0.994908350305499,
+                "f1": 0.9054680259499537,
+                "urlFpr": 0.007473841554559043,
+                "domainFpr": 0.008077544426494346,
+                "domainFprUpper": 0.013662783221612603
+              }
+            }
+          }
+        ],
+        "calibration": "Separately calibrated unseen-vector comparison"
+      }
+    ],
+    "frozen": [
+      "ngram",
+      "cnn",
+      "xgboost",
+      "fusion",
+      "mixed",
+      "fixed",
+      "stack",
+      "adaptive"
+    ],
+    "validationRows": 5011,
+    "validationPositive": 3655,
+    "calibrationDomains": 1200,
+    "trainingResources": {
+      "seconds": 53.25,
+      "peakBytes": 1181913088,
+      "logicalCpus": 2
+    },
+    "fresh": 0,
+    "paired": 0,
+    "financialIndia": 0,
+    "financialOther": 0
+  },
+  "datasets": {
+    "splits": {
+      "train": 9570,
+      "tuning": 2109,
+      "calibration": 2104,
+      "validation": 5011
+    },
+    "classCounts": {
+      "validation": {
+        "removed": [
+          0,
+          0
+        ],
+        "kept": [
+          1356,
+          3655
+        ]
+      },
+      "calibration": {
+        "removed": [
+          38,
+          2788
+        ],
+        "kept": [
+          1278,
+          826
+        ]
+      },
+      "tuning": {
+        "removed": [
+          45,
+          2815
+        ],
+        "kept": [
+          1335,
+          774
+        ]
+      },
+      "train": {
+        "removed": [
+          403,
+          20160
+        ],
+        "kept": [
+          9643,
+          4785
+        ]
+      }
+    },
+    "matchedRows": 50962,
+    "usableRows": 49901,
+    "components": 18022,
+    "largestComponent": 17391,
+    "exactCollisionRows": 1321,
+    "phishvn": {
+      "license": "CC BY 4.0",
+      "release": 5,
+      "lastObservation": "2025-02-18",
+      "forwardStart": "2025-12-17",
+      "scored": 0
+    }
+  },
+  "visual": {
+    "methods": [
+      {
+        "id": "phash",
+        "correct": 16,
+        "falseMatches": 0,
+        "medianMs": 2.2865000210003927,
+        "p95Ms": 5.088100006105378,
+        "referenceBytes": 24
+      },
+      {
+        "id": "orb",
+        "correct": 17,
+        "falseMatches": 0,
+        "medianMs": 7.206399997812696,
+        "p95Ms": 10.422099992865697,
+        "referenceBytes": 24576
+      },
+      {
+        "id": "mobilenet",
+        "correct": 17,
+        "falseMatches": 1,
+        "medianMs": 11.459300003480166,
+        "p95Ms": 15.338799974415451,
+        "referenceBytes": 12288
+      }
+    ],
+    "references": [
+      "State Bank of India",
+      "HDFC Bank",
+      "Axis Bank"
+    ],
+    "transformed": 18,
+    "unrelated": 3,
+    "independentRows": 0,
+    "paired": 0,
+    "canvasParity": false,
+    "canvasMinimum": 0.9681901987575199
+  }
+}

@@ -93,6 +93,20 @@ export async function downloadSnapshot(credential) {
   }
 }
 
+export async function probeReputationConnection(credential) {
+  try {
+    const response = await request(credential, 'reputation/snapshot', new AbortController().signal);
+    await response.body?.cancel().catch(() => {});
+    if (response.status === 401) return 'unauthorized';
+    if (response.status === 403) return 'forbidden';
+    if (response.status === 503) return 'no-reputation';
+    if (response.ok && response.headers.get('Content-Type')?.startsWith('application/json')) return 'connected';
+    return 'unexpected';
+  } catch {
+    return 'offline';
+  }
+}
+
 export async function startSession(credential, host, signal) {
   const result = await post(credential, 'session/start', { domain: host }, signal);
   if (typeof result?.sessionId !== 'string' || !SESSION_ID.test(result.sessionId)) {
@@ -125,4 +139,11 @@ export async function analyze(credential, sessionId, fields, signal) {
 
 export function requestFailure(error) {
   return error instanceof BackendStatus && [401, 403].includes(error.status) ? 'authentication' : 'backend';
+}
+
+export async function postMonitoring(credential, route, body, signal) {
+  const response = await request(credential, 'monitoring/' + route, signal, body);
+  if (response.status === 412 && route === 'events') return false;
+  if (response.status !== 204) throw new BackendStatus(response.status);
+  return true;
 }
