@@ -14,9 +14,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 
-@RestControllerAdvice(assignableTypes = MonitoringController.class)
-class MonitoringBodyLimit extends RequestBodyAdviceAdapter {
-    private static final int MAX_BYTES = 512;
+@RestControllerAdvice
+class ApiBodyLimit extends RequestBodyAdviceAdapter {
+    private static final int MONITORING_MAX_BYTES = 512;
+    private static final int API_MAX_BYTES = 8192;
 
     @Override
     public boolean supports(MethodParameter parameter, Type type,
@@ -27,9 +28,10 @@ class MonitoringBodyLimit extends RequestBodyAdviceAdapter {
     @Override
     public HttpInputMessage beforeBodyRead(HttpInputMessage input, MethodParameter parameter, Type type,
                                            Class<? extends HttpMessageConverter<?>> converter) throws IOException {
-        if (input.getHeaders().getContentLength() > MAX_BYTES) throw tooLarge();
-        byte[] body = input.getBody().readNBytes(MAX_BYTES + 1);
-        if (body.length > MAX_BYTES) throw tooLarge();
+        int limit = parameter.getContainingClass() == MonitoringController.class ? MONITORING_MAX_BYTES : API_MAX_BYTES;
+        if (input.getHeaders().getContentLength() > limit) throw tooLarge();
+        byte[] body = input.getBody().readNBytes(limit + 1);
+        if (body.length > limit) throw tooLarge();
         return new HttpInputMessage() {
             @Override
             public HttpHeaders getHeaders() { return input.getHeaders(); }
