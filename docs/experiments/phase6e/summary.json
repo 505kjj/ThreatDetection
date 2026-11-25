@@ -1,0 +1,6 @@
+{
+  "status": "Isolated browser research. New warnings and blocking are disabled.",
+  "scope": "Seven loopback Chromium scenarios passed 35 repeated trials. Twenty legitimate credential controls produced no credential advisories and ten suspicious form trials produced ten. This is not operational accuracy.",
+  "categories": ["Reputation", "Financial impersonation", "Redirects", "Credential forms", "Cookies", "Permissions", "Downloads", "Tracking", "Page behavior", "Experimental models"],
+  "limitations": "Across three runs, median inspection was 24.47–30.10 ms and p95 was 45.75–114.43 ms. Maximum browser job peak was 599,756,800 bytes. Download and tracker assessment remain deferred. No experimental production permissions are added."
+}

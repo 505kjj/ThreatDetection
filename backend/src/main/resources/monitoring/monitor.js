@@ -695,6 +695,12 @@ function renderResearch(data) {
   }));
   const { ml, datasets, visual, revisions } = data;
   const browserResearch = data.browserResearch;
+  const securityResearch = data.securityResearch;
+  if (securityResearch) {
+    byId('security-research-status').textContent = securityResearch.status + ' ' + securityResearch.scope;
+    byId('security-research-categories').textContent = securityResearch.categories.join(' · ');
+    byId('security-research-limitations').textContent = securityResearch.limitations;
+  }
   if (browserResearch) {
     byId('browser-research-scope').textContent = browserResearch.scope + ' ' + browserResearch.readiness;
     statusRows('browser-research-models', browserResearch.models.map(model => [model.name,
