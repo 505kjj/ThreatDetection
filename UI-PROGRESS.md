@@ -2,7 +2,7 @@
 
 ## Phase 7C research summary
 
-- The laboratory presents a single bounded synthetic H2 load result and its limitations. Maven, extension units and the direct Chromium responsive smoke passed after the summary was added. Secure Windows smoke, live screen-reader speech and comparison with the missing dashboard reference remain open on this branch.
+- The laboratory presents a single bounded synthetic H2 load result and its limitations. Maven, extension units and both direct and secure Windows Chromium responsive smokes passed after the summary was added. Live screen-reader speech and comparison with the missing dashboard reference remain open on this branch.
 
 ## Phase 6B integration verification
 
