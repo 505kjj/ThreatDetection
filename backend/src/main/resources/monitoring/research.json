@@ -79,7 +79,7 @@
   },
   "securityResearch": {
     "status": "Isolated browser research. New warnings and blocking are disabled.",
-    "scope": "Five loopback Chromium redirect and form fixtures matched expected categories. Three legitimate controls produced zero advisories; two suspicious form controls produced two advisories. This is not operational accuracy.",
+    "scope": "Seven loopback Chromium scenarios passed 35 repeated trials. Twenty legitimate credential controls produced no credential advisories and ten suspicious form trials produced ten. This is not operational accuracy.",
     "categories": [
       "Reputation",
       "Financial impersonation",
@@ -92,7 +92,7 @@
       "Page behavior",
       "Experimental models"
     ],
-    "limitations": "Form-inspection messaging median 39.19 ms and p95 98.81 ms in five samples. The browser job peaked at 562,417,664 bytes. Cookie, download, permission and tracker extraction remain unimplemented. The production extension has no new permissions."
+    "limitations": "Across three runs, median inspection was 24.47–30.10 ms and p95 was 45.75–114.43 ms. Maximum browser job peak was 599,756,800 bytes. Download and tracker assessment remain deferred. No experimental production permissions are added."
   },
   "financial": [
     {

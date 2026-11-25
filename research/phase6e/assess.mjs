@@ -27,6 +27,7 @@ export function assessFixture(input) {
   if (input.behavior === 'overlay' || input.behavior === 'popup' || input.behavior === 'iframe') {
     results.push(evidence('behavior', 'advisory', input.behavior));
   }
+  if (input.behavior === 'unavailable') results.push(evidence('behavior', 'unavailable', 'behavior-evidence-unavailable'));
   if (input.experimental === 'available') results.push(evidence('experimental', 'unavailable', 'research-only'));
   return results;
 }

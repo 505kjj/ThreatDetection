@@ -14,6 +14,12 @@ chrome.runtime.onMessage.addListener((message, sender, reply) => {
     else if (action.origin !== location.origin) form = 'external';
     else form = 'local';
   }
-  reply({ form });
+  const frames = [...document.querySelectorAll('iframe')];
+  if (frames.length > 20) { reply({ form, behavior: 'unavailable' }); return false; }
+  const externalFrame = frames.some(frame => {
+    try { return new URL(frame.getAttribute('src') || location.href, document.baseURI).origin !== location.origin; }
+    catch { return false; }
+  });
+  reply({ form, behavior: externalFrame ? 'iframe' : 'none' });
   return false;
 });
