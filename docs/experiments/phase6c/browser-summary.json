@@ -1,0 +1,15 @@
+{
+  "scope": "Synthetic fixtures on Chromium 159, Windows 11, two logical CPUs. Model-call latency excludes feature extraction and messaging.",
+  "readiness": "Research prototype. Independent validation is incomplete and production deployment is NO-GO.",
+  "jobPeakBytes": 721575936,
+  "jobPeakScope": "Whole neural browser test including Chromium and the harness, not model-only memory.",
+  "models": [
+    { "name": "Character TF-IDF", "bytes": 4554994, "p95Ms": 0.1, "maxError": 1.67e-16, "fixtures": 10, "runtime": "MV3 service worker, JavaScript" },
+    { "name": "URL XGBoost", "bytes": 90950, "p95Ms": 0.1, "maxError": 3.88e-8, "fixtures": 12, "runtime": "MV3 service worker, JavaScript" },
+    { "name": "Phase 5D URL ensemble", "bytes": 4645944, "p95Ms": 0.1, "maxError": 1.14e-8, "fixtures": 10, "runtime": "MV3 service worker, JavaScript" },
+    { "name": "Weighted DOM XGBoost", "bytes": 178192, "p95Ms": 0.1, "maxError": 7.08e-8, "fixtures": 12, "runtime": "MV3 service worker, numerical vectors" },
+    { "name": "Phase 5F fixed fusion", "bytes": 4742222, "p95Ms": 0.2, "maxError": 3.99e-8, "fixtures": 10, "runtime": "MV3 service worker, numerical vectors" },
+    { "name": "Character CNN", "bytes": 30042, "p95Ms": 0.3, "maxError": 7.22e-8, "fixtures": 10, "runtime": "MV3 extension page, ONNX WebAssembly" },
+    { "name": "Transformer", "bytes": 94586, "p95Ms": 2.3, "maxError": 3.43e-8, "fixtures": 10, "runtime": "MV3 extension page, ONNX WebAssembly" }
+  ]
+}

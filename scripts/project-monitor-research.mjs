@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { financialBrands } from '../extension/financial-domains.mjs';
 
@@ -203,6 +203,7 @@ const methods = Object.entries(visualSet.transformations).map(([id, outcomes]) =
 
 const data = {
   revisions,
+  browserResearch: JSON.parse(readFileSync(new URL('../docs/experiments/phase6c/browser-summary.json', import.meta.url), 'utf8')),
   financial: financialBrands.map(({ name, scopes, sharedHosts }) => ({ name, scopes, sharedHosts })),
   ml: {
     models, cohorts, frozen: Object.keys(registry.models), validationRows: grouping.rows.validation,

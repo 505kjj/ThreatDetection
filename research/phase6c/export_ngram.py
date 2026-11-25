@@ -16,9 +16,10 @@ FIXTURES = [
 ]
 
 
-def main(experiments, output):
+def main(experiments, output, candidate):
     receipt = json.loads((ROOT / "docs/experiments/phase5e/frozen-url.json").read_text())
-    spec = receipt["models"]["ngram"]
+    registry = json.loads((ROOT / "docs/experiments/phase5g/frozen-models.json").read_text())
+    spec = receipt["models"]["ngram"] if candidate == "phase5c" else registry["phase5fArtifacts"]["ngram"]
     source = (experiments / spec["artifact"]).resolve()
     if not source.is_relative_to(experiments.resolve()):
         raise ValueError("Artifact is outside the private experiments directory")
@@ -36,12 +37,12 @@ def main(experiments, output):
         "schema": "phase6c-char-tfidf-logistic-v1", "sourceSha256": spec["sha256"],
         "terms": [term for term, _ in vocabulary], "idf": vectorizer.idf_.tolist(),
         "coefficients": classifier.coef_[0].tolist(), "intercept": float(classifier.intercept_[0]),
-        "thresholds": spec["operatingPoints"],
+        "thresholds": spec.get("operatingPoints", {}),
     }
     output.mkdir(parents=True, exist_ok=False)
     (output / "model.json").write_text(json.dumps(converted, ensure_ascii=True, separators=(",", ":")), encoding="utf-8")
     reference = {"fixtures": FIXTURES, "scores": model.predict_proba(FIXTURES)[:, 1].tolist(),
-                 "tolerance": 1e-10, "thresholds": spec["operatingPoints"]}
+                 "tolerance": 1e-10, "thresholds": spec.get("operatingPoints", {})}
     (output / "reference.json").write_text(json.dumps(reference, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"sourceSha256": spec["sha256"], "terms": len(vocabulary),
                       "convertedBytes": (output / "model.json").stat().st_size, "fixtures": len(FIXTURES)}))
@@ -51,7 +52,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("experiments", type=Path)
     parser.add_argument("output", type=Path)
+    parser.add_argument("--candidate", choices=("phase5c", "phase5f"), default="phase5c")
     args = parser.parse_args()
     if args.output.resolve().is_relative_to(ROOT.resolve()):
         parser.error("Output must be outside the repository")
-    main(args.experiments, args.output)
+    main(args.experiments, args.output, args.candidate)
