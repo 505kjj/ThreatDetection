@@ -64,7 +64,7 @@ node --test research/phase6c/*.test.mjs
 
 Set `NODE_PATH` and `PLAYWRIGHT_BROWSERS_PATH` to the existing local Playwright and Chromium installation as described in the extension regression instructions. The neural export uses the existing private ONNX Python installation in `phase-6a-v1/browser-python`. The experiment directory holds the converted checkpoints, synthetic references, browser profiles and measurement receipts. It should be access-controlled and kept outside the repository.
 
-The dashboard aggregate is generated from `browser-summary.json` by `node scripts/project-monitor-research.mjs`. It contains only the synthetic measurements and limitations above. Maven verification passed 62 tests, the extension unit suite passed 29 tests, the Phase 6C Node suite passed four tests, and the direct Chromium smoke with responsive matrix passed after the dashboard change. Python exporters compiled and ran under the guard. The Phase 6B receipt checker passed 54 checks, with grouped membership digests outside that check. The secure Windows smoke passed on the Phase 6B base and needs a repeat on the final Phase 6C head.
+The dashboard aggregate is generated from `browser-summary.json` by `node scripts/project-monitor-research.mjs`. It contains only the synthetic measurements and limitations above. Maven verification passed 62 tests, the extension unit suite passed 29 tests, and the Phase 6C Node suite passed four tests. Direct and secure Windows Chromium smoke tests passed with the responsive matrix after the dashboard change. Python exporters compiled and ran under the guard. The Phase 6B receipt checker passed 54 checks, with grouped membership digests outside that check.
 
 ## Remaining work
 
