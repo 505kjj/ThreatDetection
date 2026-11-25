@@ -10,10 +10,15 @@ if (!process.argv[2] || experiment === root || experiment.startsWith(root + requ
 }
 const packageDir = join(experiment, 'browser-package');
 mkdirSync(packageDir);
-for (const name of ['manifest.json', 'worker.mjs', 'ngram.mjs', 'fixture.html']) {
+for (const name of ['manifest.json', 'worker.mjs', 'ngram.mjs', 'url-features.mjs', 'xgboost.mjs', 'fixture.html']) {
   cpSync(join(__dirname, name), join(packageDir, name));
 }
+for (const [source, name] of [['extension/reputation.mjs', 'reputation.mjs'],
+  ['extension/settings.mjs', 'settings.mjs'], ['extension/vendor/tldts.mjs', 'tldts.mjs']]) {
+  cpSync(join(root, source), join(packageDir, name));
+}
 cpSync(join(experiment, 'ngram', 'model.json'), join(packageDir, 'model.json'));
+for (const name of ['url', 'dom']) cpSync(join(experiment, 'xgboost', `${name}.json`), join(packageDir, `${name}.json`));
 const reference = JSON.parse(readFileSync(join(experiment, 'ngram', 'reference.json')));
 const quantile = (values, p) => [...values].sort((a, b) => a - b)[Math.ceil(values.length * p) - 1];
 
@@ -38,6 +43,28 @@ async function main() {
     const invalid = await send([null]);
     assert.equal(invalid.error, 'Invalid model input');
     assert.deepEqual((await send(reference.fixtures)).scores, first.scores);
+    const { extractUrl } = await import('../../evaluation/features.mjs');
+    const urlFixtures = ['https://example.test/', 'https://user:secret@bücher.example.test/a%2fb?q=secret#private',
+      'http://test.example.test:8080/a/123', 'https://example.test/💳', 'ftp://example.test/', 'not a URL'];
+    const urlResults = await page.evaluate(async inputs => chrome.runtime.sendMessage({ type: 'synthetic-url', inputs }), urlFixtures);
+    for (let index = 0; index < urlFixtures.length; index++) {
+      assert.deepEqual(urlResults.scores[index]?.features ?? null, extractUrl(urlFixtures[index], 'synthetic')?.features ?? null);
+    }
+    const trees = {};
+    for (const name of ['url', 'dom']) {
+      const expected = JSON.parse(readFileSync(join(experiment, 'xgboost', `${name}-reference.json`)));
+      const result = await page.evaluate(async ({ name, inputs }) =>
+        chrome.runtime.sendMessage({ type: 'synthetic-trees', model: name, inputs }), { name, inputs: expected.vectors });
+      if (result.error) throw new Error(result.error);
+      const errors = result.scores.map((score, index) => Math.abs(score - expected.scores[index]));
+      assert.ok(Math.max(...errors) <= expected.tolerance, `${name} tree parity exceeds tolerance`);
+      const thresholds = Object.values(expected.thresholds).filter(value => value !== null);
+      for (const threshold of thresholds) {
+        result.scores.forEach((score, index) => assert.equal(score >= threshold, expected.scores[index] >= threshold));
+      }
+      trees[name] = { fixtures: errors.length, tolerance: expected.tolerance, maximumAbsoluteError: Math.max(...errors),
+        thresholdDecisionsAgree: thresholds.length ? true : null };
+    }
     const errors = first.scores.map((score, index) => Math.abs(score - reference.scores[index]));
     assert.ok(Math.max(...errors) <= reference.tolerance, `Parity exceeds ${reference.tolerance}`);
     for (const threshold of Object.values(reference.thresholds).filter(value => value !== null)) {
@@ -59,7 +86,7 @@ async function main() {
       thresholdDecisionsAgree: true, initializationMs: first.initializationMs,
       repeatedInferences: durations.length, medianMs: quantile(durations, 0.5), p95Ms: quantile(durations, 0.95),
       concurrentRequests: runs.length, serviceWorkerRecovery: true, invalidInputRecovery: true,
-      outboundPageRequests: outboundRequests,
+      outboundPageRequests: outboundRequests, urlFeatureFixtures: urlFixtures.length, trees,
       note: 'Synthetic normalized strings only. DOM, end-to-end URL extraction, memory growth and CPU attribution are not measured.'
     };
     writeFileSync(join(experiment, 'browser-results.json'), JSON.stringify(result, null, 2) + '\n', { flag: 'wx' });
