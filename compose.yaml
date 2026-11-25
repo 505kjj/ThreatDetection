@@ -1,0 +1,25 @@
+services:
+  backend:
+    build: .
+    environment:
+      SERVER_ADDRESS: 0.0.0.0
+      SERVER_PORT: "8081"
+      SPRING_CONFIG_IMPORT: configtree:/run/threat-config/
+      THREAT_MONITORING_STOREPATH: /app/data/monitoring
+    ports:
+      - "127.0.0.1:8081:8081"
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - monitoring:/app/data
+      - type: bind
+        source: ${THREAT_DOCKER_CONFIG_DIR:?Set a private configuration directory}
+        target: /run/threat-config
+        read_only: true
+volumes:
+  monitoring:

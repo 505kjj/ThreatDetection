@@ -5,6 +5,7 @@ const verdicts = new Set(['ALLOW', 'SHOW_WARNING', 'BLOCK_PHISHING', 'BLOCK_MALW
 
 export function aggregateEvidence({ production, observations, enabled = false }) {
   if (!production || !verdicts.has(production.decision) || typeof production.bypassAllowed !== 'boolean' ||
+      (production.bypassAllowed && production.decision !== 'BLOCK_PHISHING') ||
       !Array.isArray(observations) || observations.length > 32 || typeof enabled !== 'boolean') {
     throw new TypeError('Invalid policy input');
   }

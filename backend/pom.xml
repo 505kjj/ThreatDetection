@@ -61,6 +61,18 @@
             <artifactId>flyway-core</artifactId>
         </dependency>
 
+        <!-- Optional PostgreSQL monitoring store -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
         <!-- Stateless bearer authentication and API authorization -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

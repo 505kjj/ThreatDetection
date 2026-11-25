@@ -14,7 +14,14 @@ record MonitoringProperties(
         @DefaultValue("14") @Min(1) @Max(90) int retentionDays,
         @DefaultValue("60") @Min(1) @Max(120) int eventsPerMinute,
         Set<String> syntheticClients,
-        String storePath) {
+        String storePath,
+        @jakarta.validation.Valid Postgres postgres) {
+    record Postgres(String jdbcUrl, String username, String password, String rootCertificate,
+                    boolean allowLoopbackWithoutTls, @DefaultValue("3") @Min(1) @Max(16) int poolSize) {
+        @Override
+        public String toString() { return "Postgres[configured]"; }
+    }
+
     MonitoringProperties {
         syntheticClients = syntheticClients == null ? Set.of() : Set.copyOf(syntheticClients);
     }

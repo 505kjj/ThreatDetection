@@ -181,6 +181,15 @@ class ApiSecurityTests {
     }
 
     @Test
+    void rejectsOversizedJsonBeforeParsing() throws Exception {
+        String oversized = " ".repeat(8192) + "{}";
+        submit("/session/start", FIRST, oversized).andExpect(status().is(413));
+        submit("/analyze", FIRST, oversized).andExpect(status().is(413));
+        submit("/event", FIRST, oversized).andExpect(status().is(413));
+        submit("/action", ADMIN, oversized).andExpect(status().is(413));
+    }
+
+    @Test
     void validatesRequiredFieldsAndAdministrativeInputs() throws Exception {
         String absent = UUID.randomUUID().toString();
         submit("/analyze", FIRST, "{}").andExpect(status().isBadRequest());

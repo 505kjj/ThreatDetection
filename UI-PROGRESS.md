@@ -1,5 +1,9 @@
 # Frontend progress
 
+## Phase 7C stabilization
+
+- The laboratory presents separate in-memory and file-backed H2 results from the paced synthetic runs, including the isolated rate-limit check. The [release report](docs/phase-7-release-readiness.md) records verification and open acceptance gates. Live screen-reader speech and comparison with the dashboard reference remain open.
+
 ## Phase 6B integration verification
 
 - The integrated product runtime matches UI-2 commit `9661a263`. Direct and secure Chromium smoke runs passed with the responsive matrix. The secure run exercised PowerShell 5.1 setup and PowerShell 7 restart, persistence and credential rotation.

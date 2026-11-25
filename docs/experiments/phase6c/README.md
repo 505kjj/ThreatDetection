@@ -68,8 +68,18 @@ The dashboard aggregate is generated from `browser-summary.json` by `node script
 
 ## Remaining work
 
+An additional guarded synthetic near-threshold check generated 4,000 fictional `.test` URLs and selected 160 strings, including the 20 closest to each non-null frozen score cutoff. Chromium matched the frozen Python TF-IDF scores with maximum absolute error `5.56e-16` and all tested threshold decisions agreed. The closest generated scores were 0.0000797 from 0.5, 0.0000415 from 0.7444548803360985 and 0.0860 from 0.9748486034939972. The strictest cutoff therefore still lacks a close synthetic case. The two-CPU browser job used 6.73 CPU seconds and 568,926,208 bytes peak job commit. These synthetic strings provide numerical parity evidence only. Reproduce the reference with the Windows guard and `research/phase6c/near_threshold.py <private-experiments-directory> <new-private-reference>` and run the Phase 6C browser harness using that reference in a new private experiment directory.
+
 - Expand model and fusion parity beyond the small synthetic sample, including near-threshold cases and complete browser feature pipelines.
 - Expand URL feature parity coverage and validate the frozen DOM feature definitions in the browser. Cover delayed DOM changes, cross-origin frames and unavailable evidence without collecting field values.
 - Evaluate native JavaScript, typed-array and WebAssembly tradeoffs further. Measure end-to-end latency, initialization distributions, CPU, model-only memory and repeated-run memory growth under the resource guard.
 - Add reviewed aggregate results to the existing research dashboard only after the measurements and scope are complete. Run the requested full regression and frozen-integrity checks on the final branch.
 - Identify preferred candidates only after their comparable parity, performance and independent-validation limitations are documented.
+
+## Stabilization results
+
+Chromium processed all 160 synthetic TF-IDF fixtures with added query and fragment data through canonicalization, numerical URL projection and model scoring. All frozen threshold decisions agreed. Five batches of 160 took 27.80 ms median and 39.90 ms p95, including extension messaging. A separate run measured 36.90 ms median and 65.60 ms p95. Timings are for whole batches. The initial model load and scorer construction took 292.40 ms in the run with DOM fixtures.
+
+Eight synthetic Phase 5E HTML fixtures, including the materialized delayed form, passed Chromium DOM projection, weighted numerical features, calibrated fixed fusion and threshold checks against the pinned Python path. Maximum score error was `5.52e-8` under the predefined `2e-6` tolerance. A mixed request returned an unavailable score for absent DOM and the original score for the complete pair. The browser uses an inert DOM parser. Live navigation, cross-origin DOM access and per-page collection latency remain outside this check. Peak browser-job commit was 585,990,144 bytes with 9.09 CPU seconds for the combined URL and DOM harness.
+
+Export a fresh private DOM receipt with `research/phase6c/export_dom_reference.py <private-experiments-directory> <new-private-dom-reference>` under the Windows resource guard and existing Phase 5B environment. Use the Phase 5E parser dependencies and pass the receipt as the second argument to `research/phase6c/browser.cjs <private-conversion-directory> <private-dom-reference>`. Use a new directory containing the unchanged converted models and synthetic references. The corpus, strictest cutoff, neural worker and long-running memory limitations still apply.

@@ -1,0 +1,5 @@
+{
+  "status": "Paced synthetic loopback runs with in-memory and file-backed H2.",
+  "result": "Each store accepted 208 events with zero errors across concurrency 1, 4 and 8. At concurrency 8, p95 was 131.90 ms in memory and 233.17 ms on disk. In both runs the quota returned HTTP 429 on the 61st request from a separate client.",
+  "limitations": "Three eight-second stages per store on one workstation, paced at up to 16 events per second. These figures describe fixture behavior. Docker and deployed PostgreSQL recovery remain unverified."
+}

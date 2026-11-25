@@ -36,20 +36,51 @@ class MonitoringEventRepository {
     MonitoringEventRepository(MonitoringProperties properties) {
         HikariConfig pool = new HikariConfig();
         pool.setPoolName("monitoring-store");
-        pool.setJdbcUrl(databaseUrl(properties.storePath()));
-        pool.setUsername("sa");
+        var postgres = properties.postgres();
+        if (postgres == null) {
+            pool.setJdbcUrl(databaseUrl(properties.storePath()));
+            pool.setUsername("sa");
+            pool.setMaximumPoolSize(3);
+        } else {
+            configurePostgres(pool, properties.storePath(), postgres);
+        }
         pool.setMinimumIdle(1);
-        pool.setMaximumPoolSize(3);
         pool.setConnectionTimeout(2000);
         source = new HikariDataSource(pool);
         try {
-            Flyway.configure().dataSource(source).locations("classpath:db/monitoring").load().migrate();
+            String migrations = postgres == null ? "classpath:db/monitoring" : "classpath:db/monitoring-postgresql";
+            Flyway.configure().dataSource(source).locations(migrations).cleanDisabled(true).load().migrate();
         } catch (RuntimeException error) {
             source.close();
             throw error;
         }
         jdbc = new JdbcTemplate(source);
         jdbc.setQueryTimeout(3);
+    }
+
+    static void configurePostgres(HikariConfig pool, String storePath, MonitoringProperties.Postgres settings) {
+        String url = settings.jdbcUrl();
+        if ((storePath != null && !storePath.isBlank()) || url == null ||
+                !url.matches("jdbc:postgresql://[A-Za-z0-9.-]+(?::[0-9]{1,5})?/[A-Za-z0-9_-]+") ||
+                settings.username() == null || settings.username().isBlank() ||
+                settings.password() == null || settings.password().isBlank()) {
+            throw new IllegalArgumentException("Monitoring PostgreSQL requires a dedicated JDBC endpoint and separate credentials");
+        }
+        if (settings.allowLoopbackWithoutTls() &&
+                !url.matches("jdbc:postgresql://127[.]0[.]0[.]1(?::[0-9]{1,5})?/[^/]+")) {
+            throw new IllegalArgumentException("Monitoring PostgreSQL without TLS requires IPv4 loopback");
+        }
+        pool.setJdbcUrl(url);
+        pool.setUsername(settings.username());
+        pool.setPassword(settings.password());
+        pool.setMaximumPoolSize(settings.poolSize());
+        pool.addDataSourceProperty("sslmode", settings.allowLoopbackWithoutTls() ? "disable" : "verify-full");
+        pool.addDataSourceProperty("gssEncMode", "disable");
+        pool.addDataSourceProperty("connectTimeout", "2");
+        pool.addDataSourceProperty("socketTimeout", "5");
+        if (settings.rootCertificate() != null && !settings.rootCertificate().isBlank()) {
+            pool.addDataSourceProperty("sslrootcert", settings.rootCertificate());
+        }
     }
 
     private static String databaseUrl(String setting) {

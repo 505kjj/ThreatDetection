@@ -205,6 +205,7 @@ const data = {
   revisions,
   browserResearch: JSON.parse(readFileSync(new URL('../docs/experiments/phase6c/browser-summary.json', import.meta.url), 'utf8')),
   securityResearch: JSON.parse(readFileSync(new URL('../docs/experiments/phase6e/summary.json', import.meta.url), 'utf8')),
+  scalabilityResearch: JSON.parse(readFileSync(new URL('../docs/experiments/phase7c/summary.json', import.meta.url), 'utf8')),
   financial: financialBrands.map(({ name, scopes, sharedHosts }) => ({ name, scopes, sharedHosts })),
   ml: {
     models, cohorts, frozen: Object.keys(registry.models), validationRows: grouping.rows.validation,

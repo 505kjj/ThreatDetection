@@ -12,4 +12,6 @@ No data, labels, screenshots or model predictions were downloaded or inspected d
 
 ## Dependencies
 
+The [custodian handoff](custodian-handoff.md) packages the frozen intake checklist, attestation requirements and reproduction entry point. Candidate-source eligibility was not reopened during stabilization because no new admissible evidence arrived.
+
 Phase 6B PR #29 remains draft with the dashboard reference comparison and live screen-reader speech review outstanding. Phase 6C PR #30 remains draft with broader feature and near-threshold parity, complete browser pipelines and extended performance checks open. Phase 6D PR #31 remains draft with native-canvas preprocessing parity and independent visual evidence open. Phase 6E PR #32 remains draft with its accepted download and tracker deferrals. These gates remain separate from data intake.

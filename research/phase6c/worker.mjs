@@ -51,7 +51,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       const durations = [];
       const scores = message.inputs.map(input => {
         const start = performance.now();
-        const score = fixedFusion(predictUrl(input.text), predictTree(input.vector), message.urlScale, message.otherScale);
+        const score = message.model === 'phase5f' && input.vector === null ? null
+          : fixedFusion(predictUrl(input.text), predictTree(input.vector), message.urlScale, message.otherScale);
         durations.push(performance.now() - start);
         return score;
       });
