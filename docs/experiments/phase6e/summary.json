@@ -1,0 +1,6 @@
+{
+  "status": "Offline research pilot. New warnings and blocking are disabled.",
+  "scope": "Synthetic metadata classification only. No browser observations or operational accuracy were measured.",
+  "categories": ["Reputation", "Financial impersonation", "Redirects", "Credential forms", "Cookies", "Permissions", "Downloads", "Tracking", "Page behavior", "Experimental models"],
+  "limitations": "Cookie, navigation, download and content-setting APIs require additional permissions. No new permissions are requested by this pilot."
+}
