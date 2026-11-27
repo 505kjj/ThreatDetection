@@ -1,6 +1,9 @@
 services:
   backend:
-    build: .
+    build:
+      context: .
+      args:
+        JAVA_BASE_IMAGE: ${THREAT_JAVA_BASE_IMAGE:-eclipse-temurin:21-jre}
     environment:
       SERVER_ADDRESS: 0.0.0.0
       SERVER_PORT: "8081"

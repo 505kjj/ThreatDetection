@@ -9,7 +9,7 @@ const output = resolve(process.argv[2] ?? join(here, 'dist'));
 const checkout = 'https://github.com/505kjj/ThreatDetection';
 const navigation = [
   ['features', 'Features'], ['how-it-works', 'How it works'], ['research', 'Research'],
-  ['extension', 'Extension'], ['demo', 'Security demo']
+  ['extension', 'Extension'], ['demo', 'Security demo'], ['docs', 'Documentation']
 ];
 
 function monitorHref(value) {
@@ -49,7 +49,7 @@ function render(slug, { title, description, body }) {
       <a class="button button-small button-outline admin-link" href="/administrator/">Admin login</a>
       <details class="mobile-nav">
         <summary>Menu</summary>
-        <nav aria-label="Mobile navigation">${[...navigation, ['docs', 'Documentation'], ['administrator', 'Admin login']].map(item => link(item, slug)).join('')}</nav>
+        <nav aria-label="Mobile navigation">${[...navigation, ['administrator', 'Admin login']].map(item => link(item, slug)).join('')}</nav>
       </details>
     </div>
   </header>

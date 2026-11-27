@@ -1,7 +1,7 @@
 @font-face {
   font-family: Inter;
   src: url("/assets/inter-latin.woff2") format("woff2");
-  font-weight: 100 900;
+  font-weight: 400 800;
   font-display: swap;
 }
 
@@ -48,7 +48,7 @@ img { display: block; max-width: 100%; }
 .footer .brand img { width: 28px; height: 28px; }
 
 h1, h2, h3 { margin: 0; line-height: 1.12; letter-spacing: -.045em; text-wrap: balance; }
-h1 { font-size: clamp(3rem, 6.2vw, 6.1rem); font-weight: 810; }
+h1 { font-size: clamp(3rem, 6.2vw, 6.1rem); font-weight: 800; }
 h2 { font-size: clamp(1.85rem, 3.7vw, 3.25rem); font-weight: 740; }
 h3 { font-size: clamp(1.2rem, 2.1vw, 1.65rem); font-weight: 690; }
 p { margin: .85rem 0 0; color: var(--muted); max-width: 65ch; }
@@ -67,6 +67,7 @@ code { overflow-wrap: anywhere; color: var(--violet); }
 .hero h1 { margin-top: .9rem; }
 .hero h1 span { display: block; animation: settle 650ms both; }
 .hero h1 span + span { animation-delay: 100ms; }
+.hero h1 span:nth-child(3) { animation-delay: 160ms; }
 .hero h1 .violet { color: var(--violet); }
 .hero p { font-size: clamp(1rem, 1.6vw, 1.23rem); max-width: 36ch; }
 .hero-copy > p, .hero-copy > .actions { animation: settle 600ms 180ms both; }
@@ -133,7 +134,7 @@ code { overflow-wrap: anywhere; color: var(--violet); }
 .cards [data-revealed]:nth-child(2) { animation-delay: 70ms; }
 .cards [data-revealed]:nth-child(3) { animation-delay: 140ms; }
 
-@media (max-width: 920px) {
+@media (max-width: 1030px) {
   .primary, .admin-link { display: none; }
   .mobile-nav { display: block; position: relative; }
   .mobile-nav summary { padding: .5rem .9rem; border: 1px solid var(--border); border-radius: .6rem; }

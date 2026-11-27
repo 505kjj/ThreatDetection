@@ -107,10 +107,12 @@ class MonitoringStorageTests {
     }
 
     @Test
-    @EnabledIfEnvironmentVariable(named = "THREAT_TEST_POSTGRES_URL", matches = "jdbc:postgresql://127[.]0[.]0[.]1:[0-9]+/postgres")
+    @EnabledIfEnvironmentVariable(named = "THREAT_TEST_POSTGRES_URL",
+            matches = "jdbc:postgresql://(127[.]0[.]0[.]1|localhost):[0-9]+/postgres")
     void postgresMigrationConcurrentDuplicatePersistenceAndRetention() throws Exception {
+        String ca = System.getenv("THREAT_TEST_POSTGRES_CA");
         var config = new MonitoringProperties.Postgres(System.getenv("THREAT_TEST_POSTGRES_URL"),
-                System.getenv("THREAT_TEST_POSTGRES_USER"), System.getenv("THREAT_TEST_POSTGRES_PASSWORD"), null, true, 3);
+                System.getenv("THREAT_TEST_POSTGRES_USER"), System.getenv("THREAT_TEST_POSTGRES_PASSWORD"), ca, ca == null, 3);
         var profile = new MonitoringProperties(14, 60, Set.of(), null, config);
         Instant now = Instant.now().truncatedTo(ChronoUnit.MILLIS);
         var event = new MonitoringEvent("phase7-test", UUID.randomUUID(), now, now, true, PHISHING, BLOCKED);

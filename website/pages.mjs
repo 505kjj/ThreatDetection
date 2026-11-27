@@ -1,5 +1,6 @@
 const repo = 'https://github.com/505kjj/ThreatDetection';
-const source = (file, text) => `<a href="${repo}/blob/feature/phase-7c-security-scalability/${file}">${text}</a>`;
+const productCommit = '17524a9584fbce78b6c4071ab29bc6e21831d00f';
+const source = (file, text) => `<a href="${repo}/blob/${productCommit}/${file}">${text}</a>`;
 const button = (url, text, kind = 'solid') => `<a class="button button-${kind}" href="${url}">${text}</a>`;
 const intro = (title, description) => `<section class="page-intro"><h1>${title}</h1><p>${description}</p></section>`;
 const page = (title, description, content) => ({ title, description, body: () => intro(title, description) + content });
@@ -14,9 +15,9 @@ const protection = [
 
 const architecture = `<div class="diagram" data-choice>
   <div class="diagram-nodes" role="group" aria-label="Protection layers">
-    <button type="button" data-target="browser" aria-controls="browser" aria-pressed="true">01 <span>Browser</span></button>
-    <button type="button" data-target="backend" aria-controls="backend" aria-pressed="false">02 <span>Backend</span></button>
-    <button type="button" data-target="console" aria-controls="console" aria-pressed="false">03 <span>Console</span></button>
+    <button type="button" data-target="browser" aria-controls="browser" aria-pressed="true"><span>Browser</span></button>
+    <button type="button" data-target="backend" aria-controls="backend" aria-pressed="false"><span>Backend</span></button>
+    <button type="button" data-target="console" aria-controls="console" aria-pressed="false"><span>Console</span></button>
   </div>
   <div class="diagram-output" aria-live="polite">
     <div id="browser" data-panel><h3>Check locally at navigation</h3><p>Chrome applies current reputation rules. Financial checks use domain and form structure to surface a separate advisory.</p></div>
@@ -68,7 +69,7 @@ export const pages = {
     body: () => `<section class="hero">
       <div class="hero-copy">
         <span class="eyebrow"><span></span> Browser security with evidence</span>
-        <h1><span>Detect. Defend.</span><span class="violet">Protect.</span></h1>
+        <h1><span>Detect.</span> <span>Defend.</span> <span class="violet">Protect.</span></h1>
         <p>Block known threats. Get clear warnings about suspicious financial sign-ins. Keep reporting in your control.</p>
         <div class="actions">${button('/extension/', 'Install locally')}${button('/demo/', 'Try the security demo', 'outline')}</div>
       </div>
@@ -114,7 +115,7 @@ export const pages = {
     <li>Open <code>chrome://extensions</code>, enable Developer mode and select <strong>Load unpacked</strong>.</li>
     <li>Select the project’s <code>extension</code> folder, or the extracted versioned release package supplied by your operator.</li>
     <li>Open ThreatDetection settings. Set the approved backend origin and browser credential, then use <strong>Test connection</strong>.</li>
-    </ol><div class="actions">${button(repo, 'Get source')}${button('/docs/', 'Setup documentation', 'outline')}</div></div>
+    </ol><div class="actions">${button(repo + '/tree/' + productCommit, 'Get source')}${button('/docs/', 'Setup documentation', 'outline')}</div></div>
     ${preview('extension', 'Extension popup', 'ThreatDetection browser extension popup during a synthetic protection check')}</section>
     <section class="band"><h2>Permissions at installation</h2><p>Chrome grants the extension access to eligible HTTP and HTTPS pages for on-device navigation and form evidence. Connections to a remote backend require a separate HTTPS host grant. Review the privacy policy before installing.</p>${button('/privacy/', 'Privacy policy', 'outline')}</section>`),
   demo: page('Interactive security demo', 'Synthetic scenarios only. These examples use fictional evidence, accept no input and make no backend requests.',

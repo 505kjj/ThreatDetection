@@ -6,6 +6,7 @@ Threat Detection contains a Java 21 Spring Boot API and monitoring console, a Ma
 
 - **Architecture guide:** [System architecture](docs/architecture.md)
 - **Integration audit:** [Phase 6B integration report](docs/phase-6b-integration.md)
+- **Release preparation:** [Phase 8A readiness and test evidence](docs/phase-8a-release-readiness.md), [deployment guide](docs/phase-8a-deployment.md) and [Chrome Web Store materials](docs/phase-8a-chrome-store.md).
 
 Use a repository checkout for product development. Keep private research artifacts outside Git.
 
@@ -19,6 +20,7 @@ The [Phase 3B research preflight](research/README.md) and Phases 3C–6A researc
 | --- | --- | --- |
 | Spring Boot REST API, rules, and `/monitor` UI | [`backend/`](backend/) | Secured API with temporary activity sessions, Flyway-migrated H2 monitoring store, and UI-1/UI-2 black-and-violet console at `/monitor`. |
 | Chrome extension | [`extension/`](extension/) | MV3 extension that downloads an authenticated threat snapshot, enforces local blocks/advisories, and supports opt-in privacy-preserving reporting. |
+| Public product website | [`website/`](website/) | Standalone static site, installation guide and page-local synthetic demo. The authenticated console stays on the backend origin. |
 | Swing admin client | [`admin-swing/`](admin-swing/) | Desktop client (compiles on Java 21; requires admin bearer token and updated session contract for live requests). |
 | Offline evaluation harness | [`evaluation/`](evaluation/) | Dataset manifest validator, feature extractor (`url-lexical-v1`), and replay tests. |
 | Offline ML and visual research | [`research/`](research/) | Phases 3B–6A offline experiments, Windows resource guard, and Phase 5G frozen-model custody preflight. Not required by production. |

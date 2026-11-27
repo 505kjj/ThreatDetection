@@ -138,3 +138,9 @@ Product base is Phase 4C `b9b4add`. The inspected remote main includes Phase 5E 
 3. Use the [secure Windows walkthrough](docs/windows-local-setup.md). Point `NODE_PATH` and `PLAYWRIGHT_BROWSERS_PATH` at the installed Playwright package and Chromium. Set `THREAT_SMOKE_LOCAL_SETUP=1` and optionally `THREAT_MONITOR_CAPTURE_DIR` to a private directory outside Git. Run `node extension/tests/chrome-smoke.cjs` for the disposable Windows profile and evidence capture. Clear `THREAT_SMOKE_LOCAL_SETUP` and `THREAT_MONITOR_CAPTURE_DIR` and rerun for the direct disposable-backend mode, which also tests invalid and expired snapshots. Keep synthetic reports separate from the live scope.
 
 The UI-1 baseline used system typography. The Maven build uses the committed sanitized projection without access to research branches.
+
+## Phase 8A website and release checks
+
+The [standalone product site](website/) builds with `node website/build.mjs`. Preview it with `node website/preview.mjs 4173`. Its administrator link opens the existing console on the configured server. The website includes a local synthetic demo and serves no authenticated monitoring data.
+
+The [Phase 8A readiness report](docs/phase-8a-release-readiness.md) records the website and console checks, release package verification and remaining sign-off gates. Updated private captures are in `C:/Users/kj/threat-detection-experiments/phase-8a-release`. For dashboard UI sign-off, open the synthetic console profile, repeat the login, chart and drawer flows with a live screen reader, and compare against the original dashboard reference when it is available.
