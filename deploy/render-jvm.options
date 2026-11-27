@@ -1,0 +1,7 @@
+-Xms32m
+-Xmx160m
+-Xss512k
+-XX:+UseSerialGC
+-XX:ActiveProcessorCount=1
+-XX:ReservedCodeCacheSize=64m
+-XX:+ExitOnOutOfMemoryError

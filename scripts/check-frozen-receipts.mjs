@@ -4,8 +4,9 @@ import { readFileSync, statSync } from 'node:fs';
 import { resolve, relative, isAbsolute } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
+const publicOnly = process.argv[2] === '--public-only';
 const experiments = resolve(process.argv[2] ?? '');
-if (!process.argv[2]) throw new Error('Provide the private experiments directory');
+if (!process.argv[2]) throw new Error('Provide the private experiments directory or use --public-only');
 const registry = JSON.parse(readFileSync(resolve(root, 'docs/experiments/phase5g/frozen-models.json')));
 const hash = data => createHash('sha256').update(data).digest('hex');
 const gitHash = (revision, name) => hash(Buffer.from(execFileSync('git', ['show', `${revision}:${name}`],
@@ -30,6 +31,10 @@ for (const [name, expected] of Object.entries(registry.evaluationCodeSha256))
   check(gitHash('ebe0f4f', name), expected, name);
 check(gitHash(registry.phase5fRevision, 'docs/experiments/phase5f/results.json'), registry.phase5fReportSha256, 'Phase 5F report');
 check(gitHash(registry.phase5fRevision, 'docs/experiments/phase5e/frozen-url.json'), registry.phase5eRegistrySha256, 'Phase 5E registry');
+if (publicOnly) {
+  console.log(`${count} public Git receipt checks passed. Private artifact checks require the separate experiments directory.`);
+  process.exit(0);
+}
 for (const [name, expected] of Object.entries(registry.historySha256)) privateFile(name, expected);
 for (const entry of [...Object.values(registry.models), ...Object.values(registry.phase5fArtifacts)])
   if (entry.artifact) privateFile(entry.artifact, entry.sha256, entry.bytes);

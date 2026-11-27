@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const { spawn, spawnSync } = require('node:child_process');
 const { createHash, randomBytes, randomUUID } = require('node:crypto');
 const { once } = require('node:events');
-const { mkdtempSync, realpathSync, rmSync, writeFileSync } = require('node:fs');
+const { mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } = require('node:fs');
 const { createServer } = require('node:net');
 const { tmpdir } = require('node:os');
 const { basename, dirname, join, resolve } = require('node:path');
@@ -12,6 +12,7 @@ const { setTimeout: wait } = require('node:timers/promises');
 const [reportFile, pgServer, pgClients, openssl] = process.argv.slice(2);
 const repo = resolve(__dirname, '..');
 const executable = process.platform === 'win32' ? '.exe' : '';
+const renderProfile = process.env.THREAT_RELEASE_RENDER_PROFILE === '1';
 const credential = () => randomBytes(32).toString('base64url');
 const digest = text => createHash('sha256').update(text).digest('hex');
 const cleanEnv = Object.fromEntries(Object.entries(process.env)
@@ -37,9 +38,20 @@ function startBackend(configuration, env = {}) {
   const javaHome = /^\s*java\.home = (.+)$/m.exec(javaInfo.stderr)?.[1]?.trim();
   assert(javaHome, 'Java 21 is required');
   const jar = join(repo, 'backend', 'target', 'threat-detection-0.0.1-SNAPSHOT.jar');
+  const postgres = configuration.threat.monitoring.postgres;
+  const deploymentEnv = renderProfile ? {
+    SPRING_PROFILES_ACTIVE: 'render', PORT: '0',
+    TD_RENDER_NEON_JDBC_URL: postgres['jdbc-url'],
+    TD_RENDER_NEON_USER: postgres.username, TD_RENDER_NEON_PASSWORD: postgres.password,
+    TD_RENDER_EXTENSION_ORIGIN: 'chrome-extension://' + 'a'.repeat(32),
+    TD_RENDER_BROWSER_DIGEST: digest(credential()), TD_RENDER_ADMIN_DIGEST: digest(credential())
+  } : {};
+  const jvm = renderProfile ? ['@' + join(repo, 'deploy', 'render-jvm.options'),
+    '-XX:NativeMemoryTracking=summary', '-Xlog:gc'] : ['-Xmx256m'];
+  const started = performance.now();
   const child = spawn(join(javaHome, 'bin', 'java' + executable),
-    ['-Xmx256m', '-jar', jar, '--server.address=127.0.0.1', '--server.port=0'], {
-      env: { ...cleanEnv, ...env, SPRING_APPLICATION_JSON: JSON.stringify(configuration) },
+    [...jvm, '-jar', jar, '--server.address=127.0.0.1', ...(renderProfile ? [] : ['--server.port=0'])], {
+      env: { ...cleanEnv, ...env, ...deploymentEnv, SPRING_APPLICATION_JSON: JSON.stringify(configuration) },
       windowsHide: true
     });
   let logs = '';
@@ -54,6 +66,7 @@ function startBackend(configuration, env = {}) {
         if (port) {
           const origin = 'http://127.0.0.1:' + port;
           if ((await fetch(origin + '/api/health', { signal: AbortSignal.timeout(1500) }).catch(() => null))?.ok) {
+            this.startupMs = performance.now() - started;
             return origin;
           }
         }
@@ -61,7 +74,31 @@ function startBackend(configuration, env = {}) {
       }
       throw new Error('Disposable backend did not start');
     },
-    logs: () => logs
+    logs: () => logs,
+    memory() {
+      const jcmd = join(javaHome, 'bin', 'jcmd' + executable);
+      const sample = (...args) => run(jcmd, [String(child.pid), ...args]);
+      const nmt = sample('VM.native_memory', 'summary', 'scale=KB');
+      const committed = /Total:.*committed=(\d+)KB/.exec(nmt);
+      const heap = /Java Heap.*committed=(\d+)KB/.exec(nmt);
+      const vmFlags = sample('VM.flags');
+      const maximumHeap = /MaxHeapSize=(\d+)/.exec(vmFlags);
+      const heapGroups = [...sample('GC.heap_info').matchAll(/total (\d+)K, used (\d+)K/g)];
+      assert(committed && heap && maximumHeap && heapGroups.length, 'Missing JVM resource counters');
+      let processMemory;
+      if (process.platform === 'win32') {
+        processMemory = JSON.parse(run('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command',
+          `Get-Process -Id ${child.pid} | Select-Object WorkingSet64,PeakWorkingSet64,PrivateMemorySize64,@{n='Threads';e={$_.Threads.Count}} | ConvertTo-Json -Compress`]));
+      } else {
+        const status = readFileSync(`/proc/${child.pid}/status`, 'utf8');
+        const field = name => Number(new RegExp('^' + name + ':\\s+(\\d+)', 'm').exec(status)?.[1]);
+        processMemory = { WorkingSet64: 1024 * field('VmRSS'), PeakWorkingSet64: 1024 * field('VmHWM'), Threads: field('Threads') };
+      }
+      return { ...processMemory, maximumHeapBytes: Number(maximumHeap[1]),
+        heapUsedBytes: 1024 * heapGroups.reduce((sum, match) => sum + Number(match[2]), 0),
+        jvmCommittedBytes: 1024 * Number(committed[1]),
+        jvmNativeCommittedBytes: 1024 * (Number(committed[1]) - Number(heap[1])) };
+    }
   };
 }
 
@@ -75,7 +112,7 @@ async function stop(child) {
 function latency(values) {
   const sorted = [...values].sort((a, b) => a - b);
   return { samples: sorted.length, medianMs: sorted[Math.ceil(sorted.length * .5) - 1],
-    p95Ms: sorted[Math.ceil(sorted.length * .95) - 1] };
+    p95Ms: sorted[Math.ceil(sorted.length * .95) - 1], p99Ms: sorted[Math.ceil(sorted.length * .99) - 1] };
 }
 
 async function main() {
@@ -104,7 +141,7 @@ async function main() {
         'synthetic-clients': Object.keys(clients), 'retention-days': 1,
         postgres: {
           'jdbc-url': `jdbc:postgresql://localhost:${port}/monitoring`,
-          username: 'monitoring_app', password: appPassword, 'root-certificate': ca, 'pool-size': 3
+          username: 'monitoring_app', password: appPassword, 'root-certificate': ca, 'pool-size': renderProfile ? 2 : 3
         }
       }
     }
@@ -196,6 +233,8 @@ GRANT CONNECT ON DATABASE postgres TO monitoring_app;`);
     stage = 'primary database setup and paced load';
     backend = startBackend(base);
     const address = await backend.ready();
+    const coldStartMs = backend.startupMs;
+    const idleMemory = renderProfile ? backend.memory() : null;
     assert.equal(sql("SELECT count(*) FROM flyway_schema_history WHERE success AND version = '1';", 'monitoring'), '1');
     async function request(route, token, payload) {
       const start = performance.now();
@@ -236,11 +275,13 @@ GRANT CONNECT ON DATABASE postgres TO monitoring_app;`);
       if (remaining > 0) await wait(remaining);
     }
     const loadWallMs = performance.now() - start;
+    const loadedMemory = renderProfile ? backend.memory() : null;
+    const gcPauses = [...backend.logs().matchAll(/Pause (Young|Full).* ([\d.]+)ms/g)];
     const synthetic = await (await dashboard()).response.json();
     assert.equal(synthetic.total, writes.length);
     assert.equal((await (await dashboard('REAL')).response.json()).total, 0);
     const sessions = Number(sql("SELECT count(*) FROM pg_stat_activity a JOIN pg_stat_ssl s USING (pid) WHERE datname = 'monitoring' AND a.usename = 'monitoring_app' AND s.ssl;"));
-    assert(sessions >= 1 && sessions <= 3);
+    assert(sessions >= 1 && sessions <= base.threat.monitoring.postgres['pool-size']);
     console.log(`TLS load passed ${writes.length} writes and ${reads.length} dashboard reads.`);
     const load = { concurrency: 8, wallMs: loadWallMs, writes: latency(writes), dashboardReads: latency(reads), errors: 0 };
     console.log(JSON.stringify(load));
@@ -300,6 +341,10 @@ GRANT CONNECT ON DATABASE postgres TO monitoring_app;`);
       migration: 'version 1', backupRestore: 'pg_dump custom archive and pg_restore into a new database',
       outageStatus: outage.response.status, outageResponseMs: outage.ms, recoveryMs,
       replayTotal: writes.length, restoredTotalAfterExpiry: writes.length - 1, realScopeTotal: 0 };
+    if (renderProfile) result.renderProfile = { coldStartMs, idleMemory, loadedMemory,
+      youngGcPauses: gcPauses.filter(pause => pause[1] === 'Young').length,
+      fullGcPauses: gcPauses.filter(pause => pause[1] === 'Full').length,
+      longestGcPauseMs: Math.max(0, ...gcPauses.map(pause => Number(pause[2]))) };
     if (process.env.THREAT_RELEASE_RUN_STORAGE_MAVEN === '1') {
       stage = 'Maven storage tests';
       await stop(backend.child);

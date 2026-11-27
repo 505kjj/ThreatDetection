@@ -74,6 +74,8 @@ class MonitoringEventRepository {
         pool.setUsername(settings.username());
         pool.setPassword(settings.password());
         pool.setMaximumPoolSize(settings.poolSize());
+        // Let an idle managed database suspend naturally. Hikari still validates borrowed connections.
+        pool.setKeepaliveTime(0);
         pool.addDataSourceProperty("sslmode", settings.allowLoopbackWithoutTls() ? "disable" : "verify-full");
         pool.addDataSourceProperty("gssEncMode", "disable");
         pool.addDataSourceProperty("connectTimeout", "2");

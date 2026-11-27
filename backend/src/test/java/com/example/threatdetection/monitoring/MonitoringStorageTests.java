@@ -95,6 +95,7 @@ class MonitoringStorageTests {
         assertThat(pool.getDataSourceProperties()).containsEntry("sslmode", "verify-full")
                 .containsEntry("sslrootcert", "fixture-ca.pem").containsEntry("gssEncMode", "disable");
         assertThat(pool.getMaximumPoolSize()).isEqualTo(4);
+        assertThat(pool.getKeepaliveTime()).isZero();
         assertThat(secure.toString()).doesNotContain("fixture-secret");
         assertThatThrownBy(() -> MonitoringEventRepository.configurePostgres(pool, "existing-store", secure))
                 .isInstanceOf(IllegalArgumentException.class);
