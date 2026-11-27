@@ -8,9 +8,10 @@ const { tmpdir } = require('node:os');
 const path = require('node:path');
 const { chromium } = require('playwright');
 const { createRuntime } = require('./windows-local-runtime.cjs');
+const { tlsConfiguration, openReleaseEndpoints } = require('./release-https.cjs');
 
-const extension = path.resolve(__dirname, '..');
-const jar = path.resolve(extension, '../backend/target/threat-detection-0.0.1-SNAPSHOT.jar');
+const extension = path.resolve(process.env.THREAT_SMOKE_EXTENSION_DIR ?? path.join(__dirname, '..'));
+const jar = path.resolve(__dirname, '../../backend/target/threat-detection-0.0.1-SNAPSHOT.jar');
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 let token = randomBytes(32).toString('base64url');
 let adminToken = randomBytes(32).toString('base64url');
@@ -253,11 +254,16 @@ async function main() {
   let browser;
   let backend;
   let runtime;
+  let release;
+  const tls = process.env.THREAT_SMOKE_TLS_DIR ? tlsConfiguration(process.env.THREAT_SMOKE_TLS_DIR) : null;
+  const tlsExtension = tls && process.env.THREAT_SMOKE_TLS_EXTENSION === '1';
   try {
     await publish(useWindowsSetup ? 600000 : 300000);
     browser = await chromium.launchPersistentContext('', {
       channel: 'chromium',
+      headless: !tlsExtension,
       args: ['--disable-extensions-except=' + extension, '--load-extension=' + extension,
+        ...(tls ? ['--ignore-certificate-errors-spki-list=' + tls.pin] : []),
         '--no-proxy-server', '--host-resolver-rules=' +
           [phishingHost, cautionHost, destinationHost].map(host => 'MAP ' + host + ' 127.0.0.1').join(',')]
     });
@@ -273,7 +279,27 @@ async function main() {
     } else {
       backend = await startBackend(java, extensionOrigin, snapshotPath);
     }
-    const origin = 'http://127.0.0.1:' + backend.port;
+    if (tls) {
+      release = await openReleaseEndpoints(tls, backend.port, folder);
+      const publicPage = await browser.newPage();
+      await publicPage.goto(release.website);
+      await publicPage.getByRole('link', { name: 'Install locally' }).click();
+      await publicPage.getByRole('heading', { name: 'Install locally' }).waitFor();
+      await publicPage.goto(release.website + '/demo/');
+      await publicPage.getByRole('button', { name: 'Credential-form evidence' }).click();
+      await publicPage.getByRole('heading', { name: 'Credential-form evidence' }).waitFor();
+      assert.equal((await fetch(release.website + '/api/threat/monitoring/dashboard')).status, 404);
+      await publicPage.close();
+    }
+    const origin = tlsExtension ? release.origin : 'http://127.0.0.1:' + backend.port;
+    if (release) {
+      const readReports = token => fetch(release.origin + '/api/threat/monitoring/dashboard', {
+        headers: token ? { Authorization: 'Bearer ' + token } : {}
+      });
+      assert.equal((await readReports()).status, 401);
+      assert.equal((await readReports(token)).status, 403);
+      assert.equal((await readReports(adminToken)).status, 200);
+    }
     const apiCalls = [];
     const snapshotCalls = [];
     const formActionRequests = [];
@@ -297,7 +323,8 @@ async function main() {
       const previous = await credentialId();
       await options.locator('#browserToken').fill(credential);
       await options.locator('#saveConnection').click();
-      await eventually(() => options.locator('#browserToken').inputValue(), value => value === '', 'cleared token input');
+      await eventually(() => options.locator('#browserToken').inputValue(), value => value === '', 'cleared token input',
+        tlsExtension ? 1200 : 100);
       if (credential === token) {
         await eventually(credentialId, id => !!id && id !== previous, 'verified credential stored');
       }
@@ -553,7 +580,13 @@ async function main() {
 
     const dashboard = await browser.newPage();
     await dashboard.setViewportSize({ width: 1440, height: 900 });
-    await dashboard.goto(origin + '/monitor');
+    if (release) {
+      await dashboard.goto(release.website + '/administrator/');
+      await dashboard.getByRole('link', { name: 'Open administrator console' }).click();
+      await dashboard.waitForURL(release.origin + '/monitor');
+    } else {
+      await dashboard.goto(origin + '/monitor');
+    }
     assert.equal(await dashboard.locator('#dashboard').isVisible(), false);
     if (process.env.THREAT_UI_MATRIX === '1') {
       for (const [width, height] of consoleViewports) {
@@ -594,7 +627,7 @@ async function main() {
     assert.equal(await railToggle.getAttribute('aria-pressed'), 'false');
     let allowSynthetic;
     const waitForSkeleton = new Promise(resolve => { allowSynthetic = resolve; });
-    const syntheticDashboardUrl = origin + '/api/threat/monitoring/dashboard?scope=SYNTHETIC';
+    const syntheticDashboardUrl = (release?.origin ?? origin) + '/api/threat/monitoring/dashboard?scope=SYNTHETIC';
     await dashboard.route(syntheticDashboardUrl, async route => {
       await waitForSkeleton;
       await route.continue();
@@ -946,14 +979,18 @@ async function main() {
     await assertStatus(stale, 'Protection unavailable');
     assert.equal(hits(phishingHost, '/private-path').length, 2);
     console.log('Chrome: invalid and expired snapshots report unavailable and stop blocking');
+    if (release) console.log('Release path: site setup and demo, packaged extension (' + (tlsExtension ? 'HTTPS' : 'loopback HTTP') +
+      '), and separate HTTPS administrator access passed');
   } finally {
     if (browser) await browser.close();
+    release?.close();
     if (runtime) await runtime.dispose();
     else await backend?.stop();
     fixture.closeAllConnections();
     await new Promise(resolve => fixture.close(resolve));
     rmSync(snapshotPath, { force: true });
     rmSync(snapshotPath + '.next', { force: true });
+    if (tls) rmSync(path.join(folder, 'release-website'), { recursive: true, force: true });
     rmdirSync(folder);
   }
 }

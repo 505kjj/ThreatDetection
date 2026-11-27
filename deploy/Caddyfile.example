@@ -1,0 +1,22 @@
+# Copy into protected operator configuration and set both hostnames and the static root.
+{$THREAT_SITE_HOST} {
+	root * "{$THREAT_SITE_ROOT}"
+	header {
+		Content-Security-Policy "default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self'; connect-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'"
+		Referrer-Policy "no-referrer"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+	}
+	file_server {
+		hide _headers
+	}
+}
+
+{$THREAT_ADMIN_HOST} {
+	header {
+		Strict-Transport-Security "max-age=86400"
+		Referrer-Policy "no-referrer"
+	}
+	reverse_proxy 127.0.0.1:8081
+}

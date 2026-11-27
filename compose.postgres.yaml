@@ -1,0 +1,4 @@
+services:
+  backend:
+    environment:
+      THREAT_MONITORING_STOREPATH: ""
