@@ -1,0 +1,16 @@
+/*
+!/vercel.json
+!/website/
+/website/*
+!/website/build.mjs
+!/website/pages.mjs
+!/website/assets/
+!/extension/
+/extension/*
+!/extension/icons/
+/extension/icons/*
+!/extension/icons/mark.svg
+!/extension/fonts/
+/extension/fonts/*
+!/extension/fonts/Inter-OFL.txt
+!/extension/fonts/inter-latin.woff2
