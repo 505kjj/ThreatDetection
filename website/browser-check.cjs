@@ -21,13 +21,29 @@ async function main() {
     const network = new Set();
     page.on('request', request => network.add(new URL(request.url()).origin));
     page.on('pageerror', error => errors.push(error.message));
-    page.on('requestfailed', request => errors.push(request.failure()?.errorText));
+    page.on('requestfailed', request => {
+      const message = request.failure()?.errorText;
+      // Chromium can cancel its separate favicon request when a QA navigation ends.
+      if (message === 'net::ERR_ABORTED' && request.resourceType() === 'other' &&
+          request.url() === url + '/assets/mark.svg') return;
+      errors.push(`${message} ${request.resourceType()} ${request.url()}`);
+    });
+    async function open(route) {
+      const response = await page.goto(url + route);
+      // Complete deferred image loads before the next test navigation can cancel them.
+      await page.evaluate(async () => {
+        for (const image of document.images) image.loading = 'eager';
+        await Promise.all([...document.images].map(image => image.decode()));
+        await document.fonts.ready;
+      });
+      return response;
+    }
     const audits = [];
     for (const width of [1440, 1024, 768, 390, 320]) {
       await page.setViewportSize({ width, height: width < 768 ? 844 : 1000 });
       for (const slug of Object.keys(pages)) {
         const route = slug ? `/${slug}/` : '/';
-        const response = await page.goto(url + route);
+        const response = await open(route);
         assert.equal(response.status(), 200);
         assert.match(response.headers()['content-security-policy'], /connect-src 'none'/);
         assert.equal(response.headers()['referrer-policy'], 'no-referrer');
@@ -38,11 +54,6 @@ async function main() {
           return document.fonts.check('700 16px Inter');
         }), 'bundled Inter missing');
         if (width !== 1440 && width !== 390) continue;
-        for (const image of await page.locator('main img:visible').all()) {
-          await image.scrollIntoViewIfNeeded();
-          await image.evaluate(node => node.decode());
-        }
-        await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
         await page.evaluate(axeSource);
         const result = await page.evaluate(async () => {
           const { violations, incomplete } = await axe.run({ runOnly: {
@@ -56,7 +67,7 @@ async function main() {
           fullPage: true, animations: 'disabled' });
       }
     }
-    await page.goto(url + '/demo/');
+    await open('/demo/');
     const scenarios = page.getByRole('group', { name: 'Synthetic scenarios' }).getByRole('button');
     for (const button of await scenarios.all()) {
       await button.focus();
@@ -68,7 +79,7 @@ async function main() {
     }
     assert.equal(await page.locator('form, input, iframe').count(), 0);
     assert.deepEqual([...network], [url]);
-    await page.goto(url + '/');
+    await open('/');
     await page.keyboard.press('Tab');
     await page.keyboard.press('Enter');
     assert.equal(await page.evaluate(() => document.activeElement.id), 'main');
@@ -79,20 +90,21 @@ async function main() {
     await page.keyboard.press('Escape');
     assert.equal(await menu.evaluate(node => node.open), false);
     assert(await menu.locator('summary').evaluate(node => node === document.activeElement));
-    await page.goto(url + '/how-it-works/');
+    await open('/how-it-works/');
     await page.getByRole('button', { name: /Backend/ }).click();
     assert(await page.getByRole('heading', { name: 'Refresh the snapshot securely' }).isVisible());
     await page.emulateMedia({ reducedMotion: 'no-preference' });
-    await page.goto(url + '/');
+    await open('/');
     assert.equal(await page.locator('h1 span').first().evaluate(node => getComputedStyle(node).animationName), 'settle');
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto(url + '/');
+    await open('/');
     assert.equal(await page.locator('h1 span').first().evaluate(node => getComputedStyle(node).animationName), 'none');
     assert.equal(await page.locator('html').evaluate(node => getComputedStyle(node).scrollBehavior), 'auto');
     const publicApi = await fetch(url + '/api/threat/monitoring/dashboard');
     assert.equal(publicApi.status, 404);
     assert.equal(publicApi.headers.get('set-cookie'), null);
     assert.equal((await fetch(url + '/demo/', { method: 'POST' })).status, 405);
+    assert.equal((await fetch(url + '/assets/mark.svg')).status, 200);
     assert.deepEqual(errors, []);
     writeFileSync(join(capture, 'website-checks.json'), JSON.stringify({
       chromium: browser.version(), layoutChecks: 5 * Object.keys(pages).length, audits

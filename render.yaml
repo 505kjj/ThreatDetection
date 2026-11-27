@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: threatdetection-academic
+    runtime: docker
+    plan: free
+    region: singapore
+    numInstances: 1
+    autoDeployTrigger: 'off'
+    dockerfilePath: ./deploy/Dockerfile.render
+    dockerContext: .
+    healthCheckPath: /api/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: render
+      - key: TD_RENDER_NEON_JDBC_URL
+        sync: false
+      - key: TD_RENDER_NEON_USER
+        sync: false
+      - key: TD_RENDER_NEON_PASSWORD
+        sync: false
+      - key: TD_RENDER_EXTENSION_ORIGIN
+        sync: false
+      - key: TD_RENDER_BROWSER_DIGEST
+        sync: false
+      - key: TD_RENDER_ADMIN_DIGEST
+        sync: false

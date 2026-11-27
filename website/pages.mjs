@@ -3,7 +3,10 @@ const productCommit = '17524a9584fbce78b6c4071ab29bc6e21831d00f';
 const source = (file, text) => `<a href="${repo}/blob/${productCommit}/${file}">${text}</a>`;
 const button = (url, text, kind = 'solid') => `<a class="button button-${kind}" href="${url}">${text}</a>`;
 const intro = (title, description) => `<section class="page-intro"><h1>${title}</h1><p>${description}</p></section>`;
-const page = (title, description, content) => ({ title, description, body: () => intro(title, description) + content });
+const page = (title, description, content) => ({
+  title, description, body: settings => intro(title, description) +
+    (typeof content === 'function' ? content(settings) : content)
+});
 const card = (label, title, text) => `<article class="card" data-reveal><span class="card-label">${label}</span><h3>${title}</h3><p>${text}</p></article>`;
 const logo = '<img src="/assets/mark.svg" width="27" height="27" alt="">';
 
@@ -68,7 +71,7 @@ export const pages = {
     title: 'Browser security with evidence', description: 'ThreatDetection blocks known threats and explains suspicious financial sign-ins.',
     body: () => `<section class="hero">
       <div class="hero-copy">
-        <span class="eyebrow"><span></span> Browser security with evidence</span>
+        <span class="eyebrow"><span></span> Academic browser-security demonstration</span>
         <h1><span>Detect.</span> <span>Defend.</span> <span class="violet">Protect.</span></h1>
         <p>Block known threats. Get clear warnings about suspicious financial sign-ins. Keep reporting in your control.</p>
         <div class="actions">${button('/extension/', 'Install locally')}${button('/demo/', 'Try the security demo', 'outline')}</div>
@@ -100,7 +103,7 @@ export const pages = {
     <h2>What gets sent?</h2><p>A configured connection fetches reputation. The extension sends bounded activity data when that feature is enabled and classification codes when reporting is enabled.</p>${button('/privacy/', 'Read the privacy policy', 'outline')}</section>`),
   research: page('Research and technology', 'Experimental models are isolated from browser decisions. Independent operational validation remains pending.',
     `${metrics}<section class="band"><h2>Research evidence</h2><div class="cards two">
-    ${card('URL MODELS · PHASE 6C', 'Browser score agreement', 'Frozen URL preprocessing and scoring were compared with Python across 160 synthetic URL parity fixtures. This informs compatibility and does not establish detection accuracy.')}
+    ${card('URL MODELS · PHASE 6C', 'Browser score agreement', 'Character TF-IDF with logistic regression, numerical XGBoost, character CNN and a lightweight Transformer were examined in controlled browser experiments. The 160 synthetic URL fixtures checked normalization and scoring near frozen thresholds, rather than operational detection accuracy.')}
     ${card('DOM AND FUSION · PHASE 6C', 'Local structure and fusion', 'Eight inert DOM and fusion scenarios agreed with frozen references. Missing DOM evidence is treated as unavailable.')}
     ${card('VISUAL · PHASE 6D', 'Logo recognition prototype', 'Three fictional logo fixtures cleared the preprocessing cosine-similarity gate. The result is scoped to those fixtures. Independent visual data remains unavailable.')}
     ${card('BROWSER SECURITY · PHASE 6E', 'Bounded signal pilot', 'Seven synthetic scenarios repeated five times checked expected categories. Downloads and tracker identification remain deferred.')}
@@ -109,7 +112,7 @@ export const pages = {
     <li>${source('docs/experiments/phase6d/README.md', 'Visual recognition and parity report')}</li>
     <li>${source('docs/experiments/phase6e/README.md', 'Extended browser security report')}</li>
     <li>${source('docs/experiments/phase7a/README.md', 'Independent evaluation status')}</li></ul></section>`),
-  extension: page('Chrome extension', 'Install the controlled local build for Chrome 120 or later. The extension is awaiting Chrome Web Store publication.',
+  extension: page('Chrome extension', 'The academic demonstration uses manual installation for Chrome 120 or later.',
     `<section class="split"><div class="card"><h2>Install locally</h2><ol class="steps">
     <li>Get the project source from GitHub and use the version your administrator approves.</li>
     <li>Open <code>chrome://extensions</code>, enable Developer mode and select <strong>Load unpacked</strong>.</li>
@@ -123,13 +126,15 @@ export const pages = {
     <div class="demo-list" role="group" aria-label="Synthetic scenarios">${demos.map(([id, label], index) => `<button type="button" data-target="case-${id}" aria-controls="case-${id}" aria-pressed="${!index}">${label}</button>`).join('')}</div>
     <div class="demo-output" aria-live="polite">${demos.map(demoPanel).join('')}</div></section>`),
   privacy: page('Privacy policy', 'Data practices for the public website, Chrome extension and optional operator-hosted monitoring.',
-    `<div class="prose">
-    <h2>Public website</h2><p>The site uses no analytics, cookies, sign-in form or embedded tracking. Demo interactions stay in the open page. A hosting provider may keep ordinary request logs such as IP address and requested path. External links and the operator’s console use their own services.</p>
+    ({ hosted, contact }) => `<div class="prose">
+    <h2>Public website</h2><p>The site uses no analytics, cookies, sign-in form or embedded tracking. Demo interactions stay in the open page. External links and the operator’s console use their own services.</p>
+    ${hosted ? '<h2>Hosting providers</h2><p>Vercel serves the static site. Render serves the API and administrator console. Neon stores the classified monitoring records in PostgreSQL. Providers may record connection metadata such as IP addresses, timestamps and requested paths for service delivery and diagnostics. Provider logs and recovery copies have separate retention policies.</p>' : ''}
     <h2>Browser processing</h2><p>The extension inspects eligible HTTP and HTTPS navigations for threat reputation and financial impersonation. It processes host and canonical path for local reputation checks and uses bounded credential-form structure for local advisories. It does not read typed values, passwords, one-time codes, raw cookie values, screenshots or file contents. Local settings store the configured connection details, consent settings and reputation state.</p>
-    <h2>Backend connection and consent</h2><p>When configured, the extension contacts your operator’s backend for reputation snapshots using a browser-scoped bearer token. With activity analysis enabled, it can send host information for the session and bounded event types and counters. With monitoring enabled separately, it sends an event ID, classification, action, time and protection status. Monitoring excludes browsing URLs, domain names and page content. The configured operator can associate events with the reporting browser client. Network services may receive connection metadata.</p>
-    <h2>Access and retention</h2><p>Only authorized administrators can view reports. The default monitoring window is 14 days, subject to the operator’s configuration and backup policy. Turn activity analysis or monitoring off in extension settings. Remove the extension to clear its local extension storage. Contact the operator to ask about server-held records and applicable deletion procedures.</p>
+    <h2>Backend connection and consent</h2><p>When configured, the extension contacts the backend for reputation snapshots using a browser-scoped bearer token. With activity analysis enabled on configured sites, it can send a hostname for the session and bounded event types and counters. Reporting has its own opt-in. A report contains an event ID, classification, action and detection timestamp. A separate heartbeat reports protection availability. Monitoring excludes browsing URLs, domain names and page content. The backend associates a report with the configured browser client and records the receipt time.</p>
+    <h2>Access and retention</h2><p>Only authorized administrators can view reports. The administrator credential stays in console memory for that visit. The hosted console uses a 14-day monitoring window and the backend prunes expired records at startup and while running. Backups and provider recovery history follow separate policies. Turn activity analysis or monitoring off in extension settings. Remove the extension to clear its local extension storage.</p>
+    <h2>Research restrictions</h2><p>The hosted academic demonstration uses authorized synthetic sessions. URL, DOM and visual models, shadow tests and visual telemetry are disabled in the browser product. The public demo needs no credentials. Use controlled fixtures for optional reporting.</p>
     <h2>Use and sharing</h2><p>Browser data is used to provide security features described here. ThreatDetection does not sell browser data or use it for advertising. Its use of information received from Google APIs adheres to the Chrome Web Store User Data Policy, including the Limited Use requirements.</p>
-    <p>For product privacy questions, use the project’s GitHub contact path without posting browsing data, tokens or personal information. For monitoring records, use your administrator’s private channel.</p>${button(repo, 'Project repository', 'outline')}</div>`),
+    ${hosted ? `<h2>Contact the operator</h2><p>For questions about processing, access or deletion, email <a href="mailto:${contact}">${contact}</a>. Keep credentials and browsing data out of email.</p>` : '<p>For locally held or self-hosted records, contact the operator who configured your backend.</p>'}${button(repo, 'Project repository', 'outline')}</div>`),
   docs: page('Documentation', 'Set up local protection, configure optional reporting and operate the administrator console.',
     `<div class="cards two">
     <article class="card"><h2>Local setup</h2><p>Launch the backend with the Windows workflow and generate distinct browser and administrator credentials.</p>${source('docs/windows-local-setup.md', 'Windows startup guide')}</article>
@@ -139,7 +144,7 @@ export const pages = {
     </div>`),
   faq: page('Frequently asked questions', 'Answers about local installation, warnings and optional reporting.',
     `<div class="faq">
-    <details><summary>Can I install from the Chrome Web Store?</summary><p>The store listing is pending. Follow the <a href="/extension/">local installation guide</a> for controlled evaluation.</p></details>
+    <details><summary>Can I install from the Chrome Web Store?</summary><p>This demonstration is distributed manually. Follow the <a href="/extension/">local installation guide</a> for controlled evaluation.</p></details>
     <details><summary>What is the difference between a block and an advisory?</summary><p>A block follows a confirmed reputation match. An advisory points to reasons for caution, such as financial domain resemblance or an unrelated form destination.</p></details>
     <details><summary>What if the backend goes offline?</summary><p>Local financial checks remain available. The browser can continue using a still-valid cached reputation snapshot. When it expires, reputation is unavailable until a refresh succeeds.</p></details>
     <details><summary>Do I have to enable monitoring?</summary><p>No. Monitoring requires an explicit choice in extension settings. Leaving it off keeps browser protection available.</p></details>

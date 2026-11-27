@@ -1,11 +1,12 @@
-import { cp, mkdir, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readdir, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { pages } from './pages.mjs';
 
 const here = fileURLToPath(new URL('.', import.meta.url));
 const repo = join(here, '..');
-const output = resolve(process.argv[2] ?? join(here, 'dist'));
+const hosted = process.argv[2] === '--vercel';
+const output = resolve(process.argv[hosted ? 3 : 2] ?? join(here, 'dist'));
 const checkout = 'https://github.com/505kjj/ThreatDetection';
 const navigation = [
   ['features', 'Features'], ['how-it-works', 'How it works'], ['research', 'Research'],
@@ -23,6 +24,13 @@ function monitorHref(value) {
 }
 
 const monitor = monitorHref(process.env.THREAT_PUBLIC_MONITOR_URL ?? 'http://127.0.0.1:8081/monitor');
+const contact = process.env.THREAT_PUBLIC_OPERATOR_EMAIL;
+if (hosted && !/^https:\/\/[a-z0-9-]+\.onrender\.com\/monitor$/.test(monitor)) {
+  throw new Error('The Vercel build requires the approved Render HTTPS /monitor URL');
+}
+if (hosted && !/^[a-z\d._%+-]+@[a-z\d-]+(?:\.[a-z\d-]+)+$/i.test(contact ?? '')) {
+  throw new Error('The Vercel build requires an owner-approved public operator contact');
+}
 const link = ([slug, label], current) => `<a href="/${slug}/"${slug === current ? ' aria-current="page"' : ''}>${label}</a>`;
 const mark = '<img src="/assets/mark.svg" width="32" height="32" alt="">';
 
@@ -53,7 +61,7 @@ function render(slug, { title, description, body }) {
       </details>
     </div>
   </header>
-  <main id="main" class="shell" tabindex="-1">${body({ monitor })}</main>
+  <main id="main" class="shell" tabindex="-1">${body({ monitor, hosted, contact })}</main>
   <footer class="footer">
     <div class="shell footer-inner">
       <a class="brand" href="/">${mark}<span>ThreatDetection</span></a>
@@ -67,6 +75,10 @@ function render(slug, { title, description, body }) {
 `;
 }
 
+await mkdir(output, { recursive: true });
+if (hosted && (await readdir(output)).length) {
+  throw new Error('Build the Vercel release into an empty output directory');
+}
 await mkdir(join(output, 'assets'), { recursive: true });
 await cp(join(here, 'assets'), join(output, 'assets'), { recursive: true });
 for (const [source, name] of [
@@ -85,5 +97,5 @@ await writeFile(join(output, '404.html'), render('missing', {
   title: 'Page unavailable', description: 'Return to ThreatDetection.',
   body: () => '<section class="page-intro"><h1>Page unavailable</h1><p>The address may have moved.</p><a class="button button-solid" href="/">Back to home</a></section>'
 }));
-await cp(join(here, '_headers'), join(output, '_headers'));
+if (!hosted) await cp(join(here, '_headers'), join(output, '_headers'));
 console.log(`Built ${Object.keys(pages).length} pages in ${output}`);
